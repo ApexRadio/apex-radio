@@ -1,0 +1,67 @@
+name: Installateur Windows
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version
+        id: v
+        shell: pwsh
+        run: |
+          $v = (Get-Content VERSION -Raw).Trim()
+          "version=$v" >> $env:GITHUB_OUTPUT
+
+      - name: Python portable (embeddable) + composants
+        shell: pwsh
+        run: |
+          $py = "3.12.10"
+          New-Item -ItemType Directory -Force build\app | Out-Null
+          # fichiers de l'appli
+          $files = Get-ChildItem -File | Where-Object { $_.Name -notin @("Lancer.bat", "Demo.bat", "build_public.py", ".gitignore", ".gitattributes") }
+          Copy-Item $files build\app\
+          Copy-Item -Recurse ui, vendor build\app\
+          # Python portable
+          Invoke-WebRequest "https://www.python.org/ftp/python/$py/python-$py-embed-amd64.zip" -OutFile py.zip
+          Expand-Archive py.zip build\app\python
+          $pth = Get-ChildItem build\app\python\python*._pth | Select-Object -First 1
+          Set-Content $pth.FullName "python312.zip`r`n.`r`nLib\site-packages`r`n..`r`nimport site"
+          Invoke-WebRequest "https://bootstrap.pypa.io/get-pip.py" -OutFile get-pip.py
+          build\app\python\python.exe get-pip.py --no-warn-script-location
+          build\app\python\python.exe -m pip install --no-warn-script-location -r requirements.txt
+          build\app\python\python.exe -c "import piper, faster_whisper, sounddevice, pygame; print('composants OK')"
+
+      - name: Test de démarrage (import de l'appli)
+        shell: pwsh
+        working-directory: build\app
+        run: python\python.exe -c "import strategy, questions, laptimes, behavior, setups, tactics, alerts, debrief, i18n; print('appli OK')"
+
+      - name: Installateur (Inno Setup)
+        shell: pwsh
+        run: |
+          if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) { choco install innosetup -y --no-progress }
+          $iscc = (Get-Command iscc -ErrorAction SilentlyContinue).Source
+          if (-not $iscc) { $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" }
+          & $iscc "/DAppVersion=${{ steps.v.outputs.version }}" installer\ApexRadio.iss
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ApexRadio-Setup-${{ steps.v.outputs.version }}
+          path: dist\*.exe
+
+      - name: Publication (Release)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.v.outputs.version }}
+          name: Apex Radio ${{ steps.v.outputs.version }}
+          body_path: installer/release-notes.md
+          files: dist/*.exe

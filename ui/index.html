@@ -42,6 +42,10 @@
   #delta small { font-family: Inter, sans-serif; font-size: 12px; font-weight: 400; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
   #delta.fast { color: var(--good); text-shadow: 0 0 14px rgba(61,255,162,.5); }
   #delta.slow { color: var(--alert); text-shadow: 0 0 14px rgba(255,46,136,.45); }
+  #upd { display: none; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin: 0 0 12px; padding: 9px 14px;
+         border: 1px solid var(--accent); border-radius: 10px; background: rgba(0,229,255,.08); color: var(--text); font-weight: 600; }
+  #upd a { color: #06070B; background: var(--accent); padding: 5px 12px; border-radius: 999px; text-decoration: none; font-weight: 700; letter-spacing: .04em; }
+  #upd button { background: none; border: 0; color: var(--muted); font-size: 18px; cursor: pointer; padding: 0 4px; }
   #pen { display: none; margin-top: 6px; background: var(--alert); color: #06070B; font-weight: 700; letter-spacing: .06em; border-radius: 8px; padding: 6px 10px; animation: flash 1s steps(2) infinite; }
   @keyframes flash { 50% { opacity: .55; } }
   #quiet.on { background: var(--warn); color: #06070B; border-color: var(--warn); font-weight: 700; }
@@ -176,6 +180,8 @@
       <button id="quit" title="Fermer Apex Radio" aria-label="Fermer Apex Radio" data-en-title="Close Apex Radio">⏻</button>
     </div>
   </header>
+
+  <div id="upd" role="status"><span id="updtxt"></span><a id="updlink" href="#" target="_blank" rel="noopener"></a><button id="updx" aria-label="Masquer" title="Masquer">×</button></div>
 
   <div class="layout">
     <aside>
@@ -354,6 +360,14 @@ function render(d) {
   if (dlt != null) {
     $("delta").className = dlt < -0.02 ? "fast" : dlt > 0.02 ? "slow" : "";
     $("delta").innerHTML = `${dlt > 0 ? "+" : dlt < 0 ? "−" : "±"}${Math.abs(dlt).toFixed(2)}<small>vs ${tmD.delta_ref === "record" ? "record" : T("meilleur tour", "best lap")}</small>`;
+  }
+  const up = d.update || {};
+  let hid = null; try { hid = localStorage.getItem("apex-upd-hide"); } catch (e) {}
+  $("upd").style.display = up.latest && hid !== up.latest ? "flex" : "none";
+  if (up.latest) {
+    $("updtxt").textContent = T(`Nouvelle version ${up.latest} disponible (tu as la ${up.version})`, `New version ${up.latest} available (you have ${up.version})`);
+    $("updlink").textContent = T("TÉLÉCHARGER", "DOWNLOAD"); $("updlink").href = up.url;
+    $("updx").onclick = () => { try { localStorage.setItem("apex-upd-hide", up.latest); } catch (e) {} $("upd").style.display = "none"; };
   }
   const pn = d.penalty || {};
   $("pen").style.display = pn.count ? "block" : "none";

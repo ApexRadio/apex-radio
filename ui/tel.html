@@ -31,6 +31,7 @@
          border-radius: 12px; padding: 10px; letter-spacing: .06em; animation: flash 1s steps(2) infinite; }
   @keyframes flash { 50% { opacity: .55; } }
   #msg { grid-column: 1 / -1; font-size: 16px; }
+  #upd { display: none; text-align: center; border: 1px solid var(--accent); border-radius: 12px; padding: 8px; font-size: 13px; color: var(--accent); }
   #wait { text-align: center; margin-top: 30vh; color: var(--muted); }
   nav { margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding-bottom: env(safe-area-inset-bottom); }
   nav a { display: block; text-align: center; padding: 12px 6px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel);
@@ -40,6 +41,7 @@
 </head>
 <body>
   <div class="top"><div class="logo">APEX//RADIO</div><div class="muted" id="sess">connexion…</div></div>
+  <div id="upd" role="status"></div>
   <div id="wait" data-en="Waiting for the game…">En attente du jeu…</div>
   <div class="grid" id="dash" hidden>
     <div id="pen" role="alert"></div>
@@ -68,6 +70,9 @@ const fmtTime = s => { if (s == null) return "–"; const m = Math.floor(s / 60)
 function render(d) {
   const s = d.snap || {}, p = d.plan || {}, radio = d.radio || [];
   if (d.lang && d.lang !== LANG) { LANG = d.lang; applyLang(); }
+  const up = d.update || {};
+  $("upd").style.display = up.latest ? "block" : "none";
+  if (up.latest) $("upd").textContent = T(`Mise à jour ${up.latest} disponible : télécharge-la sur le PC`, `Update ${up.latest} available: download it on the PC`);
   $("wait").hidden = !!s.on_track; $("dash").hidden = !s.on_track;
   $("sess").textContent = s.on_track ? `${s.track} · ${T(s.session, SESSION_EN[s.session] || s.session)}` : (s.connected ? T("jeu détecté", "game detected") : T("en attente du jeu", "waiting for the game"));
   if (!s.on_track) return;

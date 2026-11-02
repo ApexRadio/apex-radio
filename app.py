@@ -30,6 +30,7 @@ from telemetry import DemoSource, Snapshot
 from voice import Voice
 import questions
 import i18n
+import updates
 from i18n import L
 from questions import answer
 from laptimes import LapTimes
@@ -225,6 +226,7 @@ def loop(state: State, demo: bool) -> None:
                 "penalty": pen.ui(snap),
                 "phone": PHONE_URL,
                 "lang": i18n.LANG,
+                "update": UPD.ui(),
                 "ptt": state.radio.info(),
                 "times": lt.ui(snap),
                 "map": state.map.info(),
@@ -483,6 +485,7 @@ def make_handler(state: State):
 
 
 PHONE_URL = ""
+UPD = updates.Updates()
 
 
 def local_ip() -> str:
@@ -553,9 +556,10 @@ def main() -> None:
         webbrowser.open(f"http://localhost:{PORT}")
         sys.exit(0)
     threading.Thread(target=loop, args=(state, args.demo), daemon=True).start()
+    UPD.start()
     url = f"http://localhost:{PORT}"
     print("=" * 56)
-    print("  APEX//RADIO — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate"))
+    print(f"  APEX//RADIO {UPD.version} — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate"))
     print(f"  Tableau de bord : {url}")
     print(f"  Sur téléphone : http://{local_ip()}:{PORT}/tel")
     print("  Ferme cette fenêtre pour arrêter.")

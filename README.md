@@ -26,13 +26,13 @@ no account, no internet needed once installed.
 - **French and English**, voice included (button at the top of the dashboard, or set on first launch from Windows language).
 
 ### Install
-1. Install Python 3.11+ from python.org (tick **Add python.exe to PATH**).
-2. Download and unzip Apex Radio.
-3. Double-click **Lancer.bat**. The first launch installs the components (2-5 min) and creates a desktop shortcut.
-4. Start LMU and get in your car. The dashboard opens in your browser.
-5. Click **CHOOSE THE RADIO BUTTON** and press the wheel button you want for push-to-talk.
+1. Download **[ApexRadio-Setup.exe](https://github.com/laurent22230/apex-radio/releases/latest)** and run it (Python and everything is included).
+   If Windows says "Windows protected your PC": **More info** → **Run anyway** (the app isn't signed yet).
+2. Start LMU and get in your car, then launch **Apex Radio** from the desktop icon. The dashboard opens in your browser.
+3. Click **CHOOSE THE RADIO BUTTON** and press the wheel button you want for push-to-talk.
 
-`Demo.bat` runs a simulated race to try everything without the game.
+The **Apex Radio (demo)** shortcut in the Start menu runs a simulated race to try everything without the game.
+Developers: you can also run from source with `Lancer.bat` (needs Python 3.11+).
 
 ### Credits and licences
 Apex Radio is free software under the **GNU GPL v3** (see `LICENSE`).
@@ -63,13 +63,13 @@ pas d'abonnement, pas de compte, pas besoin d'internet une fois installé.
 - **Français et anglais**, voix comprise (bouton en haut du tableau de bord).
 
 ### Installation
-1. Installe Python 3.11 ou plus récent depuis python.org (coche **Add python.exe to PATH**).
-2. Télécharge et dézippe Apex Radio.
-3. Double-clique sur **Lancer.bat**. Le premier lancement installe les composants (2 à 5 min) et crée un raccourci sur le bureau.
-4. Lance LMU et monte dans ta voiture. Le tableau de bord s'ouvre dans ton navigateur.
-5. Clique sur **CHOISIR LE BOUTON RADIO** et appuie sur le bouton du volant que tu veux utiliser.
+1. Télécharge **[ApexRadio-Setup.exe](https://github.com/laurent22230/apex-radio/releases/latest)** et lance-le (Python et tout le reste sont inclus).
+   Si Windows affiche « Windows a protégé votre ordinateur » : **Informations complémentaires** → **Exécuter quand même** (l'appli n'est pas encore signée).
+2. Lance LMU, monte dans ta voiture, puis ouvre **Apex Radio** avec l'icône du bureau. Le tableau de bord s'ouvre dans ton navigateur.
+3. Clique sur **CHOISIR LE BOUTON RADIO** et appuie sur le bouton du volant que tu veux utiliser.
 
-`Demo.bat` lance une course simulée pour tout essayer sans le jeu.
+Le raccourci **Apex Radio (demo)** du menu Démarrer lance une course simulée pour tout essayer sans le jeu.
+Pour les développeurs : on peut aussi lancer depuis le code avec `Lancer.bat` (Python 3.11+ requis).
 
 ### Crédits et licences
 Apex Radio est un logiciel libre sous licence **GNU GPL v3** (voir `LICENSE`).

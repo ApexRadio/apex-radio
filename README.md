@@ -6,6 +6,8 @@
 
 **⬇️ [Download / Télécharger](https://github.com/laurent22230/apex-radio/releases/latest)** · 💬 [Discord](https://discord.gg/wpqNBpMaa) · ❤️ [Patreon](https://www.patreon.com/lolotuner)
 
+![Apex Radio dashboard](docs/dashboard-en.png)
+
 ---
 
 ## English

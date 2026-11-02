@@ -1,0 +1,17 @@
+# données personnelles / personal data (jamais publiées)
+config.json
+records.json
+fuelbook.json
+setups_history.json
+lmu_api_probe.json
+journal.txt
+derniere_annonce.wav
+debriefs/
+maps/
+traces/
+models/
+setup_backups/
+demo_setups/
+.venv/
+__pycache__/
+*.pyc

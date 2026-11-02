@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#06070B">
+<title>Apex Radio</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #06070B; --panel: #0B0F16; --line: #1A2330; --text: #E8EDF5; --muted: #9AA6B8;
+          --accent: #00E5FF; --alert: #FF2E88; --good: #3DFFA2; --warn: #FFB547; --yellow: #FFE500;
+          --mono: "JetBrains Mono", ui-monospace, monospace; --title: Orbitron, sans-serif; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.3 Inter, system-ui, sans-serif; }
+  body { padding: max(12px, env(safe-area-inset-top)) 16px 16px; min-height: 100vh; display: flex; flex-direction: column; gap: 10px; }
+  .top { display: flex; justify-content: space-between; align-items: center; }
+  .logo { font-family: var(--title); font-weight: 900; color: var(--accent); letter-spacing: .1em; text-shadow: 0 0 12px rgba(0,229,255,.6); font-size: 16px; }
+  .muted { color: var(--muted); font-size: 12px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; min-width: 0; }
+  .lab { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .val { font-family: var(--mono); font-weight: 700; font-size: clamp(34px, 12vw, 64px); line-height: 1.05; }
+  .sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  #lap { color: var(--yellow); text-shadow: 0 0 14px rgba(255,229,0,.5); }
+  #delta.fast { color: var(--good); } #delta.slow { color: var(--alert); }
+  #call { grid-column: 1 / -1; text-align: center; }
+  #call .val { font-family: var(--title); color: var(--accent); font-size: clamp(30px, 10vw, 56px); }
+  #call.alert { border-color: var(--alert); box-shadow: 0 0 28px rgba(255,46,136,.3); }
+  #call.alert .val { color: var(--alert); }
+  #pen { display: none; grid-column: 1 / -1; background: var(--alert); color: #06070B; font-weight: 700; text-align: center;
+         border-radius: 12px; padding: 10px; letter-spacing: .06em; animation: flash 1s steps(2) infinite; }
+  @keyframes flash { 50% { opacity: .55; } }
+  #msg { grid-column: 1 / -1; font-size: 16px; }
+  #wait { text-align: center; margin-top: 30vh; color: var(--muted); }
+  nav { margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding-bottom: env(safe-area-inset-bottom); }
+  nav a { display: block; text-align: center; padding: 12px 6px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel);
+          color: var(--text); text-decoration: none; font-size: 13px; font-weight: 600; letter-spacing: .06em; }
+  nav a.rec { color: var(--yellow); }
+</style>
+</head>
+<body>
+  <div class="top"><div class="logo">APEX//RADIO</div><div class="muted" id="sess">connexion…</div></div>
+  <div id="wait" data-en="Waiting for the game…">En attente du jeu…</div>
+  <div class="grid" id="dash" hidden>
+    <div id="pen" role="alert"></div>
+    <div class="card" id="call"><div class="lab" data-en="Call">Consigne</div><div class="val" id="calltitle">–</div><div class="sub" id="calltext"></div></div>
+    <div class="card"><div class="lab">Position</div><div class="val" id="pos">–</div><div class="sub" id="gaps"></div></div>
+    <div class="card"><div class="lab" data-en="Lap">Tour</div><div class="val" id="lap">–</div><div class="sub" id="lapsub"></div></div>
+    <div class="card"><div class="lab">Delta</div><div class="val" id="delta">–</div><div class="sub" id="deltasub"></div></div>
+    <div class="card"><div class="lab" data-en="Fuel">Essence</div><div class="val" id="fuel">–</div><div class="sub" id="fuelsub"></div></div>
+    <div class="card" id="msg"><div class="lab" data-en="Engineer">Jessica</div><div id="last">–</div></div>
+  </div>
+  <nav>
+    <a class="rec" href="/records">RECORDS</a>
+    <a href="/debriefs" data-en="DEBRIEFS">DÉBRIEFS</a>
+    <a href="/" data-en="FULL · WORKSHOP">COMPLET · ATELIER</a>
+  </nav>
+<script>
+const $ = id => document.getElementById(id);
+let LANG = "fr";
+const T = (fr, en) => LANG === "en" ? en : fr;
+function applyLang() {
+  document.documentElement.lang = LANG;
+  document.querySelectorAll("[data-en]").forEach(el => { if (el.dataset.fr === undefined) el.dataset.fr = el.innerHTML; el.innerHTML = LANG === "en" ? el.dataset.en : el.dataset.fr; });
+}
+const SESSION_EN = { course: "race", qualif: "qualifying", essais: "practice", warmup: "warm-up" };
+const fmtTime = s => { if (s == null) return "–"; const m = Math.floor(s / 60), r = Math.floor(s % 60); return `${m}:${String(r).padStart(2, "0")}`; };
+function render(d) {
+  const s = d.snap || {}, p = d.plan || {}, radio = d.radio || [];
+  if (d.lang && d.lang !== LANG) { LANG = d.lang; applyLang(); }
+  $("wait").hidden = !!s.on_track; $("dash").hidden = !s.on_track;
+  $("sess").textContent = s.on_track ? `${s.track} · ${T(s.session, SESSION_EN[s.session] || s.session)}` : (s.connected ? T("jeu détecté", "game detected") : T("en attente du jeu", "waiting for the game"));
+  if (!s.on_track) return;
+  const last = radio.find(m => !m.me);
+  let title = T("EN PISTE", "ON TRACK"), text = "", alert = false;
+  if (s.yellow) { title = T("NEUTRALISATION", "YELLOW"); alert = true; }
+  else if (p.ready && p.stops_needed > 0 && p.laps_until_box <= 1) { title = "BOX BOX"; alert = true; text = T("Rentre ce tour", "Pit this lap"); }
+  else if (p.ready && p.stops_needed > 0 && p.laps_until_box <= 3) { title = T(`BOX DANS ${p.laps_until_box}`, `BOX IN ${p.laps_until_box}`); text = T(`fin du tour ${p.box_lap}`, `end of lap ${p.box_lap}`); }
+  else if (s.game_phase === 8) title = T("DAMIER", "CHEQUERED");
+  $("calltitle").textContent = title; $("calltext").textContent = text; $("call").className = "card" + (alert ? " alert" : "");
+  $("pos").textContent = `P${s.class_position || s.position || "–"}`;
+  $("gaps").textContent = [s.gap_class_ahead != null ? `${T("devant", "ahead")} ${s.gap_class_ahead.toFixed(1)} s` : "", s.gap_class_behind != null ? `${T("derrière", "behind")} ${s.gap_class_behind.toFixed(1)} s` : ""].filter(Boolean).join(" · ");
+  const total = s.max_laps || (p.laps_to_finish != null ? Math.round(s.laps_done + s.lap_frac + p.laps_to_finish) : null);
+  $("lap").textContent = `${s.laps_done + 1}${total ? "/" + total : ""}`;
+  $("lapsub").textContent = s.time_left != null ? `${T("reste", "left")} ${fmtTime(s.time_left)}` : "";
+  const t = d.times || {}, dl = t.delta;
+  $("delta").textContent = dl == null ? "–" : `${dl > 0 ? "+" : dl < 0 ? "−" : "±"}${Math.abs(dl).toFixed(2)}`;
+  $("delta").className = "val" + (dl == null ? "" : dl < -0.02 ? " fast" : dl > 0.02 ? " slow" : "");
+  $("deltasub").textContent = dl == null ? T("pas de référence", "no reference") : `vs ${t.delta_ref === "record" ? "record" : T("meilleur tour", "best lap")}`;
+  $("fuel").textContent = p.range_laps != null ? `${p.range_laps.toFixed(1)}` : `${(s.fuel || 0).toFixed(0)} L`;
+  $("fuelsub").textContent = p.range_laps != null ? `${T("tours", "laps")} · ${(s.fuel || 0).toFixed(1)} L` : "";
+  const pn = d.penalty || {};
+  $("pen").style.display = pn.count ? "block" : "none";
+  if (pn.count) $("pen").textContent = `${T("PÉNALITÉ À PURGER", "PENALTY TO SERVE")}${pn.laps_left != null ? ` · ${pn.laps_left} ${T("TOUR", "LAP")}${pn.laps_left > 1 ? "S" : ""}` : ""}`;
+  $("last").textContent = last ? last.text : "–";
+}
+async function tick() {
+  try { render(await (await fetch("/api/state", { cache: "no-store" })).json()); }
+  catch (e) { $("sess").textContent = T("PC injoignable", "PC unreachable"); }
+  setTimeout(tick, 500);
+}
+tick();
+</script>
+</body>
+</html>

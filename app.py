@@ -1,0 +1,572 @@
+"""
+Ingénieur de course pour Le Mans Ultimate — étape 1 : tableau de bord stratégie.
+
+Lancement :
+    python app.py          -> lit le jeu en direct
+    python app.py --demo   -> course simulée pour tester sans le jeu
+
+Le tableau de bord s'ouvre dans le navigateur (http://localhost:8765).
+On peut aussi l'ouvrir sur un téléphone ou une tablette du même réseau
+avec l'adresse affichée au démarrage.
+"""
+
+from __future__ import annotations
+
+import argparse
+import os
+import json
+import socket
+import sys
+import threading
+import time
+import traceback
+import webbrowser
+from dataclasses import asdict
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+
+from strategy import Engineer
+from telemetry import DemoSource, Snapshot
+from voice import Voice
+import questions
+import i18n
+from i18n import L
+from questions import answer
+from laptimes import LapTimes
+from trackmap import TrackMap
+from behavior import Behavior
+from setups import Workshop
+from incidents import Incidents
+from lmu_probe import Probe
+from alerts import Spotter, Traffic, GapTrend, TrackLimits, Damage, Weather
+import debrief
+from pitmenu import PitCrew
+from radio import save_config
+from radio import Radio
+from tactics import Penalties, Undercut, Pace, FuelBook
+
+HERE = Path(__file__).parent
+PORT = 8765
+
+
+def system_lang() -> str:
+    """Premier lancement : français si Windows est en français, sinon anglais."""
+    try:
+        if sys.platform == "win32":
+            import ctypes
+            lid = ctypes.windll.kernel32.GetUserDefaultUILanguage()
+            return "fr" if (lid & 0x3FF) == 0x0C else "en"
+        import locale
+        return "fr" if (locale.getlocale()[0] or "").lower().startswith("fr") else "en"
+    except Exception:
+        return "fr"
+
+
+class State:
+    def __init__(self) -> None:
+        self.lock = threading.Lock()
+        self.payload = b"{}"
+        self.snap = Snapshot()
+        self.plan = None
+        self.eng = None
+        self.map = TrackMap()
+        self.radio = Radio(self.on_question)
+        i18n.set_lang(self.radio.cfg.get("lang") or system_lang())   # avant la voix : elle charge le modèle de la bonne langue
+        self.voice = Voice()
+        self.workshop = None
+        self.beh = None
+        self.demo = False
+        self.last_track = ""
+        self.fuel = FuelBook()
+
+    def track(self) -> str:
+        return self.snap.track or self.last_track
+
+    def on_question(self, text: str) -> None:
+        from strategy import Plan
+        reply = answer(text, self.snap, self.plan or Plan())
+        if self.eng is not None:
+            self.eng.radio.appendleft({"t": self.snap.elapsed, "text": f"Toi : {text}", "urgent": False, "me": True})
+            self.eng.radio.appendleft({"t": self.snap.elapsed, "text": reply, "urgent": False})
+        print(f"  [ingé] {reply}")
+        self.voice.say(reply, urgent=True)
+
+
+def make_source(demo: bool):
+    if demo:
+        return DemoSource()
+    if sys.platform != "win32":
+        print("La lecture en direct de LMU ne fonctionne que sous Windows. Lance avec --demo pour tester.")
+        sys.exit(1)
+    from telemetry import LMUSource
+    return LMUSource()
+
+
+def loop(state: State, demo: bool) -> None:
+    source = make_source(demo)
+    eng = Engineer()
+    eng.on_say = state.voice.say
+    state.eng = eng
+    questions.VOICE, questions.ENG = state.voice, eng
+    lt = LapTimes()
+    questions.LAPTIMES = lt
+    beh = Behavior(state.map)
+    beh.say = lambda key, text, **kw: eng.say(key, text, elapsed=state.snap.elapsed)
+    questions.BEHAVIOR = beh
+    state.beh = beh
+    probe = Probe() if not demo else None
+    say = lambda key, text, urgent=False: eng.say(key, text, urgent=urgent, elapsed=state.snap.elapsed)
+    spotter = Spotter(state.voice)
+    spotter.enabled = state.radio.cfg.get("spotter", True)
+    state.spotter = spotter
+    traffic, trend, limits, damage = Traffic(), GapTrend(), TrackLimits(beh), Damage()
+    weather = Weather(demo)
+    recorder = debrief.Recorder()
+    session_end = {"key": None, "prompt": 0}
+    crew = PitCrew(state.radio.cfg, demo)
+    crew.say = say
+    state.crew = crew
+    pen, under, pace = Penalties(), Undercut(), Pace()
+    state.pace = pace
+    questions.PIT_ACTION = lambda: crew.prepare(state.snap, state.plan, asked=True)
+
+    def setup_sync():
+        """Toutes les 15 s : quel setup est chargé dans LMU ? (sélection automatique dans l'atelier)"""
+        while not demo:
+            try:
+                if state.snap.connected and state.snap.track:
+                    f = state.workshop.sync_active(state.snap.track)
+                    if f:
+                        print(f"  Setup chargé dans LMU détecté : {f}")
+                        beh.reset_analysis()
+            except Exception:
+                traceback.print_exc()
+            time.sleep(15)
+
+    threading.Thread(target=setup_sync, daemon=True).start()
+    inc = Incidents(beh)
+    inc.say = lambda key, text, urgent=False: eng.say(key, text, urgent=urgent, elapsed=state.snap.elapsed)
+    state.voice.volume = float(state.radio.cfg.get("volume", 1.3))
+    if demo:
+        demo_dir = make_demo_setups()
+        state.workshop = Workshop({**state.radio.cfg, "setups_dir": str(demo_dir), "setup_folder_for": {}})
+    else:
+        state.workshop = Workshop(state.radio.cfg)
+    state.workshop.scan(force=True)
+    print(f"  Setups LMU : {state.workshop.dir} ({'trouvé' if state.workshop.ok() else 'introuvable'})")
+    last_lap_seen = None
+
+    def fast_loop():
+        """Lecture rapide (50 fois/s) de la dynamique pour l'analyse du comportement."""
+        k = 0
+        while True:
+            try:
+                beh.feed(source.fast_sample())
+                k += 1
+                if k % 2 == 0:
+                    spotter.feed(source.spot_sample())
+            except Exception:
+                traceback.print_exc()
+                time.sleep(1)
+            time.sleep(0.02)
+
+    threading.Thread(target=fast_loop, daemon=True).start()
+    while True:
+        try:
+            snap = source.read()
+            damage.update(snap, say)
+            plan = eng.update(snap)
+            lt.update(snap, eng.say)
+            state.map.update(snap)
+            spotter.session = snap.session
+            inc.update(snap)
+            traffic.update(snap, plan, say)
+            trend.update(snap, say)
+            limits.update(snap, say)
+            weather.update(snap, say)
+            crew.update(snap, plan)
+            pen.update(snap, say)
+            under.update(snap, plan, say)
+            pace.update(snap, eng, say)
+            state.fuel.update(snap, plan, eng)
+            # fin de session (drapeau à damier) : rappel des réglages garage + ouverture de l'atelier
+            key = (snap.track, snap.session_code)
+            if snap.on_track and snap.game_phase == 8 and session_end["key"] != key and snap.laps_done >= 3:
+                session_end["key"] = key
+                msg = beh.end_of_session()
+                if msg:
+                    say(None, msg)
+                    session_end["prompt"] += 1
+            recorder.update(snap, lt, beh, eng, state.workshop.state(snap.track).get("label") if snap.track else None)
+            if probe:
+                probe.update(snap)
+            state.snap, state.plan = snap, plan
+            if snap.track:
+                state.last_track = snap.track
+            if snap.session == "qualif":
+                state.workshop.set_mode("Qualif")
+            elif snap.session == "course":
+                state.workshop.set_mode("Course")
+            L = lt.last
+            if L and L.get("lap") != last_lap_seen:
+                last_lap_seen = L.get("lap")
+                if L.get("valid"):
+                    state.workshop.record_lap(snap.track, L["lap"], beh.issues)
+            if demo and isinstance(source, DemoSource) and plan.laps_until_box is not None \
+                    and plan.laps_until_box <= 1 and snap.lap_frac > 0.6 and not snap.in_pits:
+                source.request_pit(plan.fuel_to_add or 0, plan.energy_target, bool(plan.change_tyres or plan.tyre_compound))
+            data = {
+                "demo": demo,
+                "snap": asdict(snap),
+                "plan": asdict(plan),
+                "radio": list(eng.radio),
+                "voice": {"on": state.voice.enabled, "engine": state.voice.engine, "volume": state.voice.volume,
+                          "quiet": state.voice.quiet},
+                "penalty": pen.ui(snap),
+                "phone": PHONE_URL,
+                "lang": i18n.LANG,
+                "ptt": state.radio.info(),
+                "times": lt.ui(snap),
+                "map": state.map.info(),
+                "behavior": beh.ui(),
+                "incidents": inc.active,
+                "forecast": weather.ui(snap),
+                "spotter": {"on": spotter.enabled, "state": spotter.state},
+                "pit": {"mode": crew.mode, "status": crew.status},
+                "setup_prompt": session_end["prompt"],
+                "ts": time.time(),
+            }
+        except Exception as e:  # on ne plante jamais pendant une course
+            traceback.print_exc()
+            data = {"demo": demo, "snap": asdict(Snapshot()), "plan": {}, "radio": [], "error": str(e)}
+        with state.lock:
+            state.payload = json.dumps(data, default=lambda o: None).encode()
+        time.sleep(0.2)
+
+
+DEMO_SVM = """VehicleClassSetting="Demo Hypercar"
+//Setup de démonstration Apex Radio (valeurs fictives)
+
+[GENERAL]
+Notes=""
+Symmetric=1
+FuelSetting=80//90.0L
+
+[FRONTWING]
+FWSetting={fw}//{fwd}
+
+[REARWING]
+RWSetting={rw}//P{rwd}
+
+[SUSPENSION]
+FrontAntiSwaySetting={farb}//{farbd}
+RearAntiSwaySetting={rarb}//{rarbd}
+
+[CONTROLS]
+RearBrakeSetting={bias}//{biasd}
+TractionControlMapSetting={tc}//{tc}
+
+[DRIVELINE]
+DiffPowerSetting={dp}//{dpd}
+DiffCoastSetting={dc}//{dcd}
+
+""" + "".join(f"""[{w}]
+CamberSetting={{cam}}//{{camd}}
+PressureSetting={{pr}}//{{prd}}
+RideHeightSetting={{rh}}//{{rhd}}
+
+""" for w in ("FRONTLEFT", "FRONTRIGHT", "REARLEFT", "REARRIGHT"))
+
+
+def make_demo_setups() -> Path:
+    """Dossier de setups fictifs pour tester l'atelier en mode démo."""
+    d = HERE / "demo_setups" / "Circuit de demo"
+    d.mkdir(parents=True, exist_ok=True)
+    arb = ["D18 S-S", "D18 S-H", "D18 H-H", "D22 S-S", "D22 S-H", "D22 H-H"]
+    diff = ["FF6-60 deg", "FF6-55 deg", "FF6-45 deg", "FF6-30 deg", "FF6-25 deg"]
+    for name, k in (("Demo base.svm", 2), ("Demo ancien.svm", 3)):
+        f = d / name
+        if f.exists():
+            continue
+        f.write_text(DEMO_SVM.format(
+            fw=k, fwd=f"{k} deg", rw=k, rwd=k + 1, farb=k, farbd=arb[k], rarb=k - 1, rarbd=arb[k - 1],
+            bias=14 + k, biasd=f"{54.5 - 0.45 * k:.1f}:{45.5 + 0.45 * k:.1f}", tc=3 + k, dp=k, dpd=diff[k], dc=k, dcd=diff[k],
+            cam=10 + k, camd=f"{-1.8 + 0.1 * k:.1f} deg", pr=k, prd=f"{130 + 2 * k} kPa", rh=8 + k, rhd=f"{4.0 + 0.1 * k:.1f} cm"),
+            encoding="utf-8")
+    return d.parent
+
+
+def make_handler(state: State):
+    html = (HERE / "ui" / "index.html").read_bytes()
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            if self.path.startswith("/api/mics") or self.path.startswith("/api/map"):
+                data = state.radio.mics() if self.path.startswith("/api/mics") else {**state.map.info(), "points": state.map.points()}
+                body, ctype = json.dumps(data).encode(), "application/json"
+                self.send_response(200)
+                self.send_header("Content-Type", ctype)
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+                return
+            if self.path.startswith("/debrief") or self.path.rstrip("/") == "/records":
+                if self.path.rstrip("/") == "/records":
+                    body = debrief.records_page().encode()
+                elif self.path.rstrip("/") == "/debriefs":
+                    body = debrief.index_page().encode()
+                else:
+                    name = self.path.split("/")[-1]
+                    f = debrief.DIR / f"{name}.json"
+                    if not name.replace("_", "").replace("-", "").isalnum() or not f.exists():
+                        self.send_error(404)
+                        return
+                    # rendu à la demande : la page suit la langue choisie
+                    body = debrief.render(json.loads(f.read_text(encoding="utf-8"))).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+                return
+            if self.path.startswith("/api/setup"):
+                ws, beh = state.workshop, state.beh
+                if ws is None:
+                    data = {"ok": False}
+                else:
+                    tr = state.track()
+                    fuel = state.fuel.suggest(tr)
+                    data = {**ws.propose(tr, beh.issues, beh.tyre_findings, beh.live_controls(tr), fuel),
+                            "folders": ws.folders(), "analysis_laps": beh.laps_seen, "fuel": fuel}
+                body = json.dumps(data, default=lambda o: None).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+                return
+            if self.path.startswith("/api/state"):
+                with state.lock:
+                    body = state.payload
+                ctype = "application/json"
+            elif self.path.rstrip("/") in ("/tel", "/phone"):
+                body, ctype = (HERE / "ui" / "tel.html").read_bytes(), "text/html; charset=utf-8"
+            elif self.path in ("/", "/index.html"):
+                # relu à chaque fois : une mise à jour du tableau de bord s'affiche sans relancer l'appli
+                body, ctype = (HERE / "ui" / "index.html").read_bytes(), "text/html; charset=utf-8"
+            else:
+                self.send_error(404)
+                return
+            self.send_response(200)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def do_POST(self):
+            v = state.voice
+            if self.path == "/api/voice/toggle":
+                v.enabled = not v.enabled
+                if v.enabled:
+                    v.say(L("Radio active.", "Radio on."))
+            elif self.path == "/api/lang":
+                n = int(self.headers.get("Content-Length") or 0)
+                lang = json.loads(self.rfile.read(n) or b"{}").get("lang", "fr")
+                i18n.set_lang(lang)
+                state.radio.cfg["lang"] = i18n.LANG
+                save_config(state.radio.cfg)
+                v.flush()
+                v.say(L("Radio en français.", "Radio in English."))
+            elif self.path == "/api/voice/quiet":
+                v.quiet = not v.quiet
+                v.say(L("Mode silence : je ne te dis plus que l'urgent.", "Quiet mode: urgent calls only.") if v.quiet
+                      else L("Fin du silence, je te redonne toutes les infos.", "Quiet mode off, back to full info."),
+                      urgent=True)
+            elif self.path == "/api/setup/race":
+                n = int(self.headers.get("Content-Length") or 0)
+                req = json.loads(self.rfile.read(n) or b"{}")
+                state.fuel.set_race(state.track(), req.get("minutes"), req.get("laps"))
+            elif self.path == "/api/pit/mode":
+                n = int(self.headers.get("Content-Length") or 0)
+                mode = json.loads(self.rfile.read(n) or b"{}").get("mode")
+                crew = getattr(state, "crew", None)
+                if crew and mode in ("auto", "demande", "off"):
+                    crew.mode = mode
+                    state.radio.cfg["pit_auto"] = mode
+                    save_config(state.radio.cfg)
+            elif self.path == "/api/pit/now":
+                crew = getattr(state, "crew", None)
+                if crew:
+                    crew.prepare(state.snap, state.plan, asked=True)
+            elif self.path == "/api/spotter/toggle":
+                sp = getattr(state, "spotter", None)
+                if sp:
+                    sp.enabled = not sp.enabled
+                    state.radio.cfg["spotter"] = sp.enabled
+                    save_config(state.radio.cfg)
+                    v.say(L("Spotter activé.", "Spotter on.") if sp.enabled else L("Spotter coupé.", "Spotter off."))
+            elif self.path == "/api/quit":
+                self.send_response(204)
+                self.end_headers()
+                print("  Arrêt demandé depuis le tableau de bord.")
+                threading.Timer(0.3, lambda: os._exit(0)).start()
+                return
+            elif self.path == "/api/voice/volume":
+                n = int(self.headers.get("Content-Length") or 0)
+                vol = float(json.loads(self.rfile.read(n) or b"{}").get("v", 1.3))
+                v.volume = max(0.6, min(1.6, vol))
+                state.radio.cfg["volume"] = v.volume
+                save_config(state.radio.cfg)
+                v.say(L("Radio check, niveau du son.", "Radio check, volume level."))
+            elif self.path == "/api/ptt/learn":
+                state.radio.start_learning()
+            elif self.path in ("/api/setup/select", "/api/setup/create", "/api/setup/restore", "/api/setup/mode"):
+                n = int(self.headers.get("Content-Length") or 0)
+                req = json.loads(self.rfile.read(n) or b"{}")
+                ws, tr = state.workshop, state.track()
+                if req.get("mode"):
+                    ws.set_mode(req["mode"])
+                if self.path.endswith("mode"):
+                    out = {"error": None}
+                elif self.path.endswith("restore"):
+                    out = ws.restore(tr, int(req.get("version") or 0))
+                    if not out.get("error"):
+                        state.beh.reset_analysis()
+                        state.eng.say(None, L(f"Setup remis en version {out['version'][1:]}. Recharge-le au garage.",
+                                              f"Setup restored to version {out['version'][1:]}. Reload it in the garage."), elapsed=state.snap.elapsed)
+                elif self.path.endswith("select"):
+                    ws.select(tr, req.get("folder"), req.get("file"))
+                    if not state.demo:
+                        save_config(state.radio.cfg)
+                    state.beh.reset_analysis()
+                    out = {"error": None}
+                else:
+                    prop = ws.propose(tr, state.beh.issues, state.beh.tyre_findings, state.beh.live_controls(tr),
+                                      state.fuel.suggest(tr))
+                    keep = set(req.get("keys") or [])
+                    chosen = [c for c in prop["changes"] if f"{c['section']}|{c['key']}" in keep]
+                    out = ws.create(tr, chosen)
+                    if not out.get("error"):
+                        state.beh.reset_analysis()
+                        state.eng.say(None, L(f"Setup {ws.mode.lower()} mis à jour, version {out['version'][1:]}. Recharge-le au garage, je refais l'analyse.",
+                                              f"{'Qualifying' if ws.mode == 'Qualif' else 'Race'} setup updated, version {out['version'][1:]}. "
+                                              "Reload it in the garage, I'll redo the analysis."),
+                                      elapsed=state.snap.elapsed)
+                body = json.dumps(out).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+                return
+            elif self.path == "/api/mic":
+                n = int(self.headers.get("Content-Length") or 0)
+                idx = json.loads(self.rfile.read(n) or b"{}").get("index")
+                state.radio.set_mic(idx)
+            elif self.path == "/api/ask":
+                n = int(self.headers.get("Content-Length") or 0)
+                q = json.loads(self.rfile.read(n) or b"{}").get("q", "")
+                threading.Thread(target=state.on_question, args=(q,), daemon=True).start()
+            elif self.path == "/api/voice/test":
+                v.say(L("Radio check. Tu m'entends bien ? On est prêts pour la course.", "Radio check. Do you copy? We're ready to race."))
+            else:
+                self.send_error(404)
+                return
+            self.send_response(204)
+            self.end_headers()
+
+        def log_message(self, *args):
+            pass
+
+    return Handler
+
+
+PHONE_URL = ""
+
+
+def local_ip() -> str:
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect(("8.8.8.8", 80))
+            return s.getsockname()[0]
+    except OSError:
+        return "127.0.0.1"
+
+
+def ensure_packages() -> None:
+    """Installe les composants manquants et note le résultat dans journal.txt."""
+    import importlib.util
+    import subprocess
+    needed = {"piper": "piper-tts", "faster_whisper": "faster-whisper", "sounddevice": "sounddevice", "pygame": "pygame-ce"}
+    missing = [pkg for mod, pkg in needed.items() if importlib.util.find_spec(mod) is None]
+    if not missing:
+        return
+    print(f"  Installation des composants manquants : {', '.join(missing)} (quelques minutes)…")
+    r = subprocess.run([sys.executable, "-m", "pip", "install", "--disable-pip-version-check", *missing],
+                       capture_output=True, text=True, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+    print(r.stdout[-3000:])
+    if r.returncode:
+        print("  ÉCHEC de l'installation :")
+        print(r.stderr[-4000:])
+    else:
+        print("  Composants installés.")
+
+
+class _Tee:
+    """Écrit à l'écran et dans journal.txt (pour le dépannage)."""
+    def __init__(self, stream, f):
+        self.stream, self.f = stream, f
+    def write(self, data):
+        try:
+            self.stream.write(data)
+        except Exception:
+            pass
+        self.f.write(data); self.f.flush()
+    def flush(self):
+        try:
+            self.stream.flush()
+        except Exception:
+            pass
+
+
+def main() -> None:
+    log = open(HERE / "journal.txt", "w", encoding="utf-8")
+    sys.stdout = _Tee(sys.stdout, log)
+    sys.stderr = _Tee(sys.stderr, log)
+    print(f"Python {sys.version.split()[0]} · {sys.platform}")
+    ensure_packages()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--demo", action="store_true", help="course simulée, sans le jeu")
+    ap.add_argument("--no-browser", action="store_true")
+    args = ap.parse_args()
+
+    global PHONE_URL
+    PHONE_URL = f"http://{local_ip()}:{PORT}/tel"
+    state = State()
+    state.demo = args.demo
+    try:
+        server = ThreadingHTTPServer(("0.0.0.0", PORT), make_handler(state))
+    except OSError:
+        print("\n  Apex Radio tourne déjà : j'ouvre le tableau de bord existant.")
+        print("  (pour passer en démo ou en direct, clique d'abord sur QUITTER dans le tableau de bord)\n")
+        webbrowser.open(f"http://localhost:{PORT}")
+        sys.exit(0)
+    threading.Thread(target=loop, args=(state, args.demo), daemon=True).start()
+    url = f"http://localhost:{PORT}"
+    print("=" * 56)
+    print("  APEX//RADIO — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate"))
+    print(f"  Tableau de bord : {url}")
+    print(f"  Sur téléphone : http://{local_ip()}:{PORT}/tel")
+    print("  Ferme cette fenêtre pour arrêter.")
+    print("=" * 56)
+    if not args.no_browser:
+        threading.Timer(1.0, lambda: webbrowser.open(url)).start()
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        pass
+
+
+if __name__ == "__main__":
+    main()

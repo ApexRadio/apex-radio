@@ -1,0 +1,65 @@
+APEX//RADIO — ingénieur de course pour Le Mans Ultimate
+====================================================
+
+Lancer.bat  -> lit le jeu en direct et ouvre le tableau de bord dans ton navigateur.
+Demo.bat    -> course simulée (accélérée x10) pour tester sans lancer le jeu.
+
+Tableau de bord : http://localhost:8765
+Tu peux aussi l'ouvrir sur ton téléphone / une tablette (adresse affichée dans la fenêtre noire).
+
+Ce que fait l'appli :
+- lit essence, énergie virtuelle, pneus, tours, écarts, météo en direct
+- calcule la conso par tour, l'autonomie, le nombre d'arrêts
+- dit à quel tour rentrer, combien d'essence / d'énergie remettre, pneus ou pas
+- annonces radio À VOIX HAUTE (voix Jessica, effet radio)
+  Boutons en haut du tableau de bord : "Tester la voix" et "Radio : ON/OFF".
+  Le premier lancement installe la voix (1 à 3 minutes, ~80 Mo).
+
+BOUTON RADIO (étape 3)
+- Dans le tableau de bord, clique "Choisir le bouton radio" puis appuie sur le bouton
+  de ton volant (ou une touche du clavier). C'est retenu pour la suite.
+- Garde le bouton appuyé, pose ta question, relâche : Jessica répond.
+- Exemples : "combien d'essence ?", "je rentre quand ?", "les pneus ?",
+  "l'écart devant ?", "ma position ?", "la météo ?", "combien de tours ?", "point complet".
+- Le 1er lancement télécharge la reconnaissance vocale (~480 Mo), une seule fois.
+
+La conso se calcule après 2 tours propres (sans passage au stand ni neutralisation).
+
+Nécessite Python 3.11 ou plus récent. La voix (Piper) s'installe toute seule dans le dossier .venv.
+Lecture du jeu grâce à pyLMUSharedMemory (licence MIT, dossier vendor).
+
+ATELIER SETUP (bouton en haut du tableau de bord)
+Apex Radio ne crée que DEUX fichiers par circuit dans le dossier LMU :
+"APEX <circuit> Qualif.svm" et "APEX <circuit> Course.svm". Il les met à jour à chaque amélioration.
+Tes propres setups ne sont jamais modifiés.
+1. Choisis QUALIF ou COURSE (bascule toute seule selon la session), le circuit et le setup chargé dans le jeu,
+   puis clique "C'est ce setup qui est chargé dans le jeu".
+2. Roule au moins 3 tours propres : Apex Radio analyse le comportement de la voiture.
+3. Coche les réglages proposés et clique "Appliquer dans le fichier APEX".
+4. Recharge le fichier APEX au garage dans LMU. L'analyse repart de zéro.
+Toutes les versions (v1 = ton setup de départ, v2, v3...) sont gardées dans le dossier setup_backups
+d'Apex Radio, avec le meilleur tour de chacune : "Remettre cette version" pour revenir en arrière.
+
+NOUVEAUTÉS
+- Raccourci "Apex Radio" sur le bureau (créé au premier lancement de Lancer.bat) : lance l'appli
+  sans fenêtre noire. Bouton ⏻ en haut à droite du tableau de bord pour fermer Apex Radio.
+- Spotter gauche / droite (bouton Spotter ON/OFF en haut).
+- Trafic : catégorie plus rapide qui arrive derrière, plus lente à doubler devant.
+- Tendance des écarts avec la voiture devant / derrière dans ta catégorie.
+- Limites de piste : avertissements annoncés avant la pénalité.
+- Prévisions météo (lues dans LMU) affichées dans la case Météo et annoncées.
+- Dégâts après un contact (carrosserie, aéro, suspensions, crevaison) + réparation ajoutée au plan d'arrêt.
+- Débriefs : bouton DÉBRIEFS en haut ; un rapport par session dans le dossier debriefs.
+
+NOUVEAUTÉS (novembre)
+- Essence de départ : en essais, Jessica mesure ta conso. Dans l'atelier (mode COURSE), indique la durée
+  de la course : l'essence exacte est proposée pour ton fichier "APEX ... Course" (étiquette ESSENCE).
+- Réglages faits en piste (freins, TC) : proposés dans l'atelier pour les garder (étiquette FAIT EN PISTE).
+- Delta en direct (case Consigne) : vert = plus rapide que ton record (ou ton meilleur tour du jour).
+  En qualif / essais, Jessica dit en fin de tour où tu as gagné ou perdu (secteurs).
+- Pénalités : annoncées avec les tours restants pour les purger, bandeau rouge à l'écran.
+- Undercut / overcut : quand la voiture devant ou derrière s'arrête, Jessica te dit quoi faire.
+- Rythme : tous les 5 tours propres, rythme moyen, régularité et usure. Tableau dans les débriefs.
+- RECORDS : petit graphique de progression (meilleur tour de chaque session).
+- Commandes radio : "silence" (seulement l'urgent), "reparle", "répète". Bouton Silence en haut.
+- Téléphone : bouton 📱 ou adresse http://<IP du PC>:8765/tel (même Wi-Fi que le PC).

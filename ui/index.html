@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apex Radio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Chakra+Petch:wght@600;700&family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #06070B; --panel: #0B0F16; --line: #1A2330; --line2: #1E2A38; --track: #16202C;
+    --text: #E8EDF5; --muted: #9AA6B8;
+    --accent: #00E5FF; --alert: #FF2E88; --good: #3DFFA2; --warn: #FFB547;
+    --mono: "JetBrains Mono", Consolas, monospace; --title: "Chakra Petch", "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.4 Inter, "Segoe UI", system-ui, sans-serif; }
+  .wrap { padding: 20px 26px; display: flex; flex-direction: column; gap: 16px; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .logo { font-family: Orbitron, var(--title); font-weight: 900; font-size: 26px; letter-spacing: .12em; color: var(--accent); text-shadow: 0 0 14px rgba(0,229,255,.7); }
+  .demo { color: var(--warn); font-family: var(--title); font-size: 15px; letter-spacing: .1em; text-shadow: none; margin-left: 10px; }
+  .hright { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 14px; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--line2); border-radius: 999px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--alert); }
+  .live .dot { background: var(--good); box-shadow: 0 0 10px var(--good); }
+  button { font: inherit; color: var(--text); background: #0D1219; border: 1px solid var(--line2); border-radius: 999px; padding: 8px 14px; min-height: 40px; cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  button.off { color: var(--alert); border-color: var(--alert); }
+  .layout { display: flex; gap: 16px; flex-wrap: wrap; align-items: stretch; }
+  aside { flex: 1 1 340px; max-width: 460px; display: flex; flex-direction: column; gap: 16px; }
+  main { flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+  h2 { margin: 0 0 8px; font-size: 12px; letter-spacing: .14em; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+  .mono { font-family: var(--mono); }
+  .muted { color: var(--muted); }
+  #callcard { transition: border-color .3s, box-shadow .3s; }
+  #callcard.alert { border-color: var(--alert); box-shadow: 0 0 32px rgba(255,46,136,.22); }
+  #calltitle { font-family: var(--title); font-weight: 700; font-size: 44px; letter-spacing: .04em; margin: 4px 0; color: var(--accent); line-height: 1.1; }
+  #callcard.alert #calltitle { color: var(--alert); }
+  #calltext { font-size: 18px; line-height: 1.4; }
+  #delta { font-family: var(--mono); font-weight: 700; font-size: 34px; line-height: 1.1; display: flex; align-items: baseline; gap: 10px; }
+  #delta small { font-family: Inter, sans-serif; font-size: 12px; font-weight: 400; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+  #delta.fast { color: var(--good); text-shadow: 0 0 14px rgba(61,255,162,.5); }
+  #delta.slow { color: var(--alert); text-shadow: 0 0 14px rgba(255,46,136,.45); }
+  #pen { display: none; margin-top: 6px; background: var(--alert); color: #06070B; font-weight: 700; letter-spacing: .06em; border-radius: 8px; padding: 6px 10px; animation: flash 1s steps(2) infinite; }
+  @keyframes flash { 50% { opacity: .55; } }
+  #quiet.on { background: var(--warn); color: #06070B; border-color: var(--warn); font-weight: 700; }
+  #wstable .fueltag { font-size: 10px; font-weight: 700; letter-spacing: .08em; color: #06070B; background: #FFE500; border-radius: 4px; padding: 1px 5px; margin-left: 4px; }
+  .race { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin: 6px 0; }
+  .race input { width: 70px; }
+  .radio { flex-grow: 1; display: flex; flex-direction: column; gap: 12px; min-height: 300px; }
+  #radio { display: flex; flex-direction: column; gap: 10px; max-height: 360px; overflow-y: auto; padding-right: 4px; }
+  .bub { background: #111823; border: 1px solid transparent; border-radius: 12px 12px 12px 4px; padding: 9px 12px; font-size: 15px; }
+  .bub small { display: block; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .bub.urgent { border-color: var(--alert); } .bub.urgent small { color: var(--alert); }
+  .bub.me { align-self: flex-end; max-width: 85%; background: #0E2530; border-radius: 12px 12px 4px 12px; }
+  .bub.me small { color: var(--accent); }
+  .ptt { border-top: 1px solid var(--line); padding-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+  #pttstate { font-family: var(--title); font-weight: 700; font-size: 18px; letter-spacing: .06em; color: var(--accent); }
+  #pttstate.listen { color: var(--alert); }
+  .row { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; }
+  .row > span:first-child { color: var(--muted); }
+  .row > span:last-child { font-family: var(--mono); text-align: right; }
+  select, input { font: inherit; font-size: 13px; color: var(--text); background: var(--bg); border: 1px solid var(--line2); border-radius: 8px; padding: 6px 8px; min-width: 0; }
+  select { max-width: 65%; }
+  .bar { height: 6px; border-radius: 3px; background: var(--track); overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--accent); }
+  .act { background: var(--accent); color: #06070B; border: 0; border-radius: 10px; font-family: var(--title); font-weight: 700; letter-spacing: .08em; box-shadow: 0 0 18px rgba(0,229,255,.3); }
+  .act:hover { box-shadow: 0 0 26px rgba(0,229,255,.55); }
+  #askform { display: flex; gap: 6px; } #ask { flex: 1; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; }
+  .big { font-family: var(--mono); font-weight: 700; font-size: 46px; line-height: 1.1; }
+  .big small { font-size: 15px; color: var(--muted); font-weight: 400; }
+  .glow { color: var(--accent); text-shadow: 0 0 18px rgba(0,229,255,.45); }
+  .sub { font-family: var(--mono); font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .tyres { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; max-width: 520px; font-family: var(--mono); }
+  .tyre { border: 1px solid var(--line2); border-radius: 10px; padding: 10px; text-align: center; }
+  .tyre b { display: block; font-size: 28px; }
+  .tyre small { font-size: 12px; color: var(--muted); }
+  .layout { min-height: calc(100vh - 100px); }
+  .mid { display: flex; gap: 16px; flex-wrap: wrap; }
+  .leftcol { flex: 0 1 290px; min-width: 250px; display: flex; flex-direction: column; gap: 16px; }
+  .leftcol .tyres { gap: 8px; } .leftcol .tyre { padding: 8px 6px; } .leftcol .tyre b { font-size: 24px; }
+  .mapcard { flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+  #map { width: 100%; flex-grow: 1; min-height: 300px; }
+  .chrono { flex-grow: 1; }
+  #behav { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+  #behav .it { display: flex; gap: 8px; align-items: baseline; }
+  #behav .tag { font-family: var(--mono); font-weight: 700; font-size: 12px; padding: 1px 6px; border-radius: 6px; color: #06070B; white-space: nowrap; }
+  #behav .tip { color: var(--muted); }
+  #lapbig { font-family: var(--mono); font-weight: 700; font-size: 30px; color: #FFE500; text-shadow: 0 0 14px rgba(255,229,0,.65); margin-top: 2px; }
+  #lapbig small { font-size: 20px; color: #FFE500; opacity: .75; }
+  #lapleft { font-size: 15px; color: var(--text); }
+  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 15px; }
+  th { color: var(--muted); font-size: 12px; text-align: right; padding: 6px 4px; font-weight: 600; }
+  td { text-align: right; padding: 8px 4px; border-top: 1px solid var(--track); }
+  td:first-child, th:first-child { text-align: left; font-family: Inter, sans-serif; color: var(--muted); }
+  .faster { color: var(--good); } .slower { color: var(--alert); }
+  .scroll { overflow-x: auto; }
+  #wait { padding: 90px 20px; text-align: center; }
+  #wait p { color: var(--muted); font-size: 17px; }
+  .good { color: var(--good); } .warn { color: var(--warn); } .bad { color: var(--alert); }
+  #ws { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 10; display: flex; justify-content: flex-end; }
+  #ws[hidden] { display: none; }
+  .wsbox { width: min(640px, 100%); height: 100%; overflow-y: auto; background: var(--bg); border-left: 1px solid var(--accent); box-shadow: 0 0 40px rgba(0,229,255,.2); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+  .wsbox select { max-width: 70%; }
+  #wstable td, #wstable th { font-size: 13px; vertical-align: top; }
+  #wstable td:first-child { width: 28px; }
+  #wstable td:nth-child(2), #wstable th:nth-child(2) { text-align: left; font-family: Inter, sans-serif; color: var(--text); }
+  #wstable .livetag { font-size: 10px; font-weight: 700; letter-spacing: .08em; color: var(--bg, #000); background: var(--good); border-radius: 4px; padding: 1px 5px; margin-left: 4px; }
+  #wstable .why { font-family: Inter, sans-serif; color: var(--muted); font-size: 12px; }
+  .act:disabled { opacity: .4; cursor: default; box-shadow: none; }
+  .wsmode.on { background: var(--accent); color: #06070B; border-color: var(--accent); font-weight: 700; }
+  .pitm, #pitnow { min-height: 26px; padding: 2px 8px; font-size: 11px; font-family: var(--mono); }
+  .pitm.on { background: var(--accent); color: #06070B; border-color: var(--accent); font-weight: 700; }
+  .ver { border-top: 1px solid var(--line); padding: 8px 0; }
+
+  /* ---- Tout sur un écran (PC) : rien ne défile, la radio et la carte s'adaptent ---- */
+  @media (min-width: 1100px) {
+    html, body { height: 100%; overflow: hidden; }
+    .wrap { height: 100vh; padding: 12px 20px; gap: 12px; }
+    header .logo { font-size: 24px; }
+    button { min-height: 34px; padding: 6px 12px; }
+    .pill { padding: 6px 12px; }
+    .layout { flex: 1; min-height: 0; flex-wrap: nowrap; gap: 12px; }
+    aside { flex: 0 0 clamp(300px, 25vw, 420px); min-height: 0; gap: 12px; }
+    main { min-height: 0; gap: 12px; }
+    #dash { flex: 1; min-height: 0; gap: 12px !important; }
+    .card { padding: 11px 15px; }
+    h2 { margin-bottom: 4px; }
+    #calltitle { font-size: clamp(28px, 4.2vh, 44px); margin: 2px 0; }
+    #calltext { font-size: 16px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .radio { flex: 1; min-height: 0; gap: 8px; }
+    #radio { flex: 1; min-height: 0; max-height: none; }
+    .ptt { gap: 6px; padding-top: 8px; }
+    .tiles { gap: 12px; }
+    .big { font-size: clamp(30px, 4.4vh, 46px); }
+    #lapbig { font-size: clamp(22px, 3.1vh, 30px); }
+    .sub { margin-top: 2px; }
+    .mid { flex: 1; min-height: 0; flex-wrap: nowrap; gap: 12px; }
+    .leftcol { flex: 0 0 clamp(240px, 18vw, 290px); min-width: 0; min-height: 0; gap: 12px; overflow: hidden; }
+    .leftcol .tyre { padding: 5px 4px; } .leftcol .tyre b { font-size: clamp(18px, 2.6vh, 24px); }
+    .mapcard { min-height: 0; }
+    #map { min-height: 0; }
+    .chrono { flex: 0 0 auto; }
+    th { padding: 2px 4px; } td { padding: 4px 4px; }
+  }
+  @media (min-width: 1100px) and (max-height: 800px) {
+    .press { display: none; }
+    #fc span:nth-child(n+2), #fc br { display: none; }
+    #behav .it:nth-child(n+2) { display: none; }
+    .leftcol .tyre b { font-size: 18px; }
+    .leftcol .row { font-size: 13px; }
+    td { padding: 2px 4px; font-size: 14px; }
+    .tiles .card { padding: 8px 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">APEX//RADIO<span class="demo" id="demo"></span></div>
+    <div class="hright">
+      <span class="muted" id="session"></span>
+      <span class="pill" id="status"><span class="dot"></span><span id="statustxt">En attente du jeu…</span></span>
+      <button id="wsopen" class="act" style="border-radius:999px" data-en="SETUP WORKSHOP">ATELIER SETUP</button>
+      <a id="records" class="pill" href="/records" target="_blank" style="color:#FFE500;text-decoration:none">RECORDS</a>
+      <a id="debriefs" class="pill" href="/debriefs" target="_blank" style="color:var(--text);text-decoration:none" data-en="DEBRIEFS">DÉBRIEFS</a>
+      <button id="spot" title="Spotter gauche / droite" data-en-title="Left / right spotter">Spotter : ON</button>
+      <button id="vtest" title="Tester la voix" data-en-title="Test the voice" data-en="Voice test">Test voix</button>
+      <label class="pill" style="gap:6px" title="Volume de la radio" data-en-title="Radio volume">🔊<input type="range" id="vol" min="0.6" max="1.6" step="0.1" aria-label="Volume de la radio" style="width:90px;padding:0"></label>
+      <button id="lang" title="Langue / Language">FR</button>
+      <button id="quiet" title="Mode silence : Jessica ne dit plus que l'urgent (box, neutralisation, spotter, réponses). Tu peux aussi dire « silence » ou « reparle » à la radio." data-en-title="Quiet mode: urgent calls only (box, yellow flag, spotter, answers). You can also say &quot;be quiet&quot; or &quot;talk again&quot; on the radio.">Silence : OFF</button>
+      <button id="vtoggle">Radio : ON</button>
+      <a id="phone" class="pill" href="/tel" target="_blank" style="color:var(--text);text-decoration:none" title="Affichage téléphone" data-en-title="Phone view">📱</a>
+      <button id="quit" title="Fermer Apex Radio" aria-label="Fermer Apex Radio" data-en-title="Close Apex Radio">⏻</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <section class="card" id="callcard">
+        <h2 data-en="Call">Consigne</h2>
+        <div id="calltitle">EN ATTENTE</div>
+        <div id="calltext">Lance Le Mans Ultimate et monte dans ta voiture.</div>
+        <div id="delta" hidden></div>
+        <div id="pen" role="alert"></div>
+      </section>
+
+      <section class="card radio">
+        <div class="row" style="align-items:center"><h2 style="margin:0">Radio</h2><span id="pttbtn" style="color:var(--accent);font-size:13px">–</span></div>
+        <div id="radio"></div>
+        <div class="ptt">
+          <div class="row" style="align-items:center"><span id="pttstate">–</span><span id="heard" class="muted" style="font-family:Inter,sans-serif;font-size:13px;max-width:60%"></span></div>
+          <div id="pttdetail" class="warn" style="font-size:13px"></div>
+          <div class="row" style="align-items:center"><span data-en="Mic">Micro</span><select id="mic" aria-label="Micro"></select></div>
+          <div class="bar"><i id="level" style="background:var(--good)"></i></div>
+          <button class="act" id="learn" data-en="CHOOSE THE RADIO BUTTON">CHOISIR LE BOUTON RADIO</button>
+          <form id="askform"><input id="ask" placeholder="Poser une question au clavier…" data-en-placeholder="Type a question…" autocomplete="off" aria-label="Question"><button>OK</button></form>
+        </div>
+      </section>
+    </aside>
+
+    <main>
+      <div id="wait" class="card"><div class="logo" style="font-size:34px">APEX//RADIO</div><p data-en="Start Le Mans Ultimate and get in your car: the dashboard will show up by itself.">Lance Le Mans Ultimate et monte dans ta voiture : le tableau de bord s'affichera tout seul.</p></div>
+      <div id="dash" style="display:none;flex-direction:column;gap:16px;flex-grow:1">
+        <div class="tiles">
+          <section class="card">
+            <h2>Position</h2>
+            <div class="big glow" id="pos">P–</div>
+            <div id="lapbig">–</div>
+            <div class="sub" id="lapleft">–</div>
+            <div class="sub" id="lapinfo"></div>
+          </section>
+          <section class="card">
+            <h2 data-en="Gaps">Écarts</h2>
+            <div class="big good" style="font-size:32px" id="gapa">–</div>
+            <div class="mono warn" style="font-size:20px;font-weight:600" id="gapb">–</div>
+          </section>
+          <section class="card">
+            <h2 data-en="Fuel">Carburant</h2>
+            <div class="big" id="range">–</div>
+            <div class="bar" style="margin:6px 0"><i id="fuelbar"></i></div>
+            <div class="sub" id="fuelinfo">–</div>
+            <div class="sub" id="energyinfo"></div>
+          </section>
+          <section class="card">
+            <h2 data-en="Pit stop">Arrêt</h2>
+            <div style="font-family:var(--title);font-weight:700;font-size:32px;margin-top:4px" id="box">–</div>
+            <div class="sub" id="boxinfo">–</div>
+            <div class="sub" id="pitstatus" style="margin-top:4px"></div>
+            <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;align-items:center">
+              <span class="sub" style="margin:0" data-en="Pit:">Stand :</span>
+              <button class="pitm" data-m="auto">AUTO</button><button class="pitm" data-m="demande" data-en="ON REQUEST">À LA DEMANDE</button><button class="pitm" data-m="off">OFF</button>
+              <button id="pitnow" title="Régler le menu des stands maintenant" data-en-title="Set the pit menu now" data-en="SET">RÉGLER</button>
+            </div>
+          </section>
+        </div>
+
+        <div class="mid">
+          <div class="leftcol">
+            <section class="card">
+              <h2><span data-en="Tyres">Pneus</span> <span id="compound"></span></h2>
+              <div class="tyres" id="tyres"></div>
+              <div class="row" style="margin-top:10px"><span data-en="Before critical wear">Avant usure critique</span><span id="tyrelaps">–</span></div>
+            </section>
+            <section class="card">
+              <h2 data-en="Weather">Météo</h2>
+              <div style="font-family:var(--title);font-weight:700;font-size:20px" id="weather">–</div>
+              <div class="row" style="margin-top:6px"><span data-en="Air / track">Air / piste</span><span id="temps">–</span></div>
+              <div class="row"><span data-en="Track wetness">Piste mouillée</span><span id="wet">–</span></div>
+              <div id="fc" class="sub" style="margin-top:6px"></div>
+            </section>
+          </div>
+          <section class="card mapcard">
+            <div class="row" style="align-items:baseline;flex-wrap:wrap"><h2 style="margin:0"><span data-en="Track">Circuit</span> <span id="trackname"></span></h2><span class="sub" style="margin:0" id="maplegend"></span></div>
+            <svg id="map" role="img" aria-label="Carte du circuit avec les voitures en direct" data-en-aria="Live track map with all cars" preserveAspectRatio="xMidYMid meet"></svg>
+            <div class="sub" id="mapnote"></div>
+            <div id="behav"></div>
+          </section>
+        </div>
+
+        <section class="card chrono">
+          <div class="row" style="align-items:baseline;flex-wrap:wrap"><h2 style="margin:0" data-en="Lap times · sectors">Chronos · secteurs</h2><span class="sub" style="margin:0"><span data-en="Last / best">Dernier / meilleur</span> <span id="laps">–</span> · Record <span id="rec" style="color:var(--accent)">–</span> · <span data-en="ideal">idéal</span> <span id="ideal">–</span></span></div>
+          <div class="scroll" style="margin-top:8px">
+            <table>
+              <thead><tr><th></th><th>S1</th><th>S2</th><th>S3</th><th data-en="LAP">TOUR</th></tr></thead>
+              <tbody id="sectab"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+<div id="ws" hidden>
+  <div class="wsbox">
+    <div class="row" style="align-items:center"><div class="logo" style="font-size:20px" data-en="SETUP WORKSHOP">ATELIER SETUP</div><button id="wsclose" aria-label="Fermer">✕</button></div>
+    <div class="sub" id="wstrack"></div>
+    <div class="row" style="align-items:center"><span data-en="Working file">Fichier travaillé</span>
+      <span><button class="wsmode" data-m="Qualif" data-en="QUALI">QUALIF</button> <button class="wsmode" data-m="Course" data-en="RACE">COURSE</button></span></div>
+    <div id="wserr" class="warn" style="font-size:14px"></div>
+    <section class="card">
+      <h2 data-en="1 · The setup you're using">1 · Le setup que tu utilises</h2>
+      <div class="row" style="align-items:center"><span data-en="Track">Circuit</span><select id="wsfolder" aria-label="Dossier du circuit"></select></div>
+      <div class="row" style="align-items:center;margin-top:6px"><span>Setup</span><select id="wsfile" aria-label="Setup"></select></div>
+      <button class="act" id="wsuse" style="margin-top:10px;width:100%" data-en="THIS IS THE SETUP LOADED IN THE GAME">C'EST CE SETUP QUI EST CHARGÉ DANS LE JEU</button>
+      <div class="sub" id="wscurrent"></div>
+    </section>
+    <section class="card">
+      <h2 data-en="2 · Suggested changes">2 · Réglages proposés</h2>
+      <div id="wsrace" class="sub"></div>
+      <div class="sub" id="wsstatus"></div>
+      <div class="scroll"><table id="wstable"></table></div>
+      <button class="act" id="wscreate" style="margin-top:10px;width:100%" disabled data-en="APPLY TO THE APEX FILE">APPLIQUER DANS LE FICHIER APEX</button>
+      <div class="sub" id="wsresult"></div>
+    </section>
+    <section class="card">
+      <h2 data-en="3 · History on this track">3 · Historique sur ce circuit</h2>
+      <div id="wshist" class="sub"></div>
+    </section>
+  </div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const fmtTime = s => { if (s == null) return "–"; s = Math.max(0, s); const m = Math.floor(s / 60), r = Math.floor(s % 60); return `${m}:${String(r).padStart(2, "0")}`; };
+const fmtLap = s => { if (!s) return "–"; const m = Math.floor(s / 60), r = (s % 60).toFixed(3); return `${m}:${r.padStart(6, "0")}`; };
+const n = (v, d = 1) => v == null ? "–" : Number(v).toFixed(d);
+const esc = t => String(t).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+const sign = v => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(2);
+const WHEELS = ["AVG", "AVD", "ARG", "ARD"];
+let lastRadio = "", setupPrompt = null;
+let LANG = "fr";
+const T = (fr, en) => LANG === "en" ? en : fr;
+function applyLang() {
+  document.documentElement.lang = LANG;
+  document.querySelectorAll("[data-en]").forEach(el => { if (el.dataset.fr === undefined) el.dataset.fr = el.innerHTML; el.innerHTML = LANG === "en" ? el.dataset.en : el.dataset.fr; });
+  [["enTitle", "title"], ["enPlaceholder", "placeholder"], ["enAria", "aria-label"]].forEach(([k, attr]) =>
+    document.querySelectorAll(`[data-${k.replace(/[A-Z]/g, c => "-" + c.toLowerCase())}]`).forEach(el => {
+      const keep = "fr" + k; if (el.dataset[keep] === undefined) el.dataset[keep] = el.getAttribute(attr) || "";
+      el.setAttribute(attr, LANG === "en" ? el.dataset[k] : el.dataset[keep]);
+    }));
+  $("lang").textContent = LANG === "en" ? "EN" : "FR";
+  lastRadio = ""; loadMics();
+}
+const WHEELS_EN = ["FL", "FR", "RL", "RR"];
+const SESSION_EN = { course: "race", qualif: "qualifying", essais: "practice", warmup: "warm-up" };
+const KIND_EN = { "sous-virage": "UNDERSTEER", "survirage": "OVERSTEER", "blocage": "LOCK-UP", "patinage": "WHEELSPIN", "surbraquage": "OVERDRIVING" };
+
+function callout(s, p, radio) {
+  const last = radio.find(m => !m.me);
+  if (!s.on_track) return [T("EN ATTENTE", "WAITING"), s.connected ? T("Jeu détecté, monte dans ta voiture.", "Game detected, get in your car.") : T("Lance Le Mans Ultimate et monte dans ta voiture.", "Start Le Mans Ultimate and get in your car."), false];
+  if (s.yellow) return [T("NEUTRALISATION", "FULL COURSE YELLOW"), T("Drapeau jaune, ralentis.", "Yellow flag, slow down."), true];
+  if (p.ready && p.stops_needed > 0 && p.laps_until_box <= 1) return ["BOX BOX", last && last.urgent ? last.text : T("Rentre ce tour.", "Pit this lap."), true];
+  if (p.ready && p.stops_needed > 0 && p.laps_until_box <= 3) return [T(`BOX DANS ${p.laps_until_box}`, `BOX IN ${p.laps_until_box}`), T(`Arrêt à la fin du tour ${p.box_lap}.`, `Stop at the end of lap ${p.box_lap}.`), false];
+  if (s.game_phase === 8) return [T("DAMIER", "CHEQUERED"), T("Course terminée.", "Race over."), false];
+  return [T("EN PISTE", "ON TRACK"), last ? last.text : T("RAS, on roule.", "All good, keep going."), false];
+}
+
+function render(d) {
+  const s = d.snap || {}, p = d.plan || {}, radio = d.radio || [];
+  if (d.lang && d.lang !== LANG) { LANG = d.lang; applyLang(); }
+  $("demo").textContent = d.demo ? T("DÉMO", "DEMO") : "";
+  $("status").className = "pill" + (s.on_track ? " live" : "");
+  $("statustxt").textContent = s.on_track ? T("LMU connecté", "LMU connected") : (s.connected ? T("Jeu détecté", "Game detected") : T("En attente du jeu", "Waiting for the game"));
+  $("session").textContent = s.on_track ? `${s.track} · ${s.car_class || s.car} · ${T(s.session, SESSION_EN[s.session] || s.session)}` : "";
+  if (d.voice && document.activeElement !== $("vol")) $("vol").value = d.voice.volume;
+  if (d.voice) { $("vtoggle").textContent = `Radio : ${d.voice.on ? "ON" : "OFF"}`; $("vtoggle").className = d.voice.on ? "" : "off"; $("vtoggle").title = `${T("Voix", "Voice")} : ${d.voice.engine}`; }
+
+  if (d.voice) { $("quiet").textContent = `${T("Silence", "Quiet")} : ${d.voice.quiet ? "ON" : "OFF"}`; $("quiet").classList.toggle("on", !!d.voice.quiet); }
+  if (d.phone) $("phone").title = T(`Affichage téléphone : ${d.phone} (même Wi-Fi que le PC)`, `Phone view: ${d.phone} (same Wi-Fi as the PC)`);
+  const tmD = d.times || {}, dlt = tmD.delta;
+  $("delta").hidden = !(s.on_track && dlt != null);
+  if (dlt != null) {
+    $("delta").className = dlt < -0.02 ? "fast" : dlt > 0.02 ? "slow" : "";
+    $("delta").innerHTML = `${dlt > 0 ? "+" : dlt < 0 ? "−" : "±"}${Math.abs(dlt).toFixed(2)}<small>vs ${tmD.delta_ref === "record" ? "record" : T("meilleur tour", "best lap")}</small>`;
+  }
+  const pn = d.penalty || {};
+  $("pen").style.display = pn.count ? "block" : "none";
+  if (pn.count) $("pen").textContent = `${T("PÉNALITÉ À PURGER", "PENALTY TO SERVE")}${pn.count > 1 ? " ×" + pn.count : ""}${pn.laps_left != null ? ` · ${pn.laps_left} ${T("TOUR", "LAP")}${pn.laps_left > 1 ? "S" : ""}` : ""}`;
+
+  const [title, text, alert] = callout(s, p, radio);
+  $("calltitle").textContent = title; $("calltext").textContent = text;
+  $("callcard").className = "card" + (alert ? " alert" : "");
+
+  const key = radio.map(m => m.t + m.text).join("|");
+  if (key !== lastRadio) {
+    lastRadio = key;
+    $("radio").innerHTML = radio.slice().reverse().map(m =>
+      `<div class="bub ${m.urgent ? "urgent" : ""} ${m.me ? "me" : ""}"><small>${m.me ? T("TOI", "YOU") : T("JESSICA", "ENGINEER")} · ${fmtTime(m.t)}</small>${esc(m.me ? m.text.replace(/^Toi : /, "") : m.text)}</div>`).join("");
+    $("radio").scrollTop = $("radio").scrollHeight;
+  }
+
+  const t = d.ptt || {};
+  const labels = LANG === "en"
+    ? { "prêt": "READY", "écoute": "● LISTENING…", "réflexion": "THINKING…", "apprentissage": "PRESS THE BUTTON YOU WANT…", "erreur": "PROBLEM", "démarrage": "STARTING…" }
+    : { "prêt": "PRÊT", "écoute": "● J'ÉCOUTE…", "réflexion": "JE RÉFLÉCHIS…", "apprentissage": "APPUIE SUR LE BOUTON VOULU…", "erreur": "PROBLÈME", "démarrage": "DÉMARRAGE…" };
+  $("pttstate").textContent = labels[t.state] || "–";
+  $("pttstate").className = t.state === "écoute" ? "listen" : "";
+  $("pttbtn").textContent = t.button ? `● ${t.button}` : "–";
+  $("heard").textContent = t.heard ? `« ${t.heard} »` : "";
+  $("pttdetail").textContent = t.detail || (t.whisper === false ? T("Reconnaissance vocale en cours de chargement…", "Speech recognition loading…") : "");
+  $("level").style.width = t.state === "écoute" ? `${Math.min(100, (t.level || 0) * 250)}%` : "0";
+  if (document.activeElement !== $("mic") && t.mic !== undefined) $("mic").value = t.mic == null ? "" : String(t.mic);
+
+  $("wait").style.display = s.on_track ? "none" : "block";
+  $("dash").style.display = s.on_track ? "flex" : "none";
+  if (!s.on_track) return;
+
+  $("pos").textContent = `P${s.class_position || s.position}`;
+  const cur = s.laps_done + 1;
+  const total = s.max_laps ? s.max_laps : p.laps_to_finish != null ? Math.round(s.laps_done + s.lap_frac + p.laps_to_finish) : null;
+  $("lapbig").innerHTML = `${T("TOUR", "LAP")} ${cur}${total ? ` <small>/ ${s.max_laps ? "" : "~"}${total}</small>` : ""}`;
+  const left = total != null ? Math.max(0, total - cur) : null;
+  $("lapleft").innerHTML = (left != null ? (LANG === "en" ? `<b>${left}</b> lap${left !== 1 ? "s" : ""} to go` : `<b>${left}</b> tour${left > 1 ? "s" : ""} restant${left > 1 ? "s" : ""}`) : "") + (s.time_left != null ? ` · ${fmtTime(s.time_left)}` : "");
+  $("lapinfo").textContent = s.class_position && s.class_position !== s.position ? T(`P${s.position} au général · ${s.num_cars} voitures`, `P${s.position} overall · ${s.num_cars} cars`) : T(`${s.num_cars} voitures`, `${s.num_cars} cars`);
+  $("gapa").innerHTML = s.gap_ahead != null ? `−${n(s.gap_ahead)} <small class="muted" style="font-size:14px;font-weight:400">${T("devant", "ahead")}</small>` : "–";
+  $("gapb").innerHTML = s.gap_behind != null ? `+${n(s.gap_behind)} <small class="muted" style="font-size:14px;font-weight:400">${T("derrière", "behind")}</small>` : "";
+
+  const low = p.range_laps != null && p.range_laps < 3;
+  $("range").innerHTML = p.range_laps != null ? `${n(p.range_laps)} <small>${T("tours", "laps")}</small>` : `<small>${T("calcul…", "calculating…")}</small>`;
+  $("range").className = "big" + (low ? " bad" : "");
+  $("fuelbar").style.width = s.fuel_capacity ? `${100 * s.fuel / s.fuel_capacity}%` : "0";
+  $("fuelbar").style.background = low ? "var(--alert)" : "var(--accent)";
+  $("fuelinfo").textContent = `${n(s.fuel)}${s.fuel_capacity ? " / " + n(s.fuel_capacity, 0) : ""} L` + (p.fuel_per_lap ? ` · ${n(p.fuel_per_lap, 2)} L/${T("tour", "lap")}` : "");
+  $("energyinfo").textContent = s.energy != null ? `${T("Énergie", "Energy")} ${n(s.energy * 100, 0)} %` + (p.energy_per_lap ? ` · ${n(p.energy_per_lap * 100)} %/${T("tour", "lap")}` : "") : "";
+
+  let box = "–", boxCls = "", info = "";
+  if (s.session !== "course") { box = "—"; info = T("Stratégie en course uniquement", "Strategy in races only"); }
+  else if (!p.ready) { box = T("CALCUL…", "CALC…"); info = T("Après 2 tours propres", "After 2 clean laps"); }
+  else if (p.stops_needed === 0) { box = T("AU BOUT", "TO THE END"); boxCls = "good"; info = T("Pas d'arrêt nécessaire", "No stop needed"); }
+  else {
+    box = p.laps_until_box <= 1 ? T("CE TOUR", "THIS LAP") : `${T("TOUR", "LAP")} ${p.box_lap}`; boxCls = p.laps_until_box <= 1 ? "bad" : "glow";
+    const tyres = p.tyre_compound === "pluie" ? T("pneus pluie", "wets") : p.tyre_compound === "slicks" ? "slicks" : p.change_tyres ? T("4 pneus", "4 tyres") : p.change_tyres === false ? T("on garde les pneus", "keep tyres") : "";
+    info = [p.fuel_to_add != null ? `+${n(p.fuel_to_add, 0)} L` : "", p.energy_target != null ? `${T("én.", "en.")} ${n(p.energy_target * 100, 0)} %` : "", tyres, T(`${p.stops_needed} arrêt${p.stops_needed > 1 ? "s" : ""}`, `${p.stops_needed} stop${p.stops_needed > 1 ? "s" : ""}`)].filter(Boolean).join(" · ");
+  }
+  if (d.setup_prompt !== undefined) {
+    if (setupPrompt !== null && d.setup_prompt > setupPrompt) $("wsopen").click();   // fin de session : on ouvre l'atelier
+    setupPrompt = d.setup_prompt;
+  }
+  if (d.pit) {
+    document.querySelectorAll(".pitm").forEach(b => b.classList.toggle("on", b.dataset.m === d.pit.mode));
+    $("pitstatus").textContent = d.pit.status || (d.pit.mode === "auto" ? T("Je règle le menu des stands au moment du box.", "I'll set the pit menu when you box.") : "");
+    $("pitstatus").style.color = (d.pit.status || "").startsWith("⚠") ? "var(--alert)" : (d.pit.status || "").startsWith("✓") ? "var(--good)" : "";
+  }
+  $("box").textContent = box; $("box").className = boxCls; $("boxinfo").textContent = info;
+
+  $("compound").textContent = s.compound ? `· ${s.compound}` : "";
+  $("tyres").innerHTML = (LANG === "en" ? WHEELS_EN : WHEELS).map((w, i) => {
+    const wear = (s.tyre_wear?.[i] ?? 1) * 100;
+    const cls = wear < 30 ? "bad" : wear < 50 ? "warn" : "";
+    return `<div class="tyre"><small>${w}</small><b class="${cls}">${wear.toFixed(0)}%</b><small>${n(s.tyre_temp?.[i], 0)}°C<span class="press"> · ${n(s.tyre_pressure?.[i], 0)} kPa</span></small></div>`;
+  }).join("");
+  $("tyrelaps").textContent = p.tyre_laps_left != null ? n(p.tyre_laps_left) : "–";
+
+  $("weather").textContent = p.weather ? p.weather.split(" — ")[0].replace(/, (piste humide|track ).*$/, "") : T("Sec", "Dry");
+  $("temps").textContent = `${n(s.air_temp, 0)}°C / ${n(s.track_temp, 0)}°C`;
+  $("wet").textContent = `${n((s.wetness || 0) * 100, 0)} %`;
+  $("fc").innerHTML = (d.forecast || []).filter(f => f.mins > 0).slice(0, 3).map(f =>
+    `<span style="color:${f.rain >= 50 ? "var(--alert)" : "var(--muted)"}">+${f.mins} min : ${esc(f.sky)} (${f.rain}%)</span>`).join("<br>");
+  if (d.spotter) { $("spot").textContent = `Spotter : ${d.spotter.on ? "ON" : "OFF"}`; $("spot").className = d.spotter.on ? "" : "off"; }
+  drawMap(d);
+  $("laps").textContent = `${fmtLap(s.last_lap)} / ${fmtLap(s.best_lap)}`;
+
+  const tm = d.times || {}, L = tm.last || {};
+  $("rec").textContent = tm.record ? `${fmtLap(tm.record)} (${tm.record_date})` : T("aucun", "none");
+  $("ideal").textContent = fmtLap(tm.ideal);
+  const dl = v => v == null ? "–" : Math.abs(v) < 0.005 ? `<span class="muted">0.00</span>` : `<span class="${v < 0 ? "faster" : "slower"}">${sign(v)}</span>`;
+  const sum = a => a.reduce((x, y) => x + y, 0);
+  const rows = [];
+  if (L.sectors) rows.push(`<tr><td>${T("Dernier tour", "Last lap")}${L.valid ? "" : T(" (invalide)", " (invalid)")}</td>${L.sectors.map(x => `<td>${x.toFixed(3)}</td>`).join("")}<td>${fmtLap(L.lap)}</td></tr>`);
+  if (L.vs_record) rows.push(`<tr><td>vs record</td>${L.vs_record.map(x => `<td>${dl(x)}</td>`).join("")}<td>${dl(sum(L.vs_record))}</td></tr>`);
+  if (L.ahead) rows.push(`<tr><td>vs ${T("devant", "ahead")}${L.ahead_name ? " · " + esc(L.ahead_name) : ""}</td>${L.ahead.map(x => `<td>${dl(x)}</td>`).join("")}<td>${dl(sum(L.ahead))}</td></tr>`);
+  if (L.behind) rows.push(`<tr><td>vs ${T("derrière", "behind")}${L.behind_name ? " · " + esc(L.behind_name) : ""}</td>${L.behind.map(x => `<td>${dl(x)}</td>`).join("")}<td>${dl(sum(L.behind))}</td></tr>`);
+  $("sectab").innerHTML = rows.join("") || `<tr><td colspan="5">${T("Après le premier tour complet…", "After the first full lap…")}</td></tr>`;
+}
+
+// ------------------------------------------------------------ carte
+let mapPts = null, mapVer = -1, mapFetch = 0, mapBox = null;
+const CLASS_COL = ["#E8EDF5", "#FFB547", "#A06BFF", "#3DFFA2", "#FFD60A"];
+function mapProject(x, z) { const b = mapBox; return [(x - b.x0) * b.k + b.ox, (b.z1 - z) * b.k + b.oy]; }
+function drawMap(d) {
+  const m = d.map || {}, s = d.snap || {};
+  $("trackname").textContent = m.track ? "· " + m.track : "";
+  const now = Date.now();
+  if (m.version !== mapVer && now - mapFetch > (m.ready ? 0 : 2000)) {
+    mapFetch = now;
+    fetch("/api/map").then(r => r.json()).then(j => { mapPts = j.points; mapVer = j.version; mapBox = null; });
+  }
+  $("mapnote").textContent = m.ready ? "" : T(`Tracé en cours d'apprentissage : ${m.coverage || 0} % — il sera enregistré pour la prochaine fois.`, `Learning the track layout: ${m.coverage || 0} % — it will be saved for next time.`);
+  if (!mapPts) return;
+  const pts = mapPts.filter(Boolean);
+  if (pts.length < 10) return;
+  if (!mapBox) {
+    const xs = pts.map(p => p[0]), zs = pts.map(p => p[1]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), z0 = Math.min(...zs), z1 = Math.max(...zs);
+    const W = 1000, H = Math.max(400, Math.round(1000 * (z1 - z0) / Math.max(1, x1 - x0)));
+    const pad = 30, k = Math.min((W - 2 * pad) / Math.max(1, x1 - x0), (H - 2 * pad) / Math.max(1, z1 - z0));
+    mapBox = { x0, z1, k, ox: pad + ((W - 2 * pad) - (x1 - x0) * k) / 2, oy: pad + ((H - 2 * pad) - (z1 - z0) * k) / 2, W, H };
+    $("map").setAttribute("viewBox", `0 0 ${W} ${H}`);
+  }
+  // secteurs colorés selon l'écart avec la voiture devant
+  const ahead = ((d.times || {}).last || {}).ahead;
+  const secCol = i => !ahead ? "#2A3646" : ahead[i] < -0.05 ? "var(--good)" : ahead[i] > 0.05 ? "var(--alert)" : "#5B6B80";
+  let svg = "";
+  for (let sec = 0; sec < 3; sec++) {
+    let seg = [], segs = [];
+    mapPts.forEach((p, i) => {
+      const next = mapPts[(i + 1) % mapPts.length];
+      if (p && p[2] === sec) { seg.push(mapProject(p[0], p[1])); if (next && next[2] !== sec) seg.push(mapProject(next[0], next[1])); }
+      else if (seg.length) { segs.push(seg); seg = []; }
+    });
+    if (seg.length) segs.push(seg);
+    segs.forEach(sg => { if (sg.length > 1) svg += `<polyline points="${sg.map(q => q.join(",")).join(" ")}" fill="none" stroke="${secCol(sec)}" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity="${ahead ? 0.85 : 1}"/>`; });
+  }
+  // virages + comportement
+  const ISSUE_COL = { "sous-virage": "#4DA3FF", "survirage": "#FF8A3D", "blocage": "#FF2E88", "patinage": "#FFE500" };
+  ((d.behavior || {}).corners || []).forEach(c => {
+    const [x, y] = mapProject(c.x, c.z);
+    const col = ISSUE_COL[c.issue] || "#5B6B80";
+    svg += `<circle cx="${x}" cy="${y}" r="${c.issue ? 17 : 13}" fill="#06070B" stroke="${col}" stroke-width="${c.issue ? 4 : 2}"/>` +
+           `<text x="${x}" y="${y + 6}" text-anchor="middle" fill="${c.issue ? col : "#9AA6B8"}" font-family="JetBrains Mono, monospace" font-size="17" font-weight="700">${c.id}</text>`;
+  });
+  // incidents des autres pilotes
+  (d.incidents || []).forEach(i => {
+    const [x, y] = mapProject(i.x, i.z);
+    svg += `<circle cx="${x}" cy="${y}" r="26" fill="none" stroke="#FFE500" stroke-width="5" opacity=".9"><animate attributeName="r" values="18;30;18" dur="1s" repeatCount="indefinite"/></circle>`;
+  });
+  // ligne d'arrivée
+  if (mapPts[0]) { const [a, b] = mapProject(mapPts[0][0], mapPts[0][1]); svg += `<circle cx="${a}" cy="${b}" r="7" fill="none" stroke="#E8EDF5" stroke-width="3"/>`; }
+  const cars = (s.cars || []).slice().sort((a, b) => (a.me - b.me) || ((a.rel ? 1 : 0) - (b.rel ? 1 : 0)));
+  cars.forEach(c => {
+    const [x, y] = mapProject(c.x, c.z);
+    const op = c.pits ? 0.3 : 1;
+    if (c.me) svg += `<circle cx="${x}" cy="${y}" r="20" fill="rgba(0,229,255,.18)"/><circle cx="${x}" cy="${y}" r="12" fill="var(--accent)" stroke="#06070B" stroke-width="3" opacity="${op}"/>`;
+    else {
+      svg += `<circle cx="${x}" cy="${y}" r="${c.rel ? 10 : 8}" fill="${CLASS_COL[c.c % CLASS_COL.length]}" stroke="${c.rel ? "var(--alert)" : "#06070B"}" stroke-width="${c.rel ? 4 : 2}" opacity="${op}"/>`;
+      if (c.rel) svg += `<text x="${x + 14}" y="${y - 12}" fill="var(--text)" font-family="JetBrains Mono, monospace" font-size="22" font-weight="700">P${c.p}</text>`;
+    }
+  });
+  $("map").innerHTML = svg;
+  const B = d.behavior || {};
+  const items = (B.issues || []).slice(0, 2).map(i => `<div class="it"><span class="tag" style="background:${ISSUE_COL[i.kind]}">${T("V", "T")}${i.corner} · ${LANG === "en" ? (KIND_EN[i.kind] || i.kind.toUpperCase()) : i.kind.toUpperCase()}</span><span>${esc(i.text)} — <span class="tip">${esc(i.tip)}</span></span></div>`);
+  (B.tyres || []).slice(0, 1).forEach(t => items.push(`<div class="it"><span class="tag" style="background:var(--good)">${T("PNEUS", "TYRES")}</span><span class="tip">${esc(t)}</span></div>`));
+  $("behav").innerHTML = items.join("") || (m.ready && (B.laps || 0) >= 3 ? `<div class="it"><span class="tag" style="background:var(--good)">OK</span><span class="tip">${T("Voiture équilibrée, rien de répétitif.", "Car balanced, nothing recurring.")}</span></div>` : "");
+  const classes = [...new Map((s.cars || []).map(c => [c.c, c.cls])).entries()];
+  $("maplegend").innerHTML = `<span style="color:var(--accent)">●</span> ${T("toi", "you")} · <span style="color:var(--alert)">◯</span> ${T("devant / derrière", "ahead / behind")}` +
+    classes.map(([c, name]) => ` · <span style="color:${CLASS_COL[c % CLASS_COL.length]}">●</span> ${esc(name)}`).join("") +
+    (ahead ? T(` · secteurs : <span class="good">vert</span> tu gagnes, <span class="bad">rose</span> tu perds`, ` · sectors: <span class="good">green</span> you gain, <span class="bad">pink</span> you lose`) : "");
+}
+
+async function tick() {
+  try { const r = await fetch("/api/state", { cache: "no-store" }); render(await r.json()); }
+  catch { $("statustxt").textContent = T("Appli arrêtée", "App stopped"); $("status").className = "pill"; }
+  setTimeout(tick, 300);
+}
+function loadMics() {
+  fetch("/api/mics").then(r => r.json()).then(list => {
+    const cur = $("mic").value;
+    $("mic").innerHTML = `<option value="">${T("Micro par défaut de Windows", "Windows default mic")}</option>` +
+      list.filter(m => m.index != null).map(m => `<option value="${m.index}">${esc(m.name)}${m.default ? T(" (défaut)", " (default)") : ""}</option>`).join("");
+    $("mic").value = cur;
+  }).catch(() => {});
+}
+loadMics();
+$("lang").onclick = () => fetch("/api/lang", { method: "POST", body: JSON.stringify({ lang: LANG === "en" ? "fr" : "en" }) });
+$("mic").onchange = () => fetch("/api/mic", { method: "POST", body: JSON.stringify({ index: $("mic").value === "" ? null : Number($("mic").value) }) });
+$("learn").onclick = () => fetch("/api/ptt/learn", { method: "POST" });
+$("askform").onsubmit = e => { e.preventDefault(); const q = $("ask").value.trim(); if (!q) return; fetch("/api/ask", { method: "POST", body: JSON.stringify({ q }) }); $("ask").value = ""; };
+document.querySelectorAll(".pitm").forEach(b => b.onclick = () => fetch("/api/pit/mode", { method: "POST", body: JSON.stringify({ mode: b.dataset.m }) }));
+$("pitnow").onclick = () => fetch("/api/pit/now", { method: "POST" });
+$("spot").onclick = () => fetch("/api/spotter/toggle", { method: "POST" });
+$("quit").onclick = () => { if (confirmQuit()) fetch("/api/quit", { method: "POST" }).then(() => { document.body.innerHTML = "<p style='padding:40px;font-size:18px'>" + T("Apex Radio est fermé. Tu peux fermer cet onglet.", "Apex Radio is closed. You can close this tab.") + "</p>"; }); };
+function confirmQuit() { const b = $("quit"); if (b.dataset.armed) return true; b.dataset.armed = 1; b.textContent = T("Fermer ?", "Close?"); setTimeout(() => { delete b.dataset.armed; b.textContent = "⏻"; }, 3000); return false; }
+$("vol").onchange = () => fetch("/api/voice/volume", { method: "POST", body: JSON.stringify({ v: Number($("vol").value) }) });
+$("vtoggle").onclick = () => fetch("/api/voice/toggle", { method: "POST" });
+$("quiet").onclick = () => fetch("/api/voice/quiet", { method: "POST" });
+$("vtest").onclick = () => fetch("/api/voice/test", { method: "POST" });
+// ------------------------------------------------------------ atelier setup
+let WS = null, wsTimer = null, wsSeen = new Set();
+async function wsLoad(keepChecks) {
+  const checks = keepChecks ? new Set([...document.querySelectorAll(".wschk:checked")].map(c => c.value)) : null;
+  WS = await (await fetch("/api/setup")).json();
+  $("wstrack").textContent = WS.track ? T(`Circuit détecté : ${WS.track}`, `Track detected: ${WS.track}`) : T("Aucun circuit détecté pour l'instant (lance le jeu, ou choisis le dossier).", "No track detected yet (start the game, or choose the folder).");
+  $("wserr").textContent = WS.ok === false ? T(`Dossier des setups LMU introuvable : ${WS.dir || ""}`, `LMU setups folder not found: ${WS.dir || ""}`) : "";
+  document.querySelectorAll(".wsmode").forEach(b => b.classList.toggle("on", b.dataset.m === WS.mode));
+  const folders = WS.folders || [];
+  if (document.activeElement !== $("wsfolder")) {
+    const sel = $("wsfolder").value || WS.folder || (folders[0] || {}).name || "";
+    $("wsfolder").innerHTML = folders.map(f => `<option ${f.name === sel ? "selected" : ""}>${esc(f.name)}</option>`).join("");
+    fillFiles();
+  }
+  $("wscurrent").textContent = WS.current ? T(`Setup en cours : ${WS.current}`, `Current setup: ${WS.current}`) : T("Aucun setup choisi pour ce circuit.", "No setup chosen for this track.");
+  const ch = WS.changes || [];
+  if (!WS.current) $("wsstatus").textContent = T("Choisis d'abord le setup chargé dans le jeu (étape 1).", "First choose the setup loaded in the game (step 1).");
+  renderRace();
+  if (!WS.current) {}
+  else if ((WS.analysis_laps || 0) < 3 && !ch.some(c => c.live || c.fuel)) $("wsstatus").textContent = T(`Fais quelques tours propres : l'analyse en a ${WS.analysis_laps || 0}, il en faut au moins 3.`, `Do a few clean laps: the analysis has ${WS.analysis_laps || 0}, it needs at least 3.`);
+  else $("wsstatus").textContent = ch.length ? T("Coche les réglages à appliquer :", "Tick the changes to apply:") : T("Rien à changer pour l'instant : la voiture est équilibrée.", "Nothing to change for now: the car is balanced.");
+  $("wstable").innerHTML = ch.length ? `<tr><th></th><th>${T("Réglage", "Setting")}</th><th>${T("Actuel", "Current")}</th><th>${T("Proposé", "Suggested")}</th></tr>` + ch.map(c => {
+    const k = `${c.section}|${c.key}`, on = checks && wsSeen.has(k) ? checks.has(k) : true;
+    return `<tr><td><input type="checkbox" class="wschk" value="${esc(k)}" ${on ? "checked" : ""} aria-label="${esc(c.label)}"></td><td>${esc(c.label)}${c.live ? ` <span class="livetag">${T("FAIT EN PISTE", "SET ON TRACK")}</span>` : ""}${c.fuel ? ` <span class="fueltag">${T("ESSENCE", "FUEL")}</span>` : ""}<div class="why">${esc(c.why)}</div></td><td>${esc(c.from_disp)}</td><td style="color:var(--accent)">${esc(c.to_disp)}</td></tr>`;
+  }).join("") : "";
+  ch.forEach(c => wsSeen.add(`${c.section}|${c.key}`));
+  $("wscreate").disabled = !ch.length;
+  const res = WS.results || {};
+  const vers = (WS.versions || []).slice().reverse();
+  const onApex = WS.current && WS.current === WS.apex_file;
+  const best = Math.min(...vers.map(v => (res[v.label] || {}).best || Infinity));
+  let hist = vers.map(v => {
+    const r = res[v.label] || {};
+    const active = onApex && v.label === WS.apex_label;
+    const title = v.origin ? T(`v1 · ton setup de départ (${esc(v.base)})`, `v1 · your starting setup (${esc(v.base)})`) : `${v.label} · ${T("depuis", "from")} ${esc(v.base)}`;
+    const star = r.best && r.best === best ? ` <span class="good">★ ${T("la plus rapide", "fastest")}</span>` : "";
+    return `<div class="ver"><b style="color:${active ? "var(--accent)" : "var(--text)"}">${title}</b>${active ? ` · <span style='color:var(--accent)'>${T("dans le fichier APEX", "in the APEX file")}</span>` : ""} · ${esc(v.date)}<br>
+      ${T("Meilleur tour", "Best lap")} : <b>${fmtLap(r.best)}</b> (${r.laps || 0} ${T("tours", "laps")})${star}<br>
+      ${v.changes.map(c => `${esc(c.label)} ${esc(c.from_disp)} → ${esc(c.to_disp)}`).join(" · ")}
+      ${active ? "" : `<br><button class="wsrestore" data-v="${v.version}" style="margin-top:6px">${T("Remettre cette version", "Restore this version")}</button>`}</div>`;
+  }).join("");
+  const baseRes = !vers.length && WS.label && res[WS.label] ? `<div class="ver"><b>${esc(WS.label)}</b> (${T("setup de départ", "starting setup")})<br>${T("Meilleur tour", "Best lap")} : <b>${fmtLap(res[WS.label].best)}</b> (${res[WS.label].laps || 0} ${T("tours", "laps")})</div>` : "";
+  $("wshist").innerHTML = (WS.apex_file ? T(`Fichier dans LMU : <b>${esc(WS.apex_file)}</b> (un seul fichier ${WS.mode === "Qualif" ? "qualif" : "course"}, mis à jour à chaque version)`,
+                                            `File in LMU: <b>${esc(WS.apex_file)}</b> (one ${WS.mode === "Qualif" ? "qualifying" : "race"} file, updated with each version)`) : "")
+    + (hist + baseRes || T("<br>Pas encore de version créée par Apex Radio sur ce circuit.", "<br>No version created by Apex Radio on this track yet."));
+  document.querySelectorAll(".wsrestore").forEach(b => b.onclick = async () => {
+    const r = await (await fetch("/api/setup/restore", { method: "POST", body: JSON.stringify({ version: Number(b.dataset.v) }) })).json();
+    $("wsresult").innerHTML = r.error ? `<span class="bad">${esc(r.error)}</span>` : T(`<span class="good">${esc(r.file)} remis en ${esc(r.version)}</span> — recharge-le au garage dans LMU.`, `<span class="good">${esc(r.file)} restored to ${esc(r.version)}</span> — reload it in the LMU garage.`);
+    wsLoad(false);
+  });
+}
+function fillFiles() {
+  const f = (WS.folders || []).find(x => x.name === $("wsfolder").value);
+  const files = f ? f.files : [];
+  $("wsfile").innerHTML = files.map(n => `<option ${n === WS.current ? "selected" : ""}>${esc(n)}</option>`).join("");
+}
+$("wsfolder").onchange = fillFiles;
+function renderRace() {
+  const f = WS.fuel || {}, box = $("wsrace");
+  if (WS.mode !== "Course") { box.innerHTML = ""; return; }
+  if (document.activeElement && box.contains(document.activeElement)) return;
+  const conso = f.fpl ? T(`conso mesurée ${f.fpl.toFixed(2).replace(".", ",")} L/tour`, `measured consumption ${f.fpl.toFixed(2)} L/lap`) : T("conso pas encore mesurée", "consumption not measured yet");
+  const res = f.litres ? `<b style="color:#FFE500">${f.litres} L ${T("au départ", "at the start")}</b> (${esc(f.why)})` : esc(f.why || "");
+  box.innerHTML = `<div class="race"><span>${T("Durée de la course", "Race length")}</span><input id="racemin" type="number" min="5" max="1440" step="5" value="${f.race_min || ""}" aria-label="${T("Durée de la course en minutes", "Race length in minutes")}"> min
+    <span class="muted">${T("ou", "or")}</span><input id="racelaps" type="number" min="1" max="500" value="${f.race_laps || ""}" aria-label="${T("Nombre de tours", "Number of laps")}"> ${T("tours", "laps")}
+    <button id="raceok" class="pitm">OK</button></div><div>${conso} · ${res}</div>`;
+  $("raceok").onclick = async () => {
+    const minutes = Number($("racemin").value) || null, laps = Number($("racelaps").value) || null;
+    await fetch("/api/setup/race", { method: "POST", body: JSON.stringify({ minutes: laps ? null : minutes, laps }) });
+    $("raceok").blur(); wsLoad(true);
+  };
+}
+document.querySelectorAll(".wsmode").forEach(b => b.onclick = async () => {
+  await fetch("/api/setup/mode", { method: "POST", body: JSON.stringify({ mode: b.dataset.m }) });
+  $("wsfolder").value = ""; wsLoad(false);
+});
+$("wsopen").onclick = () => { $("ws").hidden = false; $("wsresult").textContent = ""; wsLoad(false); clearInterval(wsTimer); wsTimer = setInterval(() => wsLoad(true), 3000); };
+$("wsclose").onclick = () => { $("ws").hidden = true; clearInterval(wsTimer); };
+$("wsuse").onclick = async () => {
+  await fetch("/api/setup/select", { method: "POST", body: JSON.stringify({ folder: $("wsfolder").value, file: $("wsfile").value, mode: WS.mode }) });
+  wsLoad(false);
+};
+$("wscreate").onclick = async () => {
+  const keys = [...document.querySelectorAll(".wschk:checked")].map(c => c.value);
+  if (!keys.length) return;
+  const r = await (await fetch("/api/setup/create", { method: "POST", body: JSON.stringify({ keys }) })).json();
+  $("wsresult").innerHTML = r.error ? `<span class="bad">${esc(r.error)}</span>` : T(`<span class="good">${esc(r.file)} mis à jour (${esc(r.version)})</span> — recharge-le au garage dans LMU, puis roule quelques tours pour comparer.`, `<span class="good">${esc(r.file)} updated (${esc(r.version)})</span> — reload it in the LMU garage, then do a few laps to compare.`);
+  wsLoad(false);
+};
+tick();
+</script>
+</body>
+</html>

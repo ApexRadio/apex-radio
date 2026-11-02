@@ -1,0 +1,309 @@
+"""
+Bouton radio + micro + reconnaissance vocale (étape 3).
+
+- Bouton : n'importe quel bouton du volant / de la box (via SDL, pygame-ce),
+  ou une touche du clavier. Fonctionne même quand le jeu est au premier plan.
+- Micro : micro par défaut de Windows, enregistré tant que le bouton est appuyé.
+- Reconnaissance : Whisper (faster-whisper, modèle "small", français, sur le processeur).
+  Le modèle (~480 Mo) est téléchargé une seule fois au premier lancement.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import sys
+import threading
+import time
+from pathlib import Path
+
+HERE = Path(__file__).parent
+CONFIG = HERE / "config.json"
+WHISPER_MODEL = "small"
+RATE = 16000
+import i18n
+from i18n import L
+
+PROMPT_EN = ("Race car radio. Fuel, consumption, energy, tyres, wear, pit, box, stop, "
+             "gap ahead, behind, position, weather, rain, laps left, lap time.")
+PROMPT = ("Radio course automobile. Essence, conso, énergie, pneus, usure, stand, box, arrêt, "
+          "écart devant, derrière, position, météo, pluie, tours restants, chrono.")
+
+
+def load_config() -> dict:
+    try:
+        return json.loads(CONFIG.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def save_config(cfg: dict) -> None:
+    CONFIG.write_text(json.dumps(cfg, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+# ---------------------------------------------------------------- clavier
+def _keys_down() -> set[int]:
+    if sys.platform != "win32":
+        return set()
+    import ctypes
+    gk = ctypes.windll.user32.GetAsyncKeyState
+    # on ignore la souris (1-6), Windows (91, 92), Maj/Ctrl/Alt (16-18, 160-165), Échap (27)
+    ignore = {0x10, 0x11, 0x12, 0x1B, 0x5B, 0x5C, 0x5D} | set(range(0xA0, 0xA6))
+    return {vk for vk in range(8, 255) if vk not in ignore and gk(vk) & 0x8000}
+
+
+KEY_NAMES = {0x20: "Espace", 0x0D: "Entrée", 0x10: "Maj", 0x11: "Ctrl", 0x12: "Alt", 0x14: "Verr. Maj"}
+
+
+def key_name(vk: int) -> str:
+    if vk in KEY_NAMES:
+        return KEY_NAMES[vk]
+    if 0x70 <= vk <= 0x87:
+        return f"F{vk - 0x6F}"
+    if 0x30 <= vk <= 0x5A:
+        return chr(vk)
+    if 0x60 <= vk <= 0x69:
+        return f"Pavé {vk - 0x60}"
+    return f"Touche {vk}"
+
+
+class Radio:
+    """Gère le bouton, l'écoute et la transcription. Appelle on_question(texte)."""
+
+    def __init__(self, on_question) -> None:
+        self.on_question = on_question
+        self.cfg = load_config()
+        self.state = "démarrage"       # démarrage / prêt / écoute / réflexion / erreur / apprentissage
+        self.detail = ""
+        self.last_heard = ""
+        self.learning = False
+        self._pg = None
+        self._joys = {}
+        self._whisper = None
+        self._rec = None
+        self._frames: list = []
+        self._learn_reset = False
+        self.level = 0.0
+        threading.Thread(target=self._run, daemon=True).start()
+        threading.Thread(target=self._load_whisper, daemon=True).start()
+
+    # ------------------------------------------------------------- infos UI
+    def info(self) -> dict:
+        b = self.cfg.get("ptt")
+        if b and b.get("type") == "key" and b.get("vk") in (0x5B, 0x5C):
+            self.cfg.pop("ptt"); save_config(self.cfg); b = None
+        if not b:
+            label = L("aucun", "none")
+        elif b["type"] == "key":
+            label = L(f"clavier · {key_name(b['vk'])}", f"keyboard · {key_name(b['vk'])}")
+        else:
+            label = L(f"{b['name']} · bouton {b['button'] + 1}", f"{b['name']} · button {b['button'] + 1}")
+        return {"state": self.state, "detail": self.detail, "button": label, "level": self.level,
+                "mic": self.cfg.get("mic"),
+                "heard": self.last_heard, "learning": self.learning,
+                "whisper": self._whisper is not None}
+
+    def mics(self) -> list[dict]:
+        """Micros disponibles (API MME de Windows : la plus compatible)."""
+        try:
+            import sounddevice as sd
+            default_in = sd.default.device[0]
+            out = []
+            for i, d in enumerate(sd.query_devices()):
+                if d["max_input_channels"] > 0 and d["hostapi"] == 0:
+                    out.append({"index": i, "name": d["name"], "default": i == default_in})
+            return out
+        except Exception as e:
+            return [{"index": None, "name": f"Erreur : {e!r}", "default": True}]
+
+    def set_mic(self, index) -> None:
+        self.cfg["mic"] = index
+        save_config(self.cfg)
+        print(f"  Micro choisi : {index}")
+
+    def start_learning(self) -> None:
+        self._learn_reset = True
+        self.learning = True
+        self.state = "apprentissage"
+
+    # ------------------------------------------------------------- whisper
+    def _load_whisper(self) -> None:
+        try:
+            from faster_whisper import WhisperModel
+            print("  Reconnaissance vocale : chargement (le 1er lancement télécharge ~480 Mo)…")
+            self._whisper = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8",
+                                         download_root=str(HERE / "models" / "whisper"))
+            print("  Reconnaissance vocale : prête")
+        except Exception as e:
+            import traceback; traceback.print_exc()
+            self.detail = L(f"Reconnaissance vocale indisponible : {e!r}", f"Speech recognition unavailable: {e!r}")
+            print("  " + self.detail)
+
+    def transcribe(self, audio) -> str:
+        segs, _ = self._whisper.transcribe(audio, language=i18n.LANG, beam_size=1, initial_prompt=PROMPT_EN if i18n.en() else PROMPT,
+                                           condition_on_previous_text=False, vad_filter=False)
+        return " ".join(s.text.strip() for s in segs).strip()
+
+    # ------------------------------------------------------------- micro
+    def _start_rec(self) -> None:
+        import sounddevice as sd
+        self._frames = []
+
+        def cb(indata, frames, t, status):
+            self._frames.append(indata.copy())
+            self.level = max(self.level * 0.8, float(abs(indata).max()))
+
+        dev = self.cfg.get("mic")
+        self.level = 0.0
+        name = sd.query_devices(dev if dev is not None else sd.default.device[0])["name"]
+        print(f"  Écoute sur le micro : {name}")
+        self._rec = sd.InputStream(samplerate=RATE, channels=1, dtype="float32", callback=cb, device=dev)
+        self._rec.start()
+
+    def _stop_rec(self):
+        import numpy as np
+        if self._rec is None:
+            return None
+        self._rec.stop(); self._rec.close(); self._rec = None
+        if not self._frames:
+            return None
+        return np.concatenate(self._frames)[:, 0]
+
+    def _process(self, audio) -> None:
+        try:
+            if audio is None or len(audio) < RATE * 0.3:
+                self.state = "prêt"
+                return
+            peak = float(abs(audio).max())
+            print(f"  Niveau micro max : {peak * 100:.1f} %  ({len(audio) / RATE:.1f} s)")
+            if peak < 0.01:
+                self.state = "prêt"
+                self.detail = L("Le micro n'enregistre que du silence. Choisis ton micro dans la liste ci-dessous, "
+                                "et vérifie Paramètres Windows > Confidentialité > Microphone "
+                                "(« Autoriser les applications de bureau »).",
+                                "The mic is only recording silence. Pick your mic in the list below, "
+                                "and check Windows Settings > Privacy > Microphone (\"Let desktop apps access your microphone\").")
+                self.on_question("")
+                return
+            self.detail = ""
+            if self._whisper is None:
+                self.state = "prêt"
+                self.detail = L("La reconnaissance vocale se charge encore…", "Speech recognition is still loading…")
+                return
+            self.state = "réflexion"
+            t = time.time()
+            text = self.transcribe(audio)
+            print(f"  [toi] {text}   ({time.time() - t:.1f}s)")
+            self.last_heard = text
+            self.state = "prêt"
+            self.on_question(text)
+        except Exception as e:
+            import traceback; traceback.print_exc()
+            self.state = "erreur"
+            self.detail = repr(e)
+
+    # ------------------------------------------------------------- bouton
+    def _init_pygame(self) -> bool:
+        try:
+            os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
+            os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
+            import pygame
+            pygame.init()
+            pygame.joystick.init()
+            self._pg = pygame
+            return True
+        except Exception as e:
+            print(f"  Volants non disponibles ({e!r}), clavier seulement.")
+            return False
+
+    def _refresh_joys(self) -> None:
+        pg = self._pg
+        if pg is None:
+            return
+        for ev in pg.event.get():
+            if ev.type == pg.JOYDEVICEADDED:
+                j = pg.joystick.Joystick(ev.device_index)
+                self._joys[j.get_instance_id()] = j
+                print(f"  Manette détectée : {j.get_name()} ({j.get_numbuttons()} boutons)")
+            elif ev.type == pg.JOYDEVICEREMOVED:
+                self._joys.pop(ev.instance_id, None)
+
+    def _joy_buttons(self) -> list[tuple]:
+        out = []
+        for j in self._joys.values():
+            try:
+                for b in range(j.get_numbuttons()):
+                    if j.get_button(b):
+                        out.append((j.get_guid(), j.get_name(), b))
+            except Exception:
+                pass
+        return out
+
+    def _ptt_pressed(self) -> bool:
+        b = self.cfg.get("ptt")
+        if not b:
+            return False
+        if b["type"] == "key":
+            if sys.platform != "win32":
+                return False
+            import ctypes
+            return bool(ctypes.windll.user32.GetAsyncKeyState(b["vk"]) & 0x8000)
+        for j in self._joys.values():
+            try:
+                if j.get_guid() == b["guid"] and b["button"] < j.get_numbuttons():
+                    return bool(j.get_button(b["button"]))
+            except Exception:
+                pass
+        return False
+
+    def _learn(self, held_keys: set[int], held_btns: set[tuple]) -> tuple[set, set]:
+        keys = _keys_down()
+        btns = set(self._joy_buttons())
+        new_btn = btns - held_btns
+        new_key = keys - held_keys
+        if new_btn:
+            guid, name, b = sorted(new_btn)[0]
+            self.cfg["ptt"] = {"type": "joy", "guid": guid, "name": name, "button": b}
+        elif new_key:
+            self.cfg["ptt"] = {"type": "key", "vk": sorted(new_key)[0]}
+        else:
+            return keys, btns
+        save_config(self.cfg)
+        self.learning = False
+        self.state = "prêt"
+        print(f"  Bouton radio enregistré : {self.info()['button']}")
+        return keys, btns
+
+    def _run(self) -> None:
+        self._init_pygame()
+        self.state = "prêt"
+        pressed = False
+        held_keys, held_btns = _keys_down(), set()
+        while True:
+            try:
+                self._refresh_joys()
+                if self.learning and self._learn_reset:
+                    held_keys, held_btns = _keys_down(), set(self._joy_buttons())
+                    self._learn_reset = False
+                elif self.learning:
+                    held_keys, held_btns = self._learn(held_keys, held_btns)
+                    time.sleep(0.02)
+                    continue
+                now = self._ptt_pressed()
+                if now and not pressed and self.state in ("prêt", "erreur"):
+                    try:
+                        self._start_rec()
+                        self.state = "écoute"
+                        self.detail = ""
+                    except Exception as e:
+                        self.state = "erreur"
+                        self.detail = L(f"Micro indisponible : {e!r}", f"Microphone unavailable: {e!r}")
+                        print("  " + self.detail)
+                elif not now and pressed and self.state == "écoute":
+                    audio = self._stop_rec()
+                    threading.Thread(target=self._process, args=(audio,), daemon=True).start()
+                pressed = now
+            except Exception as e:
+                import traceback; traceback.print_exc()
+                self.detail = repr(e)
+            time.sleep(0.02)

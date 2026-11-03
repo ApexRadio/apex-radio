@@ -524,6 +524,29 @@ def already_running() -> bool:
         return False
 
 
+def replace_other_mode(demo: bool) -> bool:
+    """Le Apex Radio déjà lancé est dans l'autre mode (démo / course) : on l'arrête pour démarrer celui demandé."""
+    import urllib.request
+    base = f"http://127.0.0.1:{PORT}"
+    try:
+        with urllib.request.urlopen(base + "/api/state", timeout=2) as r:
+            other_demo = bool(json.load(r).get("demo"))
+    except Exception:
+        return False
+    if other_demo == demo:
+        return False
+    print("  Un Apex Radio " + ("en course" if not other_demo else "en démo") + " tourne déjà : je l'arrête.")
+    try:
+        urllib.request.urlopen(urllib.request.Request(base + "/api/quit", data=b"{}", method="POST"), timeout=3).close()
+    except Exception:
+        pass
+    for _ in range(40):
+        time.sleep(0.25)
+        if not already_running():
+            return True
+    return False
+
+
 def ensure_packages() -> None:
     """Installe les composants manquants et note le résultat dans journal.txt."""
     import importlib.util
@@ -576,7 +599,8 @@ def main() -> None:
 
     global PHONE_URL
     PHONE_URL = f"http://{local_ip()}:{PORT}/tel"
-    if already_running():     # avant de charger la voix : on rouvre juste la fenêtre existante
+    if already_running() and not replace_other_mode(args.demo):
+        # avant de charger la voix : on rouvre juste la fenêtre existante
         print("\n  Apex Radio tourne déjà : j'ouvre le tableau de bord existant.")
         desktop.show_existing(f"http://localhost:{PORT}")
         sys.exit(0)

@@ -43,7 +43,7 @@ Name: "{group}\{cm:UninstallProgram,Apex Radio}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\Apex Radio"; Filename: "{app}\ApexRadio.exe"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\ApexRadio.exe"; Parameters: "--demo"; WorkingDir: "{app}"; Description: "{cm:LaunchProgram,Apex Radio}"; Flags: nowait postinstall skipifsilent unchecked
+Filename: "{app}\ApexRadio.exe"; WorkingDir: "{app}"; Description: "{cm:LaunchProgram,Apex Radio}"; Flags: nowait postinstall skipifsilent unchecked
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\python"

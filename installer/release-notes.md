@@ -1,3 +1,7 @@
+## 🆕 1.2.1
+- 🇫🇷 La fin de l'installation lance Apex Radio en mode course (la démo reste dans le menu Démarrer). Lancer Apex Radio pendant qu'une démo tourne arrête la démo et démarre le mode course.
+- 🇬🇧 The end of the setup starts Apex Radio in race mode (the demo stays in the Start menu). Starting Apex Radio while the demo runs stops the demo and starts race mode.
+
 ## 🆕 1.2.0
 - 🇫🇷 **Vraie fenêtre Apex Radio**, intégrée à l'appli : logo Apex dans la barre de titre et la barre des tâches, plus aucune trace de navigateur.
 - 🇫🇷 Fermer la fenêtre la cache (la radio continue) ; relancer Apex Radio ou cliquer sur l'icône près de l'horloge la rouvre. Pour quitter : bouton ⏻ ou « Quitter » dans le menu de l'icône.

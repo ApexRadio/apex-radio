@@ -70,3 +70,15 @@ jobs:
           name: Apex Radio ${{ steps.v.outputs.version }}
           body_path: installer/release-notes.md
           files: dist/*.exe
+
+      - name: Version de test (branche)
+        if: github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.v.outputs.version }}-test
+          name: Apex Radio ${{ steps.v.outputs.version }} (test)
+          prerelease: true
+          make_latest: false
+          target_commitish: ${{ github.sha }}
+          body: "Version de test, pas encore publiée / Test build, not released yet."
+          files: dist/*.exe

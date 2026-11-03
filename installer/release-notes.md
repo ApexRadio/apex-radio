@@ -1,3 +1,13 @@
+## 🆕 1.2.0
+- 🇫🇷 **Vraie fenêtre Apex Radio**, intégrée à l'appli : logo Apex dans la barre de titre et la barre des tâches, plus aucune trace de navigateur.
+- 🇫🇷 Fermer la fenêtre la cache (la radio continue) ; relancer Apex Radio ou cliquer sur l'icône près de l'horloge la rouvre. Pour quitter : bouton ⏻ ou « Quitter » dans le menu de l'icône.
+- 🇫🇷 **Tes données ont leur dossier** : Documents\Apex Radio (records, débriefs, réglages, carburant). Reprises automatiquement de l'ancienne version, conservées en cas de mise à jour ou de réinstallation.
+- 🇫🇷 Un seul Apex Radio à la fois : le relancer rouvre simplement sa fenêtre.
+- 🇬🇧 **Real Apex Radio window**, built into the app: Apex logo in the title bar and taskbar, no more browser.
+- 🇬🇧 Closing the window hides it (the radio keeps going); start Apex Radio again or click the tray icon to reopen it. To quit: ⏻ button or "Quit" in the tray menu.
+- 🇬🇧 **Your data has its own folder**: Documents\Apex Radio (records, debriefs, settings, fuel). Taken over from the old version automatically, kept across updates and reinstalls.
+- 🇬🇧 Only one Apex Radio at a time: starting it again just reopens its window.
+
 ## 🆕 1.1.1
 - 🇫🇷 RECORDS et DÉBRIEFS s'ouvrent dans la fenêtre Apex (plus de page de navigateur), avec un bouton « ← Tableau de bord » pour revenir.
 - 🇬🇧 RECORDS and DEBRIEFS open inside the Apex window (no more browser page), with a "← Dashboard" button to go back.

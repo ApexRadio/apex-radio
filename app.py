@@ -20,7 +20,6 @@ import sys
 import threading
 import time
 import traceback
-import webbrowser
 from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -31,6 +30,7 @@ from voice import Voice
 import questions
 import i18n
 import updates
+import desktop
 from i18n import L
 from questions import answer
 from laptimes import LapTimes
@@ -351,6 +351,8 @@ def make_handler(state: State):
                 with state.lock:
                     body = state.payload
                 ctype = "application/json"
+            elif self.path == "/favicon.ico":
+                body, ctype = (HERE / "apex.ico").read_bytes(), "image/x-icon"
             elif self.path.rstrip("/") in ("/tel", "/phone"):
                 body, ctype = (HERE / "ui" / "tel.html").read_bytes(), "text/html; charset=utf-8"
             elif self.path in ("/", "/index.html"):
@@ -502,6 +504,8 @@ def ensure_packages() -> None:
     import importlib.util
     import subprocess
     needed = {"piper": "piper-tts", "faster_whisper": "faster-whisper", "sounddevice": "sounddevice", "pygame": "pygame-ce"}
+    if sys.platform == "win32":
+        needed.update({"pystray": "pystray", "PIL": "Pillow"})
     missing = [pkg for mod, pkg in needed.items() if importlib.util.find_spec(mod) is None]
     if not missing:
         return
@@ -542,6 +546,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--demo", action="store_true", help="course simulée, sans le jeu")
     ap.add_argument("--no-browser", action="store_true")
+    ap.add_argument("--no-tray", action="store_true", help="pas d'icône près de l'horloge")
     args = ap.parse_args()
 
     global PHONE_URL
@@ -553,7 +558,7 @@ def main() -> None:
     except OSError:
         print("\n  Apex Radio tourne déjà : j'ouvre le tableau de bord existant.")
         print("  (pour passer en démo ou en direct, clique d'abord sur QUITTER dans le tableau de bord)\n")
-        webbrowser.open(f"http://localhost:{PORT}")
+        desktop.show_existing(f"http://localhost:{PORT}")
         sys.exit(0)
     threading.Thread(target=loop, args=(state, args.demo), daemon=True).start()
     UPD.start()
@@ -562,14 +567,19 @@ def main() -> None:
     print(f"  APEX//RADIO {UPD.version} — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate"))
     print(f"  Tableau de bord : {url}")
     print(f"  Sur téléphone : http://{local_ip()}:{PORT}/tel")
-    print("  Ferme cette fenêtre pour arrêter.")
     print("=" * 56)
     if not args.no_browser:
-        threading.Timer(1.0, lambda: webbrowser.open(url)).start()
-    try:
-        server.serve_forever()
-    except KeyboardInterrupt:
-        pass
+        threading.Timer(1.0, lambda: desktop.open_window(url)).start()
+    tray = desktop.Tray(state, url, PHONE_URL, state.radio.cfg, save_config)
+    if args.no_tray or not tray.available():
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            pass
+        return
+    state.tray = tray
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    tray.run()   # icône près de l'horloge, jusqu'à « Quitter »
 
 
 if __name__ == "__main__":

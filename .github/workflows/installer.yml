@@ -30,6 +30,10 @@ jobs:
           $files = Get-ChildItem -File | Where-Object { $_.Name -notin @("Lancer.bat", "Demo.bat", "build_public.py", ".gitignore", ".gitattributes") }
           Copy-Item $files build\app\
           Copy-Item -Recurse ui, vendor build\app\
+          # lanceur ApexRadio.exe (compilateur C# de .NET Framework, présent sur Windows)
+          $csc = "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319\csc.exe"
+          & $csc /nologo /codepage:65001 /target:winexe /optimize+ /win32icon:apex.ico /r:System.Windows.Forms.dll /out:build\app\ApexRadio.exe launcher\ApexRadio.cs
+          if (-not (Test-Path build\app\ApexRadio.exe)) { throw "ApexRadio.exe non construit" }
           # Python portable
           Invoke-WebRequest "https://www.python.org/ftp/python/$py/python-$py-embed-amd64.zip" -OutFile py.zip
           Expand-Archive py.zip build\app\python
@@ -38,12 +42,12 @@ jobs:
           Invoke-WebRequest "https://bootstrap.pypa.io/get-pip.py" -OutFile get-pip.py
           build\app\python\python.exe get-pip.py --no-warn-script-location
           build\app\python\python.exe -m pip install --no-warn-script-location -r requirements.txt
-          build\app\python\python.exe -c "import piper, faster_whisper, sounddevice, pygame; print('composants OK')"
+          build\app\python\python.exe -c "import piper, faster_whisper, sounddevice, pygame, pystray, PIL; print('composants OK')"
 
       - name: Test de démarrage (import de l'appli)
         shell: pwsh
         working-directory: build\app
-        run: python\python.exe -c "import strategy, questions, laptimes, behavior, setups, tactics, alerts, debrief, i18n; print('appli OK')"
+        run: python\python.exe -c "import strategy, questions, laptimes, behavior, setups, tactics, alerts, debrief, i18n, updates, desktop, pystray; print('appli OK')"
 
       - name: Installateur (Inno Setup)
         shell: pwsh
@@ -59,6 +63,7 @@ jobs:
           path: dist\*.exe
 
       - name: Publication (Release)
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.v.outputs.version }}

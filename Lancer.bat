@@ -16,9 +16,9 @@ if not defined PY (
 if not exist ".venv\Scripts\python.exe" (
   %PY% -m venv .venv
 )
-if not exist ".venv\installe-v3.ok" (
+if not exist ".venv\installe-v4.ok" (
   echo  Installation / Installing voice and radio components, 2-5 min...
-  ".venv\Scripts\python.exe" -m pip install -q --disable-pip-version-check -r requirements.txt && echo ok> ".venv\installe-v3.ok"
+  ".venv\Scripts\python.exe" -m pip install -q --disable-pip-version-check -r requirements.txt && echo ok> ".venv\installe-v4.ok"
 )
 rem Raccourci "Apex Radio" sur le bureau (une seule fois) / desktop shortcut (once)
 powershell -NoProfile -ExecutionPolicy Bypass -Command "$d=[Environment]::GetFolderPath('Desktop'); $l=Join-Path $d 'Apex Radio.lnk'; if(-not (Test-Path $l)){ $s=(New-Object -ComObject WScript.Shell).CreateShortcut($l); $s.TargetPath='%~dp0.venv\Scripts\pythonw.exe'; $s.Arguments='app.py'; $s.WorkingDirectory='%~dp0'; $s.IconLocation='%~dp0apex.ico'; $s.Description='Apex Radio - LMU race engineer'; $s.Save(); Write-Host '  Apex Radio shortcut created on the desktop.' }"

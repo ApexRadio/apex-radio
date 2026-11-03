@@ -19,7 +19,8 @@ import i18n
 from i18n import L
 
 HERE = Path(__file__).parent
-DIR = HERE / "debriefs"
+from paths import DATA, LOCAL  # noqa: E402
+DIR = DATA / "debriefs"
 
 
 def fmt(t):
@@ -79,7 +80,7 @@ class Recorder:
     def save(self) -> None:
         if not self.data or not self.data["laps"]:
             return
-        DIR.mkdir(exist_ok=True)
+        DIR.mkdir(parents=True, exist_ok=True)
         (DIR / f"{self.data['file']}.json").write_text(json.dumps(self.data, ensure_ascii=False, indent=1), encoding="utf-8")
         (DIR / f"{self.data['file']}.html").write_text(render(self.data), encoding="utf-8")
 
@@ -268,7 +269,7 @@ def _spark(pts: list) -> str:
 def records_page() -> str:
     from alerts import class_name
     try:
-        recs = json.loads((HERE / "records.json").read_text(encoding="utf-8"))
+        recs = json.loads((DATA / "records.json").read_text(encoding="utf-8"))
     except Exception:
         recs = {}
     # progression : meilleur tour de chaque session (pris dans les débriefs)

@@ -17,7 +17,8 @@ from pathlib import Path
 from i18n import L, dec
 
 HERE = Path(__file__).parent
-FUELBOOK = HERE / "fuelbook.json"
+from paths import DATA, LOCAL  # noqa: E402
+FUELBOOK = DATA / "fuelbook.json"
 PENALTY_LAPS = 3          # LMU laisse normalement 3 tours pour purger une pénalité
 TACTIC_GAP = 45.0         # s : au plus une annonce tactique toutes les 45 s
 PACE_EVERY = 5

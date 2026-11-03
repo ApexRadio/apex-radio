@@ -47,6 +47,7 @@ from radio import Radio
 from tactics import Penalties, Undercut, Pace, FuelBook
 
 HERE = Path(__file__).parent
+from paths import DATA, LOCAL, MIGRATED  # noqa: E402
 PORT = 8765
 
 
@@ -562,7 +563,7 @@ class _Tee:
 
 
 def main() -> None:
-    log = open(HERE / "journal.txt", "w", encoding="utf-8")
+    log = open(LOCAL / "journal.txt", "w", encoding="utf-8")
     sys.stdout = _Tee(sys.stdout, log)
     sys.stderr = _Tee(sys.stderr, log)
     print(f"Python {sys.version.split()[0]} · {sys.platform}")
@@ -595,6 +596,9 @@ def main() -> None:
     print(f"  APEX//RADIO {UPD.version} — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate"))
     print(f"  Tableau de bord : {url}")
     print(f"  Sur téléphone : http://{local_ip()}:{PORT}/tel")
+    print(f"  Tes données : {DATA}")
+    if MIGRATED:
+        print(f"  Données reprises de l'ancien dossier : {', '.join(MIGRATED)}")
     print("=" * 56)
     desktop.app_id()
     tray = desktop.Tray(state, url, PHONE_URL, state.radio.cfg, save_config)

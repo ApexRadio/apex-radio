@@ -16,7 +16,8 @@ from pathlib import Path
 from telemetry import Snapshot
 
 HERE = Path(__file__).parent
-MAPS = HERE / "maps"
+from paths import DATA, LOCAL  # noqa: E402
+MAPS = DATA / "maps"
 BINS = 400
 SAMPLES = 6          # points moyennés par case avant de la figer
 
@@ -77,7 +78,7 @@ class TrackMap:
             self.version += 1
         if self.coverage() >= 0.97:
             self._fill_gaps()
-            MAPS.mkdir(exist_ok=True)
+            MAPS.mkdir(parents=True, exist_ok=True)
             _fname(self.track).write_text(json.dumps({"track": self.track, "points": self.points()}), encoding="utf-8")
             self.saved = True
             self.version += 1

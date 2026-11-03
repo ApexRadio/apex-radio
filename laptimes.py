@@ -17,8 +17,9 @@ from telemetry import Snapshot
 from i18n import L as tr, dec, en
 
 HERE = Path(__file__).parent
-RECORDS = HERE / "records.json"
-TRACES = HERE / "traces"     # temps de passage du tour record (pour le delta en direct)
+from paths import DATA, LOCAL  # noqa: E402
+RECORDS = DATA / "records.json"
+TRACES = DATA / "traces"     # temps de passage du tour record (pour le delta en direct)
 BINS = 200
 COMPARE_EVERY = 5        # annonce de comparaison tous les 5 tours
 MAX_SECTOR_GAP = 2.5     # au-delà, la comparaison n'a pas de sens (arrêt au stand, incident, trafic)
@@ -133,7 +134,7 @@ class LapTimes:
                 tr[i] = last + (nxt - last) / ((j or BINS) - i + 1)
             last = tr[i]
         if is_record:
-            TRACES.mkdir(exist_ok=True)
+            TRACES.mkdir(parents=True, exist_ok=True)
             self._trace_file(self.key(s)).write_text(json.dumps({"lap": lap, "t": [round(x, 3) for x in tr]}), encoding="utf-8")
             self.ref, self.ref_kind = tr, "record"
         elif self.ref_kind != "record" and (self.session_best is None or lap < self.session_best):

@@ -23,7 +23,8 @@ import wave
 from pathlib import Path
 
 HERE = Path(__file__).parent
-MODELS = HERE / "models"
+from paths import DATA, LOCAL  # noqa: E402
+MODELS = LOCAL / "models"
 import i18n
 
 VOICES = {   # langue -> (nom du modèle, dossier sur Hugging Face, n° de voix, nom affiché)
@@ -96,7 +97,7 @@ class Voice:
     def _load(self) -> None:
         try:
             from piper import PiperVoice  # noqa
-            MODELS.mkdir(exist_ok=True)
+            MODELS.mkdir(parents=True, exist_ok=True)
             name, folder, self.speaker, shown = VOICES[i18n.LANG]
             url = BASE_URL + folder + name
             onnx = MODELS / f"{name}.onnx"
@@ -151,7 +152,7 @@ class Voice:
             import winsound
             winsound.PlaySound(wav, winsound.SND_MEMORY)
         else:  # tests hors Windows : on enregistre le fichier
-            (HERE / "derniere_annonce.wav").write_bytes(wav)
+            (LOCAL / "derniere_annonce.wav").write_bytes(wav)
 
     def _speak_windows(self, text: str) -> None:
         safe = text.replace("'", "''")

@@ -18,7 +18,8 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).parent
-CONFIG = HERE / "config.json"
+from paths import DATA, LOCAL  # noqa: E402
+CONFIG = DATA / "config.json"
 WHISPER_MODEL = "small"
 RATE = 16000
 import i18n
@@ -132,7 +133,7 @@ class Radio:
             from faster_whisper import WhisperModel
             print("  Reconnaissance vocale : chargement (le 1er lancement télécharge ~480 Mo)…")
             self._whisper = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8",
-                                         download_root=str(HERE / "models" / "whisper"))
+                                         download_root=str(LOCAL / "models" / "whisper"))
             print("  Reconnaissance vocale : prête")
         except Exception as e:
             import traceback; traceback.print_exc()

@@ -25,8 +25,9 @@ from pathlib import Path
 from i18n import L
 
 HERE = Path(__file__).parent
-HISTORY = HERE / "setups_history.json"
-BACKUPS = HERE / "setup_backups"   # anciennes versions, gardées hors du dossier LMU
+from paths import DATA, LOCAL  # noqa: E402
+HISTORY = DATA / "setups_history.json"
+BACKUPS = DATA / "setup_backups"   # anciennes versions, gardées hors du dossier LMU
 DEFAULT_DIR = r"C:\Program Files (x86)\Steam\steamapps\common\Le Mans Ultimate\UserData\player\Settings"
 WHEEL_SECTIONS = ["FRONTLEFT", "FRONTRIGHT", "REARLEFT", "REARRIGHT"]
 FIXED = ("n/a", "non-adjustable", "non adjustable")

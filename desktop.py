@@ -22,6 +22,7 @@ from pathlib import Path
 from i18n import L
 
 HERE = Path(__file__).resolve().parent
+from paths import DATA, LOCAL  # noqa: E402
 
 
 def _browser_app() -> str | None:
@@ -164,7 +165,7 @@ class AppWindow:
         self.win.events.shown += self._shown
         self.win.events.closing += self._closing
         WINDOW = self
-        store = HERE / "webview"
+        store = LOCAL / "webview"
         webview.start(gui="edgechromium", private_mode=False, storage_path=str(store))
         # fin de la boucle : la fenêtre a été détruite
         os._exit(0)
@@ -210,7 +211,7 @@ class Tray:
                  checked=lambda _: bool(v.quiet)),
             sep,
             item(lambda _: L("Ouvrir le journal (dépannage)", "Open the log (troubleshooting)"),
-                 lambda: os.startfile(HERE / "journal.txt") if hasattr(os, "startfile") else None),
+                 lambda: os.startfile(LOCAL / "journal.txt") if hasattr(os, "startfile") else None),
             item(lambda _: L("Quitter Apex Radio", "Quit Apex Radio"), self.quit),
         )
 

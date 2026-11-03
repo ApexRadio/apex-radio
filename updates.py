@@ -15,7 +15,7 @@ import time
 import urllib.request
 from pathlib import Path
 
-REPO = "laurent22230/apex-radio"
+REPO = "ApexRadio/apex-radio"
 API = f"https://api.github.com/repos/{REPO}/releases/latest"
 PAGE = f"https://github.com/{REPO}/releases/latest"
 HERE = Path(__file__).resolve().parent

@@ -12,4 +12,4 @@ On first launch, the voice and speech recognition download (a few minutes, only 
 
 Licence: GNU GPL v3 · Voices: MaryTTS upmc (CC BY-SA 4.0), LJ Speech (public domain).
 
-Historique complet / full changelog : [CHANGELOG.md](https://github.com/laurent22230/apex-radio/blob/main/CHANGELOG.md)
+Historique complet / full changelog : [CHANGELOG.md](https://github.com/ApexRadio/apex-radio/blob/main/CHANGELOG.md)

@@ -4,7 +4,7 @@
 
 🇬🇧 [English](#english) · 🇫🇷 [Français](#français)
 
-**⬇️ [Download / Télécharger](https://github.com/laurent22230/apex-radio/releases/latest)** · 💬 [Discord](https://discord.gg/wpqNBpMaa) · ❤️ [Patreon](https://www.patreon.com/lolotuner)
+**⬇️ [Download / Télécharger](https://github.com/ApexRadio/apex-radio/releases/latest)** · 💬 [Discord](https://discord.gg/wpqNBpMaa) · ❤️ [Patreon](https://www.patreon.com/lolotuner)
 
 ![Apex Radio dashboard](docs/dashboard-en.png)
 
@@ -30,7 +30,7 @@ no account, no internet needed once installed.
 - **French and English**, voice included (button at the top of the dashboard, or set on first launch from Windows language).
 
 ### Install
-1. Download **[ApexRadio-Setup.exe](https://github.com/laurent22230/apex-radio/releases/latest)** and run it (Python and everything is included).
+1. Download **[ApexRadio-Setup.exe](https://github.com/ApexRadio/apex-radio/releases/latest)** and run it (Python and everything is included).
    If Windows says "Windows protected your PC": **More info** → **Run anyway** (the app isn't signed yet).
 2. Start LMU and get in your car, then launch **Apex Radio** from the desktop icon. The dashboard opens in your browser.
 3. Click **CHOOSE THE RADIO BUTTON** and press the wheel button you want for push-to-talk.
@@ -71,7 +71,7 @@ pas d'abonnement, pas de compte, pas besoin d'internet une fois installé.
 - **Français et anglais**, voix comprise (bouton en haut du tableau de bord).
 
 ### Installation
-1. Télécharge **[ApexRadio-Setup.exe](https://github.com/laurent22230/apex-radio/releases/latest)** et lance-le (Python et tout le reste sont inclus).
+1. Télécharge **[ApexRadio-Setup.exe](https://github.com/ApexRadio/apex-radio/releases/latest)** et lance-le (Python et tout le reste sont inclus).
    Si Windows affiche « Windows a protégé votre ordinateur » : **Informations complémentaires** → **Exécuter quand même** (l'appli n'est pas encore signée).
 2. Lance LMU, monte dans ta voiture, puis ouvre **Apex Radio** avec l'icône du bureau. Le tableau de bord s'ouvre dans ton navigateur.
 3. Clique sur **CHOISIR LE BOUTON RADIO** et appuie sur le bouton du volant que tu veux utiliser.

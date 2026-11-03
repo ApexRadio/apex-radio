@@ -42,12 +42,18 @@ jobs:
           Invoke-WebRequest "https://bootstrap.pypa.io/get-pip.py" -OutFile get-pip.py
           build\app\python\python.exe get-pip.py --no-warn-script-location
           build\app\python\python.exe -m pip install --no-warn-script-location -r requirements.txt
-          build\app\python\python.exe -c "import piper, faster_whisper, sounddevice, pygame, pystray, PIL; print('composants OK')"
+          build\app\python\python.exe -c "import piper, faster_whisper, sounddevice, pygame, pystray, PIL, webview; print('composants OK')"
 
       - name: Test de démarrage (import de l'appli)
         shell: pwsh
         working-directory: build\app
         run: python\python.exe -c "import strategy, questions, laptimes, behavior, setups, tactics, alerts, debrief, i18n, updates, desktop, pystray; print('appli OK')"
+
+      - name: Test de la fenêtre intégrée (WebView2)
+        shell: pwsh
+        continue-on-error: true
+        working-directory: build\app
+        run: python\python.exe ..\..\.github\scripts\smoke_window.py
 
       - name: Installateur (Inno Setup)
         shell: pwsh

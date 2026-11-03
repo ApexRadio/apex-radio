@@ -17,6 +17,12 @@ numpy                              BSD-3-Clause et al.
 PyAV                               BSD-3-Clause
 huggingface_hub, tokenizers        Apache-2.0
 tqdm                               MPL-2.0 and MIT
+pystray (tray icon)                LGPL-3.0             Used as a separate, replaceable library
+Pillow                             MIT-CMU (HPND)
+pywebview (app window)             BSD-3-Clause         https://github.com/r0x0r/pywebview
+pythonnet, clr_loader              MIT
+bottle, proxy_tools                MIT
+Microsoft Edge WebView2 Runtime    Microsoft licence    Part of Windows, not bundled
 Orbitron font (dashboard)          SIL OFL 1.1          Loaded from Google Fonts
 
 Voices and speech models are downloaded on first use from Hugging Face; they are not bundled.

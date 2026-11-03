@@ -48,3 +48,4 @@ Filename: "{app}\ApexRadio.exe"; Parameters: "--demo"; WorkingDir: "{app}"; Desc
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\python"
 Type: filesandordirs; Name: "{app}\__pycache__"
+Type: filesandordirs; Name: "{app}\webview"

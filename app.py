@@ -410,6 +410,8 @@ def make_handler(state: State):
                     state.radio.cfg["spotter"] = sp.enabled
                     save_config(state.radio.cfg)
                     v.say(L("Spotter activé.", "Spotter on.") if sp.enabled else L("Spotter coupé.", "Spotter off."))
+            elif self.path == "/api/show":
+                desktop.open_window(f"http://localhost:{PORT}")
             elif self.path == "/api/quit":
                 self.send_response(204)
                 self.end_headers()
@@ -568,19 +570,27 @@ def main() -> None:
     print(f"  Tableau de bord : {url}")
     print(f"  Sur téléphone : http://{local_ip()}:{PORT}/tel")
     print("=" * 56)
-    if not args.no_browser:
-        threading.Timer(1.0, lambda: desktop.open_window(url)).start()
+    desktop.app_id()
     tray = desktop.Tray(state, url, PHONE_URL, state.radio.cfg, save_config)
-    if args.no_tray or not tray.available():
-        try:
-            server.serve_forever()
-        except KeyboardInterrupt:
-            pass
-        return
-    state.tray = tray
+    tray_ok = not args.no_tray and tray.available()
     threading.Thread(target=server.serve_forever, daemon=True).start()
-    tray.run()   # icône près de l'horloge, jusqu'à « Quitter »
-
+    if tray_ok:
+        state.tray = tray
+        tray.run(detached=True)   # icône près de l'horloge, à côté de la fenêtre
+    win = desktop.AppWindow(url, hide_on_close=tray_ok, on_hidden=tray.hint if tray_ok else None)
+    if not args.no_browser and win.available():
+        try:
+            win.run()             # fenêtre Apex Radio, jusqu'à « Quitter »
+        except Exception as e:
+            print(f"  Fenêtre intégrée impossible ({e.__class__.__name__}: {e}), fenêtre Edge à la place.")
+            desktop.WINDOW = None
+            desktop.open_app_window(url)
+    elif not args.no_browser:
+        threading.Timer(1.0, lambda: desktop.open_app_window(url)).start()
+    try:
+        threading.Event().wait()  # la radio tourne jusqu'à « Quitter » (bouton ⏻ ou icône)
+    except KeyboardInterrupt:
+        pass
 
 if __name__ == "__main__":
     main()

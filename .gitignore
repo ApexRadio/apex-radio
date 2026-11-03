@@ -15,3 +15,4 @@ demo_setups/
 .venv/
 __pycache__/
 *.pyc
+webview/

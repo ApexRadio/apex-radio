@@ -1,8 +1,9 @@
 """
 Côté bureau Windows : fenêtre Apex Radio et icône près de l'horloge.
 
-- Fenêtre : Edge (ou Chrome) en mode application, une vraie fenêtre sans onglets
-  ni barre d'adresse, avec l'icône Apex. Sinon, le navigateur par défaut.
+- Fenêtre : intégrée à Apex Radio (pywebview + WebView2, le moteur d'Edge inclus dans Windows),
+  avec le logo Apex dans la barre de titre et la barre des tâches.
+  Secours : Edge (ou Chrome) en mode application, puis le navigateur par défaut.
 - Icône près de l'horloge (pystray) : ouvrir le tableau de bord, radio, silence, quitter.
   Fermer la fenêtre n'arrête pas Apex Radio : la radio continue, on la rouvre par l'icône.
 """
@@ -43,7 +44,18 @@ def _browser_app() -> str | None:
 
 
 def open_window(url: str) -> None:
-    """Ouvre le tableau de bord dans sa propre fenêtre."""
+    """Ouvre (ou ramène au premier plan) le tableau de bord."""
+    if WINDOW is not None and WINDOW.ready and url.rstrip("/") == WINDOW.url.rstrip("/"):
+        WINDOW.show()
+        return
+    if url.endswith("/tel"):          # vue téléphone : dans le navigateur, c'est fait pour être copiée
+        webbrowser.open(url)
+        return
+    open_app_window(url)
+
+
+def open_app_window(url: str) -> None:
+    """Secours : Edge / Chrome en mode application."""
     exe = _browser_app()
     if exe:
         try:
@@ -54,6 +66,111 @@ def open_window(url: str) -> None:
         except OSError as e:
             print(f"  Fenêtre Apex impossible ({e}), j'ouvre le navigateur.")
     webbrowser.open(url)
+
+
+def app_id() -> None:
+    """Regroupe la fenêtre sous « Apex Radio » dans la barre des tâches (et pas sous Python)."""
+    if sys.platform == "win32":
+        try:
+            import ctypes
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("ApexRadio.App")
+        except Exception:
+            pass
+
+
+def _set_icon(hwnd: int) -> None:
+    """Logo Apex dans la barre de titre et la barre des tâches."""
+    import ctypes
+    from ctypes import c_int, c_uint, c_void_p, c_wchar_p
+    u = ctypes.windll.user32
+    u.LoadImageW.restype = c_void_p
+    u.LoadImageW.argtypes = [c_void_p, c_wchar_p, c_uint, c_int, c_int, c_uint]
+    u.SendMessageW.argtypes = [c_void_p, c_uint, c_void_p, c_void_p]
+    ico = str(HERE / "apex.ico")
+    for kind, metric in ((1, 11), (0, 49)):          # ICON_BIG / SM_CXICON, ICON_SMALL / SM_CXSMICON
+        size = u.GetSystemMetrics(metric)
+        h = u.LoadImageW(None, ico, 1, size, size, 0x10)   # IMAGE_ICON, LR_LOADFROMFILE
+        if h:
+            u.SendMessageW(c_void_p(hwnd), 0x80, c_void_p(kind), c_void_p(h))   # WM_SETICON
+
+
+class AppWindow:
+    """Fenêtre Apex Radio intégrée (pywebview)."""
+
+    def __init__(self, url: str, hide_on_close: bool, on_hidden=None) -> None:
+        self.url, self.hide_on_close, self.on_hidden = url, hide_on_close, on_hidden
+        self.win = None
+        self.ready = False
+        self.quitting = False
+
+    @staticmethod
+    def available() -> bool:
+        if sys.platform != "win32":
+            return False
+        try:
+            import webview  # noqa: F401
+            return True
+        except Exception as e:
+            print(f"  Fenêtre intégrée indisponible ({e.__class__.__name__}: {e})")
+            return False
+
+    def _hwnd(self) -> int | None:
+        try:
+            return int(self.win.native.Handle.ToInt64())
+        except Exception:
+            try:
+                import ctypes
+                return ctypes.windll.user32.FindWindowW(None, "Apex Radio") or None
+            except Exception:
+                return None
+
+    def _shown(self) -> None:
+        h = self._hwnd()
+        if h:
+            try:
+                _set_icon(h)
+            except Exception as e:
+                print(f"  Icône de fenêtre : {e}")
+        self.ready = True
+
+    def _closing(self):
+        if self.quitting or not self.hide_on_close:
+            print("  Fenêtre fermée : arrêt d'Apex Radio.")
+            threading.Timer(0.2, lambda: os._exit(0)).start()
+            return True
+        threading.Thread(target=self.win.hide, daemon=True).start()
+        if self.on_hidden:
+            self.on_hidden()
+        return False      # on garde la radio : la fenêtre est seulement cachée
+
+    def show(self) -> None:
+        try:
+            self.win.show()
+            self.win.restore()
+            h = self._hwnd()
+            if h:
+                import ctypes
+                ctypes.windll.user32.SetForegroundWindow(h)
+        except Exception as e:
+            print(f"  Réouverture de la fenêtre : {e}")
+            open_app_window(self.url)
+
+    def run(self) -> None:
+        """Bloque sur le fil principal jusqu'à la fin d'Apex Radio."""
+        import webview
+        global WINDOW
+        self.win = webview.create_window("Apex Radio", self.url, width=1500, height=920, min_size=(1000, 640),
+                                         background_color="#06070B", text_select=True)
+        self.win.events.shown += self._shown
+        self.win.events.closing += self._closing
+        WINDOW = self
+        store = HERE / "webview"
+        webview.start(gui="edgechromium", private_mode=False, storage_path=str(store))
+        # fin de la boucle : la fenêtre a été détruite
+        os._exit(0)
+
+
+WINDOW: AppWindow | None = None
 
 
 def _post(url: str) -> None:
@@ -105,8 +222,23 @@ class Tray:
         finally:
             threading.Timer(0.3, lambda: os._exit(0)).start()
 
-    def run(self) -> None:
-        """Bloque (à appeler sur le fil principal)."""
+    def hint(self) -> None:
+        """Première fermeture de la fenêtre : on explique où est passée la radio."""
+        if self.icon is None or self.cfg is None or self.cfg.get("tray_hint"):
+            return
+        try:
+            self.icon.notify(L("Apex Radio continue ici. Clique sur cette icône pour rouvrir le tableau de bord, "
+                               "clic droit pour quitter.",
+                               "Apex Radio keeps running here. Click this icon to reopen the dashboard, "
+                               "right-click to quit."), "Apex Radio")
+            self.cfg["tray_hint"] = True
+            if self.save:
+                self.save(self.cfg)
+        except Exception:
+            pass
+
+    def run(self, detached: bool = False) -> None:
+        """Bloque (fil principal), ou tourne à côté de la fenêtre si detached."""
         import pystray
         from PIL import Image
         img = Image.open(HERE / "apex.ico")
@@ -114,17 +246,6 @@ class Tray:
 
         def setup(icon) -> None:
             icon.visible = True
-            if self.cfg is not None and not self.cfg.get("tray_hint"):
-                try:
-                    icon.notify(L("Apex Radio tourne ici. Fermer la fenêtre n'arrête pas la radio : "
-                                  "clique sur cette icône pour rouvrir le tableau de bord, clic droit pour quitter.",
-                                  "Apex Radio runs here. Closing the window keeps the radio on: "
-                                  "click this icon to reopen the dashboard, right-click to quit."), "Apex Radio")
-                    self.cfg["tray_hint"] = True
-                    if self.save:
-                        self.save(self.cfg)
-                except Exception:
-                    pass
 
         def keep_fresh() -> None:   # coches Radio / Silence et langue à jour, même changées depuis le tableau de bord
             import time
@@ -132,7 +253,10 @@ class Tray:
                 time.sleep(3)
                 self.refresh()
         threading.Thread(target=keep_fresh, daemon=True).start()
-        self.icon.run(setup=setup)
+        if detached:
+            self.icon.run_detached(setup=setup)
+        else:
+            self.icon.run(setup=setup)
 
     def refresh(self) -> None:
         """Après un changement de langue."""
@@ -144,6 +268,9 @@ class Tray:
 
 
 def show_existing(base_url: str) -> None:
-    """Apex Radio tourne déjà : on rouvre simplement sa fenêtre."""
-    open_window(base_url)
+    """Apex Radio tourne déjà : on lui demande de rouvrir sa fenêtre."""
+    try:
+        urllib.request.urlopen(urllib.request.Request(base_url + "/api/show", data=b"{}", method="POST"), timeout=3).close()
+    except Exception:
+        open_app_window(base_url)
 

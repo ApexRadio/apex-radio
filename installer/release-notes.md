@@ -1,3 +1,7 @@
+## 🆕 1.1.1
+- 🇫🇷 RECORDS et DÉBRIEFS s'ouvrent dans la fenêtre Apex (plus de page de navigateur), avec un bouton « ← Tableau de bord » pour revenir.
+- 🇬🇧 RECORDS and DEBRIEFS open inside the Apex window (no more browser page), with a "← Dashboard" button to go back.
+
 ## 🆕 1.1.0
 - 🇫🇷 Apex Radio s'ouvre dans **sa propre fenêtre** (plus d'onglet de navigateur), avec son icône dans la barre des tâches.
 - 🇫🇷 **Icône Apex près de l'horloge** : clic pour rouvrir le tableau de bord, clic droit pour Radio, Silence, vue téléphone, journal, Quitter. Fermer la fenêtre n'arrête plus la radio.

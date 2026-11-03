@@ -198,6 +198,7 @@ def render(d: dict) -> str:
 def _page(title: str, body: str) -> str:
     return f"""<!doctype html><html lang="{i18n.LANG}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(title)}</title>
+<link rel="icon" href="/favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{{--bg:#06070B;--panel:#0B0F16;--line:#1A2330;--text:#E8EDF5;--muted:#9AA6B8;--accent:#00E5FF}}
@@ -215,8 +216,12 @@ ul{{padding-left:20px}} .radio li{{color:var(--muted);margin:3px 0}}
 a{{color:var(--accent)}} .back{{text-decoration:none}}
 .list{{display:flex;flex-direction:column;gap:8px}} .row{{display:grid;grid-template-columns:160px 1fr 110px 90px 110px;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--text);text-decoration:none}}
 .row:hover{{border-color:var(--accent)}}
+.nav{{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}} .nav a{{text-decoration:none;color:var(--text);border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;letter-spacing:.04em}}
+.nav a:hover{{border-color:var(--accent)}} .nav a.home{{color:#06070B;background:var(--accent);border-color:var(--accent)}} .nav a.nrec{{color:#FFE500}}
 @media(max-width:700px){{.row{{grid-template-columns:1fr 1fr}}}}
-</style></head><body>{body}</body></html>"""
+</style></head><body>
+<nav class="nav"><a class="home" href="/">← {L('TABLEAU DE BORD', 'DASHBOARD')}</a><a class="nrec" href="/records">RECORDS</a><a href="/debriefs">{L('DÉBRIEFS', 'DEBRIEFS')}</a></nav>
+{body}</body></html>"""
 
 
 # ------------------------------------------------------------------- records par circuit

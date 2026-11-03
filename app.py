@@ -501,6 +501,28 @@ def local_ip() -> str:
         return "127.0.0.1"
 
 
+class ApexServer(ThreadingHTTPServer):
+    """Serveur du tableau de bord, en exclusivité sur son port.
+
+    Sous Windows, l'option « réutiliser l'adresse » permet à un 2e Apex Radio d'écouter sur le même port :
+    les pages viennent alors au hasard de l'un ou de l'autre. On la remplace par l'accès exclusif."""
+    allow_reuse_address = sys.platform != "win32"
+
+    def server_bind(self):
+        if sys.platform == "win32" and hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        super().server_bind()
+
+
+def already_running() -> bool:
+    """Un Apex Radio répond déjà sur le port ?"""
+    try:
+        with socket.create_connection(("127.0.0.1", PORT), timeout=0.5):
+            return True
+    except OSError:
+        return False
+
+
 def ensure_packages() -> None:
     """Installe les composants manquants et note le résultat dans journal.txt."""
     import importlib.util
@@ -553,10 +575,14 @@ def main() -> None:
 
     global PHONE_URL
     PHONE_URL = f"http://{local_ip()}:{PORT}/tel"
+    if already_running():     # avant de charger la voix : on rouvre juste la fenêtre existante
+        print("\n  Apex Radio tourne déjà : j'ouvre le tableau de bord existant.")
+        desktop.show_existing(f"http://localhost:{PORT}")
+        sys.exit(0)
     state = State()
     state.demo = args.demo
     try:
-        server = ThreadingHTTPServer(("0.0.0.0", PORT), make_handler(state))
+        server = ApexServer(("0.0.0.0", PORT), make_handler(state))
     except OSError:
         print("\n  Apex Radio tourne déjà : j'ouvre le tableau de bord existant.")
         print("  (pour passer en démo ou en direct, clique d'abord sur QUITTER dans le tableau de bord)\n")

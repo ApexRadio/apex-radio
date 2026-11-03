@@ -41,6 +41,7 @@ jobs:
           Set-Content $pth.FullName "python312.zip`r`n.`r`nLib\site-packages`r`n..`r`nimport site"
           Invoke-WebRequest "https://bootstrap.pypa.io/get-pip.py" -OutFile get-pip.py
           build\app\python\python.exe get-pip.py --no-warn-script-location
+          build\app\python\python.exe -m pip install --no-warn-script-location setuptools wheel
           build\app\python\python.exe -m pip install --no-warn-script-location -r requirements.txt
           build\app\python\python.exe -c "import piper, faster_whisper, sounddevice, pygame, pystray, PIL, webview; print('composants OK')"
 

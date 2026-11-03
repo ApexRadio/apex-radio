@@ -507,7 +507,7 @@ def ensure_packages() -> None:
     import subprocess
     needed = {"piper": "piper-tts", "faster_whisper": "faster-whisper", "sounddevice": "sounddevice", "pygame": "pygame-ce"}
     if sys.platform == "win32":
-        needed.update({"pystray": "pystray", "PIL": "Pillow"})
+        needed.update({"pystray": "pystray", "PIL": "Pillow", "webview": "pywebview"})
     missing = [pkg for mod, pkg in needed.items() if importlib.util.find_spec(mod) is None]
     if not missing:
         return

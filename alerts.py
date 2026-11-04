@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import math
+import random
 import sys
 import threading
 import time
@@ -196,18 +197,36 @@ class GapTrend:
             return None, None, None   # pas assez de tours, ou ce n'est plus la même voiture
         return (series[-1][1] - series[0][1]) / 3, series[-1][1], series[-1][0]
 
+    # phrases d'ingénieur, tirées au hasard pour ne pas répéter toujours la même chose
+    @staticmethod
+    def _pep(fr: list[str], en: list[str]) -> str:
+        i = random.randrange(len(fr))
+        return " " + L(fr[i], en[i])
+
     def _ahead_msg(self):
         rate, gap, place = self._rate(self.ahead)
         if rate is None or gap > 15:
             return None
         if rate < -0.12:
             if gap < 1.0:
-                return L(f"Tu es dans les roues de P{place}, attaque !", f"You're on P{place}'s gearbox, attack!")
+                return L(f"Tu es dans les roues de P{place}, attaque !", f"You're on P{place}'s gearbox, attack!") + self._pep(
+                    ["Mets-lui la pression, montre-toi dans ses rétros.", "Il est à portée, cherche l'ouverture au freinage.",
+                     "Il commence à craquer, reste collé et attends sa faute."],
+                    ["Put him under pressure, show yourself in his mirrors.", "He's in range, look for a gap under braking.",
+                     "He's starting to crack, stay close and wait for his mistake."])
             n = math.ceil((gap - 0.8) / -rate)
             return L(f"Tu reprends {_dix(rate)} par tour sur P{place}, dans ses roues dans {n} tour{'s' if n > 1 else ''}.",
-                     f"You're gaining {_dix(rate)} a lap on P{place}, on his gearbox in {n} lap{'s' if n > 1 else ''}.")
+                     f"You're gaining {_dix(rate)} a lap on P{place}, on his gearbox in {n} lap{'s' if n > 1 else ''}.") + self._pep(
+                    ["Continue comme ça !", "Pousse, il perd du temps !", "Super rythme, va le chercher !",
+                     "Il est en difficulté, mets-lui la pression !"],
+                    ["Keep it up!", "Push, he's losing time!", "Great pace, go get him!", "He's struggling, put the pressure on!"])
+        if rate < -0.05 and gap < 5:
+            return L(f"Tu grappilles sur P{place}, petit à petit.", f"You're chipping away at P{place}, bit by bit.") + self._pep(
+                ["Continue comme ça.", "Reste régulier, ça va payer."], ["Keep it going.", "Stay consistent, it'll pay off."])
         if rate > 0.15:
-            return L(f"P{place} s'échappe de {_dix(rate)} par tour.", f"P{place} is pulling away by {_dix(rate)} a lap.")
+            return L(f"P{place} s'échappe de {_dix(rate)} par tour.", f"P{place} is pulling away by {_dix(rate)} a lap.") + self._pep(
+                ["Accroche-toi, ne le laisse pas filer.", "Reste concentré, fais ta course.", "Pas de panique, la course est longue."],
+                ["Hang on, don't let him go.", "Stay focused, run your own race.", "No panic, it's a long race."])
         return None
 
     def _behind_msg(self):
@@ -216,12 +235,20 @@ class GapTrend:
             return None
         if rate < -0.12:
             if gap < 1.0:
-                return L(f"P{place} est dans tes roues, défends !", f"P{place} is right behind you, defend!")
+                return L(f"P{place} est dans tes roues, défends !", f"P{place} is right behind you, defend!") + self._pep(
+                    ["Ferme l'intérieur aux freinages.", "Pas d'erreur, soigne tes sorties de virage.", "Ne lui laisse aucune ouverture."],
+                    ["Cover the inside into the braking zones.", "No mistakes, nail your corner exits.", "Don't give him any gap."])
             n = math.ceil((gap - 0.8) / -rate)
             return L(f"P{place} revient de {_dix(rate)} par tour, il sera sur toi dans {n} tour{'s' if n > 1 else ''}.",
-                     f"P{place} is closing by {_dix(rate)} a lap, he'll be on you in {n} lap{'s' if n > 1 else ''}.")
+                     f"P{place} is closing by {_dix(rate)} a lap, he'll be on you in {n} lap{'s' if n > 1 else ''}.") + self._pep(
+                    ["Il est plus rapide, pousse un peu plus.", "Ne lâche rien, garde ton rythme.",
+                     "Reste propre, fais tes trajectoires et il ne passera pas."],
+                    ["He's quicker, push a bit harder.", "Don't give up, keep your pace.",
+                     "Stay clean, hit your lines and he won't get by."])
         if rate > 0.15:
-            return L(f"Tu creuses l'écart sur P{place}, {_dix(rate)} par tour.", f"You're pulling away from P{place}, {_dix(rate)} a lap.")
+            return L(f"Tu creuses l'écart sur P{place}, {_dix(rate)} par tour.", f"You're pulling away from P{place}, {_dix(rate)} a lap.") + self._pep(
+                ["Super boulot, continue comme ça !", "Tu le décroches, garde ce rythme.", "Parfait, il ne peut pas suivre."],
+                ["Great job, keep it up!", "You're dropping him, keep this pace.", "Perfect, he can't keep up."])
         return None
 
 

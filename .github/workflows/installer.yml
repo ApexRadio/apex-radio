@@ -27,7 +27,7 @@ jobs:
           $py = "3.12.10"
           New-Item -ItemType Directory -Force build\app | Out-Null
           # fichiers de l'appli
-          $files = Get-ChildItem -File | Where-Object { $_.Name -notin @("Lancer.bat", "Demo.bat", "build_public.py", ".gitignore", ".gitattributes") }
+          $files = Get-ChildItem -File | Where-Object { $_.Name -notin @("Lancer.bat", "Demo.bat", "build_public.py", ".gitignore", ".gitattributes", "CLAUDE.md", "CHANGELOG.md") }
           Copy-Item $files build\app\
           Copy-Item -Recurse ui, vendor build\app\
           # lanceur ApexRadio.exe (compilateur C# de .NET Framework, présent sur Windows)

@@ -257,102 +257,15 @@ def command(text: str) -> str | None:
     return None
 
 
-# ------------------------------------------------------------ discussion
-# Petites phrases de radio qui marchent partout, même hors de la voiture.
-def _radio_check(s: Snapshot) -> str:
-    return L("Oui, je t'entends, cinq sur cinq.", "Yes, I hear you loud and clear.")
-
-
-def _here(s: Snapshot) -> str:
-    return L("Je suis là, je t'écoute.", "I'm here, go ahead.")
-
-
-def _hello(s: Snapshot) -> str:
-    return L("Salut ! Je suis là, prête quand tu veux.", "Hi! I'm here, ready when you are.")
-
-
-def _thanks(s: Snapshot) -> str:
-    return L("Avec plaisir.", "You're welcome.")
-
-
-def _who(s: Snapshot) -> str:
-    return L("Je suis Jessica, ton ingénieure de course.", "I'm Jessica, your race engineer.")
-
-
-def _help(s: Snapshot) -> str:
-    return L("Demande-moi l'essence, l'énergie, les pneus, le stand, les écarts, ta position, la météo, tes chronos, "
-             "tes secteurs ou le comportement de la voiture. Je peux aussi régler le menu des stands.",
-             "Ask me about fuel, energy, tyres, pit stop, gaps, position, weather, lap times, sectors "
-             "or car handling. I can also set up the pit menu.")
-
-
-def _time(s: Snapshot) -> str:
-    import datetime
-    n = datetime.datetime.now()
-    h = "heure" if n.hour <= 1 else "heures"
-    return L(f"Il est {n.hour} {h} {n.minute:02d}." if n.minute else f"Il est {n.hour} {h}.", f"It's {n:%H:%M}.")
-
-
-def _how_are_you(s: Snapshot) -> str | None:
-    if s.on_track:   # en piste, « ça va ? » = le point complet (sujet status)
-        return None
-    return L("Ça va très bien, merci ! Prête pour la course.", "All good, thanks! Ready for the race.")
-
-
-def _joke(s: Snapshot) -> str:
-    return L("Les blagues, c'est après le drapeau à damier. Reste concentré !",
-             "Jokes are for after the chequered flag. Stay focused!")
-
-
-CHAT = [
-    (r"\bm entends?\b|\bm entendez\b|tu me recois|me recois tu|tu recois|radio check|test radio|\ballo\b|"
-     r"can you hear|do you hear|hear me|do you copy|you copy", _radio_check),
-    (r"\b(t es|tu es|es tu|t es bien) la\b|t es toujours la|you there|are you there", _here),
-    (r"^(bonjour|salut|hello|coucou|hey|bonsoir|hi)\b", _hello),
-    (r"\bmerci\b|thank", _thanks),
-    (r"qui es tu|t es qui|tu es qui|comment tu t appelles|ton nom|ton prenom|who are you|your name", _who),
-    (r"que (peux|sais) tu|qu est ce que tu (peux|sais)|tu sais faire|tu peux faire quoi|\baide\b|\bhelp\b|what can you", _help),
-    (r"quelle heure|l heure qu il|what time", _time),
-    (r"\bca va\b|comment vas tu|how are you", _how_are_you),
-    (r"blague|joke|funny", _joke),
-]
-
-
-FILLER = (_hello, _thanks)   # « salut », « merci » : seulement si la phrase ne demande rien d'autre
-
-
-def chat(t: str, s: Snapshot, alone: bool = True) -> list[str]:
-    """alone=False : la phrase demande aussi des données, on saute « salut » / « merci »."""
-    out = []
-    for pattern, fn in CHAT:
-        if re.search(pattern, t) and (alone or fn not in FILLER):
-            r = fn(s)
-            if r and r not in out:
-                out.append(r)
-    return out
-
-
 def answer(text: str, s: Snapshot, p: Plan) -> str:
     c = command(text)
     if c:
         return c
-    t = _norm(text).strip()
-    if not t:
-        return L("Je n'ai rien entendu, répète.", "I didn't hear anything, say again.")
     if not s.on_track:
-        # hors piste, « comment ça va » est une politesse, pas une demande de point complet
-        polite = bool(re.search(r"\bca va\b|comment vas tu|how are you", t))
-        asks_data = any(re.search(pattern, t) for pattern, fn in TOPICS if not (polite and fn is status))
-        said = chat(t, s, alone=not asks_data)
-        if asks_data:
-            said.append(L("Je n'ai pas encore de données, monte dans la voiture.", "No data yet, get in the car."))
-        if said:
-            return " ".join(said)
-        return L("Je t'entends, mais je n'ai pas compris. Une fois en piste, demande-moi l'essence, les pneus, "
-                 "le stand, les écarts, la position ou la météo.",
-                 "I hear you, but I didn't get that. Once you're on track, ask me about fuel, tyres, "
-                 "pit stop, gaps, position or weather.")
-    said = chat(t, s, alone=not any(re.search(pattern, t) for pattern, _ in TOPICS))
+        return L("Je n'ai pas encore de données, monte dans la voiture.", "No data yet, get in the car.")
+    t = _norm(text)
+    if not t.strip():
+        return L("Je n'ai rien entendu, répète.", "I didn't hear anything, say again.")
     replies = []
     for pattern, fn in TOPICS:
         if re.search(pattern, t) and fn not in [r[0] for r in replies]:
@@ -363,7 +276,7 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
             if fn is laptimes and any(r[0] is record for r in replies):
                 continue
             replies.append((fn, fn(s, p)))
-    if not replies and not said:
-        # jamais sans réponse : on donne le point complet
-        return L("Pas sûr d'avoir compris, voilà le point. ", "Not sure I got that, here's the update. ") + status(s, p)
-    return " ".join(said + [r[1] for r in replies[:3]])
+    if not replies:
+        return L("Je n'ai pas compris. Tu peux me demander l'essence, les pneus, le stand, les écarts, la position ou la météo.",
+                 "I didn't get that. You can ask about fuel, tyres, pit stop, gaps, position or weather.")
+    return " ".join(r[1] for r in replies[:3])

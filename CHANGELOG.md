@@ -1,5 +1,9 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.2.2
+- 🇫🇷 Atelier setup : indiquer le setup chargé dans le jeu n'efface plus l'analyse qui vient d'être faite. Les réglages proposés par Jessica (barre antiroulis, carrossage…) apparaissent bien dans l'atelier.
+- 🇬🇧 Setup workshop: choosing the setup loaded in the game no longer wipes the analysis just made, so Jessica's suggestions (anti-roll bar, camber…) now show up in the workshop.
+
 ## 1.2.1
 - 🇫🇷 La fin de l'installation lance Apex Radio en mode course (la démo reste dans le menu Démarrer). Lancer Apex Radio pendant qu'une démo tourne arrête la démo et démarre le mode course.
 - 🇬🇧 The end of the setup starts Apex Radio in race mode (the demo stays in the Start menu). Starting Apex Radio while the demo runs stops the demo and starts race mode.

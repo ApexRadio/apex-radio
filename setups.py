@@ -257,8 +257,10 @@ class Workshop:
         st = self.state(track)
         if st["folder"] == folder and st["current"] == file:
             return None
+        had = bool(st["current"])
         self.select(track, folder, file)
-        return file
+        print(f"  Setup chargé dans LMU détecté : {file}")
+        return file if had else None   # 1re détection : l'analyse en cours porte déjà sur ce setup, on la garde
 
     # ----------------------------------------------------------- crans
     def _step(self, setup: Setup, section: str, key: str, delta: int):

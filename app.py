@@ -138,8 +138,7 @@ def loop(state: State, demo: bool) -> None:
             try:
                 if state.snap.connected and state.snap.track:
                     f = state.workshop.sync_active(state.snap.track)
-                    if f:
-                        print(f"  Setup chargé dans LMU détecté : {f}")
+                    if f:   # un autre setup a remplacé celui qu'on analysait
                         beh.reset_analysis()
             except Exception:
                 traceback.print_exc()
@@ -443,10 +442,14 @@ def make_handler(state: State):
                         state.eng.say(None, L(f"Setup remis en version {out['version'][1:]}. Recharge-le au garage.",
                                               f"Setup restored to version {out['version'][1:]}. Reload it in the garage."), elapsed=state.snap.elapsed)
                 elif self.path.endswith("select"):
+                    prev = ws.state(tr)
                     ws.select(tr, req.get("folder"), req.get("file"))
                     if not state.demo:
                         save_config(state.radio.cfg)
-                    state.beh.reset_analysis()
+                    # tu indiques le setup avec lequel tu viens de rouler : l'analyse le concerne, on la garde.
+                    # On ne repart de zéro que si tu remplaces un setup déjà choisi par un autre.
+                    if prev.get("current") and (prev.get("folder"), prev.get("current")) != (req.get("folder"), req.get("file")):
+                        state.beh.reset_analysis()
                     out = {"error": None}
                 else:
                     prop = ws.propose(tr, state.beh.issues, state.beh.tyre_findings, state.beh.live_controls(tr),

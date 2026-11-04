@@ -1,8 +1,8 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
-## 🆕 1.2.2
-- 🇫🇷 Atelier setup : indiquer le setup chargé dans le jeu n'efface plus l'analyse qui vient d'être faite. Les réglages proposés par Jessica (barre antiroulis, carrossage…) apparaissent bien dans l'atelier.
-- 🇬🇧 Setup workshop: choosing the setup loaded in the game no longer wipes the analysis just made, so Jessica's suggestions (anti-roll bar, camber…) now show up in the workshop.
+## 🆕 1.2.3
+- 🇫🇷 Jessica répond toujours : « tu m'entends ? » → « Oui, je t'entends, cinq sur cinq ». Elle répond aussi à bonjour, merci, « qui es-tu ? », « qu'est-ce que tu sais faire ? », l'heure… même hors de la voiture. Une question qu'elle ne comprend pas en piste donne le point complet au lieu de rester sans réponse.
+- 🇬🇧 Jessica always answers: "can you hear me?" → "Yes, I hear you loud and clear". She also replies to hello, thanks, "who are you?", "what can you do?", the time… even out of the car. A question she doesn't understand on track gets the full update instead of no answer.
 
 ## 🇫🇷 Installation
 Télécharge **ApexRadio-Setup.exe** ci-dessous, lance-le, clique sur Suivant. C'est tout : Python et tous les composants sont inclus.

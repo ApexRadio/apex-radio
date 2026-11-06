@@ -17,7 +17,8 @@ from dataclasses import dataclass, field
 from telemetry import Snapshot
 from i18n import L, dec
 
-MARGIN_LAPS = 0.5        # marge de sécurité en tours d'essence / énergie
+MARGIN_LAPS = 0.5        # marge de sécurité en tours d'essence / énergie (quantité à mettre, arrêts nécessaires)
+BOX_RESERVE = 0.2        # réserve gardée en arrivant au stand : on roule jusqu'au dernier tour possible
 TYRE_LIMIT = 0.30        # on considère un pneu à changer sous 30 % restant
 AVG_OVER = 5             # moyenne sur les 5 derniers tours propres
 
@@ -104,7 +105,8 @@ class Engineer:
         if s.in_pits or s.yellow:
             self.current.dirty = True
 
-    def _per_lap(self, attr: str) -> float | None:
+    def _per_lap(self, attr: str, safe: bool = False) -> float | None:
+        """Consommation par tour. safe=True : valeur prudente (3e quartile) pour la quantité à mettre au stand."""
         vals = []
         for a, b in zip(self.laps, self.laps[1:] + [self.current]):
             if a.dirty or a.number == 0 or b is None:
@@ -116,7 +118,24 @@ class Engineer:
             if d > 0:
                 vals.append(d)
         vals = vals[-AVG_OVER:]
-        return statistics.median(vals) if vals else None
+        if not vals:
+            return None
+        if safe:
+            return max(vals) if len(vals) < 4 else statistics.quantiles(vals, n=4)[2]
+        return statistics.median(vals)
+
+    @staticmethod
+    def _race_end(s: Snapshot, avg: float) -> float:
+        """Course au temps : secondes jusqu'à la fin pour TOI. À 0:00, la course ne s'arrête pas :
+        le 1er (toutes catégories) finit son tour, puis tu finis le tien. Sans ça, on oublie souvent un tour."""
+        leader = next((c for c in s.cars if c.get("p") == 1), None)
+        if leader is None or leader.get("me"):
+            lead_f, lead_lap = s.lap_frac, avg
+        else:
+            lead_f = leader.get("f") or 0.0
+            lead_lap = (leader.get("best") or avg) * 1.03       # rythme de course ≈ meilleur tour + 3 %
+        frac_at_zero = (lead_f + s.time_left / lead_lap) % 1.0  # où sera le 1er quand le chrono tombe à 0
+        return s.time_left + (1.0 - frac_at_zero) * lead_lap
 
     def _avg_lap(self) -> float | None:
         times = [l.time for l in self.laps if l.time and not l.dirty and l.number > 0][-AVG_OVER:]
@@ -159,7 +178,7 @@ class Engineer:
         if s.max_laps:
             p.laps_to_finish = max(0.0, s.max_laps - s.laps_done - s.lap_frac)
         elif s.time_left is not None and avg:
-            p.laps_to_finish = math.ceil(s.lap_frac + s.time_left / avg) - s.lap_frac
+            p.laps_to_finish = math.ceil(s.lap_frac + self._race_end(s, avg) / avg) - s.lap_frac
 
         self._weather(s, p)
         self._flags(s)
@@ -201,16 +220,17 @@ class Engineer:
                      elapsed=et)
 
         # tour d'arrêt
-        k = math.floor(s.lap_frac + p.range_laps - MARGIN_LAPS)
+        k = math.floor(s.lap_frac + p.range_laps - BOX_RESERVE)
         p.laps_until_box = max(0, k)
         p.box_lap = s.laps_done + max(1, k)
 
         # quantités au stand
         laps_driven_before = max(0.0, max(1, k) - s.lap_frac)
         laps_after = max(0.0, p.laps_to_finish - laps_driven_before)
-        fuel_at_pit = max(0.0, s.fuel - laps_driven_before * fpl)
+        fpl_safe = self._per_lap("fuel", safe=True) or fpl    # prudent : mieux vaut 1 litre de trop qu'un tour de moins
+        fuel_at_pit = max(0.0, s.fuel - laps_driven_before * fpl_safe)
         if p.stops_needed == 1:
-            need = (laps_after + MARGIN_LAPS) * fpl - fuel_at_pit
+            need = (laps_after + MARGIN_LAPS) * fpl_safe - fuel_at_pit
         else:
             need = s.fuel_capacity - fuel_at_pit
         room = (s.fuel_capacity - fuel_at_pit) if s.fuel_capacity else need

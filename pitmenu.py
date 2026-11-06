@@ -118,7 +118,7 @@ class PitCrew:
         self.say = None
 
     def update(self, s, p) -> None:
-        if self.mode != "auto" or not s.on_track or s.in_pits or s.session != "course":
+        if self.mode != "auto" or not s.on_track or s.in_pits or s.session != "course" or s.game_phase == 8:
             return
         if p.ready and p.stops_needed and p.laps_until_box is not None and p.laps_until_box <= 1:
             if self.done_for != s.pit_stops:

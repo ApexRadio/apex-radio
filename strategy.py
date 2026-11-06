@@ -233,7 +233,8 @@ class Engineer:
     def _pit_service(self, p: Plan) -> str:
         parts = []
         if p.fuel_to_add is not None:
-            parts.append(L(f"{p.fuel_to_add:.0f} litres", f"{p.fuel_to_add:.0f} litres of fuel"))
+            n = round(p.fuel_to_add)
+            parts.append(L(f"{n} litre{'s' if n > 1 else ''}", f"{n} litre{'s' if n != 1 else ''} of fuel"))
         if p.energy_target is not None:
             parts.append(L(f"énergie à {p.energy_target * 100:.0f} %", f"energy to {p.energy_target * 100:.0f} %"))
         if p.tyre_compound == "pluie":
@@ -252,7 +253,7 @@ class Engineer:
 
     def _pit_calls(self, s: Snapshot, p: Plan) -> None:
         et = s.elapsed
-        if p.laps_until_box is None or s.in_pits:
+        if p.laps_until_box is None or s.in_pits or s.game_phase == 8:   # 8 = drapeau à damier : plus d'arrêt
             return
         if p.laps_until_box <= 1:
             self.say("stint:box", L(f"Box, box ce tour ! On met {self._pit_service(p)}.", f"Box, box this lap! {self._pit_service(p)}."), urgent=True, elapsed=et)

@@ -342,6 +342,8 @@ class Damage:
         self.wear = None           # dégâts lus dans l'interface de LMU (aéro, suspensions)
         self.repair = False
         self.choice = None         # choix du pilote à la radio : True / False / None (= Apex décide)
+        self.all = False           # mécanique touchée : tout réparer
+        self.choice_all = True     # « répare » à la radio : tout, sauf s'il dit « la carrosserie »
         self._fetching = False
         self._last_fetch = 0.0
         self._session = None
@@ -352,14 +354,14 @@ class Damage:
         key = (s.track, s.session_code)
         if key != self._session:          # nouvelle session : on repart d'une voiture neuve
             self._session = key
-            self.repair, self.choice, self.wear, self.dents = False, None, None, None
+            self.repair, self.choice, self.wear, self.dents, self.all = False, None, None, None, False
         me = next((c for c in s.cars if c.get("me")), None)
         moving = me is not None and me.get("spd", 0) > 5 and not s.in_pits
         if self.dents is None or not moving:
             # au garage / au stand / voiture remise en piste : on prend les valeurs sans rien annoncer
             self.dents, self.flat, self.wheel_off, self.part_off = list(s.dents), list(s.flat), list(s.wheel_off), s.part_off
             if s.in_pits and s.pit_state == 3:
-                self.repair, self.choice = False, None
+                self.repair, self.choice, self.all = False, None, False
             self._apply(s)
             return
         # carrosserie
@@ -376,16 +378,16 @@ class Damage:
         for i in range(4):
             if s.flat[i] and not self.flat[i]:
                 say(None, L(f"Crevaison {WHEEL_NAME(i)} ! Rentre au stand, doucement.", f"Puncture {WHEEL_NAME(i)}! Box, take it easy."), urgent=True)
-                self.repair = True
+                self.repair = self.all = True
             if s.wheel_off[i] and not self.wheel_off[i]:
                 say(None, L(f"Roue {WHEEL_NAME(i)} perdue ! Rentre au stand.", f"Lost the {WHEEL_NAME(i)} wheel! Box now."), urgent=True)
-                self.repair = True
+                self.repair = self.all = True
         self.flat, self.wheel_off = list(s.flat), list(s.wheel_off)
         if s.part_off and not self.part_off:
             say(None, L("Une pièce s'est détachée de la voiture.", "A part has come off the car."), urgent=True)
         self.part_off = s.part_off
         if s.in_pits and s.pit_state == 3:
-            self.repair, self.choice = False, None   # arrêté au stand : on considère que c'est réglé
+            self.repair, self.choice, self.all = False, None, False   # arrêté au stand : on considère que c'est réglé
         self._poll_api(say)
         self._apply(s)
 
@@ -395,9 +397,10 @@ class Damage:
             aero = self.wear.get("aero") or 0
             susp = [v for v in (self.wear.get("susp") or []) if isinstance(v, (int, float))]
             if aero < 0.05 and all(v < 0.05 for v in susp):
-                self.repair = False
+                self.repair = self.all = False
         s.repair = self.repair if self.choice is None else self.choice
         s.no_repair = self.choice is False
+        s.repair_all = s.repair and (self.choice_all if self.choice is True else self.all)
 
     def _poll_api(self, say) -> None:
         if sys.platform != "win32" or self._fetching or time.monotonic() - self._last_fetch < 20:
@@ -428,7 +431,7 @@ class Damage:
                     say(None, L(f"Suspension {WHEEL_NAME(i)} touchée à {v * 100:.0f} %. Attention au comportement.",
                                 f"{WHEEL_NAME(i).capitalize()} suspension damaged {v * 100:.0f} %. Watch the handling."))
                     if v > 0.15:
-                        self.repair = True
+                        self.repair = self.all = True
         except Exception:
             pass
         finally:

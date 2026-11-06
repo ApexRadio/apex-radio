@@ -385,9 +385,14 @@ def repair_command(t: str) -> str | None:
         return None
     if REPAIR_SET is None:
         return L("Je ne peux pas changer les réparations pour l'instant.", "I can't change the repairs right now.")
-    menu = REPAIR_SET(want)
-    out = L("C'est noté, on ne répare pas au prochain arrêt.", "Copy, no repairs at the next stop.") if not want else \
-        L("C'est noté, on répare la voiture au prochain arrêt.", "Copy, we'll fix the car at the next stop.")
+    body_only = want and bool(re.search(r"carrosserie|body|aero", t)) and not re.search(r"\btout\b|\ball\b|full", t)
+    menu = REPAIR_SET(want, not body_only)
+    if not want:
+        out = L("C'est noté, on ne répare pas au prochain arrêt.", "Copy, no repairs at the next stop.")
+    elif body_only:
+        out = L("C'est noté, on répare seulement la carrosserie au prochain arrêt.", "Copy, bodywork only at the next stop.")
+    else:
+        out = L("C'est noté, on répare tout au prochain arrêt.", "Copy, full repairs at the next stop.")
     if menu:
         out += L(" Je corrige le menu des stands.", " Updating the pit menu.")
     return out

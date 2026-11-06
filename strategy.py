@@ -43,6 +43,7 @@ class Plan:
     weather: str = ""
     repair: bool = False                # réparations à faire au prochain arrêt
     no_repair: bool = False             # le pilote a dit « pas de réparation »
+    repair_all: bool = False            # « Tout réparer » (mécanique) plutôt que « Réparer la carrosserie »
     fuel_total: float | None = None     # niveau d'essence voulu après l'arrêt (menu des stands LMU)
 
 
@@ -141,6 +142,7 @@ class Engineer:
         p = Plan()
         p.repair = s.repair
         p.no_repair = s.no_repair
+        p.repair_all = s.repair_all
 
         # nouveau relais après un arrêt
         if s.pit_stops != self._last_stops:
@@ -246,7 +248,7 @@ class Engineer:
         elif p.change_tyres is False:
             parts.append(L("on garde les pneus", "we keep the tyres"))
         if p.repair:
-            parts.append(L("et on répare la voiture", "and we fix the car"))
+            parts.append(L("et on répare tout", "and full repairs") if p.repair_all else L("et on répare la carrosserie", "and we fix the bodywork"))
         elif p.no_repair:
             parts.append(L("et on ne répare pas", "and no repairs"))
         return ", ".join(parts)

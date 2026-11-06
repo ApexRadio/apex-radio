@@ -16,6 +16,8 @@ Créateur : Laurent (pseudo lolotuner), francophone : **réponds-lui en françai
   voix/modèles/journal → `%LOCALAPPDATA%\Apex Radio`. Mode portable si `portable.txt` existe.
 - Atelier setup (`setups.py`) : **ne modifie jamais les setups de l'utilisateur**, écrit seulement
   `APEX <circuit> Qualif.svm` / `APEX <circuit> Course.svm` dans le dossier du circuit.
+- Menu des stands, réparations (LMU) : « Ne pas réparer », « Réparer la carrosserie », « Tout réparer ».
+  Apex choisit « Tout réparer » si la mécanique est touchée (suspension, roue), sinon la carrosserie.
 - Mises à jour : `updates.py` interroge `api.github.com/repos/ApexRadio/apex-radio/releases/latest`
   et affiche un bandeau (rien ne s'installe tout seul).
 
@@ -43,4 +45,3 @@ Créateur : Laurent (pseudo lolotuner), francophone : **réponds-lui en françai
 ## Idées / à faire
 - Vidéo de démo (Reel/Short) : question essence → réponse, spotter, « box box » + menu des stands réglé.
 - Option de repli si la mise à jour échoue ; signature de code un jour (message SmartScreen).
-- Texte de l'option « réparations » du menu des stands encore inconnu (à relever lors d'une course avec dégâts).

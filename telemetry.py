@@ -75,6 +75,7 @@ class Snapshot:
     part_off: bool = False           # une pièce s'est détachée
     repair: bool = False             # réparation conseillée au prochain arrêt (rempli par les alertes)
     no_repair: bool = False          # le pilote a demandé de ne pas réparer
+    repair_all: bool = False         # mécanique touchée (suspension, roue) : « Tout réparer » plutôt que la carrosserie
     gap_class_ahead: float | None = None    # écart (s) avec la voiture devant dans ta catégorie
     gap_class_behind: float | None = None
     driver: str = ""

@@ -13,6 +13,8 @@
 - 🇬🇧 After the chequered flag, no more "Box, box" calls or pit menu changes.
 - 🇫🇷 Jessica prévient quand tu vas rattraper une voiture plus lente (« GT3 plus lente devant, à 2 secondes, tu la rattrapes au virage 4 »). Limites de piste annoncées à chaque avertissement. Drapeau à damier et récap quand TOI tu finis (plus quand le 1er finit). Plus de « on répare la voiture » à cause des dégâts d'une session précédente.
 - 🇬🇧 Jessica warns you when you're about to catch a slower car ("Slower GT3 ahead, 2 seconds, you'll catch it at turn 4"). Track limits announced on every warning. Chequered flag and recap when YOU finish (not when the leader does). No more "we fix the car" because of damage from a previous session.
+- 🇫🇷 Réparations : Apex choisit « Tout réparer » quand la suspension ou une roue est touchée, et « Réparer la carrosserie » pour de la tôle ou de l'aéro. À la radio : « tout réparer » ou « répare la carrosserie ».
+- 🇬🇧 Repairs: Apex picks "Repair all" when suspension or a wheel is damaged, and bodywork only for body or aero damage. By radio: "fix everything" or "fix the bodywork".
 
 ## 🇫🇷 Installation
 Télécharge **ApexRadio-Setup.exe** ci-dessous, lance-le, clique sur Suivant. C'est tout : Python et tous les composants sont inclus.

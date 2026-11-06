@@ -132,12 +132,12 @@ def loop(state: State, demo: bool) -> None:
     state.pace = pace
     questions.PIT_ACTION = lambda: crew.prepare(state.snap, state.plan, asked=True)
 
-    def set_repair(want: bool) -> bool:
+    def set_repair(want: bool, full: bool = True) -> bool:
         """Le pilote dit « répare » / « pas de réparation » : prioritaire jusqu'au prochain arrêt."""
-        damage.choice = want
+        damage.choice, damage.choice_all = want, full
         for o in (state.snap, state.plan):
             if o is not None:
-                o.repair, o.no_repair = want, not want
+                o.repair, o.no_repair, o.repair_all = want, not want, want and full
         # menu des stands déjà réglé pour cet arrêt : on le refait tout de suite
         if crew.done_for == state.snap.pit_stops and state.snap.on_track and not state.snap.in_pits:
             crew.prepare(state.snap, state.plan, asked=True)

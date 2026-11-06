@@ -49,7 +49,7 @@ def _liters(text: str) -> float | None:
     return float(m.group(1).replace(",", ".")) if m else None
 
 
-def plan_menu(menu: list, fuel_total: float | None, tyres: str | None, compound: str, repair: bool) -> tuple[list, list]:
+def plan_menu(menu: list, fuel_total: float | None, tyres: str | None, compound: str, repair: bool | None) -> tuple[list, list]:
     """Retourne (menu modifié, liste de ce qui change en clair). tyres : None/"keep"/"same"/"Wet"/"dry"."""
     menu = json.loads(json.dumps(menu))   # copie
     changes = []
@@ -97,6 +97,11 @@ def plan_menu(menu: list, fuel_total: float | None, tyres: str | None, compound:
                 it["currentSetting"] = i
                 changes.append(L("réparations", "repairs"))
                 break
+    if it and repair is False and len(it["settings"]) > 1:   # le pilote a dit « pas de réparation »
+        idx = next((i for i, s in enumerate(it["settings"])
+                    if any(n in s.get("text", "").lower() for n in ("ne pas", "pas de", "not", "no ", "none", "aucun"))), 0)
+        it["currentSetting"] = idx
+        changes.append(L("pas de réparation", "no repairs"))
     return menu, changes
 
 
@@ -129,7 +134,8 @@ class PitCrew:
         tyres = "Wet" if p.tyre_compound == "pluie" else "dry" if p.tyre_compound == "slicks" else \
             "same" if p.change_tyres else "keep" if p.change_tyres is False else None
         self.busy = True
-        threading.Thread(target=self._run, args=(fuel_total, tyres, s.compound, bool(getattr(p, "repair", False))),
+        threading.Thread(target=self._run, args=(fuel_total, tyres, s.compound,
+                                                       True if getattr(p, "repair", False) else False if getattr(p, "no_repair", False) else None),
                          daemon=True).start()
 
     def _run(self, fuel_total, tyres, compound, repair) -> None:
@@ -139,7 +145,7 @@ class PitCrew:
                 txt = ", ".join(x for x in [L(f"essence à {fuel_total:.0f} litres", f"fuel to {fuel_total:.0f} litres") if fuel_total else "",
                                             {"keep": L("on garde les pneus", "keep the tyres"), "same": L("pneus neufs", "new tyres"),
                                              "Wet": L("pneus pluie", "wet tyres"), "dry": L("pneus slicks", "slick tyres")}.get(tyres, ""),
-                                            L("réparations", "repairs") if repair else ""] if x)
+                                            L("réparations", "repairs") if repair else L("pas de réparation", "no repairs") if repair is False else ""] if x)
                 self.status = L(f"✓ Réglé (démo) : {txt}", f"✓ Set (demo): {txt}")
                 self._say(L(f"Stand réglé : {txt}.", f"Pit menu set: {txt}."))
                 return

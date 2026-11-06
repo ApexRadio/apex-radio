@@ -290,6 +290,7 @@ class Damage:
         self.part_off = False
         self.wear = None           # dégâts lus dans l'interface de LMU (aéro, suspensions)
         self.repair = False
+        self.choice = None         # choix du pilote à la radio : True / False / None (= Apex décide)
         self._fetching = False
         self._last_fetch = 0.0
 
@@ -302,8 +303,8 @@ class Damage:
             # au garage / au stand / voiture remise en piste : on prend les valeurs sans rien annoncer
             self.dents, self.flat, self.wheel_off, self.part_off = list(s.dents), list(s.flat), list(s.wheel_off), s.part_off
             if s.in_pits and s.pit_state == 3:
-                self.repair = False
-            s.repair = self.repair
+                self.repair, self.choice = False, None
+            self._apply(s)
             return
         # carrosserie
         if sum(s.dents) > sum(self.dents):
@@ -328,9 +329,13 @@ class Damage:
             say(None, L("Une pièce s'est détachée de la voiture.", "A part has come off the car."), urgent=True)
         self.part_off = s.part_off
         if s.in_pits and s.pit_state == 3:
-            self.repair = False   # arrêté au stand : on considère que c'est réparé
+            self.repair, self.choice = False, None   # arrêté au stand : on considère que c'est réglé
         self._poll_api(say)
-        s.repair = self.repair
+        self._apply(s)
+
+    def _apply(self, s) -> None:
+        s.repair = self.repair if self.choice is None else self.choice
+        s.no_repair = self.choice is False
 
     def _poll_api(self, say) -> None:
         if sys.platform != "win32" or self._fetching or time.monotonic() - self._last_fetch < 20:

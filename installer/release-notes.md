@@ -7,6 +7,8 @@
 - 🇬🇧 Gaps to the cars ahead and behind: Jessica now coaches you like a real engineer ("keep it up", "push, he's losing time", "put the pressure on", "don't give up, defend"…), with phrases that change each time.
 - 🇫🇷 Atelier setup : si tu roules avec le setup d'usine, Apex te le dit clairement et t'explique quoi faire (l'enregistrer dans le garage de LMU, par exemple sous le nom « Base »), au lieu de « choisis un setup ».
 - 🇬🇧 Setup workshop: if you're driving the default setup, Apex now says so clearly and tells you what to do (save it in the LMU garage, for example as "Base"), instead of "choose a setup".
+- 🇫🇷 Réparations à la radio : « pas de réparation », « enlève les réparations », « répare la voiture »… Jessica change le menu des stands (même s'il était déjà réglé) et répond à « il faut réparer ? ». « L'écart avec la voiture devant » donne bien la voiture devant (avant, elle répondait parfois avec celle de derrière).
+- 🇬🇧 Repairs by radio: "no repairs", "remove the repairs", "fix the car"… Jessica changes the pit menu (even if it was already set) and answers "do we need repairs?". "Gap to the car ahead" now really gives the car ahead (it sometimes answered with the car behind).
 
 ## 🇫🇷 Installation
 Télécharge **ApexRadio-Setup.exe** ci-dessous, lance-le, clique sur Suivant. C'est tout : Python et tous les composants sont inclus.

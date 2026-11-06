@@ -42,6 +42,7 @@ class Plan:
     save_per_lap: float | None = None   # litres à économiser par tour pour éviter un arrêt
     weather: str = ""
     repair: bool = False                # réparations à faire au prochain arrêt
+    no_repair: bool = False             # le pilote a dit « pas de réparation »
     fuel_total: float | None = None     # niveau d'essence voulu après l'arrêt (menu des stands LMU)
 
 
@@ -139,6 +140,7 @@ class Engineer:
         et = s.elapsed
         p = Plan()
         p.repair = s.repair
+        p.no_repair = s.no_repair
 
         # nouveau relais après un arrêt
         if s.pit_stops != self._last_stops:
@@ -244,6 +246,8 @@ class Engineer:
             parts.append(L("on garde les pneus", "we keep the tyres"))
         if p.repair:
             parts.append(L("et on répare la voiture", "and we fix the car"))
+        elif p.no_repair:
+            parts.append(L("et on ne répare pas", "and no repairs"))
         return ", ".join(parts)
 
     def _pit_calls(self, s: Snapshot, p: Plan) -> None:

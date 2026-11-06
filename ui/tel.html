@@ -51,7 +51,7 @@
     <div class="card"><div class="lab" data-en="Lap">Tour</div><div class="val" id="lap">–</div><div class="sub" id="lapsub"></div></div>
     <div class="card"><div class="lab">Delta</div><div class="val" id="delta">–</div><div class="sub" id="deltasub"></div></div>
     <div class="card"><div class="lab" data-en="Fuel">Essence</div><div class="val" id="fuel">–</div><div class="sub" id="fuelsub"></div></div>
-    <div class="card" id="msg"><div class="lab" data-en="Engineer">Jessica</div><div id="last">–</div></div>
+    <div class="card" id="msg"><div class="lab" id="engname">Jessica</div><div id="last">–</div></div>
   </div>
   <nav>
     <a class="rec" href="/records">RECORDS</a>
@@ -71,6 +71,7 @@ const fmtTime = s => { if (s == null) return "–"; const m = Math.floor(s / 60)
 function render(d) {
   const s = d.snap || {}, p = d.plan || {}, radio = d.radio || [];
   if (d.lang && d.lang !== LANG) { LANG = d.lang; applyLang(); }
+  if (d.voice && d.voice.name) $("engname").textContent = d.voice.name;
   const up = d.update || {};
   $("upd").style.display = up.latest ? "block" : "none";
   if (up.latest) $("upd").textContent = T(`Mise à jour ${up.latest} disponible : télécharge-la sur le PC`, `Update ${up.latest} available: download it on the PC`);

@@ -1,5 +1,9 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.2.4
+- 🇫🇷 Choix de la voix (menu 🎙️ du tableau de bord) : en français Jessica, Pierre ou Siwis ; en anglais LJ, Kristin, John ou Northern. La nouvelle voix se télécharge une fois (60 à 115 Mo) pendant que l'ancienne continue de parler, puis elle se présente. Le choix est gardé, et l'ingénieur se présente avec son nom.
+- 🇬🇧 Choose the voice (🎙️ menu on the dashboard): French Jessica, Pierre or Siwis; English LJ, Kristin, John or Northern. The new voice downloads once (60 to 115 MB) while the old one keeps talking, then introduces itself. Your choice is kept, and the engineer uses their own name.
+
 ## 1.2.3
 - 🇫🇷 Jessica répond toujours : « tu m'entends ? » → « Oui, je t'entends, cinq sur cinq ». Elle répond aussi à bonjour, merci, « qui es-tu ? », « qu'est-ce que tu sais faire ? », l'heure… même hors de la voiture. Une question qu'elle ne comprend pas en piste donne le point complet au lieu de rester sans réponse.
 - 🇬🇧 Jessica always answers: "can you hear me?" → "Yes, I hear you loud and clear". She also replies to hello, thanks, "who are you?", "what can you do?", the time… even out of the car. A question she doesn't understand on track gets the full update instead of no answer.

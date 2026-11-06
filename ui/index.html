@@ -172,10 +172,11 @@
       <a id="records" class="pill" href="/records" style="color:#FFE500;text-decoration:none">RECORDS</a>
       <a id="debriefs" class="pill" href="/debriefs" style="color:var(--text);text-decoration:none" data-en="DEBRIEFS">DÉBRIEFS</a>
       <button id="spot" title="Spotter gauche / droite" data-en-title="Left / right spotter">Spotter : ON</button>
+      <label class="pill" style="gap:6px;padding:4px 10px" title="Choisis la voix de ton ingénieur (téléchargée la première fois)" data-en-title="Pick your engineer's voice (downloaded the first time)">🎙️<select id="vchoice" aria-label="Voix" style="max-width:none;border:0;padding:2px 4px"></select></label>
       <button id="vtest" title="Tester la voix" data-en-title="Test the voice" data-en="Voice test">Test voix</button>
       <label class="pill" style="gap:6px" title="Volume de la radio" data-en-title="Radio volume">🔊<input type="range" id="vol" min="0.6" max="1.6" step="0.1" aria-label="Volume de la radio" style="width:90px;padding:0"></label>
       <button id="lang" title="Langue / Language">FR</button>
-      <button id="quiet" title="Mode silence : Jessica ne dit plus que l'urgent (box, neutralisation, spotter, réponses). Tu peux aussi dire « silence » ou « reparle » à la radio." data-en-title="Quiet mode: urgent calls only (box, yellow flag, spotter, answers). You can also say &quot;be quiet&quot; or &quot;talk again&quot; on the radio.">Silence : OFF</button>
+      <button id="quiet" title="Mode silence : l'ingénieur ne dit plus que l'urgent (box, neutralisation, spotter, réponses). Tu peux aussi dire « silence » ou « reparle » à la radio." data-en-title="Quiet mode: urgent calls only (box, yellow flag, spotter, answers). You can also say &quot;be quiet&quot; or &quot;talk again&quot; on the radio.">Silence : OFF</button>
       <button id="vtoggle">Radio : ON</button>
       <a id="phone" class="pill" href="/tel" target="_blank" style="color:var(--text);text-decoration:none" title="Affichage téléphone" data-en-title="Phone view">📱</a>
       <button id="quit" title="Fermer Apex Radio" aria-label="Fermer Apex Radio" data-en-title="Close Apex Radio">⏻</button>
@@ -354,6 +355,15 @@ function render(d) {
   if (d.voice && document.activeElement !== $("vol")) $("vol").value = d.voice.volume;
   if (d.voice) { $("vtoggle").textContent = `Radio : ${d.voice.on ? "ON" : "OFF"}`; $("vtoggle").className = d.voice.on ? "" : "off"; $("vtoggle").title = `${T("Voix", "Voice")} : ${d.voice.engine}`; }
 
+  if (d.voice && d.voice.list && document.activeElement !== $("vchoice")) {
+    const dl = d.voice.downloading;
+    const opts = d.voice.list.map(o => {
+      const tag = o.female ? T("femme", "female") : T("homme", "male");
+      const extra = dl && dl.name === o.name ? ` · ${dl.pct} %` : (o.ready ? "" : ` · ${o.mb} Mo`);
+      return `<option value="${o.id}" ${o.id === d.voice.choice ? "selected" : ""}>${esc(o.name)} (${tag})${extra}</option>`;
+    }).join("");
+    if ($("vchoice").innerHTML !== opts) $("vchoice").innerHTML = opts;
+  }
   if (d.voice) { $("quiet").textContent = `${T("Silence", "Quiet")} : ${d.voice.quiet ? "ON" : "OFF"}`; $("quiet").classList.toggle("on", !!d.voice.quiet); }
   if (d.phone) $("phone").title = T(`Affichage téléphone : ${d.phone} (même Wi-Fi que le PC)`, `Phone view: ${d.phone} (same Wi-Fi as the PC)`);
   const tmD = d.times || {}, dlt = tmD.delta;
@@ -571,6 +581,7 @@ $("vol").onchange = () => fetch("/api/voice/volume", { method: "POST", body: JSO
 $("vtoggle").onclick = () => fetch("/api/voice/toggle", { method: "POST" });
 $("quiet").onclick = () => fetch("/api/voice/quiet", { method: "POST" });
 $("vtest").onclick = () => fetch("/api/voice/test", { method: "POST" });
+$("vchoice").onchange = () => { fetch("/api/voice/choose", { method: "POST", body: JSON.stringify({ id: $("vchoice").value }) }); $("vchoice").blur(); };
 // ------------------------------------------------------------ atelier setup
 let WS = null, wsTimer = null, wsSeen = new Set();
 async function wsLoad(keepChecks) {

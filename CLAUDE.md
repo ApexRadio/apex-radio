@@ -7,7 +7,8 @@ Créateur : Laurent (pseudo lolotuner), francophone : **réponds-lui en françai
 ## Le projet
 - Python. Lecture de LMU par la mémoire partagée (`vendor/pyLMUSharedMemory`) et l'API REST de LMU (`localhost:6397`,
   ex. `POST /rest/garage/PitMenu/loadPitMenu` pour régler le menu des stands, `GET /rest/garage/summary` pour le setup chargé).
-- Voix Piper (FR `fr_FR-upmc-medium` « Jessica », EN `en_US-ljspeech-high`), reconnaissance faster-whisper,
+- Voix Piper au choix (`voice.py`, `VOICES`) : FR Jessica/Pierre (upmc), Siwis ; EN LJ, Kristin, John, Northern.
+  Seulement des licences sans restriction commerciale (pas Ryan/HFC : NC ; pas Tom : AGPL). Reconnaissance faster-whisper,
   tableau de bord HTTP sur le port 8765 (`ui/index.html`, vue téléphone `ui/tel.html` sur `/tel`).
 - Bilingue : `i18n.py` (`L("fr", "en")`), langue dans `config.json`.
 - Fenêtre : `desktop.py` (pywebview/WebView2, logo via WM_SETICON, icône près de l'horloge avec pystray,

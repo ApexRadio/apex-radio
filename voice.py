@@ -1,8 +1,9 @@
 """
 Voix de l'ingénieur (étape 2).
 
-- Voix principale : Piper (gratuit, local), voix française "Jessica" (fr_FR-upmc-medium).
-  Le fichier de voix (~77 Mo) est téléchargé une seule fois au premier lancement.
+- Voix principale : Piper (gratuit, local). Plusieurs voix au choix (menu « Voix » du tableau de bord),
+  par défaut « Jessica » en français et « LJ » en anglais. Chaque fichier de voix (~60 à 115 Mo)
+  est téléchargé une seule fois, la première fois qu'on la choisit.
 - Effet radio : filtre passe-bande + légère saturation + petit "clic" de micro.
 - Secours : si Piper n'est pas disponible, la voix intégrée de Windows prend le relais.
 
@@ -27,10 +28,46 @@ from paths import DATA, LOCAL  # noqa: E402
 MODELS = LOCAL / "models"
 import i18n
 
-VOICES = {   # langue -> (nom du modèle, dossier sur Hugging Face, n° de voix, nom affiché)
-    "fr": ("fr_FR-upmc-medium", "fr/fr_FR/upmc/medium/", 0, "Jessica"),        # CC BY-SA 4.0 (MaryTTS upmc)
-    "en": ("en_US-ljspeech-high", "en/en_US/ljspeech/high/", 0, "LJ"),          # domaine public (LJ Speech)
+# Voix proposées : seulement des licences libres sans restriction commerciale (vérifié sur les MODEL_CARD de Piper).
+# id -> (langue, nom du modèle, dossier sur Hugging Face, n° de voix, nom affiché, femme ?, taille en Mo)
+VOICES = {
+    "jessica":  ("fr", "fr_FR-upmc-medium", "fr/fr_FR/upmc/medium/", 0, "Jessica", True, 77),   # CC BY-SA 4.0 (MaryTTS upmc)
+    "pierre":   ("fr", "fr_FR-upmc-medium", "fr/fr_FR/upmc/medium/", 1, "Pierre", False, 77),   # même fichier que Jessica
+    "siwis":    ("fr", "fr_FR-siwis-medium", "fr/fr_FR/siwis/medium/", 0, "Siwis", True, 63),   # CC BY 4.0 (SIWIS, Univ. Édimbourg)
+    "lj":       ("en", "en_US-ljspeech-high", "en/en_US/ljspeech/high/", 0, "LJ", True, 114),   # domaine public (LJ Speech)
+    "kristin":  ("en", "en_US-kristin-medium", "en/en_US/kristin/medium/", 0, "Kristin", True, 64),   # domaine public (LibriVox)
+    "john":     ("en", "en_US-john-medium", "en/en_US/john/medium/", 0, "John", False, 64),     # domaine public (LibriVox)
+    "northern": ("en", "en_GB-northern_english_male-medium", "en/en_GB/northern_english_male/medium/", 0,
+                 "Northern", False, 63),                                                       # CC BY-SA 4.0 (OpenSLR 83)
 }
+DEFAULT = {"fr": "jessica", "en": "lj"}
+CHOICE = dict(DEFAULT)   # langue -> id de voix choisie (rempli depuis config.json au démarrage)
+
+
+def current_id(lang: str | None = None) -> str:
+    lang = lang or i18n.LANG
+    vid = CHOICE.get(lang)
+    return vid if vid in VOICES and VOICES[vid][0] == lang else DEFAULT[lang]
+
+
+def L_ready(name: str) -> str:
+    return i18n.L(f"Ici {name}, je prends la radio.", f"{name} here, I've got the radio.")
+
+
+def engineer_name() -> str:
+    return VOICES[current_id()][4]
+
+
+def engineer_female() -> bool:
+    return VOICES[current_id()][5]
+
+
+def catalog(lang: str | None = None) -> list[dict]:
+    """Voix proposées pour une langue, pour le menu du tableau de bord."""
+    lang = lang or i18n.LANG
+    return [{"id": k, "name": v[4], "female": v[5], "mb": v[6],
+             "ready": (MODELS / f"{v[1]}.onnx").exists()}
+            for k, v in VOICES.items() if v[0] == lang]
 BASE_URL = "https://huggingface.co/rhasspy/piper-voices/resolve/main/"
 SPEAKER = 0
 SPEED = 0.92         # < 1 = plus rapide
@@ -49,13 +86,15 @@ def spoken(text: str) -> str:
     return text
 
 
-def _download(url: str, dest: Path) -> None:
+def _download(url: str, dest: Path, progress=None) -> None:
     tmp = dest.with_suffix(dest.suffix + ".part")
     print(f"  Téléchargement de la voix : {dest.name} …")
     with urllib.request.urlopen(url, timeout=60) as r, open(tmp, "wb") as f:
         total = int(r.headers.get("Content-Length") or 0)
         done = 0
         while chunk := r.read(1 << 16):
+            if progress and total:
+                progress(done * 100 // total)
             f.write(chunk)
             done += len(chunk)
             if total:
@@ -91,6 +130,8 @@ class Voice:
         self._q: queue.PriorityQueue = queue.PriorityQueue()
         self._n = 0
         self._piper = None
+        self.loaded = None          # (langue, id de voix) actuellement chargé
+        self.downloading = None     # {"name": ..., "pct": ...} pendant un téléchargement
         threading.Thread(target=self._worker, daemon=True).start()
 
     # ------------------------------------------------------------ chargement
@@ -98,23 +139,64 @@ class Voice:
         try:
             from piper import PiperVoice  # noqa
             MODELS.mkdir(parents=True, exist_ok=True)
-            name, folder, self.speaker, shown = VOICES[i18n.LANG]
-            url = BASE_URL + folder + name
-            onnx = MODELS / f"{name}.onnx"
-            cfg = MODELS / f"{name}.onnx.json"
-            if not cfg.exists():
-                _download(url + ".onnx.json", cfg)
-            if not onnx.exists():
-                _download(url + ".onnx", onnx)
-            self._piper = PiperVoice.load(onnx, config_path=cfg)
+            vid = current_id()
+            _, name, folder, speaker, shown, _, _ = VOICES[vid]
+            onnx, cfg = self._files(vid)
+            if not (cfg.exists() and onnx.exists()):
+                if self._piper is not None and self.loaded and self.loaded[0] == i18n.LANG:
+                    # même langue : on garde la voix actuelle pendant le téléchargement de la nouvelle (en arrière-plan)
+                    if not self.downloading:
+                        threading.Thread(target=self._fetch, args=(vid,), daemon=True).start()
+                    return
+                self._fetch(vid)          # tout premier lancement : il faut bien une voix
+            if self._piper is None or getattr(self, "_model", None) != name:
+                self._piper = PiperVoice.load(onnx, config_path=cfg)
+                self._model = name
+            self.speaker = speaker
+            self.loaded = (i18n.LANG, vid)
             self.engine = f"Piper · {shown}"
         except Exception as e:
             import traceback; traceback.print_exc()
-            print(f"  Voix Piper indisponible ({e!r}). Utilisation de la voix Windows.")
-            self.engine = "Windows" if sys.platform == "win32" else "aucune"
+            self.loaded = (i18n.LANG, current_id())   # pas de nouvel essai à chaque annonce
+            if self._piper is None:
+                print(f"  Voix Piper indisponible ({e!r}). Utilisation de la voix Windows.")
+                self.engine = "Windows" if sys.platform == "win32" else "aucune"
+            else:
+                print(f"  Nouvelle voix indisponible ({e!r}), on garde la voix actuelle.")
         print(f"  Voix : {self.engine}")
 
+    @staticmethod
+    def _files(vid: str) -> tuple[Path, Path]:
+        name = VOICES[vid][1]
+        return MODELS / f"{name}.onnx", MODELS / f"{name}.onnx.json"
+
+    def _fetch(self, vid: str) -> None:
+        """Télécharge les fichiers d'une voix (une seule fois)."""
+        _, name, folder, _, shown, _, _ = VOICES[vid]
+        url = BASE_URL + folder + name
+        onnx, cfg = self._files(vid)
+        self.downloading = {"name": shown, "pct": 0}
+        try:
+            if not cfg.exists():
+                _download(url + ".onnx.json", cfg)
+            if not onnx.exists():
+                _download(url + ".onnx", onnx, lambda pct: self.downloading and self.downloading.update(pct=pct))
+        except Exception as e:
+            print(f"  Téléchargement de la voix {shown} impossible : {e!r}")
+            self.loaded = (i18n.LANG, vid)   # on n'insiste pas
+        finally:
+            self.downloading = None
+        if threading.current_thread() is not threading.main_thread() and self._piper is not None:
+            self.say(L_ready(shown), urgent=True)   # elle se présente dès qu'elle est prête
+
     # ------------------------------------------------------------ API
+    def choose(self, vid: str) -> bool:
+        """Change de voix (pour sa langue). Elle est chargée (et téléchargée si besoin) avant la prochaine annonce."""
+        if vid not in VOICES:
+            return False
+        CHOICE[VOICES[vid][0]] = vid
+        return True
+
     def flush(self) -> None:
         """Vide la file d'attente (changement de langue)."""
         try:
@@ -167,13 +249,10 @@ class Voice:
 
     def _worker(self) -> None:
         self._load()
-        loaded = i18n.LANG
         while True:
             _, _, text, t0, spot = self._q.get()
             import time as _t
-            if i18n.LANG != loaded:           # langue changée : on charge l'autre voix
-                loaded = i18n.LANG
-                self._piper = None
+            if self.loaded != (i18n.LANG, current_id()):   # langue ou voix changée : on charge l'autre voix
                 self._load()
             if spot and _t.monotonic() - t0 > 1.2:
                 continue   # info du spotter périmée : on ne la dit pas

@@ -26,6 +26,7 @@ from pathlib import Path
 
 from strategy import Engineer
 from telemetry import DemoSource, Snapshot
+import voice as voices
 from voice import Voice
 import questions
 import i18n
@@ -74,6 +75,7 @@ class State:
         self.map = TrackMap()
         self.radio = Radio(self.on_question)
         i18n.set_lang(self.radio.cfg.get("lang") or system_lang())   # avant la voix : elle charge le modèle de la bonne langue
+        voices.CHOICE.update(self.radio.cfg.get("voices") or {})      # voix choisie pour chaque langue
         self.voice = Voice()
         self.workshop = None
         self.beh = None
@@ -236,7 +238,9 @@ def loop(state: State, demo: bool) -> None:
                 "plan": asdict(plan),
                 "radio": list(eng.radio),
                 "voice": {"on": state.voice.enabled, "engine": state.voice.engine, "volume": state.voice.volume,
-                          "quiet": state.voice.quiet},
+                          "quiet": state.voice.quiet, "choice": voices.current_id(), "list": voices.catalog(),
+                          "name": voices.engineer_name(),
+                          "downloading": state.voice.downloading},
                 "penalty": pen.ui(snap),
                 "phone": PHONE_URL,
                 "lang": i18n.LANG,
@@ -492,6 +496,18 @@ def make_handler(state: State):
                 n = int(self.headers.get("Content-Length") or 0)
                 q = json.loads(self.rfile.read(n) or b"{}").get("q", "")
                 threading.Thread(target=state.on_question, args=(q,), daemon=True).start()
+            elif self.path == "/api/voice/choose":
+                n = int(self.headers.get("Content-Length") or 0)
+                vid = json.loads(self.rfile.read(n) or b"{}").get("id", "")
+                if v.choose(vid):
+                    state.radio.cfg["voices"] = dict(voices.CHOICE)
+                    save_config(state.radio.cfg)
+                    name = voices.engineer_name()
+                    if all(f.exists() for f in v._files(vid)):
+                        v.say(voices.L_ready(name), urgent=True)
+                    else:   # l'ancienne voix prévient ; la nouvelle se présentera une fois téléchargée
+                        v.say(L(f"Je télécharge la voix de {name}, {'elle' if voices.engineer_female() else 'il'} prend la radio dans une minute.",
+                                f"Downloading {name}'s voice, it'll take over the radio in a minute."), urgent=True)
             elif self.path == "/api/voice/test":
                 v.say(L("Radio check. Tu m'entends bien ? On est prêts pour la course.", "Radio check. Do you copy? We're ready to race."))
             else:

@@ -27,7 +27,7 @@ no account, no internet needed once installed.
   (never touches your own setup files). Starting fuel calculated from your consumption.
 - **Records and debriefs**: best lap per track and class, progress chart, a report for every session.
 - **Phone view**: open `http://<your-PC-IP>:8765/tel` on your phone (same Wi-Fi).
-- **French and English**, voice included (button at the top of the dashboard, or set on first launch from Windows language).
+- **French and English**, voice included (button at the top of the dashboard, or set on first launch from Windows language), with several voices to choose from (female and male).
 
 ### Install
 1. Download **[ApexRadio-Setup.exe](https://github.com/ApexRadio/apex-radio/releases/latest)** and run it (Python and everything is included).
@@ -42,7 +42,8 @@ Developers: you can also run from source with `Lancer.bat` (needs Python 3.11+).
 Apex Radio is free software under the **GNU GPL v3** (see `LICENSE`).
 It uses: Piper TTS (GPL-3.0), faster-whisper and Whisper (MIT), pyLMUSharedMemory (MIT), pygame-ce (LGPL-2.1),
 and others listed in `THIRD_PARTY_LICENSES.txt`.
-Voices: French "Jessica" from the MaryTTS **upmc** recordings (CC BY-SA 4.0); English voice trained on **LJ Speech** (public domain).
+Voices (pick one in the dashboard): French "Jessica" and "Pierre" (MaryTTS **upmc**, CC BY-SA 4.0), "Siwis" (SIWIS, CC BY 4.0);
+English "LJ" (**LJ Speech**, public domain), "Kristin" and "John" (LibriVox, public domain), "Northern" (OpenSLR 83, CC BY-SA 4.0).
 Not affiliated with Studio 397, Motorsport Games or the ACO.
 
 ### Community and support
@@ -68,7 +69,7 @@ pas d'abonnement, pas de compte, pas besoin d'internet une fois installé.
   (il ne touche jamais à tes propres setups). Essence de départ calculée d'après ta conso.
 - **Records et débriefs** : meilleur tour par circuit et catégorie, courbe de progression, un rapport par session.
 - **Affichage téléphone** : `http://<IP-du-PC>:8765/tel` sur ton téléphone (même Wi-Fi).
-- **Français et anglais**, voix comprise (bouton en haut du tableau de bord).
+- **Français et anglais**, voix comprise (bouton en haut du tableau de bord), avec plusieurs voix au choix (femme et homme).
 
 ### Installation
 1. Télécharge **[ApexRadio-Setup.exe](https://github.com/ApexRadio/apex-radio/releases/latest)** et lance-le (Python et tout le reste sont inclus).
@@ -83,7 +84,8 @@ Pour les développeurs : on peut aussi lancer depuis le code avec `Lancer.bat` (
 Apex Radio est un logiciel libre sous licence **GNU GPL v3** (voir `LICENSE`).
 Composants : Piper TTS (GPL-3.0), faster-whisper et Whisper (MIT), pyLMUSharedMemory (MIT), pygame-ce (LGPL-2.1),
 et les autres listés dans `THIRD_PARTY_LICENSES.txt`.
-Voix : « Jessica » (français), enregistrements MaryTTS **upmc** (CC BY-SA 4.0) ; voix anglaise entraînée sur **LJ Speech** (domaine public).
+Voix (au choix dans le tableau de bord) : « Jessica » et « Pierre » (MaryTTS **upmc**, CC BY-SA 4.0), « Siwis » (SIWIS, CC BY 4.0) ;
+en anglais « LJ » (**LJ Speech**, domaine public), « Kristin » et « John » (LibriVox, domaine public), « Northern » (OpenSLR 83, CC BY-SA 4.0).
 Sans lien avec Studio 397, Motorsport Games ou l'ACO.
 
 ### Communauté et soutien

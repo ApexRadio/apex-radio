@@ -11,7 +11,7 @@ Ce que fait l'appli :
 - lit essence, énergie virtuelle, pneus, tours, écarts, météo en direct
 - calcule la conso par tour, l'autonomie, le nombre d'arrêts
 - dit à quel tour rentrer, combien d'essence / d'énergie remettre, pneus ou pas
-- annonces radio À VOIX HAUTE (voix Jessica, effet radio)
+- annonces radio À VOIX HAUTE (effet radio), plusieurs voix au choix : Jessica, Pierre, Siwis (menu 🎙️)
   Boutons en haut du tableau de bord : "Tester la voix" et "Radio : ON/OFF".
   Le premier lancement installe la voix (1 à 3 minutes, ~80 Mo).
 

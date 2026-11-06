@@ -312,7 +312,10 @@ def _thanks(s: Snapshot) -> str:
 
 
 def _who(s: Snapshot) -> str:
-    return L("Je suis Jessica, ton ingénieure de course.", "I'm Jessica, your race engineer.")
+    import voice
+    name = voice.engineer_name()
+    return L(f"Je suis {name}, ton {'ingénieure' if voice.engineer_female() else 'ingénieur'} de course.",
+             f"I'm {name}, your race engineer.")
 
 
 def _help(s: Snapshot) -> str:

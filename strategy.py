@@ -304,5 +304,5 @@ class Engineer:
         if not s.yellow and self._was_yellow:
             self.say(None, L("Fin de neutralisation, la course reprend.", "Yellow's over, we're racing again."), elapsed=s.elapsed)
         self._was_yellow = s.yellow
-        if s.game_phase == 8:
+        if s.done:
             self.say("once:finish", L("Drapeau à damier ! Bien joué.", "Chequered flag! Well done."), elapsed=s.elapsed)

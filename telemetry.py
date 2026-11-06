@@ -30,7 +30,8 @@ class Snapshot:
     car: str = ""
     car_class: str = ""
     session: str = ""                # "course", "qualif", "essais", "warmup"
-    game_phase: int = 0              # 5 = vert, 6 = FCY/SC, 7 = arrêtée, 8 = terminée
+    game_phase: int = 0              # 5 = vert, 6 = FCY/SC, 7 = arrêtée, 8 = terminée (le 1er a fini)
+    finish_status: int = 0           # pour TA voiture : 0 = en course, 1 = arrivée, 2 = abandon, 3 = disqualifié
     time_left: float | None = None   # secondes restantes (course au temps)
     max_laps: int | None = None      # course au nombre de tours
     elapsed: float = 0.0
@@ -79,6 +80,13 @@ class Snapshot:
     driver: str = ""
     lap_time: float | None = None    # temps écoulé dans le tour en cours (s)
     penalties: int = 0               # pénalités à purger (drive-through / stop-go)
+
+    @property
+    def done(self) -> bool:
+        """TU as fini ta session (en course : quand toi tu passes le drapeau, pas le 1er)."""
+        if self.session == "course":
+            return self.finish_status >= 1
+        return self.game_phase == 8 or self.finish_status >= 1
 
 
 def sector_index(m_sector: int) -> int:
@@ -281,6 +289,7 @@ class LMUSource:
         s.part_off = bool(tel.mDetached)
         s.driver = _txt(sc.mDriverName)
         s.penalties = max(0, int(sc.mNumPenalties))
+        s.finish_status = int(sc.mFinishStatus)
         lt = tel.mElapsedTime - tel.mLapStartET
         s.lap_time = lt if 0 <= lt < 3600 else None
 
@@ -553,4 +562,5 @@ class DemoSource:
                              "last_lap": sum(sec) if sec else None, "sectors": sec})
         if s.time_left <= 0:
             s.game_phase = 8
+            s.finish_status = 1
         return s

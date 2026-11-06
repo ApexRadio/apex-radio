@@ -20,6 +20,8 @@ import urllib.request
 
 from i18n import L, dec
 
+L_ = L   # dans le trafic, « L » sert aussi à la longueur du circuit
+
 
 def WHEEL_NAME(i: int) -> str:
     return L("avant gauche|avant droit|arrière gauche|arrière droit", "front left|front right|rear left|rear right").split("|")[i]
@@ -113,7 +115,10 @@ class Spotter:
 class Traffic:
     GLOBAL_GAP = 30.0        # s : pas plus d'une annonce de trafic toutes les 30 s
 
-    def __init__(self) -> None:
+    CATCH_WINDOW = (8.0, 25.0)  # s : on prévient quand on va rattraper une voiture plus lente dans 8 à 25 s
+
+    def __init__(self, behavior=None) -> None:
+        self.beh = behavior
         self.said = {}       # (id, type) -> heure
         self.prev_gap = {}
         self.last = -999.0
@@ -156,7 +161,51 @@ class Traffic:
                         L(f"elle sera sur toi dans {math.ceil(catch)} tours", f"it'll be on you in {math.ceil(catch)} laps")
                     say(None, L(f"{name} qui arrive derrière, {gap:.0f} seconde{'s' if round(gap) > 1 else ''}, {when}.",
                                 f"{name} coming up behind, {gap:.0f} second{'s' if round(gap) != 1 else ''}, {when}."))
-            # catégorie plus lente devant : plus annoncée (en LMP2 on double des GT3 à chaque tour, ça faisait du bruit)
+        self._slower_ahead(s, me, pace, mine, speed, now, say)
+
+    def _slower_ahead(self, s, me, pace, mine, speed, now, say) -> None:
+        """Catégorie plus lente devant : on prévient où tu vas la rattraper, pour anticiper le dépassement.
+        Une seule annonce à la fois (la plus proche), pas plus d'une fois toutes les 2 minutes par voiture."""
+        L = s.track_len
+        slow = []
+        for c in s.cars:
+            if c.get("me") or c.get("pits") or c["c"] == me["c"] or c["c"] not in pace:
+                continue
+            if pace[c["c"]] - mine <= 0.02 * mine:      # pas nettement plus lente
+                continue
+            gap = ((c["f"] - me["f"]) % 1) * L / speed  # temps pour arriver là où elle est
+            key = (c["id"], "front")
+            prev = self.prev_gap.get(key)
+            self.prev_gap[key] = gap
+            if gap < 8:
+                slow.append((gap, prev, c, key))
+        slow.sort(key=lambda x: x[0])
+        if now - self.last < self.GLOBAL_GAP:
+            return
+        lo, hi = self.CATCH_WINDOW
+        for gap, prev, c, key in slow:
+            if prev is None or prev <= gap or now - self.said.get(key, -999) < 120:
+                continue
+            closing = speed - L / pace[c["c"]]           # m/s gagnés sur elle
+            if closing <= 0:
+                continue
+            t = gap * speed / closing                     # secondes avant de la rattraper
+            if not (lo < t < hi):                         # trop tôt (inutile) ou trop tard (déjà dessus)
+                continue
+            group = [x for x in slow if x[2]["c"] == c["c"] and 0 <= x[0] - gap < 2.0]
+            for x in group:
+                self.said[x[3]] = now
+            self.last = now
+            name = class_name(c["cls"])
+            corner = self.beh.corner_at((me["f"] + t * speed / L) % 1) if self.beh else None
+            where = L_(f", tu la rattrapes au virage {corner}", f", you'll catch it at turn {corner}") if corner else ""
+            sec = L_(f"{gap:.0f} seconde{'s' if round(gap) > 1 else ''}", f"{gap:.0f} second{'s' if round(gap) != 1 else ''}")
+            if len(group) > 1:
+                where = where.replace("la rattrapes", "les rattrapes").replace("catch it", "catch them")
+                say(None, L_(f"{len(group)} {name} devant, à {sec}{where}.", f"{len(group)} {name} cars ahead, {sec}{where}."))
+            else:
+                say(None, L_(f"{name} plus lente devant, à {sec}{where}.", f"Slower {name} ahead, {sec}{where}."))
+            return
 
 
 # ======================================================================= 3. écarts
@@ -272,7 +321,9 @@ class TrackLimits:
             if s.tl_per_penalty:
                 left = s.tl_per_penalty - s.tl_steps
                 if left > 3:
-                    return    # encore loin de la pénalité : pas la peine d'en parler
+                    say(None, L(f"Limites de piste{where}, avertissement {s.tl_steps} sur {s.tl_per_penalty}.",
+                                f"Track limits{where}, warning {s.tl_steps} of {s.tl_per_penalty}."))
+                    return
                 tail = L("la prochaine, c'est la pénalité !", "next one is a penalty!") if left <= 1 else \
                     L(f"encore {left} avant la pénalité.", f"{left} more before a penalty.")
                 say(None, L(f"Limites de piste{where}, avertissement {s.tl_steps} sur {s.tl_per_penalty}, {tail}",
@@ -293,10 +344,15 @@ class Damage:
         self.choice = None         # choix du pilote à la radio : True / False / None (= Apex décide)
         self._fetching = False
         self._last_fetch = 0.0
+        self._session = None
 
     def update(self, s, say) -> None:
         if not s.on_track:
             return
+        key = (s.track, s.session_code)
+        if key != self._session:          # nouvelle session : on repart d'une voiture neuve
+            self._session = key
+            self.repair, self.choice, self.wear, self.dents = False, None, None, None
         me = next((c for c in s.cars if c.get("me")), None)
         moving = me is not None and me.get("spd", 0) > 5 and not s.in_pits
         if self.dents is None or not moving:
@@ -334,6 +390,12 @@ class Damage:
         self._apply(s)
 
     def _apply(self, s) -> None:
+        # plus aucun dégât lisible (voiture réparée ou remise à neuf) : plus rien à réparer
+        if self.repair and self.wear is not None and not any(s.flat) and not any(s.wheel_off) and max(s.dents or [0]) == 0:
+            aero = self.wear.get("aero") or 0
+            susp = [v for v in (self.wear.get("susp") or []) if isinstance(v, (int, float))]
+            if aero < 0.05 and all(v < 0.05 for v in susp):
+                self.repair = False
         s.repair = self.repair if self.choice is None else self.choice
         s.no_repair = self.choice is False
 

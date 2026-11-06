@@ -121,7 +121,7 @@ def loop(state: State, demo: bool) -> None:
     spotter = Spotter(state.voice)
     spotter.enabled = state.radio.cfg.get("spotter", True)
     state.spotter = spotter
-    traffic, trend, limits, damage = Traffic(), GapTrend(), TrackLimits(beh), Damage()
+    traffic, trend, limits, damage = Traffic(beh), GapTrend(), TrackLimits(beh), Damage()
     weather = Weather(demo)
     recorder = debrief.Recorder()
     session_end = {"key": None, "prompt": 0}
@@ -206,7 +206,7 @@ def loop(state: State, demo: bool) -> None:
             state.fuel.update(snap, plan, eng)
             # fin de session (drapeau à damier) : rappel des réglages garage + ouverture de l'atelier
             key = (snap.track, snap.session_code)
-            if snap.on_track and snap.game_phase == 8 and session_end["key"] != key and snap.laps_done >= 3:
+            if snap.on_track and snap.done and session_end["key"] != key and snap.laps_done >= 3:
                 session_end["key"] = key
                 msg = beh.end_of_session()
                 if msg:

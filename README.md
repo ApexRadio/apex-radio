@@ -32,6 +32,9 @@ no account, no internet needed once installed.
 ### Install
 1. Download **[ApexRadio-Setup.exe](https://github.com/ApexRadio/apex-radio/releases/latest)** and run it (Python and everything is included).
    If Windows says "Windows protected your PC": **More info** → **Run anyway** (the app isn't signed yet).
+   It's not a virus warning: Windows just doesn't know unsigned apps yet. The installer is built automatically by GitHub from this public code.
+
+   ![Installing past the blue Windows message](docs/installation-guide.png)
 2. Start LMU and get in your car, then launch **Apex Radio** from the desktop icon. The dashboard opens in your browser.
 3. Click **CHOOSE THE RADIO BUTTON** and press the wheel button you want for push-to-talk.
 
@@ -73,6 +76,9 @@ pas d'abonnement, pas de compte, pas besoin d'internet une fois installé.
 ### Installation
 1. Télécharge **[ApexRadio-Setup.exe](https://github.com/ApexRadio/apex-radio/releases/latest)** et lance-le (Python et tout le reste sont inclus).
    Si Windows affiche « Windows a protégé votre ordinateur » : **Informations complémentaires** → **Exécuter quand même** (l'appli n'est pas encore signée).
+   Ce n'est pas une alerte virus : Windows ne connaît simplement pas encore les applis non signées. L'installateur est fabriqué automatiquement par GitHub à partir de ce code public.
+
+   ![Installer malgré le message bleu de Windows](docs/installation-guide.png)
 2. Lance LMU, monte dans ta voiture, puis ouvre **Apex Radio** avec l'icône du bureau. Le tableau de bord s'ouvre dans ton navigateur.
 3. Clique sur **CHOISIR LE BOUTON RADIO** et appuie sur le bouton du volant que tu veux utiliser.
 

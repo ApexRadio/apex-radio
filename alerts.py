@@ -6,6 +6,8 @@ Alertes radio supplémentaires :
 4. Limites de piste
 5. Prévisions météo (interface locale de LMU)
 8. Dégâts après un contact
+9. Pneus et freins froids (départ, sortie des stands)
+10. Voiture en piste (LMP2 version ELMS ou WEC)
 """
 
 from __future__ import annotations
@@ -330,6 +332,118 @@ class TrackLimits:
                             f"Track limits{where}, warning {s.tl_steps} of {s.tl_per_penalty}, {tail}"), urgent=left <= 1)
             else:
                 say(None, L(f"Limites de piste{where}, avertissement numéro {s.tl_steps}.", f"Track limits{where}, warning number {s.tl_steps}."))
+
+
+# ======================================================================= 9. pneus et freins froids
+CARBON = ("HYPER", "LMH", "LMDH", "LMP2", "GTE")   # freins carbone : ils chauffent beaucoup plus
+
+
+class WarmUp:
+    """Au départ de la course et à chaque sortie des stands : « pneus froids, freins froids »,
+    puis « tout est en température, tu peux attaquer »."""
+    TIMEOUT = 300.0      # s : si ça ne chauffe jamais (pluie, rythme lent), on n'insiste pas
+
+    def __init__(self) -> None:
+        self.key = None          # (circuit, session) : un seul départ par séance
+        self.was_in_pits = None
+        self.watch = None        # moment (temps de séance) où on surveille
+        self.warned = False
+
+    @staticmethod
+    def limits(s) -> tuple[float, float]:
+        opt = s.tyre_opt if 40 <= (s.tyre_opt or 0) <= 150 else 80.0
+        c = (s.car_class or "").upper()
+        brake = 300.0 if any(k in c for k in CARBON) else 200.0
+        return opt - 12.0, brake
+
+    def cold(self, s) -> tuple[bool, bool]:
+        tyre_ok, brake_ok = self.limits(s)
+        tyres = [t for t in s.tyre_temp if t > -50]
+        brakes = [b for b in s.brake_temp[:2] if b > -50]   # freins avant : ceux qui comptent au premier virage
+        tc = bool(tyres) and sum(tyres) / len(tyres) < tyre_ok
+        bc = bool(brakes) and sum(brakes) / len(brakes) < brake_ok
+        return tc, bc
+
+    def start(self, s) -> None:
+        self.watch, self.warned = s.elapsed, False
+
+    def update(self, s, say) -> None:
+        if not s.on_track or s.done:
+            self.was_in_pits = None
+            return
+        key = (s.track, s.session_code)
+        # départ de la course : tour de formation ou feu vert, au 1er tour
+        if s.session == "course" and key != self.key and s.game_phase in (3, 4, 5) and s.laps_done == 0 and not s.in_pits:
+            self.key = key
+            self.start(s)
+        # sortie des stands (ou du garage), dans n'importe quelle séance
+        if self.was_in_pits and not s.in_pits:
+            self.start(s)
+        self.was_in_pits = s.in_pits
+        if self.watch is None:
+            return
+        if s.elapsed - self.watch > self.TIMEOUT or s.elapsed < self.watch:
+            self.watch = None
+            return
+        tc, bc = self.cold(s)
+        if not self.warned:
+            self.warned = True
+            if tc and bc:
+                say(None, L("Attention, pneus froids et freins froids. Doucement au premier freinage.",
+                                "Careful, cold tyres and cold brakes. Easy on the first braking zone."))
+            elif tc:
+                say(None, L("Attention, pneus froids. Fais-les monter en température avant d'attaquer.",
+                                "Careful, cold tyres. Bring them up to temperature before you push."))
+            elif bc:
+                say(None, L("Attention, freins froids. Freine plus tôt les premiers virages.",
+                                "Careful, cold brakes. Brake earlier for the first few corners."))
+            else:
+                self.watch = None    # déjà chaud : rien à dire
+            return
+        if not tc and not bc:
+            self.watch = None
+            say(None, L("Pneus et freins en température. Vas-y, tu peux attaquer !",
+                            "Tyres and brakes are up to temperature. Go on, you can push now!"))
+
+
+# ======================================================================= 10. voiture en piste
+def car_label(car_class: str, car: str = "") -> str:
+    """« LMP2, version ELMS » : la LMP2 existe en deux versions dans LMU."""
+    from setups import series_tag
+    name = class_name(car_class)
+    t = series_tag(car_class, car)
+    return L(f"{name}, version {t}", f"{name}, {t} version") if t else name
+
+
+def car_sentence(car_class: str, car: str = "") -> str:
+    if not car_class:
+        return L("Je ne vois pas encore ta voiture. Va au garage ou monte dans la voiture.",
+                 "I can't see your car yet. Go to the garage or get in the car.")
+    from setups import series_tag
+    out = L(f"Tu es en {car_label(car_class, car)}.", f"You're in the {car_label(car_class, car)}.")
+    t = series_tag(car_class, car)
+    if t:
+        out += L(f" Charge bien un setup fait pour la {class_name(car_class)} {t}.",
+                 f" Make sure you load a setup made for the {t} {class_name(car_class)}.")
+    return out
+
+
+class CarInfo:
+    """Dès que tu prends une voiture (au garage, avant de choisir le setup), Apex dit laquelle."""
+
+    def __init__(self) -> None:
+        self.key = None
+
+    def update(self, s, say) -> None:
+        if not s.connected or not s.car_class:
+            return
+        key = (s.track, s.car_class, s.car)
+        if key == self.key:
+            return
+        first = self.key is None or self.key[:2] != key[:2]
+        self.key = key
+        if first:
+            say(None, car_sentence(s.car_class, s.car))
 
 
 # ======================================================================= 8. dégâts

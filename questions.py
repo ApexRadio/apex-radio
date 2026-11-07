@@ -338,6 +338,11 @@ def _how_are_you(s: Snapshot) -> str | None:
     return L("Ça va très bien, merci ! Prête pour la course.", "All good, thanks! Ready for the race.")
 
 
+def _car(s: Snapshot) -> str:
+    from alerts import car_sentence
+    return car_sentence(s.car_class, s.car)
+
+
 def _joke(s: Snapshot) -> str:
     return L("Les blagues, c'est après le drapeau à damier. Reste concentré !",
              "Jokes are for after the chequered flag. Stay focused!")
@@ -354,6 +359,8 @@ CHAT = [
     (r"quelle heure|l heure qu il|what time", _time),
     (r"\bca va\b|comment vas tu|how are you", _how_are_you),
     (r"blague|joke|funny", _joke),
+    (r"\belms\b|\be l m s\b|\bwec\b|\bw e c\b|quelle voiture|quelle categorie|quel championnat|"
+     r"which car|what car|which class|which championship", _car),
 ]
 
 

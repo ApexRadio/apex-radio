@@ -40,7 +40,7 @@ from behavior import Behavior
 from setups import Workshop
 from incidents import Incidents
 from lmu_probe import Probe
-from alerts import Spotter, Traffic, GapTrend, TrackLimits, Damage, Weather
+from alerts import Spotter, Traffic, GapTrend, TrackLimits, Damage, Weather, WarmUp, CarInfo, car_label
 import debrief
 from pitmenu import PitCrew
 from radio import save_config
@@ -124,6 +124,7 @@ def loop(state: State, demo: bool) -> None:
     spotter.enabled = state.radio.cfg.get("spotter", True)
     state.spotter = spotter
     traffic, trend, limits, damage = Traffic(beh), GapTrend(), TrackLimits(beh), Damage()
+    warmup, carinfo = WarmUp(), CarInfo()
     weather = Weather(demo)
     recorder = debrief.Recorder()
     session_end = {"key": None, "prompt": 0}
@@ -156,9 +157,30 @@ def loop(state: State, demo: bool) -> None:
                     f = state.workshop.sync_active(state.snap.track)
                     if f:   # un autre setup a remplacé celui qu'on analysait
                         beh.reset_analysis()
+                    check_setup_class()
             except Exception:
                 traceback.print_exc()
             time.sleep(15)
+
+    warned_setup = set()
+
+    def check_setup_class():
+        """Le setup chargé a-t-il été fait pour cette version de la voiture (LMP2 / LMP2 ELMS…) ?"""
+        ws, sn = state.workshop, state.snap
+        ws.car_class, ws.car = sn.car_class, sn.car
+        m = ws.class_mismatch(sn.track)
+        ws.mismatch = m
+        if not m:
+            return
+        k = (sn.track, m["file"], m["car"])
+        if k in warned_setup:
+            return
+        warned_setup.add(k)
+        say(None, i18n.L(
+            f"Attention, ton setup {m['file'][:-4]} a été fait pour la {car_label(m['setup'])}, "
+            f"mais tu es en {car_label(m['car'], sn.car)}. Charge plutôt un setup fait pour cette voiture.",
+            f"Careful, your setup {m['file'][:-4]} was made for the {car_label(m['setup'])}, "
+            f"but you're in the {car_label(m['car'], sn.car)}. Better load a setup made for this car."), urgent=False)
 
     threading.Thread(target=setup_sync, daemon=True).start()
     inc = Incidents(beh)
@@ -200,6 +222,10 @@ def loop(state: State, demo: bool) -> None:
             traffic.update(snap, plan, say)
             trend.update(snap, say)
             limits.update(snap, say)
+            warmup.update(snap, say)
+            carinfo.update(snap, say)
+            if state.workshop:
+                state.workshop.car_class, state.workshop.car = snap.car_class, snap.car
             weather.update(snap, say)
             crew.update(snap, plan)
             pen.update(snap, say)

@@ -49,6 +49,8 @@ class Snapshot:
     energy: float | None = None      # énergie virtuelle 0..1 (Hypercar / LMGT3), None si absente
     tyre_wear: list = field(default_factory=lambda: [1.0] * 4)   # 1.0 = neuf
     tyre_temp: list = field(default_factory=lambda: [0.0] * 4)   # °C
+    tyre_opt: float = 0.0                                        # température idéale des pneus (°C)
+    brake_temp: list = field(default_factory=lambda: [0.0] * 4)  # °C
     tyre_pressure: list = field(default_factory=lambda: [0.0] * 4)  # kPa
     compound: str = ""
     wet_tyres: bool = False
@@ -305,6 +307,8 @@ class LMUSource:
         s.tyre_wear = [w[i].mWear for i in range(4)]
         s.tyre_temp = [sum(w[i].mTemperature) / 3 - 273.15 for i in range(4)]
         s.tyre_pressure = [w[i].mPressure for i in range(4)]
+        s.tyre_opt = float(w[0].mOptimalTemp)
+        s.brake_temp = [float(w[i].mBrakeTemp) for i in range(4)]
         s.compound = _txt(tel.mFrontTireCompoundName)
         name = s.compound.lower()
         s.wet_tyres = any(k in name for k in ("wet", "rain", "pluie", "inter"))
@@ -516,6 +520,10 @@ class DemoSource:
         s.energy = max(0.0, self.energy)
         s.tyre_wear = [max(0.0, w) for w in self.wear]
         s.tyre_temp = [86, 88, 82, 83] if not rain else [70, 71, 68, 68]
+        warm = min(1.0, et / 90)        # démo : pneus et freins froids au départ, chauds au bout d'1 min 30
+        s.tyre_temp = [40 + (t - 40) * warm for t in s.tyre_temp]
+        s.tyre_opt = 88.0
+        s.brake_temp = [120 + 380 * warm] * 2 + [100 + 300 * warm] * 2
         s.tyre_pressure = [168, 169, 165, 166]
         s.wet_tyres = self.wet_tyres
         s.compound = "Pluie" if self.wet_tyres else "Medium"

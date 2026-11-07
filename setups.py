@@ -142,6 +142,28 @@ def FACTORY_MSG() -> str:
              "Apex will pick it up automatically and can then create the modified setup.")
 
 
+# ===================================================================== voiture
+KNOWN_CLASSES = {"HYPERCAR", "LMP2", "LMP2_ELMS", "LMP3", "GTE", "GT3", "LMGT3"}
+
+
+def series_tag(car_class: str, car: str = "") -> str:
+    """« ELMS » ou « WEC » : la LMP2 existe en deux versions dans LMU (LMP2 et LMP2_ELMS)."""
+    c, v = (car_class or "").upper(), (car or "").upper()
+    if "ELMS" in c or ":ELMS" in v:
+        return "ELMS"
+    if c == "LMP2":
+        return "WEC"
+    return ""
+
+
+def setup_class(vehicle: str) -> str:
+    """Catégorie écrite dans un fichier .svm : VehicleClassSetting="ELMS2025 LMP2_ELMS Oreca_07" -> LMP2_ELMS."""
+    for tok in (vehicle or "").replace('"', " ").split():
+        if tok.upper() in KNOWN_CLASSES:
+            return tok.upper()
+    return ""
+
+
 # ===================================================================== atelier
 class Workshop:
     def __init__(self, cfg: dict) -> None:
@@ -156,6 +178,9 @@ class Workshop:
         self._scanned = 0.0
         self.factory = False      # LMU roule avec le setup d'usine (pas de fichier à copier)
         self._last_active = None
+        self.car_class = ""       # catégorie de la voiture en piste (LMP2, LMP2_ELMS…), mise à jour par app.py
+        self.car = ""
+        self.mismatch = None      # dernier écart setup / voiture détecté (pour le tableau de bord)
 
     # ----------------------------------------------------------- inventaire
     def ok(self) -> bool:
@@ -205,11 +230,32 @@ class Workshop:
         if mode in ("Qualif", "Course"):
             self.mode = mode
 
+    def tag(self) -> str:
+        return series_tag(self.car_class, self.car)
+
     def _hkey(self, folder: str | None) -> str:
-        return f"{folder} · {self.mode}" if folder else ""
+        if not folder:
+            return ""
+        t = self.tag()
+        return f"{folder} · {t} · {self.mode}" if t else f"{folder} · {self.mode}"
 
     def apex_name(self, folder: str) -> str:
-        return f"APEX {folder} {self.mode}.svm"
+        t = self.tag()
+        return f"APEX {folder} {t} {self.mode}.svm" if t else f"APEX {folder} {self.mode}.svm"
+
+    def class_mismatch(self, track: str) -> dict | None:
+        """Le setup choisi a été fait pour une autre version de la voiture (ex. LMP2 standard sur la LMP2 ELMS) ?"""
+        st = self.state(track)
+        car = (self.car_class or "").upper()
+        if not st["folder"] or not st["current"] or car not in KNOWN_CLASSES:
+            return None
+        try:
+            sc = setup_class(Setup(self.dir / st["folder"] / st["current"]).vehicle)
+        except Exception:
+            return None
+        if not sc or sc == car:
+            return None
+        return {"file": st["current"], "setup": sc, "car": car}
 
     def state(self, track: str) -> dict:
         folder = self.cfg.get("setup_folder_for", {}).get(track) or self.guess_folder(track)
@@ -217,7 +263,7 @@ class Workshop:
         return {"ok": self.ok(), "dir": str(self.dir), "track": track, "folder": folder, "mode": self.mode,
                 "current": h.get("current"), "label": self._label(h), "apex_file": h.get("apex_file"),
                 "apex_label": h.get("apex_label"), "versions": h.get("versions", []), "results": h.get("results", {}),
-                "factory": self.factory}
+                "factory": self.factory, "series": self.tag(), "mismatch": self.mismatch}
 
     @staticmethod
     def _label(h: dict) -> str | None:

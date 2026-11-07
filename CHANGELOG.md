@@ -1,5 +1,13 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.2.5
+- 🇫🇷 Pneus et freins froids : au départ de la course et à chaque sortie des stands, l'ingénieur te prévient (« pneus froids, freins froids »), puis te dit quand tout est en température : « tu peux attaquer ! ».
+- 🇬🇧 Cold tyres and brakes: at the race start and every time you leave the pits, your engineer warns you ("cold tyres, cold brakes"), then tells you when everything is up to temperature: "you can push now!".
+- 🇫🇷 LMP2 version ELMS ou WEC : dès le garage, l'ingénieur te dit dans quelle voiture tu es, et tu peux lui demander « je suis en ELMS ou en WEC ? ». C'est aussi écrit sur le tableau de bord.
+- 🇬🇧 LMP2, ELMS or WEC version: from the garage, your engineer tells you which car you're in, and you can ask "am I in ELMS or WEC?". It's also shown on the dashboard.
+- 🇫🇷 Setup de la mauvaise voiture : si le setup chargé a été fait pour l'autre version (par exemple un setup LMP2 standard sur la LMP2 ELMS), Apex te prévient. Les setups créés par Apex portent maintenant la version dans leur nom (« APEX Spa ELMS Course.svm »).
+- 🇬🇧 Setup for the wrong car: if the loaded setup was made for the other version (for example a standard LMP2 setup on the ELMS LMP2), Apex warns you. Setups created by Apex now include the version in their name ("APEX Spa ELMS Course.svm").
+
 ## 1.2.4
 - 🇫🇷 Choix de la voix (menu 🎙️ du tableau de bord) : en français Jessica, Pierre ou Siwis ; en anglais LJ, Kristin, John ou Northern. La nouvelle voix se télécharge une fois (60 à 115 Mo) pendant que l'ancienne continue de parler, puis elle se présente. Le choix est gardé, et l'ingénieur se présente avec son nom.
 - 🇬🇧 Choose the voice (🎙️ menu on the dashboard): French Jessica, Pierre or Siwis; English LJ, Kristin, John or Northern. The new voice downloads once (60 to 115 MB) while the old one keeps talking, then introduces itself. Your choice is kept, and the engineer uses their own name.

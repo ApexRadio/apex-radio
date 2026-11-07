@@ -31,6 +31,9 @@ Créateur : Laurent (pseudo lolotuner), francophone : **réponds-lui en françai
 3. Une branche autre que `main` publie une pré-version `v<VERSION>-test` (ignorée par le bandeau) : utile pour faire tester avant.
 4. Sur `main`, une **nouvelle** version est annoncée toute seule dans #annonces-news (Discord) avec les notes de release-notes.md
    (`.github/scripts/discord_announce.py`, secret GitHub `DISCORD_WEBHOOK` créé par Laurent ; sans secret, rien n'est posté).
+5. Une **nouvelle** version de test (branche) est annoncée dans #accès-anticipé (catégorie 🏆 PATREON, rôles Pit Wall + Écurie),
+   secret `DISCORD_WEBHOOK_EARLY`. Paliers Patreon : Paddock 3 €, Pit Wall 6 € (accès anticipé), Écurie 12 € (accès anticipé,
+   #suggestions et #retours réservés, traités en priorité).
 
 ## Poste de développement
 - Laurent garde une copie de travail dans ses Documents (dossier `IngenieurCourse`) en plus de l'appli installée ;

@@ -1,8 +1,11 @@
 """Annonce automatique d'une nouvelle version dans le salon Discord (via un webhook).
 
-Lancé par le workflow « Installateur Windows » après la publication sur `main`.
+Lancé par le workflow « Installateur Windows » :
+- après la publication sur `main` → #annonces-news (secret DISCORD_WEBHOOK) ;
+- avec `--early`, pour une version de test → #accès-anticipé, réservé aux membres Pit Wall et Écurie
+  (secret DISCORD_WEBHOOK_EARLY).
 Le texte vient de installer/release-notes.md (la section « 🆕 <version> »), donc rien à écrire en plus.
-Le lien du webhook est un secret GitHub (DISCORD_WEBHOOK) : sans lui, on ne fait rien.
+Les liens des webhooks sont des secrets GitHub : sans eux, on ne fait rien.
 """
 import json
 import os
@@ -41,26 +44,35 @@ def clip(lines: list[str], limit: int) -> str:
 
 
 def main() -> int:
-    hook = os.environ.get("DISCORD_WEBHOOK", "").strip()
+    early = "--early" in sys.argv
+    var = "DISCORD_WEBHOOK_EARLY" if early else "DISCORD_WEBHOOK"
+    hook = os.environ.get(var, "").strip()
     if not hook:
-        print("Pas de webhook Discord configuré (secret DISCORD_WEBHOOK) : pas d'annonce.")
+        print(f"Pas de webhook Discord configuré (secret {var}) : pas d'annonce.")
         return 0
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     fr, en = notes(version)
     if not fr and not en:
         print(f"Aucune note trouvée pour {version} dans release-notes.md : pas d'annonce.")
         return 0
-    url = f"{REPO}/releases/tag/v{version}"
+    url = f"{REPO}/releases/tag/v{version}" + ("-test" if early else "")
     embeds = []
     if fr:
         embeds.append({"title": f"🇫🇷 Nouveautés de la {version}", "description": clip(fr, 3900), "color": 0x00E5FF, "url": url})
     if en:
         embeds.append({"title": f"🇬🇧 What's new in {version}", "description": clip(en, 3900), "color": 0x00E5FF, "url": url})
+    if early:
+        content = (f"🧪 **Accès anticipé : Apex Radio {version} (version de test) / Early access: Apex Radio {version} (test build)**\n"
+                   f"Merci pour ton soutien ! Tu l'as avant tout le monde / Thanks for your support, you get it before everyone else.\n"
+                   f"👉 {url}  (ApexRadio-Setup-{version}.exe, en bas de la page / at the bottom of the page)\n"
+                   "Un souci ou une idée ? Dis-le ici / Any issue or idea? Tell us here. 🏁")
+    else:
+        content = (f"🆕 **Apex Radio {version} est sortie ! / Apex Radio {version} is out!**\n"
+                   f"👉 {REPO}/releases/latest\n"
+                   "Le bandeau de mise à jour te la propose dans l'appli / The update banner offers it in the app. 🏁")
     payload = {
         "username": "Apex Radio",
-        "content": (f"🆕 **Apex Radio {version} est sortie ! / Apex Radio {version} is out!**\n"
-                    f"👉 {REPO}/releases/latest\n"
-                    "Le bandeau de mise à jour te la propose dans l'appli / The update banner offers it in the app. 🏁"),
+        "content": content,
         "embeds": embeds,
         "allowed_mentions": {"parse": []},
     }

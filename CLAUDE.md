@@ -28,6 +28,8 @@ Créateur : Laurent (pseudo lolotuner), francophone : **réponds-lui en françai
    Python embarqué 3.12, pip, test d'import, test de la fenêtre WebView2, lanceur C# `launcher/ApexRadio.cs`,
    Inno Setup (`installer/ApexRadio.iss`), puis release `v<VERSION>` avec `ApexRadio-Setup-<VERSION>.exe`.
 3. Une branche autre que `main` publie une pré-version `v<VERSION>-test` (ignorée par le bandeau) : utile pour faire tester avant.
+4. Sur `main`, une **nouvelle** version est annoncée toute seule dans #annonces-news (Discord) avec les notes de release-notes.md
+   (`.github/scripts/discord_announce.py`, secret GitHub `DISCORD_WEBHOOK` créé par Laurent ; sans secret, rien n'est posté).
 
 ## Poste de développement
 - Laurent garde une copie de travail dans ses Documents (dossier `IngenieurCourse`) en plus de l'appli installée ;

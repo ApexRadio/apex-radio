@@ -19,6 +19,10 @@
 - 🇬🇧 Jessica warns you when you're about to catch a slower car ("Slower GT3 ahead, 2 seconds, you'll catch it at turn 4"). Track limits announced on every warning. Chequered flag and recap when YOU finish (not when the leader does). No more "we fix the car" because of damage from a previous session.
 - 🇫🇷 Réparations : Apex choisit « Tout réparer » quand la suspension ou une roue est touchée, et « Réparer la carrosserie » pour de la tôle ou de l'aéro. À la radio : « tout réparer » ou « répare la carrosserie ».
 - 🇬🇧 Repairs: Apex picks "Repair all" when suspension or a wheel is damaged, and bodywork only for body or aero damage. By radio: "fix everything" or "fix the bodywork".
+- 🇫🇷 Arrêt au stand : Jessica te fait rouler jusqu'au dernier tour possible (avant, elle gardait une réserve d'un demi-tour et te faisait souvent rentrer un tour trop tôt). Course au temps : elle compte le tour en plus quand le 1er passe la ligne après 0:00, et l'essence à mettre est calculée de façon plus prudente.
+- 🇬🇧 Pit stop: Jessica now keeps you out until the last possible lap (she used to keep half a lap in reserve and often called you in one lap early). Timed races: she counts the extra lap when the leader crosses the line after 0:00, and the fuel to add is calculated more cautiously.
+- 🇫🇷 Le numéro de version est affiché en petit à côté du logo (tableau de bord et vue téléphone).
+- 🇬🇧 The version number is shown in small print next to the logo (dashboard and phone view).
 
 ## 1.2.2
 - 🇫🇷 Atelier setup : indiquer le setup chargé dans le jeu n'efface plus l'analyse qui vient d'être faite. Les réglages proposés par Jessica (barre antiroulis, carrossage…) apparaissent bien dans l'atelier.

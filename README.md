@@ -4,7 +4,7 @@
 
 🇬🇧 [English](#english) · 🇫🇷 [Français](#français)
 
-**⬇️ [Download / Télécharger](https://github.com/ApexRadio/apex-radio/releases/latest)** · 💬 [Discord](https://discord.gg/wpqNBpMaa) · ❤️ [Patreon](https://www.patreon.com/lolotuner)
+**⬇️ [Download / Télécharger](https://github.com/ApexRadio/apex-radio/releases/latest)** · 💬 [Discord](https://discord.gg/ZHg4qXd26g) · ❤️ [Patreon](https://www.patreon.com/lolotuner)
 
 ![Apex Radio dashboard](docs/dashboard-en.png)
 
@@ -50,7 +50,7 @@ English "LJ" (**LJ Speech**, public domain), "Kristin" and "John" (LibriVox, pub
 Not affiliated with Studio 397, Motorsport Games or the ACO.
 
 ### Community and support
-Questions, bugs, ideas: join the [Discord](https://discord.gg/wpqNBpMaa). The app is free and will stay free;
+Questions, bugs, ideas: join the [Discord](https://discord.gg/ZHg4qXd26g). The app is free and will stay free;
 if it helps you find a few tenths, you can support its development on [Patreon](https://www.patreon.com/lolotuner).
 
 ---
@@ -95,5 +95,5 @@ en anglais « LJ » (**LJ Speech**, domaine public), « Kristin » et « John »
 Sans lien avec Studio 397, Motorsport Games ou l'ACO.
 
 ### Communauté et soutien
-Questions, bugs, idées : rejoins le [Discord](https://discord.gg/wpqNBpMaa). L'appli est gratuite et le restera ;
+Questions, bugs, idées : rejoins le [Discord](https://discord.gg/ZHg4qXd26g). L'appli est gratuite et le restera ;
 si elle t'aide à gagner quelques dixièmes, tu peux soutenir son développement sur [Patreon](https://www.patreon.com/lolotuner).

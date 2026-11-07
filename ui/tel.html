@@ -41,7 +41,7 @@
 </style>
 </head>
 <body>
-  <div class="top"><div class="logo">APEX//RADIO</div><div class="muted" id="sess">connexion…</div></div>
+  <div class="top"><div class="logo">APEX//RADIO <span id="ver" style="font-size:10px;font-weight:600;color:#8a94a6;text-shadow:none;letter-spacing:.05em"></span></div><div class="muted" id="sess">connexion…</div></div>
   <div id="upd" role="status"></div>
   <div id="wait" data-en="Waiting for the game…">En attente du jeu…</div>
   <div class="grid" id="dash" hidden>
@@ -71,6 +71,7 @@ const fmtTime = s => { if (s == null) return "–"; const m = Math.floor(s / 60)
 function render(d) {
   const s = d.snap || {}, p = d.plan || {}, radio = d.radio || [];
   if (d.lang && d.lang !== LANG) { LANG = d.lang; applyLang(); }
+  if (d.update && d.update.version) $("ver").textContent = "v" + d.update.version;
   const up = d.update || {};
   $("upd").style.display = up.latest ? "block" : "none";
   if (up.latest) $("upd").textContent = T(`Mise à jour ${up.latest} disponible : télécharge-la sur le PC`, `Update ${up.latest} available: download it on the PC`);

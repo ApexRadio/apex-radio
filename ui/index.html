@@ -164,7 +164,7 @@
 <body>
 <div class="wrap">
   <header>
-    <div class="logo">APEX//RADIO<span class="demo" id="demo"></span></div>
+    <div class="logo">APEX//RADIO<span class="demo" id="demo"></span><span id="ver" title="Version d'Apex Radio installée" data-en-title="Installed Apex Radio version" style="font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--muted,#8a94a6);text-shadow:none;margin-left:10px;vertical-align:middle"></span></div>
     <div class="hright">
       <span class="muted" id="session"></span>
       <span class="pill" id="status"><span class="dot"></span><span id="statustxt">En attente du jeu…</span></span>
@@ -348,6 +348,7 @@ function render(d) {
   const s = d.snap || {}, p = d.plan || {}, radio = d.radio || [];
   if (d.lang && d.lang !== LANG) { LANG = d.lang; applyLang(); }
   $("demo").textContent = d.demo ? T("DÉMO", "DEMO") : "";
+  if (d.update && d.update.version) $("ver").textContent = "v" + d.update.version;
   $("status").className = "pill" + (s.on_track ? " live" : "");
   $("statustxt").textContent = s.on_track ? T("LMU connecté", "LMU connected") : (s.connected ? T("Jeu détecté", "Game detected") : T("En attente du jeu", "Waiting for the game"));
   $("session").textContent = s.on_track ? `${s.track} · ${s.car_class || s.car} · ${T(s.session, SESSION_EN[s.session] || s.session)}` : "";

@@ -164,7 +164,7 @@
 <body>
 <div class="wrap">
   <header>
-    <div class="logo">APEX//RADIO<span class="demo" id="demo"></span></div>
+    <div class="logo">APEX//RADIO<span class="demo" id="demo"></span><span id="ver" title="Version d'Apex Radio installée" data-en-title="Installed Apex Radio version" style="font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--muted,#8a94a6);text-shadow:none;margin-left:10px;vertical-align:middle"></span></div>
     <div class="hright">
       <span class="muted" id="session"></span>
       <span class="pill" id="status"><span class="dot"></span><span id="statustxt">En attente du jeu…</span></span>
@@ -348,6 +348,7 @@ function render(d) {
   const s = d.snap || {}, p = d.plan || {}, radio = d.radio || [];
   if (d.lang && d.lang !== LANG) { LANG = d.lang; applyLang(); }
   $("demo").textContent = d.demo ? T("DÉMO", "DEMO") : "";
+  if (d.update && d.update.version) $("ver").textContent = "v" + d.update.version;
   $("status").className = "pill" + (s.on_track ? " live" : "");
   $("statustxt").textContent = s.on_track ? T("LMU connecté", "LMU connected") : (s.connected ? T("Jeu détecté", "Game detected") : T("En attente du jeu", "Waiting for the game"));
   $("session").textContent = s.on_track ? `${s.track} · ${s.car_class || s.car} · ${T(s.session, SESSION_EN[s.session] || s.session)}` : "";
@@ -585,11 +586,12 @@ async function wsLoad(keepChecks) {
     $("wsfolder").innerHTML = folders.map(f => `<option ${f.name === sel ? "selected" : ""}>${esc(f.name)}</option>`).join("");
     fillFiles();
   }
-  $("wscurrent").textContent = WS.current ? T(`Setup en cours : ${WS.current}`, `Current setup: ${WS.current}`) : T("Aucun setup choisi pour ce circuit.", "No setup chosen for this track.");
+  $("wscurrent").textContent = WS.factory ? T("Setup en cours : setup d'usine (pas encore enregistré)", "Current setup: default setup (not saved yet)") : WS.current ? T(`Setup en cours : ${WS.current}`, `Current setup: ${WS.current}`) : T("Aucun setup choisi pour ce circuit.", "No setup chosen for this track.");
   const ch = WS.changes || [];
-  if (!WS.current) $("wsstatus").textContent = T("Choisis d'abord le setup chargé dans le jeu (étape 1).", "First choose the setup loaded in the game (step 1).");
+  if (WS.factory) $("wsstatus").textContent = WS.error || "";
+  else if (!WS.current) $("wsstatus").textContent = T("Choisis d'abord le setup chargé dans le jeu (étape 1).", "First choose the setup loaded in the game (step 1).");
   renderRace();
-  if (!WS.current) {}
+  if (WS.factory || !WS.current) {}
   else if ((WS.analysis_laps || 0) < 3 && !ch.some(c => c.live || c.fuel)) $("wsstatus").textContent = T(`Fais quelques tours propres : l'analyse en a ${WS.analysis_laps || 0}, il en faut au moins 3.`, `Do a few clean laps: the analysis has ${WS.analysis_laps || 0}, it needs at least 3.`);
   else $("wsstatus").textContent = ch.length ? T("Coche les réglages à appliquer :", "Tick the changes to apply:") : T("Rien à changer pour l'instant : la voiture est équilibrée.", "Nothing to change for now: the car is balanced.");
   $("wstable").innerHTML = ch.length ? `<tr><th></th><th>${T("Réglage", "Setting")}</th><th>${T("Actuel", "Current")}</th><th>${T("Proposé", "Suggested")}</th></tr>` + ch.map(c => {

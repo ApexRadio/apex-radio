@@ -121,7 +121,7 @@ def loop(state: State, demo: bool) -> None:
     spotter = Spotter(state.voice)
     spotter.enabled = state.radio.cfg.get("spotter", True)
     state.spotter = spotter
-    traffic, trend, limits, damage = Traffic(), GapTrend(), TrackLimits(beh), Damage()
+    traffic, trend, limits, damage = Traffic(beh), GapTrend(), TrackLimits(beh), Damage()
     weather = Weather(demo)
     recorder = debrief.Recorder()
     session_end = {"key": None, "prompt": 0}
@@ -131,6 +131,20 @@ def loop(state: State, demo: bool) -> None:
     pen, under, pace = Penalties(), Undercut(), Pace()
     state.pace = pace
     questions.PIT_ACTION = lambda: crew.prepare(state.snap, state.plan, asked=True)
+
+    def set_repair(want: bool, full: bool = True) -> bool:
+        """Le pilote dit « répare » / « pas de réparation » : prioritaire jusqu'au prochain arrêt."""
+        damage.choice, damage.choice_all = want, full
+        for o in (state.snap, state.plan):
+            if o is not None:
+                o.repair, o.no_repair, o.repair_all = want, not want, want and full
+        # menu des stands déjà réglé pour cet arrêt : on le refait tout de suite
+        if crew.done_for == state.snap.pit_stops and state.snap.on_track and not state.snap.in_pits:
+            crew.prepare(state.snap, state.plan, asked=True)
+            return True
+        return False
+
+    questions.REPAIR_SET = set_repair
 
     def setup_sync():
         """Toutes les 15 s : quel setup est chargé dans LMU ? (sélection automatique dans l'atelier)"""
@@ -192,7 +206,7 @@ def loop(state: State, demo: bool) -> None:
             state.fuel.update(snap, plan, eng)
             # fin de session (drapeau à damier) : rappel des réglages garage + ouverture de l'atelier
             key = (snap.track, snap.session_code)
-            if snap.on_track and snap.game_phase == 8 and session_end["key"] != key and snap.laps_done >= 3:
+            if snap.on_track and snap.done and session_end["key"] != key and snap.laps_done >= 3:
                 session_end["key"] = key
                 msg = beh.end_of_session()
                 if msg:

@@ -121,15 +121,48 @@ def tyres(s: Snapshot, p: Plan) -> str:
     return out
 
 
+def _sec(g: float) -> str:
+    return L(f"{_f(g)} seconde{'s' if g >= 2 else ''}", f"{_f(g)} second{'s' if g != 1 else ''}")
+
+
 def gaps(s: Snapshot, p: Plan) -> str:
+    # écart dans ta catégorie d'abord (celui de LMU est souvent vide), sinon l'écart général
+    ga = s.gap_class_ahead if s.gap_class_ahead is not None else s.gap_ahead
+    gb = s.gap_class_behind if s.gap_class_behind is not None else s.gap_behind
+    t = LAST_TEXT
+    front = bool(re.search(r"devant|ahead|in front|attaque|premier|leader|tete", t))
+    back = bool(re.search(r"derriere|behind|revient|catching|suit", t))
+    leader = s.ahead is None and (s.class_position or s.position) == 1
+    if front and not back:
+        if ga is not None:
+            return L(f"La voiture devant est à {_sec(ga)}.", f"The car ahead is {_sec(ga)} up the road.")
+        if leader:
+            return L("Tu es en tête, il n'y a personne devant toi.", "You're leading, there's nobody ahead.")
+        return L("Je n'arrive pas à lire l'écart avec la voiture devant pour l'instant.", "I can't read the gap to the car ahead right now.")
+    if back and not front:
+        if gb is not None:
+            return L(f"La voiture derrière est à {_sec(gb)}.", f"The car behind is {_sec(gb)} back.")
+        return L("Personne derrière toi pour l'instant.", "Nobody behind you right now.")
     parts = []
-    if s.gap_ahead is not None:
-        parts.append(L(f"{_f(s.gap_ahead)} seconde devant", f"{_f(s.gap_ahead)} seconds ahead"))
-    if s.gap_behind is not None:
-        parts.append(L(f"{_f(s.gap_behind)} derrière", f"{_f(s.gap_behind)} behind"))
+    if ga is not None:
+        parts.append(L(f"{_sec(ga)} devant", f"{_sec(ga)} ahead"))
+    elif leader:
+        parts.append(L("tu es en tête", "you're leading"))
+    if gb is not None:
+        parts.append(L(f"{_sec(gb)} derrière", f"{_sec(gb)} behind"))
     if not parts:
         return L("Personne de proche autour de toi.", "Nobody close around you.")
     return L("Écart : ", "Gaps: ") + ", ".join(parts) + "."
+
+
+def repairs(s: Snapshot, p: Plan) -> str:
+    if s.no_repair:
+        return L("Tu m'as demandé de ne pas réparer : au prochain arrêt, on ne touche pas à la voiture.",
+                 "You asked for no repairs: we won't touch the car at the next stop.")
+    if s.repair:
+        return L("Oui, la voiture est abîmée : je prévois les réparations au prochain arrêt. Dis « pas de réparation » si tu n'en veux pas.",
+                 "Yes, the car is damaged: I'm planning repairs at the next stop. Say \"no repairs\" if you don't want them.")
+    return L("Pas de dégâts importants, pas besoin de réparer.", "No significant damage, no need for repairs.")
 
 
 def position(s: Snapshot, p: Plan) -> str:
@@ -165,6 +198,7 @@ TOPICS = [
     (r"stand|\bbox|arret|rentr|\bpit|ravitaill|strateg|\bstop\b|come in", pit),
     (r"pneu|gomme|usure|\btyre|\btire|rubber|\bwear", tyres),
     (r"ecart|devant|derriere|\bgap|attaque|revient|ahead|behind|in front|catching", gaps),
+    (r"repar|degat|dommage|abime|damage|repair", repairs),
     (r"position|place|classement|quelle p\b|combien.*(je suis|suis je)|where am i|what p\b", position),
     (r"meteo|pluie|pleut|pleuvoir|mouill|humid|sec\b|temperature|nuage|weather|\brain|\bwet\b|\bdry\b|cloud", weather),
     (r"chrono|dernier tour|meilleur tour|temps au tour|mon tour|rythme|lap time|last lap|best lap|\bpace\b", laptimes),
@@ -176,6 +210,8 @@ TOPICS = [
 LAPTIMES = None  # branché par app.py
 BEHAVIOR = None
 PIT_ACTION = None   # fonction appelée pour régler le menu des stands
+REPAIR_SET = None   # fonction(True/False) : réparer ou pas au prochain arrêt ; renvoie True si le menu est re-réglé
+LAST_TEXT = ""      # dernière question (normalisée), pour savoir si on parle de devant ou de derrière
 
 
 def pit_command(s: Snapshot, p: Plan) -> str:
@@ -257,15 +293,137 @@ def command(text: str) -> str | None:
     return None
 
 
+# ------------------------------------------------------------ discussion
+# Petites phrases de radio qui marchent partout, même hors de la voiture.
+def _radio_check(s: Snapshot) -> str:
+    return L("Oui, je t'entends, cinq sur cinq.", "Yes, I hear you loud and clear.")
+
+
+def _here(s: Snapshot) -> str:
+    return L("Je suis là, je t'écoute.", "I'm here, go ahead.")
+
+
+def _hello(s: Snapshot) -> str:
+    return L("Salut ! Je suis là, prête quand tu veux.", "Hi! I'm here, ready when you are.")
+
+
+def _thanks(s: Snapshot) -> str:
+    return L("Avec plaisir.", "You're welcome.")
+
+
+def _who(s: Snapshot) -> str:
+    return L("Je suis Jessica, ton ingénieure de course.", "I'm Jessica, your race engineer.")
+
+
+def _help(s: Snapshot) -> str:
+    return L("Demande-moi l'essence, l'énergie, les pneus, le stand, les écarts, ta position, la météo, tes chronos, "
+             "tes secteurs ou le comportement de la voiture. Je peux aussi régler le menu des stands.",
+             "Ask me about fuel, energy, tyres, pit stop, gaps, position, weather, lap times, sectors "
+             "or car handling. I can also set up the pit menu.")
+
+
+def _time(s: Snapshot) -> str:
+    import datetime
+    n = datetime.datetime.now()
+    h = "heure" if n.hour <= 1 else "heures"
+    return L(f"Il est {n.hour} {h} {n.minute:02d}." if n.minute else f"Il est {n.hour} {h}.", f"It's {n:%H:%M}.")
+
+
+def _how_are_you(s: Snapshot) -> str | None:
+    if s.on_track:   # en piste, « ça va ? » = le point complet (sujet status)
+        return None
+    return L("Ça va très bien, merci ! Prête pour la course.", "All good, thanks! Ready for the race.")
+
+
+def _joke(s: Snapshot) -> str:
+    return L("Les blagues, c'est après le drapeau à damier. Reste concentré !",
+             "Jokes are for after the chequered flag. Stay focused!")
+
+
+CHAT = [
+    (r"\bm entends?\b|\bm entendez\b|tu me recois|me recois tu|tu recois|radio check|test radio|\ballo\b|"
+     r"can you hear|do you hear|hear me|do you copy|you copy", _radio_check),
+    (r"\b(t es|tu es|es tu|t es bien) la\b|t es toujours la|you there|are you there", _here),
+    (r"^(bonjour|salut|hello|coucou|hey|bonsoir|hi)\b", _hello),
+    (r"\bmerci\b|thank", _thanks),
+    (r"qui es tu|t es qui|tu es qui|comment tu t appelles|ton nom|ton prenom|who are you|your name", _who),
+    (r"que (peux|sais) tu|qu est ce que tu (peux|sais)|tu sais faire|tu peux faire quoi|\baide\b|\bhelp\b|what can you", _help),
+    (r"quelle heure|l heure qu il|what time", _time),
+    (r"\bca va\b|comment vas tu|how are you", _how_are_you),
+    (r"blague|joke|funny", _joke),
+]
+
+
+FILLER = (_hello, _thanks)   # « salut », « merci » : seulement si la phrase ne demande rien d'autre
+
+
+def chat(t: str, s: Snapshot, alone: bool = True) -> list[str]:
+    """alone=False : la phrase demande aussi des données, on saute « salut » / « merci »."""
+    out = []
+    for pattern, fn in CHAT:
+        if re.search(pattern, t) and (alone or fn not in FILLER):
+            r = fn(s)
+            if r and r not in out:
+                out.append(r)
+    return out
+
+
+NO_REPAIR = (r"\b(pas|plus|sans|aucune?|annule|enleve|leve|retire|supprime|oublie|non)\b.*\brepar|"
+             r"\brepar\w*\b.*\b(non|pas|enleve|annule|retire|supprime)\b|\bne repare|"
+             r"don t (fix|repair)|no repairs?\b|skip (the )?repairs?|cancel (the )?repairs?|"
+             r"\b(remove|no) (the )?(repairs?|damage)")
+DO_REPAIR = (r"\b(repare|reparer|reparez|reparation|reparations)\b|\bfix (the )?(car|damage)|\brepair")
+
+
+def repair_command(t: str) -> str | None:
+    """« pas de réparation » / « répare la voiture » : change le menu des stands."""
+    if re.search(NO_REPAIR, t):
+        want = False
+    elif re.search(DO_REPAIR, t) and re.search(r"\b(repare|reparer|reparez|tout|carrosserie|fix|repair the|do the|on repare)\b", t):
+        want = True
+    else:
+        return None
+    if REPAIR_SET is None:
+        return L("Je ne peux pas changer les réparations pour l'instant.", "I can't change the repairs right now.")
+    body_only = want and bool(re.search(r"carrosserie|body|aero", t)) and not re.search(r"\btout\b|\ball\b|full", t)
+    menu = REPAIR_SET(want, not body_only)
+    if not want:
+        out = L("C'est noté, on ne répare pas au prochain arrêt.", "Copy, no repairs at the next stop.")
+    elif body_only:
+        out = L("C'est noté, on répare seulement la carrosserie au prochain arrêt.", "Copy, bodywork only at the next stop.")
+    else:
+        out = L("C'est noté, on répare tout au prochain arrêt.", "Copy, full repairs at the next stop.")
+    if menu:
+        out += L(" Je corrige le menu des stands.", " Updating the pit menu.")
+    return out
+
+
 def answer(text: str, s: Snapshot, p: Plan) -> str:
+    global LAST_TEXT
     c = command(text)
     if c:
         return c
-    if not s.on_track:
-        return L("Je n'ai pas encore de données, monte dans la voiture.", "No data yet, get in the car.")
-    t = _norm(text)
-    if not t.strip():
+    t = _norm(text).strip()
+    if not t:
         return L("Je n'ai rien entendu, répète.", "I didn't hear anything, say again.")
+    LAST_TEXT = t
+    r = repair_command(t)
+    if r:
+        return r
+    if not s.on_track:
+        # hors piste, « comment ça va » est une politesse, pas une demande de point complet
+        polite = bool(re.search(r"\bca va\b|comment vas tu|how are you", t))
+        asks_data = any(re.search(pattern, t) for pattern, fn in TOPICS if not (polite and fn is status))
+        said = chat(t, s, alone=not asks_data)
+        if asks_data:
+            said.append(L("Je n'ai pas encore de données, monte dans la voiture.", "No data yet, get in the car."))
+        if said:
+            return " ".join(said)
+        return L("Je t'entends, mais je n'ai pas compris. Une fois en piste, demande-moi l'essence, les pneus, "
+                 "le stand, les écarts, la position ou la météo.",
+                 "I hear you, but I didn't get that. Once you're on track, ask me about fuel, tyres, "
+                 "pit stop, gaps, position or weather.")
+    said = chat(t, s, alone=not any(re.search(pattern, t) for pattern, _ in TOPICS))
     replies = []
     for pattern, fn in TOPICS:
         if re.search(pattern, t) and fn not in [r[0] for r in replies]:
@@ -276,7 +434,7 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
             if fn is laptimes and any(r[0] is record for r in replies):
                 continue
             replies.append((fn, fn(s, p)))
-    if not replies:
-        return L("Je n'ai pas compris. Tu peux me demander l'essence, les pneus, le stand, les écarts, la position ou la météo.",
-                 "I didn't get that. You can ask about fuel, tyres, pit stop, gaps, position or weather.")
-    return " ".join(r[1] for r in replies[:3])
+    if not replies and not said:
+        # jamais sans réponse : on donne le point complet
+        return L("Pas sûr d'avoir compris, voilà le point. ", "Not sure I got that, here's the update. ") + status(s, p)
+    return " ".join(said + [r[1] for r in replies[:3]])

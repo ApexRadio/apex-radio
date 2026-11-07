@@ -133,6 +133,15 @@ class Setup:
         return any(l.startswith('Notes="Apex Radio') for l in self.lines)
 
 
+def FACTORY_MSG() -> str:
+    return L("Tu roules avec le setup d'usine : il n'existe pas en fichier, donc Apex ne peut pas le modifier. "
+             "Dans le garage de LMU, clique sur Enregistrer et donne-lui un nom (par exemple « Base »). "
+             "Apex le détectera tout seul et pourra créer le setup modifié.",
+             "You're driving the default setup: it isn't saved as a file, so Apex can't change it. "
+             "In the LMU garage, click Save and give it a name (for example \"Base\"). "
+             "Apex will pick it up automatically and can then create the modified setup.")
+
+
 # ===================================================================== atelier
 class Workshop:
     def __init__(self, cfg: dict) -> None:
@@ -145,6 +154,8 @@ class Workshop:
         self.catalog = {}     # (véhicule, section, clé) -> {index: affichage}
         self.mode = "Course"  # "Qualif" ou "Course" : un fichier APEX pour chacun
         self._scanned = 0.0
+        self.factory = False      # LMU roule avec le setup d'usine (pas de fichier à copier)
+        self._last_active = None
 
     # ----------------------------------------------------------- inventaire
     def ok(self) -> bool:
@@ -205,7 +216,8 @@ class Workshop:
         h = self.history.get(self._hkey(folder), {})
         return {"ok": self.ok(), "dir": str(self.dir), "track": track, "folder": folder, "mode": self.mode,
                 "current": h.get("current"), "label": self._label(h), "apex_file": h.get("apex_file"),
-                "apex_label": h.get("apex_label"), "versions": h.get("versions", []), "results": h.get("results", {})}
+                "apex_label": h.get("apex_label"), "versions": h.get("versions", []), "results": h.get("results", {}),
+                "factory": self.factory}
 
     @staticmethod
     def _label(h: dict) -> str | None:
@@ -219,6 +231,7 @@ class Workshop:
         self.cfg.setdefault("setup_folder_for", {})[track] = folder
         h = self.history.setdefault(self._hkey(folder), {"versions": [], "results": {}})
         h["current"] = file
+        self.factory = False      # un vrai fichier est choisi (par toi ou détecté dans LMU)
         self._save()
 
     def _save(self) -> None:
@@ -248,6 +261,10 @@ class Workshop:
         except Exception:
             return None
         active = (j or {}).get("activeSetup") or ""
+        if active != self._last_active:
+            self._last_active = active
+            # pas de « Circuit\\Nom » : c'est le setup d'usine, il n'existe pas en fichier
+            self.factory = "\\" not in active
         if "\\" not in active:
             return None
         folder, name = active.split("\\", 1)
@@ -360,6 +377,8 @@ class Workshop:
                 fuel: dict | None = None) -> dict:
         self.scan()
         st = self.state(track)
+        if self.factory:
+            return {**st, "changes": [], "error": FACTORY_MSG()}
         if not st["folder"] or not st["current"]:
             return {**st, "changes": [], "error": L("Choisis d'abord le setup que tu utilises.", "First choose the setup you're using.")}
         path = self.dir / st["folder"] / st["current"]

@@ -12,12 +12,15 @@ from __future__ import annotations
 
 import json
 import math
+import random
 import sys
 import threading
 import time
 import urllib.request
 
 from i18n import L, dec
+
+L_ = L   # dans le trafic, « L » sert aussi à la longueur du circuit
 
 
 def WHEEL_NAME(i: int) -> str:
@@ -112,7 +115,10 @@ class Spotter:
 class Traffic:
     GLOBAL_GAP = 30.0        # s : pas plus d'une annonce de trafic toutes les 30 s
 
-    def __init__(self) -> None:
+    CATCH_WINDOW = (8.0, 25.0)  # s : on prévient quand on va rattraper une voiture plus lente dans 8 à 25 s
+
+    def __init__(self, behavior=None) -> None:
+        self.beh = behavior
         self.said = {}       # (id, type) -> heure
         self.prev_gap = {}
         self.last = -999.0
@@ -155,7 +161,51 @@ class Traffic:
                         L(f"elle sera sur toi dans {math.ceil(catch)} tours", f"it'll be on you in {math.ceil(catch)} laps")
                     say(None, L(f"{name} qui arrive derrière, {gap:.0f} seconde{'s' if round(gap) > 1 else ''}, {when}.",
                                 f"{name} coming up behind, {gap:.0f} second{'s' if round(gap) != 1 else ''}, {when}."))
-            # catégorie plus lente devant : plus annoncée (en LMP2 on double des GT3 à chaque tour, ça faisait du bruit)
+        self._slower_ahead(s, me, pace, mine, speed, now, say)
+
+    def _slower_ahead(self, s, me, pace, mine, speed, now, say) -> None:
+        """Catégorie plus lente devant : on prévient où tu vas la rattraper, pour anticiper le dépassement.
+        Une seule annonce à la fois (la plus proche), pas plus d'une fois toutes les 2 minutes par voiture."""
+        L = s.track_len
+        slow = []
+        for c in s.cars:
+            if c.get("me") or c.get("pits") or c["c"] == me["c"] or c["c"] not in pace:
+                continue
+            if pace[c["c"]] - mine <= 0.02 * mine:      # pas nettement plus lente
+                continue
+            gap = ((c["f"] - me["f"]) % 1) * L / speed  # temps pour arriver là où elle est
+            key = (c["id"], "front")
+            prev = self.prev_gap.get(key)
+            self.prev_gap[key] = gap
+            if gap < 8:
+                slow.append((gap, prev, c, key))
+        slow.sort(key=lambda x: x[0])
+        if now - self.last < self.GLOBAL_GAP:
+            return
+        lo, hi = self.CATCH_WINDOW
+        for gap, prev, c, key in slow:
+            if prev is None or prev <= gap or now - self.said.get(key, -999) < 120:
+                continue
+            closing = speed - L / pace[c["c"]]           # m/s gagnés sur elle
+            if closing <= 0:
+                continue
+            t = gap * speed / closing                     # secondes avant de la rattraper
+            if not (lo < t < hi):                         # trop tôt (inutile) ou trop tard (déjà dessus)
+                continue
+            group = [x for x in slow if x[2]["c"] == c["c"] and 0 <= x[0] - gap < 2.0]
+            for x in group:
+                self.said[x[3]] = now
+            self.last = now
+            name = class_name(c["cls"])
+            corner = self.beh.corner_at((me["f"] + t * speed / L) % 1) if self.beh else None
+            where = L_(f", tu la rattrapes au virage {corner}", f", you'll catch it at turn {corner}") if corner else ""
+            sec = L_(f"{gap:.0f} seconde{'s' if round(gap) > 1 else ''}", f"{gap:.0f} second{'s' if round(gap) != 1 else ''}")
+            if len(group) > 1:
+                where = where.replace("la rattrapes", "les rattrapes").replace("catch it", "catch them")
+                say(None, L_(f"{len(group)} {name} devant, à {sec}{where}.", f"{len(group)} {name} cars ahead, {sec}{where}."))
+            else:
+                say(None, L_(f"{name} plus lente devant, à {sec}{where}.", f"Slower {name} ahead, {sec}{where}."))
+            return
 
 
 # ======================================================================= 3. écarts
@@ -196,18 +246,36 @@ class GapTrend:
             return None, None, None   # pas assez de tours, ou ce n'est plus la même voiture
         return (series[-1][1] - series[0][1]) / 3, series[-1][1], series[-1][0]
 
+    # phrases d'ingénieur, tirées au hasard pour ne pas répéter toujours la même chose
+    @staticmethod
+    def _pep(fr: list[str], en: list[str]) -> str:
+        i = random.randrange(len(fr))
+        return " " + L(fr[i], en[i])
+
     def _ahead_msg(self):
         rate, gap, place = self._rate(self.ahead)
         if rate is None or gap > 15:
             return None
         if rate < -0.12:
             if gap < 1.0:
-                return L(f"Tu es dans les roues de P{place}, attaque !", f"You're on P{place}'s gearbox, attack!")
+                return L(f"Tu es dans les roues de P{place}, attaque !", f"You're on P{place}'s gearbox, attack!") + self._pep(
+                    ["Mets-lui la pression, montre-toi dans ses rétros.", "Il est à portée, cherche l'ouverture au freinage.",
+                     "Il commence à craquer, reste collé et attends sa faute."],
+                    ["Put him under pressure, show yourself in his mirrors.", "He's in range, look for a gap under braking.",
+                     "He's starting to crack, stay close and wait for his mistake."])
             n = math.ceil((gap - 0.8) / -rate)
             return L(f"Tu reprends {_dix(rate)} par tour sur P{place}, dans ses roues dans {n} tour{'s' if n > 1 else ''}.",
-                     f"You're gaining {_dix(rate)} a lap on P{place}, on his gearbox in {n} lap{'s' if n > 1 else ''}.")
+                     f"You're gaining {_dix(rate)} a lap on P{place}, on his gearbox in {n} lap{'s' if n > 1 else ''}.") + self._pep(
+                    ["Continue comme ça !", "Pousse, il perd du temps !", "Super rythme, va le chercher !",
+                     "Il est en difficulté, mets-lui la pression !"],
+                    ["Keep it up!", "Push, he's losing time!", "Great pace, go get him!", "He's struggling, put the pressure on!"])
+        if rate < -0.05 and gap < 5:
+            return L(f"Tu grappilles sur P{place}, petit à petit.", f"You're chipping away at P{place}, bit by bit.") + self._pep(
+                ["Continue comme ça.", "Reste régulier, ça va payer."], ["Keep it going.", "Stay consistent, it'll pay off."])
         if rate > 0.15:
-            return L(f"P{place} s'échappe de {_dix(rate)} par tour.", f"P{place} is pulling away by {_dix(rate)} a lap.")
+            return L(f"P{place} s'échappe de {_dix(rate)} par tour.", f"P{place} is pulling away by {_dix(rate)} a lap.") + self._pep(
+                ["Accroche-toi, ne le laisse pas filer.", "Reste concentré, fais ta course.", "Pas de panique, la course est longue."],
+                ["Hang on, don't let him go.", "Stay focused, run your own race.", "No panic, it's a long race."])
         return None
 
     def _behind_msg(self):
@@ -216,12 +284,20 @@ class GapTrend:
             return None
         if rate < -0.12:
             if gap < 1.0:
-                return L(f"P{place} est dans tes roues, défends !", f"P{place} is right behind you, defend!")
+                return L(f"P{place} est dans tes roues, défends !", f"P{place} is right behind you, defend!") + self._pep(
+                    ["Ferme l'intérieur aux freinages.", "Pas d'erreur, soigne tes sorties de virage.", "Ne lui laisse aucune ouverture."],
+                    ["Cover the inside into the braking zones.", "No mistakes, nail your corner exits.", "Don't give him any gap."])
             n = math.ceil((gap - 0.8) / -rate)
             return L(f"P{place} revient de {_dix(rate)} par tour, il sera sur toi dans {n} tour{'s' if n > 1 else ''}.",
-                     f"P{place} is closing by {_dix(rate)} a lap, he'll be on you in {n} lap{'s' if n > 1 else ''}.")
+                     f"P{place} is closing by {_dix(rate)} a lap, he'll be on you in {n} lap{'s' if n > 1 else ''}.") + self._pep(
+                    ["Il est plus rapide, pousse un peu plus.", "Ne lâche rien, garde ton rythme.",
+                     "Reste propre, fais tes trajectoires et il ne passera pas."],
+                    ["He's quicker, push a bit harder.", "Don't give up, keep your pace.",
+                     "Stay clean, hit your lines and he won't get by."])
         if rate > 0.15:
-            return L(f"Tu creuses l'écart sur P{place}, {_dix(rate)} par tour.", f"You're pulling away from P{place}, {_dix(rate)} a lap.")
+            return L(f"Tu creuses l'écart sur P{place}, {_dix(rate)} par tour.", f"You're pulling away from P{place}, {_dix(rate)} a lap.") + self._pep(
+                ["Super boulot, continue comme ça !", "Tu le décroches, garde ce rythme.", "Parfait, il ne peut pas suivre."],
+                ["Great job, keep it up!", "You're dropping him, keep this pace.", "Perfect, he can't keep up."])
         return None
 
 
@@ -245,7 +321,9 @@ class TrackLimits:
             if s.tl_per_penalty:
                 left = s.tl_per_penalty - s.tl_steps
                 if left > 3:
-                    return    # encore loin de la pénalité : pas la peine d'en parler
+                    say(None, L(f"Limites de piste{where}, avertissement {s.tl_steps} sur {s.tl_per_penalty}.",
+                                f"Track limits{where}, warning {s.tl_steps} of {s.tl_per_penalty}."))
+                    return
                 tail = L("la prochaine, c'est la pénalité !", "next one is a penalty!") if left <= 1 else \
                     L(f"encore {left} avant la pénalité.", f"{left} more before a penalty.")
                 say(None, L(f"Limites de piste{where}, avertissement {s.tl_steps} sur {s.tl_per_penalty}, {tail}",
@@ -263,20 +341,28 @@ class Damage:
         self.part_off = False
         self.wear = None           # dégâts lus dans l'interface de LMU (aéro, suspensions)
         self.repair = False
+        self.choice = None         # choix du pilote à la radio : True / False / None (= Apex décide)
+        self.all = False           # mécanique touchée : tout réparer
+        self.choice_all = True     # « répare » à la radio : tout, sauf s'il dit « la carrosserie »
         self._fetching = False
         self._last_fetch = 0.0
+        self._session = None
 
     def update(self, s, say) -> None:
         if not s.on_track:
             return
+        key = (s.track, s.session_code)
+        if key != self._session:          # nouvelle session : on repart d'une voiture neuve
+            self._session = key
+            self.repair, self.choice, self.wear, self.dents, self.all = False, None, None, None, False
         me = next((c for c in s.cars if c.get("me")), None)
         moving = me is not None and me.get("spd", 0) > 5 and not s.in_pits
         if self.dents is None or not moving:
             # au garage / au stand / voiture remise en piste : on prend les valeurs sans rien annoncer
             self.dents, self.flat, self.wheel_off, self.part_off = list(s.dents), list(s.flat), list(s.wheel_off), s.part_off
             if s.in_pits and s.pit_state == 3:
-                self.repair = False
-            s.repair = self.repair
+                self.repair, self.choice, self.all = False, None, False
+            self._apply(s)
             return
         # carrosserie
         if sum(s.dents) > sum(self.dents):
@@ -292,18 +378,29 @@ class Damage:
         for i in range(4):
             if s.flat[i] and not self.flat[i]:
                 say(None, L(f"Crevaison {WHEEL_NAME(i)} ! Rentre au stand, doucement.", f"Puncture {WHEEL_NAME(i)}! Box, take it easy."), urgent=True)
-                self.repair = True
+                self.repair = self.all = True
             if s.wheel_off[i] and not self.wheel_off[i]:
                 say(None, L(f"Roue {WHEEL_NAME(i)} perdue ! Rentre au stand.", f"Lost the {WHEEL_NAME(i)} wheel! Box now."), urgent=True)
-                self.repair = True
+                self.repair = self.all = True
         self.flat, self.wheel_off = list(s.flat), list(s.wheel_off)
         if s.part_off and not self.part_off:
             say(None, L("Une pièce s'est détachée de la voiture.", "A part has come off the car."), urgent=True)
         self.part_off = s.part_off
         if s.in_pits and s.pit_state == 3:
-            self.repair = False   # arrêté au stand : on considère que c'est réparé
+            self.repair, self.choice, self.all = False, None, False   # arrêté au stand : on considère que c'est réglé
         self._poll_api(say)
-        s.repair = self.repair
+        self._apply(s)
+
+    def _apply(self, s) -> None:
+        # plus aucun dégât lisible (voiture réparée ou remise à neuf) : plus rien à réparer
+        if self.repair and self.wear is not None and not any(s.flat) and not any(s.wheel_off) and max(s.dents or [0]) == 0:
+            aero = self.wear.get("aero") or 0
+            susp = [v for v in (self.wear.get("susp") or []) if isinstance(v, (int, float))]
+            if aero < 0.05 and all(v < 0.05 for v in susp):
+                self.repair = self.all = False
+        s.repair = self.repair if self.choice is None else self.choice
+        s.no_repair = self.choice is False
+        s.repair_all = s.repair and (self.choice_all if self.choice is True else self.all)
 
     def _poll_api(self, say) -> None:
         if sys.platform != "win32" or self._fetching or time.monotonic() - self._last_fetch < 20:
@@ -334,7 +431,7 @@ class Damage:
                     say(None, L(f"Suspension {WHEEL_NAME(i)} touchée à {v * 100:.0f} %. Attention au comportement.",
                                 f"{WHEEL_NAME(i).capitalize()} suspension damaged {v * 100:.0f} %. Watch the handling."))
                     if v > 0.15:
-                        self.repair = True
+                        self.repair = self.all = True
         except Exception:
             pass
         finally:

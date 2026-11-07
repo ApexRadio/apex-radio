@@ -49,7 +49,8 @@ def _liters(text: str) -> float | None:
     return float(m.group(1).replace(",", ".")) if m else None
 
 
-def plan_menu(menu: list, fuel_total: float | None, tyres: str | None, compound: str, repair: bool) -> tuple[list, list]:
+def plan_menu(menu: list, fuel_total: float | None, tyres: str | None, compound: str, repair) -> tuple[list, list]:
+    """repair : None = on ne touche pas, False = « Ne pas réparer », "body" = carrosserie, "all" = tout réparer."""
     """Retourne (menu modifié, liste de ce qui change en clair). tyres : None/"keep"/"same"/"Wet"/"dry"."""
     menu = json.loads(json.dumps(menu))   # copie
     changes = []
@@ -91,12 +92,21 @@ def plan_menu(menu: list, fuel_total: float | None, tyres: str | None, compound:
     if it and repair:
         print(f"  Menu stand, réparations possibles : {[s.get('text') for s in it.get('settings', [])]}")
     if it and repair and len(it["settings"]) > 1:
-        for i, s in enumerate(it["settings"]):
-            t = s.get("text", "").lower()
-            if ("répar" in t or "repair" in t or "fix" in t) and not any(n in t for n in ("ne pas", "not", "no ", "aucun")):
-                it["currentSetting"] = i
-                changes.append(L("réparations", "repairs"))
-                break
+        opts = [(i, s.get("text", "").lower()) for i, s in enumerate(it["settings"])]
+        opts = [(i, t) for i, t in opts
+                if ("répar" in t or "repair" in t or "fix" in t) and not any(n in t for n in ("ne pas", "not", "no ", "aucun"))]
+        # LMU : « Ne pas réparer », « Réparer la carrosserie », « Tout réparer »
+        want_all = repair == "all"
+        pick = next((o for o in opts if any(k in o[1] for k in (("tout", "all", "full") if want_all else ("carross", "body", "aero")))), None)
+        pick = pick or (opts[-1] if want_all and opts else opts[0] if opts else None)
+        if pick:
+            it["currentSetting"] = pick[0]
+            changes.append(L("on répare tout", "full repairs") if want_all else L("réparation de la carrosserie", "bodywork repairs"))
+    if it and repair is False and len(it["settings"]) > 1:   # le pilote a dit « pas de réparation »
+        idx = next((i for i, s in enumerate(it["settings"])
+                    if any(n in s.get("text", "").lower() for n in ("ne pas", "pas de", "not", "no ", "none", "aucun"))), 0)
+        it["currentSetting"] = idx
+        changes.append(L("pas de réparation", "no repairs"))
     return menu, changes
 
 
@@ -113,7 +123,7 @@ class PitCrew:
         self.say = None
 
     def update(self, s, p) -> None:
-        if self.mode != "auto" or not s.on_track or s.in_pits or s.session != "course":
+        if self.mode != "auto" or not s.on_track or s.in_pits or s.session != "course" or s.game_phase == 8:
             return
         if p.ready and p.stops_needed and p.laps_until_box is not None and p.laps_until_box <= 1:
             if self.done_for != s.pit_stops:
@@ -129,7 +139,9 @@ class PitCrew:
         tyres = "Wet" if p.tyre_compound == "pluie" else "dry" if p.tyre_compound == "slicks" else \
             "same" if p.change_tyres else "keep" if p.change_tyres is False else None
         self.busy = True
-        threading.Thread(target=self._run, args=(fuel_total, tyres, s.compound, bool(getattr(p, "repair", False))),
+        threading.Thread(target=self._run, args=(fuel_total, tyres, s.compound,
+                                                       ("all" if getattr(p, "repair_all", False) else "body") if getattr(p, "repair", False)
+                                                       else False if getattr(p, "no_repair", False) else None),
                          daemon=True).start()
 
     def _run(self, fuel_total, tyres, compound, repair) -> None:
@@ -139,7 +151,8 @@ class PitCrew:
                 txt = ", ".join(x for x in [L(f"essence à {fuel_total:.0f} litres", f"fuel to {fuel_total:.0f} litres") if fuel_total else "",
                                             {"keep": L("on garde les pneus", "keep the tyres"), "same": L("pneus neufs", "new tyres"),
                                              "Wet": L("pneus pluie", "wet tyres"), "dry": L("pneus slicks", "slick tyres")}.get(tyres, ""),
-                                            L("réparations", "repairs") if repair else ""] if x)
+                                            (L("on répare tout", "full repairs") if repair == "all" else L("réparation de la carrosserie", "bodywork repairs")) if repair
+                                            else L("pas de réparation", "no repairs") if repair is False else ""] if x)
                 self.status = L(f"✓ Réglé (démo) : {txt}", f"✓ Set (demo): {txt}")
                 self._say(L(f"Stand réglé : {txt}.", f"Pit menu set: {txt}."))
                 return

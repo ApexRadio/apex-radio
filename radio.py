@@ -279,10 +279,12 @@ class Radio:
                 return False
             import ctypes
             return bool(ctypes.windll.user32.GetAsyncKeyState(b["vk"]) & 0x8000)
+        # Certains volants (ex. Fanatec) apparaissent deux fois dans Windows avec le même identifiant,
+        # et un seul des deux envoie les boutons : on regarde donc tous les périphériques qui correspondent.
         for j in self._joys.values():
             try:
-                if j.get_guid() == b["guid"] and b["button"] < j.get_numbuttons():
-                    return bool(j.get_button(b["button"]))
+                if j.get_guid() == b["guid"] and b["button"] < j.get_numbuttons() and j.get_button(b["button"]):
+                    return True
             except Exception:
                 pass
         return False

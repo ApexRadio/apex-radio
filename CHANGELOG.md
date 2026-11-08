@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.2.7
+- 🇫🇷 Volant : correction pour les volants qui apparaissent deux fois dans Windows (ex. Fanatec) : le bouton radio est maintenant bien détecté en jeu. Merci à l'utilisateur qui l'a signalé !
+- 🇬🇧 Wheel: fix for wheels that show up twice in Windows (e.g. Fanatec): the radio button is now detected in game. Thanks to the user who reported it!
 - 🇫🇷 Interface plus claire : en haut, seulement les 3 boutons de course (🔊 Radio, 🤫 Silence, 👀 Spotter, allumés ou éteints) ; tous les réglages (voix, volume, encouragements, micro, bouton radio, raccourcis, couleur, langue) sont rangés dans le panneau ⚙️ Réglages. Les pneus affichent « – » au lieu de -273 °C quand le jeu ne donne pas encore leurs données.
 - 🇬🇧 Cleaner interface: only the 3 race buttons stay at the top (🔊 Radio, 🤫 Quiet, 👀 Spotter, lit or dimmed); all settings (voice, volume, encouragement, mic, radio button, shortcuts, colour, language) are in the ⚙️ Settings panel. Tyres show "–" instead of -273 °C when the game hasn't sent their data yet.
 - 🇫🇷 Encouragements réglables : menu 💬 dans le tableau de bord, Discret (juste les infos), Normal ou Motivant (plus souvent et plus varié).

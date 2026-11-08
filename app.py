@@ -40,7 +40,7 @@ from behavior import Behavior
 from setups import Workshop
 from incidents import Incidents
 from lmu_probe import Probe
-from alerts import Spotter, Traffic, GapTrend, TrackLimits, Damage, Weather, WarmUp, CarInfo, car_label
+from alerts import Spotter, Traffic, GapTrend, TrackLimits, Damage, Weather, WarmUp, CarInfo, Places, car_label, set_encourage
 import debrief
 from pitmenu import PitCrew
 from radio import save_config
@@ -151,7 +151,8 @@ def loop(state: State, demo: bool) -> None:
     spotter.enabled = state.radio.cfg.get("spotter", True)
     state.spotter = spotter
     traffic, trend, limits, damage = Traffic(beh), GapTrend(), TrackLimits(beh), Damage()
-    warmup, carinfo = WarmUp(), CarInfo()
+    warmup, carinfo, places = WarmUp(), CarInfo(), Places()
+    set_encourage(state.radio.cfg.get("encourage", "normal"))
     weather = Weather(demo)
     recorder = debrief.Recorder()
     session_end = {"key": None, "prompt": 0}
@@ -250,6 +251,7 @@ def loop(state: State, demo: bool) -> None:
             trend.update(snap, say)
             limits.update(snap, say)
             warmup.update(snap, say)
+            places.update(snap, say)
             carinfo.update(snap, say)
             if state.workshop:
                 state.workshop.car_class, state.workshop.car = snap.car_class, snap.car
@@ -291,6 +293,7 @@ def loop(state: State, demo: bool) -> None:
                 "plan": asdict(plan),
                 "radio": list(eng.radio),
                 "accent": state.radio.cfg.get("accent", "bleu"),
+                "encourage": state.radio.cfg.get("encourage", "normal"),
                 "voice": {"on": state.voice.enabled, "engine": state.voice.engine, "volume": state.voice.volume,
                           "quiet": state.voice.quiet, "choice": voices.current_id(), "list": voices.catalog(),
                           "name": voices.engineer_name(),
@@ -491,6 +494,13 @@ def make_handler(state: State):
                 n = int(self.headers.get("Content-Length") or 0)
                 target = (json.loads(self.rfile.read(n) or b"{}") if n else {}).get("target", "ptt")
                 state.radio.start_learning(target)
+            elif self.path == "/api/encourage":
+                n = int(self.headers.get("Content-Length") or 0)
+                lv = json.loads(self.rfile.read(n) or b"{}").get("level", "normal")
+                if lv in ("discret", "normal", "motivant"):
+                    state.radio.cfg["encourage"] = lv
+                    save_config(state.radio.cfg)
+                    set_encourage(lv)
             elif self.path == "/api/accent":
                 n = int(self.headers.get("Content-Length") or 0)
                 a = json.loads(self.rfile.read(n) or b"{}").get("accent", "bleu")

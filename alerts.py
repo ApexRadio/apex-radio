@@ -22,7 +22,16 @@ import urllib.request
 
 from i18n import L, dec
 
-L_ = L   # dans le trafic, « L » sert aussi à la longueur du circuit
+L_ = L
+
+# niveau d'encouragements choisi dans l'appli : "discret", "normal" ou "motivant"
+ENCOURAGE = "normal"
+
+
+def set_encourage(level: str) -> None:
+    global ENCOURAGE
+    ENCOURAGE = level if level in ("discret", "normal", "motivant") else "normal"
+   # dans le trafic, « L » sert aussi à la longueur du circuit
 
 
 def WHEEL_NAME(i: int) -> str:
@@ -235,7 +244,8 @@ class GapTrend:
         self.ahead.append((pa, s.gap_class_ahead))
         self.behind.append((pb, s.gap_class_behind))
         self.ahead, self.behind = self.ahead[-4:], self.behind[-4:]
-        if self.count % self.EVERY != 1 or s.in_pits:
+        every = {"discret": 5, "normal": self.EVERY, "motivant": 2}[ENCOURAGE]
+        if self.count % every != 1 % every or s.in_pits:
             return
         msg = self._ahead_msg() or self._behind_msg()
         msg = msg and msg.replace("PNone", L("la voiture", "the car"))
@@ -251,8 +261,14 @@ class GapTrend:
     # phrases d'ingénieur, tirées au hasard pour ne pas répéter toujours la même chose
     @staticmethod
     def _pep(fr: list[str], en: list[str]) -> str:
+        if ENCOURAGE == "discret":
+            return ""              # juste l'info, sans encouragement
         i = random.randrange(len(fr))
-        return " " + L(fr[i], en[i])
+        out = " " + L(fr[i], en[i])
+        if ENCOURAGE == "motivant" and random.random() < 0.5:
+            j = random.randrange(len(MORE_PEP_FR))
+            out += " " + L(MORE_PEP_FR[j], MORE_PEP_EN[j])
+        return out
 
     def _ahead_msg(self):
         rate, gap, place = self._rate(self.ahead)
@@ -301,6 +317,100 @@ class GapTrend:
                 ["Super boulot, continue comme ça !", "Tu le décroches, garde ce rythme.", "Parfait, il ne peut pas suivre."],
                 ["Great job, keep it up!", "You're dropping him, keep this pace.", "Perfect, he can't keep up."])
         return None
+
+
+MORE_PEP_FR = ["Allez, allez !", "On y croit !", "Tu es en feu aujourd'hui !", "Superbe pilotage !", "On lâche rien !",
+               "C'est exactement ce qu'il faut faire.", "Je suis fier de toi."]
+MORE_PEP_EN = ["Come on, come on!", "We believe in it!", "You're on fire today!", "Superb driving!", "Never give up!",
+               "That's exactly what we need.", "Proud of you."]
+
+
+# ======================================================================= 11. places gagnées / perdues
+class Places:
+    """Après le 1er tour : « Bon départ, tu as gagné 3 places ! ». Puis pendant la course,
+    à chaque place gagnée ou perdue (sauf autour des arrêts aux stands, où ça bouge pour rien)."""
+    STABLE = 4.0       # s : la place doit tenir quelques secondes (pas un croisement éclair)
+    COOLDOWN = 25.0    # s entre deux annonces
+    PIT_CALM = 90.0    # s sans annonce après un passage aux stands
+
+    def __init__(self) -> None:
+        self.key = None
+        self.start = None        # place au départ
+        self.told_start = False
+        self.last_said = None    # dernière place annoncée
+        self.cand, self.cand_t = None, 0.0
+        self.last_t = -1e9
+        self.pit_t = -1e9
+
+    def update(self, s, say) -> None:
+        if not s.on_track or s.session != "course" or s.done:
+            return
+        pos = s.class_position or s.position
+        if not pos:
+            return
+        key = (s.track, s.session_code)
+        if key != self.key:
+            self.__init__()
+            self.key = key
+        if s.in_pits:
+            self.pit_t = s.elapsed
+        if self.start is None:
+            if s.laps_done == 0:
+                self.start = pos
+            return
+        if not self.told_start:
+            if s.laps_done >= 1:
+                self.told_start = True
+                self.last_said, self.last_t = pos, s.elapsed
+                self._start_msg(pos, say)
+            return
+        if ENCOURAGE == "discret":
+            return
+        if s.in_pits or s.elapsed - self.pit_t < self.PIT_CALM:
+            self.last_said = pos
+            return
+        if pos != self.cand:
+            self.cand, self.cand_t = pos, s.elapsed
+            return
+        if pos == self.last_said or s.elapsed - self.cand_t < self.STABLE or s.elapsed - self.last_t < self.COOLDOWN:
+            return
+        diff = self.last_said - pos
+        self.last_said, self.last_t = pos, s.elapsed
+        if abs(diff) > 3:
+            return                 # gros saut : arrêts des autres, pénalité… pas un vrai dépassement
+        if diff > 0:
+            n = L(f"{diff} places de plus" if diff > 1 else "Une place de plus", f"{diff} places gained" if diff > 1 else "One place up")
+            pep = random.choice([L("Bien joué !", "Nice one!"), L("Superbe dépassement !", "Great move!"), L("Continue !", "Keep going!")])
+            if ENCOURAGE == "motivant":
+                j = random.randrange(len(MORE_PEP_FR)); pep += " " + L(MORE_PEP_FR[j], MORE_PEP_EN[j])
+            say(None, L(f"{n}, tu es P{pos}. ", f"{n}, you're P{pos}. ") + pep)
+        else:
+            k = -diff
+            say(None, L(f"Tu perds {k} place{'s' if k > 1 else ''}, P{pos}. ", f"You lose {k} place{'s' if k > 1 else ''}, P{pos}. ")
+                + random.choice([L("Accroche-toi, on va la reprendre.", "Hang on, we'll get it back."),
+                                 L("Pas grave, reste concentré.", "No worries, stay focused."),
+                                 L("Respire, la course est longue.", "Breathe, it's a long race.")]))
+
+    def _start_msg(self, pos, say) -> None:
+        d = self.start - pos
+        disc = ENCOURAGE == "discret"
+        if d > 0:
+            msg = L(f"Bon départ, tu as gagné {d} place{'s' if d > 1 else ''}, tu es P{pos}.",
+                    f"Good start, you gained {d} place{'s' if d > 1 else ''}, you're P{pos}.")
+            if not disc:
+                msg += " " + random.choice([L("Superbe !", "Superb!"), L("Continue comme ça !", "Keep it up!"),
+                                            L("Excellent premier tour !", "Excellent first lap!")])
+        elif d < 0:
+            msg = L(f"Premier tour difficile, tu as perdu {-d} place{'s' if d < -1 else ''}, tu es P{pos}.",
+                    f"Tough first lap, you lost {-d} place{'s' if d < -1 else ''}, you're P{pos}.")
+            if not disc:
+                msg += " " + random.choice([L("Pas grave, on va les reprendre.", "No worries, we'll get them back."),
+                                            L("La course est longue, reste calme.", "It's a long race, stay calm.")])
+        else:
+            msg = L(f"Premier tour propre, tu gardes ta place, P{pos}.", f"Clean first lap, you hold your place, P{pos}.")
+            if not disc:
+                msg += " " + L("Maintenant, on attaque !", "Now let's attack!")
+        say(None, msg)
 
 
 # ======================================================================= 4. limites de piste

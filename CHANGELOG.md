@@ -1,5 +1,11 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.2.7
+- 🇫🇷 Encouragements réglables : menu 💬 dans le tableau de bord, Discret (juste les infos), Normal ou Motivant (plus souvent et plus varié).
+- 🇬🇧 Adjustable encouragement: 💬 menu on the dashboard, Low-key (info only), Normal or Hype (more often, more varied).
+- 🇫🇷 Places gagnées : après le 1er tour (« Bon départ, tu as gagné 3 places ! ») et pendant la course à chaque place gagnée ou perdue (sauf autour des arrêts aux stands).
+- 🇬🇧 Places gained: after lap 1 ("Good start, you gained 3 places!") and during the race for every place gained or lost (except around pit stops).
+
 ## 1.2.6
 - 🇫🇷 Raccourcis : choisis un bouton du volant, d'une box ou une touche du clavier pour allumer ou couper le spotter, la radio ou le mode silence, sans quitter la piste (carte Radio → « Raccourcis »).
 - 🇬🇧 Shortcuts: pick a wheel button, button box or keyboard key to turn the spotter, the radio or quiet mode on and off without leaving the track (Radio card → "Shortcuts").

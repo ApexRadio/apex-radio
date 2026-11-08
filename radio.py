@@ -68,11 +68,18 @@ def key_name(vk: int) -> str:
     return f"Touche {vk}"
 
 
-class Radio:
-    """Gère le bouton, l'écoute et la transcription. Appelle on_question(texte)."""
+SHORTCUTS = ("spotter", "radio", "quiet")   # raccourcis : couper/allumer le spotter, la radio, le mode silence
 
-    def __init__(self, on_question) -> None:
+
+class Radio:
+    """Gère le bouton, l'écoute et la transcription. Appelle on_question(texte),
+    et on_shortcut(nom) quand un raccourci (spotter, radio, silence) est pressé."""
+
+    def __init__(self, on_question, on_shortcut=None) -> None:
         self.on_question = on_question
+        self.on_shortcut = on_shortcut
+        self.learn_target = "ptt"         # ce qu'on est en train d'apprendre : le bouton radio ou un raccourci
+        self._short_down: dict = {}
         self.cfg = load_config()
         self.state = "démarrage"       # démarrage / prêt / écoute / réflexion / erreur / apprentissage
         self.detail = ""
@@ -89,17 +96,23 @@ class Radio:
         threading.Thread(target=self._load_whisper, daemon=True).start()
 
     # ------------------------------------------------------------- infos UI
+    @staticmethod
+    def label(b) -> str:
+        if not b:
+            return L("aucun", "none")
+        if b["type"] == "key":
+            return L(f"clavier · {key_name(b['vk'])}", f"keyboard · {key_name(b['vk'])}")
+        return L(f"{b['name']} · bouton {b['button'] + 1}", f"{b['name']} · button {b['button'] + 1}")
+
     def info(self) -> dict:
         b = self.cfg.get("ptt")
         if b and b.get("type") == "key" and b.get("vk") in (0x5B, 0x5C):
             self.cfg.pop("ptt"); save_config(self.cfg); b = None
-        if not b:
-            label = L("aucun", "none")
-        elif b["type"] == "key":
-            label = L(f"clavier · {key_name(b['vk'])}", f"keyboard · {key_name(b['vk'])}")
-        else:
-            label = L(f"{b['name']} · bouton {b['button'] + 1}", f"{b['name']} · button {b['button'] + 1}")
+        label = self.label(b)
+        sc = self.cfg.get("shortcuts") or {}
         return {"state": self.state, "detail": self.detail, "button": label, "level": self.level,
+                "shortcuts": {k: (self.label(sc.get(k)) if sc.get(k) else None) for k in SHORTCUTS},
+                "learn_target": self.learn_target if self.learning else None,
                 "mic": self.cfg.get("mic"),
                 "heard": self.last_heard, "learning": self.learning,
                 "whisper": self._whisper is not None}
@@ -122,10 +135,17 @@ class Radio:
         save_config(self.cfg)
         print(f"  Micro choisi : {index}")
 
-    def start_learning(self) -> None:
+    def start_learning(self, target: str = "ptt") -> None:
+        self.learn_target = target if target in SHORTCUTS else "ptt"
         self._learn_reset = True
         self.learning = True
         self.state = "apprentissage"
+
+    def clear_shortcut(self, target: str) -> None:
+        sc = self.cfg.setdefault("shortcuts", {})
+        if target in sc:
+            sc.pop(target)
+            save_config(self.cfg)
 
     # ------------------------------------------------------------- whisper
     def _load_whisper(self) -> None:
@@ -249,7 +269,9 @@ class Radio:
         return out
 
     def _ptt_pressed(self) -> bool:
-        b = self.cfg.get("ptt")
+        return self._pressed(self.cfg.get("ptt"))
+
+    def _pressed(self, b) -> bool:
         if not b:
             return False
         if b["type"] == "key":
@@ -272,16 +294,45 @@ class Radio:
         new_key = keys - held_keys
         if new_btn:
             guid, name, b = sorted(new_btn)[0]
-            self.cfg["ptt"] = {"type": "joy", "guid": guid, "name": name, "button": b}
+            binding = {"type": "joy", "guid": guid, "name": name, "button": b}
         elif new_key:
-            self.cfg["ptt"] = {"type": "key", "vk": sorted(new_key)[0]}
+            binding = {"type": "key", "vk": sorted(new_key)[0]}
         else:
             return keys, btns
+        if self.learn_target in SHORTCUTS:
+            if binding == self.cfg.get("ptt"):
+                self.detail = L("Ce bouton sert déjà à la radio : choisis-en un autre.",
+                                "That button is already your radio button: pick another one.")
+            else:
+                sc = self.cfg.setdefault("shortcuts", {})
+                for k in SHORTCUTS:                    # un bouton = une seule action
+                    if sc.get(k) == binding:
+                        sc.pop(k)
+                sc[self.learn_target] = binding
+                self._short_down[self.learn_target] = True   # ne pas déclencher l'action au moment où on l'apprend
+                print(f"  Raccourci {self.learn_target} enregistré : {self.label(binding)}")
+        else:
+            self.cfg["ptt"] = binding
+            for k, v in list((self.cfg.get("shortcuts") or {}).items()):
+                if v == binding:
+                    self.cfg["shortcuts"].pop(k)
+            print(f"  Bouton radio enregistré : {self.label(binding)}")
         save_config(self.cfg)
         self.learning = False
+        self.learn_target = "ptt"
         self.state = "prêt"
-        print(f"  Bouton radio enregistré : {self.info()['button']}")
         return keys, btns
+
+    def _check_shortcuts(self) -> None:
+        sc = self.cfg.get("shortcuts") or {}
+        for name in SHORTCUTS:
+            now = self._pressed(sc.get(name)) if sc.get(name) else False
+            if now and not self._short_down.get(name) and self.on_shortcut:
+                try:
+                    self.on_shortcut(name)
+                except Exception:
+                    import traceback; traceback.print_exc()
+            self._short_down[name] = now
 
     def _run(self) -> None:
         self._init_pygame()
@@ -298,6 +349,7 @@ class Radio:
                     held_keys, held_btns = self._learn(held_keys, held_btns)
                     time.sleep(0.02)
                     continue
+                self._check_shortcuts()
                 now = self._ptt_pressed()
                 if now and not pressed and self.state in ("prêt", "erreur"):
                     try:

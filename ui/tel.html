@@ -9,13 +9,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root { --bg: #06070B; --panel: #0B0F16; --line: #1A2330; --text: #E8EDF5; --muted: #9AA6B8;
-          --accent: #00E5FF; --alert: #FF2E88; --good: #3DFFA2; --warn: #FFB547; --yellow: #FFE500;
+          --accent: #00E5FF; --accent-rgb: 0,229,255; --alert: #FF2E88; --good: #3DFFA2; --warn: #FFB547; --yellow: #FFE500;
           --mono: "JetBrains Mono", ui-monospace, monospace; --title: Orbitron, sans-serif; }
   * { box-sizing: border-box; }
   html, body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.3 Inter, system-ui, sans-serif; }
   body { padding: max(12px, env(safe-area-inset-top)) 16px 16px; min-height: 100vh; display: flex; flex-direction: column; gap: 10px; }
   .top { display: flex; justify-content: space-between; align-items: center; }
-  .logo { font-family: var(--title); font-weight: 900; color: var(--accent); letter-spacing: .1em; text-shadow: 0 0 12px rgba(0,229,255,.6); font-size: 16px; }
+  .logo { font-family: var(--title); font-weight: 900; color: var(--accent); letter-spacing: .1em; text-shadow: 0 0 12px rgba(var(--accent-rgb),.6); font-size: 16px; }
   .muted { color: var(--muted); font-size: 12px; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; min-width: 0; }
@@ -68,7 +68,13 @@ function applyLang() {
 }
 const SESSION_EN = { course: "race", qualif: "qualifying", essais: "practice", warmup: "warm-up" };
 const fmtTime = s => { if (s == null) return "–"; const m = Math.floor(s / 60), r = Math.floor(s % 60); return `${m}:${String(r).padStart(2, "0")}`; };
+const ACCENT = { bleu: "#00E5FF", orange: "#FF8A00", vert: "#7CFF2E", rouge: "#FF3B3B", violet: "#B26BFF", jaune: "#FFD400", blanc: "#E8EDF5" };
 function render(d) {
+  if (d.accent && ACCENT[d.accent]) {
+    const h = ACCENT[d.accent];
+    document.documentElement.style.setProperty("--accent", h);
+    document.documentElement.style.setProperty("--accent-rgb", [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)).join(","));
+  }
   const s = d.snap || {}, p = d.plan || {}, radio = d.radio || [];
   if (d.lang && d.lang !== LANG) { LANG = d.lang; applyLang(); }
   if (d.voice && d.voice.name) $("engname").textContent = d.voice.name;

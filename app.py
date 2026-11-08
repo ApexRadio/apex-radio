@@ -73,7 +73,7 @@ class State:
         self.plan = None
         self.eng = None
         self.map = TrackMap()
-        self.radio = Radio(self.on_question)
+        self.radio = Radio(self.on_question, self.on_shortcut)
         i18n.set_lang(self.radio.cfg.get("lang") or system_lang())   # avant la voix : elle charge le modèle de la bonne langue
         voices.CHOICE.update(self.radio.cfg.get("voices") or {})      # voix choisie pour chaque langue
         self.voice = Voice()
@@ -85,6 +85,33 @@ class State:
 
     def track(self) -> str:
         return self.snap.track or self.last_track
+
+    # ------------------------------------------------ boutons du tableau de bord et raccourcis du volant
+    def toggle_voice(self) -> None:
+        v = self.voice
+        v.enabled = not v.enabled
+        if v.enabled:
+            v.say(L("Radio active.", "Radio on."), urgent=True)
+        print(f"  Radio : {'activée' if v.enabled else 'coupée'}")
+
+    def toggle_quiet(self) -> None:
+        v = self.voice
+        v.quiet = not v.quiet
+        v.say(L("Mode silence : je ne te dis plus que l'urgent.", "Quiet mode: urgent calls only.") if v.quiet
+              else L("Fin du silence, je te redonne toutes les infos.", "Quiet mode off, back to full info."),
+              urgent=True)
+
+    def toggle_spotter(self) -> None:
+        sp = getattr(self, "spotter", None)
+        if sp:
+            sp.enabled = not sp.enabled
+            self.radio.cfg["spotter"] = sp.enabled
+            save_config(self.radio.cfg)
+            self.voice.say(L("Spotter activé.", "Spotter on.") if sp.enabled else L("Spotter coupé.", "Spotter off."),
+                           urgent=True)
+
+    def on_shortcut(self, name: str) -> None:
+        {"spotter": self.toggle_spotter, "radio": self.toggle_voice, "quiet": self.toggle_quiet}[name]()
 
     def on_question(self, text: str) -> None:
         from strategy import Plan
@@ -263,6 +290,7 @@ def loop(state: State, demo: bool) -> None:
                 "snap": asdict(snap),
                 "plan": asdict(plan),
                 "radio": list(eng.radio),
+                "accent": state.radio.cfg.get("accent", "bleu"),
                 "voice": {"on": state.voice.enabled, "engine": state.voice.engine, "volume": state.voice.volume,
                           "quiet": state.voice.quiet, "choice": voices.current_id(), "list": voices.catalog(),
                           "name": voices.engineer_name(),
@@ -415,9 +443,7 @@ def make_handler(state: State):
         def do_POST(self):
             v = state.voice
             if self.path == "/api/voice/toggle":
-                v.enabled = not v.enabled
-                if v.enabled:
-                    v.say(L("Radio active.", "Radio on."))
+                state.toggle_voice()
             elif self.path == "/api/lang":
                 n = int(self.headers.get("Content-Length") or 0)
                 lang = json.loads(self.rfile.read(n) or b"{}").get("lang", "fr")
@@ -427,10 +453,7 @@ def make_handler(state: State):
                 v.flush()
                 v.say(L("Radio en français.", "Radio in English."))
             elif self.path == "/api/voice/quiet":
-                v.quiet = not v.quiet
-                v.say(L("Mode silence : je ne te dis plus que l'urgent.", "Quiet mode: urgent calls only.") if v.quiet
-                      else L("Fin du silence, je te redonne toutes les infos.", "Quiet mode off, back to full info."),
-                      urgent=True)
+                state.toggle_quiet()
             elif self.path == "/api/setup/race":
                 n = int(self.headers.get("Content-Length") or 0)
                 req = json.loads(self.rfile.read(n) or b"{}")
@@ -448,12 +471,7 @@ def make_handler(state: State):
                 if crew:
                     crew.prepare(state.snap, state.plan, asked=True)
             elif self.path == "/api/spotter/toggle":
-                sp = getattr(state, "spotter", None)
-                if sp:
-                    sp.enabled = not sp.enabled
-                    state.radio.cfg["spotter"] = sp.enabled
-                    save_config(state.radio.cfg)
-                    v.say(L("Spotter activé.", "Spotter on.") if sp.enabled else L("Spotter coupé.", "Spotter off."))
+                state.toggle_spotter()
             elif self.path == "/api/show":
                 desktop.open_window(f"http://localhost:{PORT}")
             elif self.path == "/api/quit":
@@ -470,7 +488,18 @@ def make_handler(state: State):
                 save_config(state.radio.cfg)
                 v.say(L("Radio check, niveau du son.", "Radio check, volume level."))
             elif self.path == "/api/ptt/learn":
-                state.radio.start_learning()
+                n = int(self.headers.get("Content-Length") or 0)
+                target = (json.loads(self.rfile.read(n) or b"{}") if n else {}).get("target", "ptt")
+                state.radio.start_learning(target)
+            elif self.path == "/api/accent":
+                n = int(self.headers.get("Content-Length") or 0)
+                a = json.loads(self.rfile.read(n) or b"{}").get("accent", "bleu")
+                if a in ("bleu", "orange", "vert", "rouge", "violet", "jaune", "blanc"):
+                    state.radio.cfg["accent"] = a
+                    save_config(state.radio.cfg)
+            elif self.path == "/api/shortcut/clear":
+                n = int(self.headers.get("Content-Length") or 0)
+                state.radio.clear_shortcut(json.loads(self.rfile.read(n) or b"{}").get("target", ""))
             elif self.path in ("/api/setup/select", "/api/setup/create", "/api/setup/restore", "/api/setup/mode"):
                 n = int(self.headers.get("Content-Length") or 0)
                 req = json.loads(self.rfile.read(n) or b"{}")

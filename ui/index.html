@@ -11,14 +11,14 @@
   :root {
     --bg: #06070B; --panel: #0B0F16; --line: #1A2330; --line2: #1E2A38; --track: #16202C;
     --text: #E8EDF5; --muted: #9AA6B8;
-    --accent: #00E5FF; --alert: #FF2E88; --good: #3DFFA2; --warn: #FFB547;
+    --accent: #00E5FF; --accent-rgb: 0,229,255; --alert: #FF2E88; --good: #3DFFA2; --warn: #FFB547;
     --mono: "JetBrains Mono", Consolas, monospace; --title: "Chakra Petch", "Segoe UI", sans-serif;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.4 Inter, "Segoe UI", system-ui, sans-serif; }
   .wrap { padding: 20px 26px; display: flex; flex-direction: column; gap: 16px; }
   header { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
-  .logo { font-family: Orbitron, var(--title); font-weight: 900; font-size: 26px; letter-spacing: .12em; color: var(--accent); text-shadow: 0 0 14px rgba(0,229,255,.7); }
+  .logo { font-family: Orbitron, var(--title); font-weight: 900; font-size: 26px; letter-spacing: .12em; color: var(--accent); text-shadow: 0 0 14px rgba(var(--accent-rgb),.7); }
   .demo { color: var(--warn); font-family: var(--title); font-size: 15px; letter-spacing: .1em; text-shadow: none; margin-left: 10px; }
   .hright { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 14px; }
   .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--line2); border-radius: 999px; }
@@ -44,7 +44,7 @@
   #delta.fast { color: var(--good); text-shadow: 0 0 14px rgba(61,255,162,.5); }
   #delta.slow { color: var(--alert); text-shadow: 0 0 14px rgba(255,46,136,.45); }
   #upd { display: none; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin: 0 0 12px; padding: 9px 14px;
-         border: 1px solid var(--accent); border-radius: 10px; background: rgba(0,229,255,.08); color: var(--text); font-weight: 600; }
+         border: 1px solid var(--accent); border-radius: 10px; background: rgba(var(--accent-rgb),.08); color: var(--text); font-weight: 600; }
   #upd a { color: #06070B; background: var(--accent); padding: 5px 12px; border-radius: 999px; text-decoration: none; font-weight: 700; letter-spacing: .04em; }
   #upd button { background: none; border: 0; color: var(--muted); font-size: 18px; cursor: pointer; padding: 0 4px; }
   #pen { display: none; margin-top: 6px; background: var(--alert); color: #06070B; font-weight: 700; letter-spacing: .06em; border-radius: 8px; padding: 6px 10px; animation: flash 1s steps(2) infinite; }
@@ -70,13 +70,13 @@
   select { max-width: 65%; }
   .bar { height: 6px; border-radius: 3px; background: var(--track); overflow: hidden; }
   .bar i { display: block; height: 100%; width: 0; background: var(--accent); }
-  .act { background: var(--accent); color: #06070B; border: 0; border-radius: 10px; font-family: var(--title); font-weight: 700; letter-spacing: .08em; box-shadow: 0 0 18px rgba(0,229,255,.3); }
-  .act:hover { box-shadow: 0 0 26px rgba(0,229,255,.55); }
+  .act { background: var(--accent); color: #06070B; border: 0; border-radius: 10px; font-family: var(--title); font-weight: 700; letter-spacing: .08em; box-shadow: 0 0 18px rgba(var(--accent-rgb),.3); }
+  .act:hover { box-shadow: 0 0 26px rgba(var(--accent-rgb),.55); }
   #askform { display: flex; gap: 6px; } #ask { flex: 1; }
   .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; }
   .big { font-family: var(--mono); font-weight: 700; font-size: 46px; line-height: 1.1; }
   .big small { font-size: 15px; color: var(--muted); font-weight: 400; }
-  .glow { color: var(--accent); text-shadow: 0 0 18px rgba(0,229,255,.45); }
+  .glow { color: var(--accent); text-shadow: 0 0 18px rgba(var(--accent-rgb),.45); }
   .sub { font-family: var(--mono); font-size: 13px; color: var(--muted); margin-top: 4px; }
   .tyres { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; max-width: 520px; font-family: var(--mono); }
   .tyre { border: 1px solid var(--line2); border-radius: 10px; padding: 10px; text-align: center; }
@@ -107,7 +107,7 @@
   .good { color: var(--good); } .warn { color: var(--warn); } .bad { color: var(--alert); }
   #ws { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 10; display: flex; justify-content: flex-end; }
   #ws[hidden] { display: none; }
-  .wsbox { width: min(640px, 100%); height: 100%; overflow-y: auto; background: var(--bg); border-left: 1px solid var(--accent); box-shadow: 0 0 40px rgba(0,229,255,.2); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+  .wsbox { width: min(640px, 100%); height: 100%; overflow-y: auto; background: var(--bg); border-left: 1px solid var(--accent); box-shadow: 0 0 40px rgba(var(--accent-rgb),.2); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
   .wsbox select { max-width: 70%; }
   #wstable td, #wstable th { font-size: 13px; vertical-align: top; }
   #wstable td:first-child { width: 28px; }
@@ -173,6 +173,7 @@
       <a id="debriefs" class="pill" href="/debriefs" style="color:var(--text);text-decoration:none" data-en="DEBRIEFS">DÉBRIEFS</a>
       <button id="spot" title="Spotter gauche / droite" data-en-title="Left / right spotter">Spotter : ON</button>
       <label class="pill" style="gap:6px;padding:4px 10px" title="Choisis la voix de ton ingénieur (téléchargée la première fois)" data-en-title="Pick your engineer's voice (downloaded the first time)">🎙️<select id="vchoice" aria-label="Voix" style="max-width:none;border:0;padding:2px 4px"></select></label>
+      <label class="pill" style="gap:6px;padding:4px 10px" title="Couleur de l'application" data-en-title="App colour">🎨<select id="accent" aria-label="Couleur" style="max-width:none;border:0;padding:2px 4px"></select></label>
       <button id="vtest" title="Tester la voix" data-en-title="Test the voice" data-en="Voice test">Test voix</button>
       <label class="pill" style="gap:6px" title="Volume de la radio" data-en-title="Radio volume">🔊<input type="range" id="vol" min="0.6" max="1.6" step="0.1" aria-label="Volume de la radio" style="width:90px;padding:0"></label>
       <button id="lang" title="Langue / Language">FR</button>
@@ -204,6 +205,10 @@
           <div class="row" style="align-items:center"><span data-en="Mic">Micro</span><select id="mic" aria-label="Micro"></select></div>
           <div class="bar"><i id="level" style="background:var(--good)"></i></div>
           <button class="act" id="learn" data-en="CHOOSE THE RADIO BUTTON">CHOISIR LE BOUTON RADIO</button>
+          <details id="shortcuts" style="font-size:13px">
+            <summary style="cursor:pointer;color:var(--muted)" data-en="Shortcuts (wheel / keyboard)">Raccourcis (volant / clavier)</summary>
+            <div id="sclist" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"></div>
+          </details>
           <form id="askform"><input id="ask" placeholder="Poser une question au clavier…" data-en-placeholder="Type a question…" autocomplete="off" aria-label="Question"><button>OK</button></form>
         </div>
       </section>
@@ -410,6 +415,8 @@ function render(d) {
   $("pttstate").textContent = labels[t.state] || "–";
   $("pttstate").className = t.state === "écoute" ? "listen" : "";
   $("pttbtn").textContent = t.button ? `● ${t.button}` : "–";
+  renderShortcuts(t);
+  if (d.accent && document.activeElement !== $("accent")) { $("accent").value = d.accent; applyAccent(d.accent); }
   $("heard").textContent = t.heard ? `« ${t.heard} »` : "";
   $("pttdetail").textContent = t.detail || (t.whisper === false ? T("Reconnaissance vocale en cours de chargement…", "Speech recognition loading…") : "");
   $("level").style.width = t.state === "écoute" ? `${Math.min(100, (t.level || 0) * 250)}%` : "0";
@@ -544,7 +551,7 @@ function drawMap(d) {
   cars.forEach(c => {
     const [x, y] = mapProject(c.x, c.z);
     const op = c.pits ? 0.3 : 1;
-    if (c.me) svg += `<circle cx="${x}" cy="${y}" r="20" fill="rgba(0,229,255,.18)"/><circle cx="${x}" cy="${y}" r="12" fill="var(--accent)" stroke="#06070B" stroke-width="3" opacity="${op}"/>`;
+    if (c.me) svg += `<circle cx="${x}" cy="${y}" r="20" fill="rgba(var(--accent-rgb),.18)"/><circle cx="${x}" cy="${y}" r="12" fill="var(--accent)" stroke="#06070B" stroke-width="3" opacity="${op}"/>`;
     else {
       svg += `<circle cx="${x}" cy="${y}" r="${c.rel ? 10 : 8}" fill="${CLASS_COL[c.c % CLASS_COL.length]}" stroke="${c.rel ? "var(--alert)" : "#06070B"}" stroke-width="${c.rel ? 4 : 2}" opacity="${op}"/>`;
       if (c.rel) svg += `<text x="${x + 14}" y="${y - 12}" fill="var(--text)" font-family="JetBrains Mono, monospace" font-size="22" font-weight="700">P${c.p}</text>`;
@@ -578,6 +585,39 @@ loadMics();
 $("lang").onclick = () => fetch("/api/lang", { method: "POST", body: JSON.stringify({ lang: LANG === "en" ? "fr" : "en" }) });
 $("mic").onchange = () => fetch("/api/mic", { method: "POST", body: JSON.stringify({ index: $("mic").value === "" ? null : Number($("mic").value) }) });
 $("learn").onclick = () => fetch("/api/ptt/learn", { method: "POST" });
+
+// ---- couleur de l'application
+const ACCENTS = [
+  ["bleu", "Bleu", "Blue", "#00E5FF"], ["orange", "Orange", "Orange", "#FF8A00"], ["vert", "Vert", "Green", "#7CFF2E"],
+  ["rouge", "Rouge", "Red", "#FF3B3B"], ["violet", "Violet", "Purple", "#B26BFF"], ["jaune", "Jaune", "Yellow", "#FFD400"],
+  ["blanc", "Blanc", "White", "#E8EDF5"],
+];
+function applyAccent(id) {
+  const a = ACCENTS.find(x => x[0] === id) || ACCENTS[0], h = a[3];
+  const rgb = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)).join(",");
+  document.documentElement.style.setProperty("--accent", h);
+  document.documentElement.style.setProperty("--accent-rgb", rgb);
+}
+$("accent").innerHTML = ACCENTS.map(a => `<option value="${a[0]}">${LANG === "en" ? a[2] : a[1]}</option>`).join("");
+$("accent").onchange = e => { applyAccent(e.target.value);
+  fetch("/api/accent", { method: "POST", body: JSON.stringify({ accent: e.target.value }) }); };
+
+// ---- raccourcis : spotter, radio, mode silence
+const SC = [["spotter", "Spotter on / off", "Spotter on / off"], ["radio", "Radio on / off", "Radio on / off"],
+            ["quiet", "Mode silence", "Quiet mode"]];
+function renderShortcuts(t) {
+  const sc = t.shortcuts || {}, learning = t.learn_target;
+  $("sclist").innerHTML = SC.map(([k, fr, en]) => `<div class="row" style="align-items:center;gap:6px">
+    <span>${LANG === "en" ? en : fr}</span>
+    <span style="color:var(--accent);flex:1;text-align:right">${learning === k ? T("appuie sur le bouton…", "press the button…") : esc(sc[k] || T("aucun", "none"))}</span>
+    <button data-sc="${k}" class="pill" style="padding:2px 8px">${T("Choisir", "Set")}</button>
+    ${sc[k] ? `<button data-scclear="${k}" class="pill" style="padding:2px 8px" title="${T("Retirer", "Remove")}">✕</button>` : ""}</div>`).join("");
+}
+$("sclist").onclick = e => {
+  const k = e.target.dataset.sc, c = e.target.dataset.scclear;
+  if (k) fetch("/api/ptt/learn", { method: "POST", body: JSON.stringify({ target: k }) });
+  if (c) fetch("/api/shortcut/clear", { method: "POST", body: JSON.stringify({ target: c }) });
+};
 $("askform").onsubmit = e => { e.preventDefault(); const q = $("ask").value.trim(); if (!q) return; fetch("/api/ask", { method: "POST", body: JSON.stringify({ q }) }); $("ask").value = ""; };
 document.querySelectorAll(".pitm").forEach(b => b.onclick = () => fetch("/api/pit/mode", { method: "POST", body: JSON.stringify({ mode: b.dataset.m }) }));
 $("pitnow").onclick = () => fetch("/api/pit/now", { method: "POST" });

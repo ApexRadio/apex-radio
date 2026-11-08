@@ -156,6 +156,14 @@ class Radio:
 
         dev = self.cfg.get("mic")
         self.level = 0.0
+        if dev is None and (sd.default.device[0] is None or sd.default.device[0] < 0):
+            # Windows n'a pas de micro « par défaut » (ex. casque Xbox) : on prend le premier micro trouvé
+            mics = [m for m in self.mics() if m["index"] is not None]
+            if not mics:
+                raise RuntimeError(L("Aucun micro trouvé. Branche ton micro ou ton casque, puis choisis-le dans la liste.",
+                                     "No microphone found. Plug in your mic or headset, then pick it in the list."))
+            dev = mics[0]["index"]
+            print(f"  Pas de micro par défaut dans Windows : j'utilise « {mics[0]['name']} »")
         name = sd.query_devices(dev if dev is not None else sd.default.device[0])["name"]
         print(f"  Écoute sur le micro : {name}")
         self._rec = sd.InputStream(samplerate=RATE, channels=1, dtype="float32", callback=cb, device=dev)
@@ -298,7 +306,13 @@ class Radio:
                         self.detail = ""
                     except Exception as e:
                         self.state = "erreur"
-                        self.detail = L(f"Micro indisponible : {e!r}", f"Microphone unavailable: {e!r}")
+                        if isinstance(e, RuntimeError):
+                            self.detail = str(e)
+                        else:
+                            self.detail = L(f"Micro indisponible : {e!r}. Choisis ton micro dans la liste ci-dessous, et vérifie "
+                                            "Paramètres Windows > Son > Entrée (micro par défaut) et Confidentialité > Microphone.",
+                                            f"Microphone unavailable: {e!r}. Pick your mic in the list below, and check "
+                                            "Windows Settings > Sound > Input (default mic) and Privacy > Microphone.")
                         print("  " + self.detail)
                 elif not now and pressed and self.state == "écoute":
                     audio = self._stop_rec()

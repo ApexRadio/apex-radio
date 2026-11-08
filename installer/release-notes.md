@@ -7,6 +7,8 @@
 - 🇬🇧 LMP2, ELMS or WEC version: from the garage, your engineer tells you which car you're in, and you can ask "am I in ELMS or WEC?". It's also shown on the dashboard.
 - 🇫🇷 Setup de la mauvaise voiture : si le setup chargé a été fait pour l'autre version (par exemple un setup LMP2 standard sur la LMP2 ELMS), Apex te prévient. Les setups créés par Apex portent maintenant la version dans leur nom (« APEX Spa ELMS Course.svm »).
 - 🇬🇧 Setup for the wrong car: if the loaded setup was made for the other version (for example a standard LMP2 setup on the ELMS LMP2), Apex warns you. Setups created by Apex now include the version in their name ("APEX Spa ELMS Course.svm").
+- 🇫🇷 Micro : si Windows n'a pas de micro « par défaut » (par exemple avec un casque Xbox), Apex prend tout seul le premier micro trouvé, et le message d'erreur explique quoi vérifier.
+- 🇬🇧 Microphone: if Windows has no "default" mic (for example with an Xbox headset), Apex picks the first mic it finds, and the error message explains what to check.
 
 ## 🇫🇷 Installation
 Télécharge **ApexRadio-Setup.exe** ci-dessous, lance-le, clique sur Suivant. C'est tout : Python et tous les composants sont inclus.

@@ -2,6 +2,8 @@
 
 **A free voice race engineer for Le Mans Ultimate** · *Un ingénieur de course vocal gratuit pour Le Mans Ultimate*
 
+[![Téléchargements / Downloads](https://img.shields.io/github/downloads/ApexRadio/apex-radio/total?label=t%C3%A9l%C3%A9chargements%20%2F%20downloads&color=00b8d4)](https://github.com/ApexRadio/apex-radio/releases) [![Version](https://img.shields.io/github/v/release/ApexRadio/apex-radio?label=version&color=00b8d4)](https://github.com/ApexRadio/apex-radio/releases/latest)
+
 🇬🇧 [English](#english) · 🇫🇷 [Français](#français)
 
 **⬇️ [Download / Télécharger](https://github.com/ApexRadio/apex-radio/releases/latest)** · 💬 [Discord](https://discord.gg/ZHg4qXd26g) · ❤️ [Patreon](https://www.patreon.com/lolotuner)

@@ -348,24 +348,28 @@ class WarmUp:
         self.was_in_pits = None
         self.watch = None        # moment (temps de séance) où on surveille
         self.warned = False
+        self.brake_peak = 0.0
 
     @staticmethod
     def limits(s) -> tuple[float, float]:
         opt = s.tyre_opt if 40 <= (s.tyre_opt or 0) <= 150 else 80.0
         c = (s.car_class or "").upper()
-        brake = 300.0 if any(k in c for k in CARBON) else 200.0
-        return opt - 12.0, brake
+        brake = 250.0 if any(k in c for k in CARBON) else 180.0
+        return opt - 15.0, brake
 
     def cold(self, s) -> tuple[bool, bool]:
         tyre_ok, brake_ok = self.limits(s)
         tyres = [t for t in s.tyre_temp if t > -50]
         brakes = [b for b in s.brake_temp[:2] if b > -50]   # freins avant : ceux qui comptent au premier virage
+        # les freins refroidissent vite dans les lignes droites : on retient le pic atteint depuis le départ
+        if brakes:
+            self.brake_peak = max(self.brake_peak, sum(brakes) / len(brakes))
         tc = bool(tyres) and sum(tyres) / len(tyres) < tyre_ok
-        bc = bool(brakes) and sum(brakes) / len(brakes) < brake_ok
+        bc = bool(brakes) and self.brake_peak < brake_ok
         return tc, bc
 
     def start(self, s) -> None:
-        self.watch, self.warned = s.elapsed, False
+        self.watch, self.warned, self.brake_peak = s.elapsed, False, 0.0
 
     def update(self, s, say) -> None:
         if not s.on_track or s.done:

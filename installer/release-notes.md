@@ -1,6 +1,10 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
 ## 🆕 1.2.6
+- 🇫🇷 Raccourcis : choisis un bouton du volant, d'une box ou une touche du clavier pour allumer ou couper le spotter, la radio ou le mode silence, sans quitter la piste (carte Radio → « Raccourcis »).
+- 🇬🇧 Shortcuts: pick a wheel button, button box or keyboard key to turn the spotter, the radio or quiet mode on and off without leaving the track (Radio card → "Shortcuts").
+- 🇫🇷 Couleur de l'appli : choisis la couleur du tableau de bord avec le menu 🎨 (bleu, orange, vert, rouge, violet, jaune, blanc). La vue téléphone suit aussi.
+- 🇬🇧 App colour: pick the dashboard colour with the 🎨 menu (blue, orange, green, red, purple, yellow, white). The phone view follows too.
 - 🇫🇷 Raccourcis : choisis un bouton du volant, de ta box ou une touche du clavier pour allumer ou couper le spotter, la radio ou le mode silence, sans quitter la piste (carte Radio → « Raccourcis »).
 - 🇬🇧 Shortcuts: pick a wheel button, button box or keyboard key to turn the spotter, the radio or quiet mode on and off without leaving the track (Radio card → "Shortcuts").
 - 🇫🇷 Couleur de l'application : choisis-la avec le menu 🎨 en haut du tableau de bord (bleu, orange, vert, rouge, violet, jaune, blanc). La vue téléphone suit.

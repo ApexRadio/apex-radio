@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.2.7
+- 🇫🇷 Interface plus claire : en haut, seulement les 3 boutons de course (🔊 Radio, 🤫 Silence, 👀 Spotter, allumés ou éteints) ; tous les réglages (voix, volume, encouragements, micro, bouton radio, raccourcis, couleur, langue) sont rangés dans le panneau ⚙️ Réglages. Les pneus affichent « – » au lieu de -273 °C quand le jeu ne donne pas encore leurs données.
+- 🇬🇧 Cleaner interface: only the 3 race buttons stay at the top (🔊 Radio, 🤫 Quiet, 👀 Spotter, lit or dimmed); all settings (voice, volume, encouragement, mic, radio button, shortcuts, colour, language) are in the ⚙️ Settings panel. Tyres show "–" instead of -273 °C when the game hasn't sent their data yet.
 - 🇫🇷 Encouragements réglables : menu 💬 dans le tableau de bord, Discret (juste les infos), Normal ou Motivant (plus souvent et plus varié).
 - 🇬🇧 Adjustable encouragement: 💬 menu on the dashboard, Low-key (info only), Normal or Hype (more often, more varied).
 - 🇫🇷 Places gagnées : après le 1er tour (« Bon départ, tu as gagné 3 places ! ») et pendant la course à chaque place gagnée ou perdue (sauf autour des arrêts aux stands).

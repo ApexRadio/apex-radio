@@ -107,6 +107,18 @@
   .good { color: var(--good); } .warn { color: var(--warn); } .bad { color: var(--alert); }
   #ws { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 10; display: flex; justify-content: flex-end; }
   #ws[hidden] { display: none; }
+  #set { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 11; display: flex; justify-content: flex-end; }
+  #set[hidden] { display: none; }
+  .setbox { width: min(460px, 100%); }
+  .setsec { border: 1px solid var(--line, #1E2533); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+  .setsec h2 { margin: 0 0 2px; }
+  .setrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 14px; }
+  .setrow select, .setrow input[type=range] { max-width: 230px; }
+  .setctl { display: flex; align-items: center; gap: 8px; }
+  .racebtns { display: flex; gap: 6px; }
+  .tog { border-radius: 999px; opacity: .55; }
+  .tog.on { opacity: 1; border-color: var(--accent); background: rgba(var(--accent-rgb),.14); color: var(--text); box-shadow: 0 0 12px rgba(var(--accent-rgb),.25); }
+  #quiet.tog.on { border-color: var(--warn); background: rgba(255,181,71,.14); box-shadow: none; }
   .wsbox { width: min(640px, 100%); height: 100%; overflow-y: auto; background: var(--bg); border-left: 1px solid var(--accent); box-shadow: 0 0 40px rgba(var(--accent-rgb),.2); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
   .wsbox select { max-width: 70%; }
   #wstable td, #wstable th { font-size: 13px; vertical-align: top; }
@@ -168,18 +180,15 @@
     <div class="hright">
       <span class="muted" id="session"></span>
       <span class="pill" id="status"><span class="dot"></span><span id="statustxt">En attente du jeu…</span></span>
+      <div class="racebtns" role="group" aria-label="En course">
+        <button id="vtoggle" class="tog" title="Radio : l'ingénieur parle ou se tait" data-en-title="Radio: the engineer talks or stays silent">🔊 Radio</button>
+        <button id="quiet" class="tog" title="Mode silence : l'ingénieur ne dit plus que l'urgent (box, neutralisation, spotter, réponses). Tu peux aussi dire « silence » ou « reparle » à la radio." data-en-title="Quiet mode: urgent calls only (box, yellow flag, spotter, answers). You can also say &quot;be quiet&quot; or &quot;talk again&quot; on the radio.">🤫 <span data-en="Quiet">Silence</span></button>
+        <button id="spot" class="tog" title="Spotter gauche / droite" data-en-title="Left / right spotter">👀 Spotter</button>
+      </div>
       <button id="wsopen" class="act" style="border-radius:999px" data-en="SETUP WORKSHOP">ATELIER SETUP</button>
       <a id="records" class="pill" href="/records" style="color:#FFE500;text-decoration:none">RECORDS</a>
       <a id="debriefs" class="pill" href="/debriefs" style="color:var(--text);text-decoration:none" data-en="DEBRIEFS">DÉBRIEFS</a>
-      <button id="spot" title="Spotter gauche / droite" data-en-title="Left / right spotter">Spotter : ON</button>
-      <label class="pill" style="gap:6px;padding:4px 10px" title="Choisis la voix de ton ingénieur (téléchargée la première fois)" data-en-title="Pick your engineer's voice (downloaded the first time)">🎙️<select id="vchoice" aria-label="Voix" style="max-width:none;border:0;padding:2px 4px"></select></label>
-      <label class="pill" style="gap:6px;padding:4px 10px" title="Couleur de l'application" data-en-title="App colour">🎨<select id="accent" aria-label="Couleur" style="max-width:none;border:0;padding:2px 4px"></select></label>
-      <label class="pill" style="gap:6px;padding:4px 10px" title="Encouragements de l'ingénieur en course" data-en-title="Engineer's encouragement during the race">💬<select id="encourage" aria-label="Encouragements" style="max-width:none;border:0;padding:2px 4px"></select></label>
-      <button id="vtest" title="Tester la voix" data-en-title="Test the voice" data-en="Voice test">Test voix</button>
-      <label class="pill" style="gap:6px" title="Volume de la radio" data-en-title="Radio volume">🔊<input type="range" id="vol" min="0.6" max="1.6" step="0.1" aria-label="Volume de la radio" style="width:90px;padding:0"></label>
-      <button id="lang" title="Langue / Language">FR</button>
-      <button id="quiet" title="Mode silence : l'ingénieur ne dit plus que l'urgent (box, neutralisation, spotter, réponses). Tu peux aussi dire « silence » ou « reparle » à la radio." data-en-title="Quiet mode: urgent calls only (box, yellow flag, spotter, answers). You can also say &quot;be quiet&quot; or &quot;talk again&quot; on the radio.">Silence : OFF</button>
-      <button id="vtoggle">Radio : ON</button>
+      <button id="setopen" title="Réglages" data-en-title="Settings" aria-label="Réglages">⚙️</button>
       <a id="phone" class="pill" href="/tel" target="_blank" style="color:var(--text);text-decoration:none" title="Affichage téléphone" data-en-title="Phone view">📱</a>
       <button id="quit" title="Fermer Apex Radio" aria-label="Fermer Apex Radio" data-en-title="Close Apex Radio">⏻</button>
     </div>
@@ -203,13 +212,7 @@
         <div class="ptt">
           <div class="row" style="align-items:center"><span id="pttstate">–</span><span id="heard" class="muted" style="font-family:Inter,sans-serif;font-size:13px;max-width:60%"></span></div>
           <div id="pttdetail" class="warn" style="font-size:13px"></div>
-          <div class="row" style="align-items:center"><span data-en="Mic">Micro</span><select id="mic" aria-label="Micro"></select></div>
           <div class="bar"><i id="level" style="background:var(--good)"></i></div>
-          <button class="act" id="learn" data-en="CHOOSE THE RADIO BUTTON">CHOISIR LE BOUTON RADIO</button>
-          <details id="shortcuts" style="font-size:13px">
-            <summary style="cursor:pointer;color:var(--muted)" data-en="Shortcuts (wheel / keyboard)">Raccourcis (volant / clavier)</summary>
-            <div id="sclist" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"></div>
-          </details>
           <form id="askform"><input id="ask" placeholder="Poser une question au clavier…" data-en-placeholder="Type a question…" autocomplete="off" aria-label="Question"><button>OK</button></form>
         </div>
       </section>
@@ -285,6 +288,33 @@
         </section>
       </div>
     </main>
+  </div>
+</div>
+
+<div id="set" hidden>
+  <div class="wsbox setbox">
+    <div class="row" style="align-items:center"><div class="logo" style="font-size:20px" data-en="SETTINGS">RÉGLAGES</div><button id="setclose" aria-label="Fermer">✕</button></div>
+    <section class="setsec"><h2>🎙️ <span data-en="Voice">Voix</span></h2>
+      <div class="setrow"><span data-en="Engineer's voice">Voix de l'ingénieur</span><div class="setctl"><select id="vchoice" aria-label="Voix" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
+      <div class="setrow"><span data-en="Volume">Volume</span><div class="setctl"><input type="range" id="vol" min="0.6" max="1.6" step="0.1" aria-label="Volume de la radio" style="width:90px;padding:0"></div></div>
+      <div class="setrow"><span data-en="Test">Tester</span><div class="setctl"><button id="vtest" title="Tester la voix" data-en-title="Test the voice" data-en="Voice test">Test voix</button></div></div>
+    </section>
+    <section class="setsec"><h2>💬 <span data-en="Engineer">Ingénieur</span></h2>
+      <div class="setrow"><span data-en="Encouragement">Encouragements</span><div class="setctl"><select id="encourage" aria-label="Encouragements" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
+    </section>
+    <section class="setsec"><h2>🎮 <span data-en="Radio &amp; wheel">Radio et volant</span></h2>
+      <div class="setrow" style="align-items:center"><span data-en="Mic">Micro</span><select id="mic" aria-label="Micro"></select></div>
+      <div class="setrow"><span data-en="Radio button">Bouton radio</span><div class="setctl"><span id="pttbtn2" style="color:var(--accent)">–</span></div></div>
+      <button class="act" id="learn" data-en="CHOOSE THE RADIO BUTTON">CHOISIR LE BOUTON RADIO</button>
+      <details id="shortcuts" open style="font-size:13px">
+            <summary style="cursor:pointer;color:var(--muted)" data-en="Shortcuts (wheel / keyboard)">Raccourcis (volant / clavier)</summary>
+            <div id="sclist" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"></div>
+          </details>
+    </section>
+    <section class="setsec"><h2>🎨 <span data-en="Look">Apparence</span></h2>
+      <div class="setrow"><span data-en="Colour">Couleur</span><div class="setctl"><select id="accent" aria-label="Couleur" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
+      <div class="setrow"><span data-en="Language">Langue</span><div class="setctl"><button id="lang" title="Langue / Language">FR</button></div></div>
+    </section>
   </div>
 </div>
 <div id="ws" hidden>
@@ -366,7 +396,7 @@ function render(d) {
   $("statustxt").textContent = s.on_track ? T("LMU connecté", "LMU connected") : (s.connected ? T("Jeu détecté", "Game detected") : T("En attente du jeu", "Waiting for the game"));
   $("session").textContent = s.on_track ? `${s.track} · ${carLabel(s.car_class, s.car)} · ${T(s.session, SESSION_EN[s.session] || s.session)}` : "";
   if (d.voice && document.activeElement !== $("vol")) $("vol").value = d.voice.volume;
-  if (d.voice) { $("vtoggle").textContent = `Radio : ${d.voice.on ? "ON" : "OFF"}`; $("vtoggle").className = d.voice.on ? "" : "off"; $("vtoggle").title = `${T("Voix", "Voice")} : ${d.voice.engine}`; }
+  if (d.voice) { $("vtoggle").classList.toggle("on", !!d.voice.on); $("vtoggle").setAttribute("aria-pressed", !!d.voice.on); }
 
   if (d.voice && d.voice.list && document.activeElement !== $("vchoice")) {
     const dl = d.voice.downloading;
@@ -377,7 +407,7 @@ function render(d) {
     }).join("");
     if ($("vchoice").innerHTML !== opts) $("vchoice").innerHTML = opts;
   }
-  if (d.voice) { $("quiet").textContent = `${T("Silence", "Quiet")} : ${d.voice.quiet ? "ON" : "OFF"}`; $("quiet").classList.toggle("on", !!d.voice.quiet); }
+  if (d.voice) { $("quiet").classList.toggle("on", !!d.voice.quiet); $("quiet").setAttribute("aria-pressed", !!d.voice.quiet); }
   if (d.phone) $("phone").title = T(`Affichage téléphone : ${d.phone} (même Wi-Fi que le PC)`, `Phone view: ${d.phone} (same Wi-Fi as the PC)`);
   const tmD = d.times || {}, dlt = tmD.delta;
   $("delta").hidden = !(s.on_track && dlt != null);
@@ -416,6 +446,7 @@ function render(d) {
   $("pttstate").textContent = labels[t.state] || "–";
   $("pttstate").className = t.state === "écoute" ? "listen" : "";
   $("pttbtn").textContent = t.button ? `● ${t.button}` : "–";
+  $("pttbtn2").textContent = t.learning && (t.learn_target || "ptt") === "ptt" ? T("appuie sur le bouton…", "press the button…") : (t.button || "–");
   renderShortcuts(t);
   if (d.encourage && document.activeElement !== $("encourage")) $("encourage").value = d.encourage;
   if (d.accent && document.activeElement !== $("accent")) { $("accent").value = d.accent; applyAccent(d.accent); }
@@ -470,7 +501,7 @@ function render(d) {
   $("tyres").innerHTML = (LANG === "en" ? WHEELS_EN : WHEELS).map((w, i) => {
     const wear = (s.tyre_wear?.[i] ?? 1) * 100;
     const cls = wear < 30 ? "bad" : wear < 50 ? "warn" : "";
-    return `<div class="tyre"><small>${w}</small><b class="${cls}">${wear.toFixed(0)}%</b><small>${n(s.tyre_temp?.[i], 0)}°C<span class="press"> · ${n(s.tyre_pressure?.[i], 0)} kPa</span></small></div>`;
+    return `<div class="tyre"><small>${w}</small><b class="${cls}">${wear.toFixed(0)}%</b><small>${(s.tyre_temp?.[i] ?? -999) > -100 ? n(s.tyre_temp[i], 0) + "°C" : "–"}<span class="press"> · ${(s.tyre_pressure?.[i] || 0) > 0 ? n(s.tyre_pressure[i], 0) + " kPa" : "–"}</span></small></div>`;
   }).join("");
   $("tyrelaps").textContent = p.tyre_laps_left != null ? n(p.tyre_laps_left) : "–";
 
@@ -479,7 +510,7 @@ function render(d) {
   $("wet").textContent = `${n((s.wetness || 0) * 100, 0)} %`;
   $("fc").innerHTML = (d.forecast || []).filter(f => f.mins > 0).slice(0, 3).map(f =>
     `<span style="color:${f.rain >= 50 ? "var(--alert)" : "var(--muted)"}">+${f.mins} min : ${esc(f.sky)} (${f.rain}%)</span>`).join("<br>");
-  if (d.spotter) { $("spot").textContent = `Spotter : ${d.spotter.on ? "ON" : "OFF"}`; $("spot").className = d.spotter.on ? "" : "off"; }
+  if (d.spotter) { $("spot").classList.toggle("on", !!d.spotter.on); $("spot").setAttribute("aria-pressed", !!d.spotter.on); }
   drawMap(d);
   $("laps").textContent = `${fmtLap(s.last_lap)} / ${fmtLap(s.best_lap)}`;
 
@@ -714,6 +745,9 @@ document.querySelectorAll(".wsmode").forEach(b => b.onclick = async () => {
   await fetch("/api/setup/mode", { method: "POST", body: JSON.stringify({ mode: b.dataset.m }) });
   $("wsfolder").value = ""; wsLoad(false);
 });
+$("setopen").onclick = () => { $("set").hidden = false; };
+$("setclose").onclick = () => { $("set").hidden = true; };
+$("set").onclick = e => { if (e.target.id === "set") $("set").hidden = true; };
 $("wsopen").onclick = () => { $("ws").hidden = false; $("wsresult").textContent = ""; wsLoad(false); clearInterval(wsTimer); wsTimer = setInterval(() => wsLoad(true), 3000); };
 $("wsclose").onclick = () => { $("ws").hidden = true; clearInterval(wsTimer); };
 $("wsuse").onclick = async () => {

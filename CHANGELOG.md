@@ -1,5 +1,9 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.2.6
+- 🇫🇷 Correction : le nom des setups créés par Apex indique la version du setup de départ (WEC ou ELMS), et plus celle de la voiture. Un setup WEC créé pendant qu'on roule en LMP2 ELMS s'appelle bien « APEX … WEC … ».
+- 🇬🇧 Fix: setups created by Apex are now named after the base setup's version (WEC or ELMS), not the car's. A WEC setup created while driving the ELMS LMP2 is now correctly named "APEX … WEC …".
+
 ## 1.2.5
 - 🇫🇷 Pneus et freins froids : au départ de la course et à chaque sortie des stands, l'ingénieur te prévient (« pneus froids, freins froids »), puis te dit quand tout est en température : « tu peux attaquer ! ».
 - 🇬🇧 Cold tyres and brakes: at the race start and every time you leave the pits, your engineer warns you ("cold tyres, cold brakes"), then tells you when everything is up to temperature: "you can push now!".

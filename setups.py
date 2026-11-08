@@ -239,8 +239,14 @@ class Workshop:
         t = self.tag()
         return f"{folder} · {t} · {self.mode}" if t else f"{folder} · {self.mode}"
 
-    def apex_name(self, folder: str) -> str:
+    def apex_name(self, folder: str, base: "Setup | None" = None) -> str:
+        """Nom du fichier APEX. La version (ELMS / WEC) est celle du setup de départ, pas celle de la voiture :
+        un setup WEC reste un setup WEC, même créé pendant qu'on roule en LMP2 ELMS."""
         t = self.tag()
+        if base is not None:
+            sc = setup_class(base.vehicle)
+            if sc:
+                t = series_tag(sc)
         return f"APEX {folder} {t} {self.mode}.svm" if t else f"APEX {folder} {self.mode}.svm"
 
     def class_mismatch(self, track: str) -> dict | None:
@@ -518,9 +524,9 @@ class Workshop:
         if not st["folder"] or not st["current"] or not changes:
             return {"error": L("Rien à créer.", "Nothing to create.")}
         folder = self.dir / st["folder"]
-        name = self.apex_name(st["folder"])
-        apex = folder / name
         base = Setup(folder / st["current"])
+        name = self.apex_name(st["folder"], base)
+        apex = folder / name
         if apex.exists() and not Setup(apex).is_apex():
             return {"error": L(f"Un fichier « {name} » existe déjà et n'a pas été créé par Apex Radio : je n'y touche pas.",
                                f"A file \"{name}\" already exists and wasn't created by Apex Radio: I won't touch it.")}
@@ -561,7 +567,7 @@ class Workshop:
         v = next((x for x in h.get("versions", []) if x["version"] == version), None)
         if not v or not Path(v["backup"]).exists():
             return {"error": L("Version introuvable.", "Version not found.")}
-        name = self.apex_name(st["folder"])
+        name = self.apex_name(st["folder"], Setup(Path(v["backup"])))
         apex = self.dir / st["folder"] / name
         if apex.exists() and not Setup(apex).is_apex():
             return {"error": L(f"« {name} » n'a pas été créé par Apex Radio : je n'y touche pas.",

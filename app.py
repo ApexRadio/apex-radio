@@ -40,7 +40,7 @@ from behavior import Behavior
 from setups import Workshop
 from incidents import Incidents
 from lmu_probe import Probe
-from alerts import Spotter, Traffic, GapTrend, TrackLimits, Damage, Weather, WarmUp, CarInfo, Places, car_label, set_encourage
+from alerts import Spotter, Traffic, GapTrend, TrackLimits, Damage, Weather, WarmUp, CarInfo, Places, Morale, car_label, set_encourage
 import debrief
 from pitmenu import PitCrew
 from radio import save_config
@@ -151,7 +151,7 @@ def loop(state: State, demo: bool) -> None:
     spotter.enabled = state.radio.cfg.get("spotter", True)
     state.spotter = spotter
     traffic, trend, limits, damage = Traffic(beh), GapTrend(), TrackLimits(beh), Damage()
-    warmup, carinfo, places = WarmUp(), CarInfo(), Places()
+    warmup, carinfo, places, morale = WarmUp(), CarInfo(), Places(), Morale()
     set_encourage(state.radio.cfg.get("encourage", "normal"))
     weather = Weather(demo)
     recorder = debrief.Recorder()
@@ -252,6 +252,7 @@ def loop(state: State, demo: bool) -> None:
             limits.update(snap, say)
             warmup.update(snap, say)
             places.update(snap, say)
+            morale.update(snap, say)
             carinfo.update(snap, say)
             if state.workshop:
                 state.workshop.car_class, state.workshop.car = snap.car_class, snap.car

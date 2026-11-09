@@ -413,6 +413,74 @@ class Places:
         say(None, msg)
 
 
+# ======================================================================= 12. moral : encouragements au fil des tours
+class Morale:
+    """Encouragements qui ne dépendent pas des adversaires : utile quand on est seul, loin devant
+    ou loin derrière (après un accident par exemple). Normal : rare. Motivant : environ un tour sur deux."""
+
+    def __init__(self) -> None:
+        self.key = None
+        self.lap = 0
+        self.prev = None          # tour précédent (s)
+        self.since = 0            # tours depuis le dernier encouragement
+        self.trouble_lap = None   # tour du dernier incident (dégâts, place perdue en masse)
+        self.start_pos = None
+
+    def note_trouble(self, s) -> None:
+        self.trouble_lap = s.laps_done
+
+    def update(self, s, say) -> None:
+        if ENCOURAGE == "discret" or not s.on_track or s.session != "course" or s.done:
+            return
+        key = (s.track, s.session_code)
+        if key != self.key:
+            self.__init__(); self.key = key
+        if s.laps_done == self.lap:
+            return
+        self.lap = s.laps_done
+        last, prev = s.last_lap, self.prev
+        self.prev = last
+        pos_now = s.class_position or s.position
+        if pos_now and self.start_pos and pos_now - self.start_pos >= 3:
+            self.trouble_lap = s.laps_done        # on a perdu beaucoup de places d'un coup (accident, tête-à-queue…)
+        self.start_pos = pos_now
+        if s.laps_done < 2 or s.in_pits or not last:
+            return
+        self.since += 1
+        long_lap = last > 150          # Le Mans, Spa… : un tour dure 2 à 4 minutes, on parle plus souvent
+        every = (1 if long_lap else 2) if ENCOURAGE == "motivant" else (3 if long_lap else 5)
+        if self.since < every:
+            return
+        self.since = 0
+        pos = s.class_position or s.position
+        lines = []
+        if prev and last < prev - 0.3:
+            d = prev - last
+            lines.append(L(f"Super tour, {d:.1f} seconde de mieux que le précédent !".replace(".", ","),
+                           f"Great lap, {d:.1f} seconds quicker than the last one!"))
+        elif prev and abs(last - prev) < 0.4:
+            lines.append(L("Belle régularité, continue sur ce rythme.", "Nice and consistent, keep this pace."))
+        if self.trouble_lap is not None and s.laps_done - self.trouble_lap <= 6:
+            lines.append(random.choice([
+                L("On a eu un coup dur, mais tu remontes. Continue comme ça !", "We had a tough moment, but you're coming back. Keep it up!"),
+                L("Oublie l'incident, regarde devant, tu vas plus vite qu'eux.", "Forget the incident, look ahead, you're quicker than them."),
+                L("Belle réaction après le pépin, je sens que tu vas remonter.", "Great reaction after the trouble, I can feel you climbing back.")]))
+        if pos and pos <= 3:
+            lines.append(L(f"P{pos}, tu es sur le podium, garde la tête froide !", f"P{pos}, you're on the podium, stay cool!"))
+        if not lines:
+            lines = [L("Tu fais du bon boulot, reste concentré.", "You're doing a good job, stay focused."),
+                     L("Chaque tour compte, on continue à pousser.", "Every lap counts, keep pushing."),
+                     L("La course est longue, tout peut encore arriver.", "It's a long race, anything can still happen."),
+                     L("Bien, propre et régulier, c'est comme ça qu'on gagne des places.",
+                       "Good, clean and consistent, that's how we gain places.")]
+        fresh = [l for l in lines if l != getattr(self, "last_msg", None)] or lines
+        msg = random.choice(fresh)
+        self.last_msg = msg
+        if ENCOURAGE == "motivant" and random.random() < 0.4:
+            j = random.randrange(len(MORE_PEP_FR)); msg += " " + L(MORE_PEP_FR[j], MORE_PEP_EN[j])
+        say(None, msg)
+
+
 # ======================================================================= 4. limites de piste
 class TrackLimits:
     def __init__(self, behavior) -> None:

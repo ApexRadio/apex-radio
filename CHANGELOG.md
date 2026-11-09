@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.2.7
+- 🇫🇷 Encouragements « Motivant » plus présents : l'ingénieur t'encourage aussi au fil des tours, même seul ou loin derrière après un accident (bon tour, régularité, remontée…), à chaque tour sur les longs circuits.
+- 🇬🇧 "Hype" encouragement is more present: the engineer also cheers you on lap after lap, even alone or far behind after an accident (good lap, consistency, comeback…), every lap on long tracks.
 - 🇫🇷 Volant : correction pour les volants qui apparaissent deux fois dans Windows (ex. Fanatec) : le bouton radio est maintenant bien détecté en jeu. Merci à l'utilisateur qui l'a signalé !
 - 🇬🇧 Wheel: fix for wheels that show up twice in Windows (e.g. Fanatec): the radio button is now detected in game. Thanks to the user who reported it!
 - 🇫🇷 Interface plus claire : en haut, seulement les 3 boutons de course (🔊 Radio, 🤫 Silence, 👀 Spotter, allumés ou éteints) ; tous les réglages (voix, volume, encouragements, micro, bouton radio, raccourcis, couleur, langue) sont rangés dans le panneau ⚙️ Réglages. Les pneus affichent « – » au lieu de -273 °C quand le jeu ne donne pas encore leurs données.

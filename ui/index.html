@@ -204,6 +204,7 @@
     <div class="hright">
       <span class="muted" id="session"></span>
       <span class="pill" id="status"><span class="dot"></span><span id="statustxt">En attente du jeu…</span></span>
+      <button id="lmulaunch" class="act" hidden title="Démarre Le Mans Ultimate par Steam" data-en-title="Starts Le Mans Ultimate through Steam">▶ <span data-en="Launch LMU">Lancer LMU</span></button>
       <div class="racebtns" role="group" aria-label="En course">
         <button id="vtoggle" class="tog" title="Radio : l'ingénieur parle ou se tait" data-en-title="Radio: the engineer talks or stays silent">🔊 Radio</button>
         <button id="quiet" class="tog" title="Mode silence : l'ingénieur ne dit plus que l'urgent (box, neutralisation, spotter, réponses). Tu peux aussi dire « silence » ou « reparle » à la radio." data-en-title="Quiet mode: urgent calls only (box, yellow flag, spotter, answers). You can also say &quot;be quiet&quot; or &quot;talk again&quot; on the radio.">🤫 <span data-en="Quiet">Silence</span></button>
@@ -341,6 +342,10 @@
             <div id="sclist" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"></div>
           </details>
     </section>
+    <section class="setsec"><h2>🏁 <span data-en="Game">Jeu</span></h2>
+      <div class="setrow"><label for="autolmu" data-en="Launch Le Mans Ultimate when Apex opens">Lancer Le Mans Ultimate à l'ouverture d'Apex</label><div class="setctl"><input type="checkbox" id="autolmu"></div></div>
+      <button id="lmulaunch2" data-en="▶ LAUNCH LE MANS ULTIMATE">▶ LANCER LE MANS ULTIMATE</button>
+    </section>
     <section class="setsec"><h2>🎨 <span data-en="Look">Apparence</span></h2>
       <div class="setrow"><span data-en="Colour">Couleur</span><div class="setctl"><select id="accent" aria-label="Couleur" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><span data-en="Language">Langue</span><div class="setctl"><button id="lang" title="Langue / Language">FR</button></div></div>
@@ -432,6 +437,9 @@ function render(d) {
   $("demo").textContent = d.demo ? T("DÉMO", "DEMO") : "";
   if (d.update && d.update.version) $("ver").textContent = "v" + d.update.version;
   $("status").className = "pill" + (s.on_track ? " live" : "");
+  $("lmulaunch").hidden = !!s.connected || !!d.demo;
+  if (!s.connected && Date.now() - lmuClicked > 60000) $("lmulaunch").innerHTML = `▶ ${T("Lancer LMU", "Launch LMU")}`;
+  if (document.activeElement !== $("autolmu")) $("autolmu").checked = !!d.autolaunch_lmu;
   $("statustxt").textContent = s.on_track ? T("LMU connecté", "LMU connected") : (s.connected ? T("Jeu détecté", "Game detected") : T("En attente du jeu", "Waiting for the game"));
   $("session").textContent = s.on_track ? `${s.track} · ${carLabel(s.car_class, s.car)} · ${T(s.session, SESSION_EN[s.session] || s.session)}` : "";
   if (d.voice && document.activeElement !== $("vol")) $("vol").value = d.voice.volume;
@@ -822,17 +830,22 @@ function renderOnboard(d) {
     [!!t.button, T("Choisis ton bouton radio (volant ou clavier)", "Pick your radio button (wheel or keyboard)"), "set"],
     [OB.voiceTested, T("Teste la voix de l'ingénieur", "Test the engineer's voice"), "set"],
     [!!t.heard, T("Appuie sur ton bouton radio et dis « tu m'entends ? »", "Hold your radio button and say \"can you hear me?\""), "set"],
-    [!!s.connected, T("Lance Le Mans Ultimate", "Start Le Mans Ultimate"), null],
+    [!!s.connected, T("Lance Le Mans Ultimate", "Start Le Mans Ultimate"), "lmu"],
   ];
   if (t.heard) try { localStorage.setItem("apex_heard", "1"); } catch (e) {}
   try { if (localStorage.getItem("apex_heard") === "1") steps[2][0] = true; } catch (e) {}
   if (steps.every(x => x[0])) { try { localStorage.setItem("apex_onboard", "done"); } catch (e) {} $("onboard").hidden = true; return; }
   $("onboard").hidden = false;
-  $("oblist").innerHTML = steps.map(([ok, txt, act], i) => `<li class="${ok ? "done" : ""}"><b class="ck">${ok ? "✓" : i + 1}</b><span>${txt}</span>${!ok && act ? `<button data-ob="${act}">${T("Régler", "Set up")}</button>` : ""}</li>`).join("");
+  $("oblist").innerHTML = steps.map(([ok, txt, act], i) => `<li class="${ok ? "done" : ""}"><b class="ck">${ok ? "✓" : i + 1}</b><span>${txt}</span>${!ok && act ? `<button data-ob="${act}">${act === "lmu" ? T("▶ Lancer", "▶ Launch") : T("Régler", "Set up")}</button>` : ""}</li>`).join("");
 }
-$("oblist").onclick = e => { if (e.target.dataset.ob) $("setopen").click(); };
+$("oblist").onclick = e => { const a = e.target.dataset.ob; if (a === "lmu") launchLMU(); else if (a) $("setopen").click(); };
 $("obx").onclick = () => { try { localStorage.setItem("apex_onboard", "done"); } catch (e) {} $("onboard").hidden = true; };
 $("vtest").addEventListener("click", () => { OB.voiceTested = true; try { localStorage.setItem("apex_vtested", "1"); } catch (e) {} });
+// ---- lancer Le Mans Ultimate (par Steam)
+let lmuClicked = 0;
+function launchLMU() { lmuClicked = Date.now(); fetch("/api/lmu/launch", { method: "POST" }); $("lmulaunch").textContent = T("⏳ Lancement…", "⏳ Launching…"); }
+$("lmulaunch").onclick = launchLMU; $("lmulaunch2").onclick = launchLMU;
+$("autolmu").onchange = e => fetch("/api/lmu/autolaunch", { method: "POST", body: JSON.stringify({ on: e.target.checked }) });
 $("setopen").onclick = () => { $("set").hidden = false; };
 $("setclose").onclick = () => { $("set").hidden = true; };
 $("set").onclick = e => { if (e.target.id === "set") $("set").hidden = true; };

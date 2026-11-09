@@ -295,6 +295,7 @@ def loop(state: State, demo: bool) -> None:
                 "radio": list(eng.radio),
                 "accent": state.radio.cfg.get("accent", "bleu"),
                 "encourage": state.radio.cfg.get("encourage", "normal"),
+                "autolaunch_lmu": bool(state.radio.cfg.get("autolaunch_lmu")),
                 "voice": {"on": state.voice.enabled, "engine": state.voice.engine, "volume": state.voice.volume,
                           "quiet": state.voice.quiet, "choice": voices.current_id(), "list": voices.catalog(),
                           "name": voices.engineer_name(),
@@ -495,6 +496,12 @@ def make_handler(state: State):
                 n = int(self.headers.get("Content-Length") or 0)
                 target = (json.loads(self.rfile.read(n) or b"{}") if n else {}).get("target", "ptt")
                 state.radio.start_learning(target)
+            elif self.path == "/api/lmu/launch":
+                launch_lmu()
+            elif self.path == "/api/lmu/autolaunch":
+                n = int(self.headers.get("Content-Length") or 0)
+                state.radio.cfg["autolaunch_lmu"] = bool(json.loads(self.rfile.read(n) or b"{}").get("on"))
+                save_config(state.radio.cfg)
             elif self.path == "/api/encourage":
                 n = int(self.headers.get("Content-Length") or 0)
                 lv = json.loads(self.rfile.read(n) or b"{}").get("level", "normal")
@@ -684,6 +691,32 @@ class _Tee:
             pass
 
 
+LMU_STEAM_ID = 2399420
+
+
+def launch_lmu() -> bool:
+    """Lance Le Mans Ultimate par Steam (steam://rungameid/…)."""
+    url = f"steam://rungameid/{LMU_STEAM_ID}"
+    try:
+        if sys.platform == "win32":
+            os.startfile(url)
+        else:
+            import webbrowser
+            webbrowser.open(url)
+        print("  Lancement de Le Mans Ultimate par Steam…")
+        return True
+    except Exception as e:
+        print(f"  Impossible de lancer LMU : {e!r}")
+        return False
+
+
+def autolaunch_lmu(state) -> None:
+    """Option : si LMU n'est pas déjà lancé quelques secondes après l'ouverture d'Apex, on le démarre."""
+    time.sleep(6)
+    if state.radio.cfg.get("autolaunch_lmu") and not getattr(state.snap, "connected", False):
+        launch_lmu()
+
+
 def main() -> None:
     log = open(LOCAL / "journal.txt", "w", encoding="utf-8")
     sys.stdout = _Tee(sys.stdout, log)
@@ -713,6 +746,8 @@ def main() -> None:
         desktop.show_existing(f"http://localhost:{PORT}")
         sys.exit(0)
     threading.Thread(target=loop, args=(state, args.demo), daemon=True).start()
+    if not args.demo:
+        threading.Thread(target=autolaunch_lmu, args=(state,), daemon=True).start()
     UPD.start()
     url = f"http://localhost:{PORT}"
     print("=" * 56)

@@ -1,5 +1,9 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.2.8
+- 🇫🇷 Lancer LMU : un bouton « ▶ Lancer LMU » en haut du tableau de bord (et dans les Premiers pas) démarre Le Mans Ultimate par Steam. Option dans ⚙️ Réglages → Jeu : lancer LMU automatiquement à l'ouverture d'Apex.
+- 🇬🇧 Launch LMU: a "▶ Launch LMU" button at the top of the dashboard (and in Getting started) starts Le Mans Ultimate through Steam. Option in ⚙️ Settings → Game: launch LMU automatically when Apex opens.
+
 ## 1.2.7
 - 🇫🇷 Records : un bouton « 📋 Partager sur Discord » sur chaque record copie un message tout prêt (circuit, catégorie, chrono, secteurs) à coller dans #chronos-laptimes.
 - 🇬🇧 Records: a "📋 Share on Discord" button on each record copies a ready-made message (track, class, lap time, sectors) to paste in #chronos-laptimes.

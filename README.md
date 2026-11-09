@@ -6,7 +6,7 @@
 
 🇬🇧 [English](#english) · 🇫🇷 [Français](#français)
 
-**⬇️ [Download / Télécharger](https://github.com/ApexRadio/apex-radio/releases/latest)** · 💬 [Discord](https://discord.gg/ZHg4qXd26g) · ❤️ [Patreon](https://www.patreon.com/lolotuner) · 🔏 [Code signing policy](CODE_SIGNING_POLICY.md)
+**⬇️ [Download / Télécharger](https://github.com/ApexRadio/apex-radio/releases/latest)** · 💬 [Discord](https://discord.gg/ZHg4qXd26g) · ❤️ [Patreon](https://www.patreon.com/lolotuner) · 🔏 [Code signing: SignPath Foundation](CODE_SIGNING_POLICY.md)
 
 ![Apex Radio dashboard](docs/dashboard-en.png)
 

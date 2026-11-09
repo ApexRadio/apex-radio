@@ -1,6 +1,8 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
 ## 🆕 1.2.7
+- 🇫🇷 Records : un bouton « 📋 Partager sur Discord » sur chaque record copie un message tout prêt (circuit, catégorie, chrono, secteurs) à coller dans #chronos-laptimes.
+- 🇬🇧 Records: a "📋 Share on Discord" button on each record copies a ready-made message (track, class, lap time, sectors) to paste in #chronos-laptimes.
 - 🇫🇷 Premiers pas : au premier lancement, une petite liste guide les nouveaux (bouton radio, test de la voix, « tu m'entends ? », lancer LMU).
 - 🇬🇧 Getting started: on first launch, a short checklist guides new users (radio button, voice test, "can you hear me?", start LMU).
 - 🇫🇷 Gros « J'ÉCOUTE… » bien visible en bas de l'écran quand tu appuies sur le bouton radio (puis « JE RÉFLÉCHIS… »).

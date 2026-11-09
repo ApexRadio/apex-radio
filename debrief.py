@@ -286,18 +286,36 @@ def records_page() -> str:
         best = r.get("best_sectors") or []
         ideal = sum(best) if len(best) == 3 else None
         sec_html = " · ".join(f"S{i + 1} {x:.3f}" for i, x in enumerate(sec)) if sec else ""
+        # message prêt à coller dans le Discord (#chronos-laptimes)
+        share = (f"🏁 {track} · {class_name(cls)}" + (f" · {r.get('car')}" if r.get('car') else "") + f"\n⏱️ {fmt(r.get('lap'))}"
+                 + (f"  ({' · '.join(f'S{i + 1} {x:.3f}' for i, x in enumerate(sec))})" if sec else "")
+                 + (f"\n🎯 {L('Tour idéal', 'Ideal lap')} {fmt(ideal)}" if ideal else "")
+                 + f"\n📅 {r.get('date', '')} · Apex Radio")
         rows.append(f"""<div class="rec">{_thumb(track)}
   <div class="info"><div class="tr">{html.escape(track)}</div>
     <div class="muted">{html.escape(class_name(cls))} · {html.escape(r.get('car', ''))} · {html.escape(r.get('date', ''))}</div>
     <div class="muted mono" style="font-size:13px">{sec_html}</div>{_spark(prog.get((track, cls), []))}</div>
   <div class="best"><div class="lab">{L('Meilleur tour', 'Best lap')}</div><div class="val">{fmt(r.get('lap'))}</div>
-    <div class="sub">{L('tour idéal', 'ideal lap')} {fmt(ideal)}</div></div></div>""")
+    <div class="sub">{L('tour idéal', 'ideal lap')} {fmt(ideal)}</div>
+    <button class="share" data-share="{html.escape(share, quote=True)}">📋 {L('Partager sur Discord', 'Share on Discord')}</button></div></div>""")
     css = """<style>.rec{display:grid;grid-template-columns:170px 1fr 180px;gap:16px;align-items:center;background:var(--panel);
 border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:10px}.thumb{width:160px;height:100px;border:0;background:none;
 display:flex;align-items:center;justify-content:center}
 .spark{width:100%;max-width:420px;height:70px;margin-top:6px;border-radius:8px}.tr{font-size:18px;font-weight:600}.best{text-align:right}
 .best .val{font-family:"JetBrains Mono",monospace;font-size:28px;font-weight:700;color:#FFE500;text-shadow:0 0 12px rgba(255,229,0,.5)}
-@media(max-width:700px){.rec{grid-template-columns:1fr}.best{text-align:left}}</style>"""
+.share{margin-top:8px;font:inherit;font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:transparent;color:inherit;cursor:pointer}
+.share:hover{border-color:#FFE500}.share.ok{border-color:#3DFFA2;color:#3DFFA2}
+@media(max-width:700px){.rec{grid-template-columns:1fr}.best{text-align:left}}</style>
+<script>document.addEventListener("click", async e => {
+  const b = e.target.closest(".share"); if (!b) return;
+  const t = b.dataset.share, old = b.textContent;
+  let ok = false;
+  try { await navigator.clipboard.writeText(t); ok = true; } catch (_) {
+    const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select();
+    try { ok = document.execCommand("copy"); } catch (__) {} a.remove(); }
+  b.textContent = ok ? "✓ """ + L("Copié ! Colle-le dans #chronos-laptimes", "Copied! Paste it in #chronos-laptimes") + """" : old;
+  b.classList.toggle("ok", ok); setTimeout(() => { b.textContent = old; b.classList.remove("ok"); }, 4000);
+});</script>"""
     body = css + L("<h1>MEILLEURS TOURS</h1><p class='muted'>Ton record sur chaque circuit, par catégorie (tours valides uniquement).</p>",
                    "<h1>BEST LAPS</h1><p class='muted'>Your record on each track, by class (valid laps only).</p>") + \
         ("".join(rows) or "<p class='muted'>" + L("Pas encore de record : fais quelques tours valides avec Apex Radio ouvert.",

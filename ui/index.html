@@ -87,7 +87,7 @@
   .leftcol { flex: 0 1 290px; min-width: 250px; display: flex; flex-direction: column; gap: 16px; }
   .leftcol .tyres { gap: 8px; } .leftcol .tyre { padding: 8px 6px; } .leftcol .tyre b { font-size: 24px; }
   .mapcard { flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
-  #map { width: 100%; flex-grow: 1; min-height: 300px; }
+  #map { width: 100%; flex-grow: 1; min-height: 240px; max-height: 44vh; }
   .chrono { flex-grow: 1; }
   #behav { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
   #behav .it { display: flex; gap: 8px; align-items: baseline; }
@@ -107,6 +107,30 @@
   .good { color: var(--good); } .warn { color: var(--warn); } .bad { color: var(--alert); }
   #ws { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 10; display: flex; justify-content: flex-end; }
   #ws[hidden] { display: none; }
+  .oblist { margin: 6px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+  .oblist li { display: flex; align-items: center; gap: 10px; }
+  .oblist .ck { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line2, #1E2A38); display: grid; place-items: center; flex: none; font-size: 12px; }
+  .oblist li.done .ck { border-color: var(--good); background: var(--good); color: var(--bg); }
+  .oblist li.done span { color: var(--muted); text-decoration: line-through; }
+  .oblist button { margin-left: auto; padding: 2px 10px; }
+  .lapsrow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px; font-family: var(--mono); font-size: 13px; }
+  .lapchip { border: 1px solid var(--line2, #1E2A38); border-radius: 8px; padding: 3px 8px; font-variant-numeric: tabular-nums; }
+  .lapchip small { color: var(--muted); margin-right: 4px; }
+  .lapchip em { font-style: normal; color: var(--warn); }
+  .lapchip.best { border-color: var(--good); color: var(--good); }
+  #listen { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 20; display: flex; align-items: center; gap: 14px;
+            padding: 16px 30px; border-radius: 999px; background: rgba(6,7,11,.92); border: 2px solid var(--accent);
+            box-shadow: 0 0 30px rgba(var(--accent-rgb),.45); font-family: var(--title); font-size: 28px; letter-spacing: .06em; color: var(--accent); }
+  #listen[hidden] { display: none; }
+  #listen.think { border-color: var(--warn); color: var(--warn); box-shadow: 0 0 30px rgba(255,181,71,.35); }
+  #listen .ldot { width: 18px; height: 18px; border-radius: 50%; background: currentColor; animation: lpulse 1s ease-in-out infinite; }
+  @keyframes lpulse { 50% { transform: scale(.55); opacity: .5; } }
+  @media (prefers-reduced-motion: reduce) { #listen .ldot { animation: none; } }
+  .bub.k-alert { border-left: 3px solid var(--alert); }
+  .bub.k-strat { border-left: 3px solid var(--warn); }
+  .bub.k-pep { border-left: 3px solid var(--good); }
+  .bub.k-info { border-left: 3px solid var(--line, #2a3242); }
+  .pitrow[hidden] { display: none !important; }
   #set { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 11; display: flex; justify-content: flex-end; }
   #set[hidden] { display: none; }
   .setbox { width: min(460px, 100%); }
@@ -118,7 +142,7 @@
   .racebtns { display: flex; gap: 6px; }
   .tog { border-radius: 999px; opacity: .55; }
   .tog.on { opacity: 1; border-color: var(--accent); background: rgba(var(--accent-rgb),.14); color: var(--text); box-shadow: 0 0 12px rgba(var(--accent-rgb),.25); }
-  #quiet.tog.on { border-color: var(--warn); background: rgba(255,181,71,.14); box-shadow: none; }
+  #quiet.tog.on { border-color: var(--warn); background: rgba(255,181,71,.14); color: var(--warn); box-shadow: none; }
   .wsbox { width: min(640px, 100%); height: 100%; overflow-y: auto; background: var(--bg); border-left: 1px solid var(--accent); box-shadow: 0 0 40px rgba(var(--accent-rgb),.2); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
   .wsbox select { max-width: 70%; }
   #wstable td, #wstable th { font-size: 13px; vertical-align: top; }
@@ -198,6 +222,10 @@
 
   <div class="layout">
     <aside>
+      <section class="card" id="onboard" hidden>
+        <div class="row" style="align-items:center"><h2 style="margin:0">🚀 <span data-en="Getting started">Premiers pas</span></h2><button id="obx" title="Masquer" data-en-title="Hide" aria-label="Masquer">✕</button></div>
+        <ol id="oblist" class="oblist"></ol>
+      </section>
       <section class="card" id="callcard">
         <h2 data-en="Call">Consigne</h2>
         <div id="calltitle">EN ATTENTE</div>
@@ -230,7 +258,7 @@
             <div class="sub" id="lapinfo"></div>
           </section>
           <section class="card">
-            <h2 data-en="Gaps">Écarts</h2>
+            <h2 id="gaph" data-en="Gaps">Écarts</h2>
             <div class="big good" style="font-size:32px" id="gapa">–</div>
             <div class="mono warn" style="font-size:20px;font-weight:600" id="gapb">–</div>
           </section>
@@ -242,11 +270,11 @@
             <div class="sub" id="energyinfo"></div>
           </section>
           <section class="card">
-            <h2 data-en="Pit stop">Arrêt</h2>
+            <h2 id="boxh" data-en="Pit stop">Arrêt</h2>
             <div style="font-family:var(--title);font-weight:700;font-size:32px;margin-top:4px" id="box">–</div>
             <div class="sub" id="boxinfo">–</div>
             <div class="sub" id="pitstatus" style="margin-top:4px"></div>
-            <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;align-items:center">
+            <div class="pitrow" style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;align-items:center">
               <span class="sub" style="margin:0" data-en="Pit:">Stand :</span>
               <button class="pitm" data-m="auto">AUTO</button><button class="pitm" data-m="demande" data-en="ON REQUEST">À LA DEMANDE</button><button class="pitm" data-m="off">OFF</button>
               <button id="pitnow" title="Régler le menu des stands maintenant" data-en-title="Set the pit menu now" data-en="SET">RÉGLER</button>
@@ -285,12 +313,14 @@
               <tbody id="sectab"></tbody>
             </table>
           </div>
+          <div id="lapsrow" class="lapsrow" aria-label="Derniers tours"></div>
         </section>
       </div>
     </main>
   </div>
 </div>
 
+<div id="listen" aria-live="polite" hidden><span class="ldot"></span><b id="listentxt">J'ÉCOUTE…</b></div>
 <div id="set" hidden>
   <div class="wsbox setbox">
     <div class="row" style="align-items:center"><div class="logo" style="font-size:20px" data-en="SETTINGS">RÉGLAGES</div><button id="setclose" aria-label="Fermer">✕</button></div>
@@ -348,6 +378,15 @@
 <script>
 const $ = id => document.getElementById(id);
 const fmtTime = s => { if (s == null) return "–"; s = Math.max(0, s); const m = Math.floor(s / 60), r = Math.floor(s % 60); return `${m}:${String(r).padStart(2, "0")}`; };
+// couleur des messages de Jessica : alerte, stratégie, encouragement ou info
+function kind(t) {
+  t = (t || "").toLowerCase();
+  if (/contact|crevaison|arrêtée|drapeau jaune|danger|dégâts|pénalité|puncture|stopped|damage|penalty|attention|careful|safety|neutralis/.test(t)) return "alert";
+  if (/box|stand|essence|carburant|énergie|pneus? (froids|neufs)|réparer|pit|fuel|energy|tyres?/.test(t)) return "strat";
+  if (/bien joué|bravo|super|superbe|record|bon départ|une place de plus|tu peux attaquer|allez|on lâche rien|régularité|en feu|fier|nice|great|good start|keep|push|proud|on fire/.test(t)) return "pep";
+  return "info";
+}
+const lapHist = { key: null, list: [], n: null };
 const fmtLap = s => { if (!s) return "–"; const m = Math.floor(s / 60), r = (s % 60).toFixed(3); return `${m}:${r.padStart(6, "0")}`; };
 const n = (v, d = 1) => v == null ? "–" : Number(v).toFixed(d);
 const esc = t => String(t).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
@@ -435,7 +474,7 @@ function render(d) {
   if (key !== lastRadio) {
     lastRadio = key;
     $("radio").innerHTML = radio.slice().reverse().map(m =>
-      `<div class="bub ${m.urgent ? "urgent" : ""} ${m.me ? "me" : ""}"><small>${m.me ? T("TOI", "YOU") : T("JESSICA", "ENGINEER")} · ${fmtTime(m.t)}</small>${esc(m.me ? m.text.replace(/^Toi : /, "") : m.text)}</div>`).join("");
+      `<div class="bub ${m.urgent ? "urgent" : ""} ${m.me ? "me" : ""} k-${m.me ? "me" : kind(m.text)}"><small>${m.me ? T("TOI", "YOU") : T("JESSICA", "ENGINEER")} · ${fmtTime(m.t)}</small>${esc(m.me ? m.text.replace(/^Toi : /, "") : m.text)}</div>`).join("");
     $("radio").scrollTop = $("radio").scrollHeight;
   }
 
@@ -445,9 +484,13 @@ function render(d) {
     : { "prêt": "PRÊT", "écoute": "● J'ÉCOUTE…", "réflexion": "JE RÉFLÉCHIS…", "apprentissage": "APPUIE SUR LE BOUTON VOULU…", "erreur": "PROBLÈME", "démarrage": "DÉMARRAGE…" };
   $("pttstate").textContent = labels[t.state] || "–";
   $("pttstate").className = t.state === "écoute" ? "listen" : "";
+  $("listen").hidden = !(t.state === "écoute" || t.state === "réflexion");
+  $("listen").classList.toggle("think", t.state === "réflexion");
+  $("listentxt").textContent = t.state === "réflexion" ? T("JE RÉFLÉCHIS…", "THINKING…") : T("J'ÉCOUTE…", "LISTENING…");
   $("pttbtn").textContent = t.button ? `● ${t.button}` : "–";
   $("pttbtn2").textContent = t.learning && (t.learn_target || "ptt") === "ptt" ? T("appuie sur le bouton…", "press the button…") : (t.button || "–");
   renderShortcuts(t);
+  renderOnboard(d);
   if (d.encourage && document.activeElement !== $("encourage")) $("encourage").value = d.encourage;
   if (d.accent && document.activeElement !== $("accent")) { $("accent").value = d.accent; applyAccent(d.accent); }
   $("heard").textContent = t.heard ? `« ${t.heard} »` : "";
@@ -517,6 +560,22 @@ function render(d) {
   const tm = d.times || {}, L = tm.last || {};
   $("rec").textContent = tm.record ? `${fmtLap(tm.record)} (${tm.record_date})` : T("aucun", "none");
   $("ideal").textContent = fmtLap(tm.ideal);
+  // essais / qualif : les tuiles Écarts et Arrêt montrent le rythme au lieu de rester vides
+  const race = s.session === "course";
+  $("gaph").textContent = race ? T("Écarts", "Gaps") : T("Mon rythme", "My pace");
+  $("boxh").textContent = race ? T("Arrêt", "Pit stop") : T("Potentiel", "Potential");
+  document.querySelectorAll(".pitrow").forEach(e => e.hidden = !race);
+  if (!race) {
+    const vs = tm.record && s.best_lap ? s.best_lap - tm.record : null;
+    $("gapa").innerHTML = s.best_lap ? `${fmtLap(s.best_lap)} <small class="muted" style="font-size:14px;font-weight:400">${T("meilleur", "best")}</small>` : "–";
+    $("gapb").innerHTML = vs != null ? `${vs > 0 ? "+" : "−"}${Math.abs(vs).toFixed(2)} <small class="muted" style="font-size:14px;font-weight:400">vs record</small>` : (tm.record ? "" : `<small class="muted" style="font-size:14px;font-weight:400">${T("pas encore de record ici", "no record here yet")}</small>`);
+    const gain = tm.ideal && s.best_lap ? s.best_lap - tm.ideal : null;
+    $("box").textContent = tm.ideal ? fmtLap(tm.ideal) : "–"; $("box").className = "glow";
+    $("boxinfo").textContent = gain != null && gain > 0.005
+      ? T(`Tour idéal (tes meilleurs secteurs) : ${gain.toFixed(2)} s à gagner`, `Ideal lap (your best sectors): ${gain.toFixed(2)} s to gain`)
+      : T("Tour idéal : tes meilleurs secteurs mis bout à bout", "Ideal lap: your best sectors put together");
+    $("pitstatus").textContent = "";
+  }
   const dl = v => v == null ? "–" : Math.abs(v) < 0.005 ? `<span class="muted">0.00</span>` : `<span class="${v < 0 ? "faster" : "slower"}">${sign(v)}</span>`;
   const sum = a => a.reduce((x, y) => x + y, 0);
   const rows = [];
@@ -524,6 +583,13 @@ function render(d) {
   if (L.vs_record) rows.push(`<tr><td>vs record</td>${L.vs_record.map(x => `<td>${dl(x)}</td>`).join("")}<td>${dl(sum(L.vs_record))}</td></tr>`);
   if (L.ahead) rows.push(`<tr><td>vs ${T("devant", "ahead")}${L.ahead_name ? " · " + esc(L.ahead_name) : ""}</td>${L.ahead.map(x => `<td>${dl(x)}</td>`).join("")}<td>${dl(sum(L.ahead))}</td></tr>`);
   if (L.behind) rows.push(`<tr><td>vs ${T("derrière", "behind")}${L.behind_name ? " · " + esc(L.behind_name) : ""}</td>${L.behind.map(x => `<td>${dl(x)}</td>`).join("")}<td>${dl(sum(L.behind))}</td></tr>`);
+  // derniers tours de la séance (gardés dans le navigateur, effacés au changement de séance)
+  const hk = `${s.track}|${s.session}`;
+  if (hk !== lapHist.key) { lapHist.key = hk; lapHist.list = []; lapHist.n = null; }
+  if (s.last_lap && s.laps_done !== lapHist.n) { lapHist.n = s.laps_done; lapHist.list.push({ n: s.laps_done, t: s.last_lap }); lapHist.list = lapHist.list.slice(-8); }
+  const bestH = Math.min(...lapHist.list.map(x => x.t));
+  $("lapsrow").innerHTML = lapHist.list.length ? `<span class="sub" style="margin:0">${T("Derniers tours", "Last laps")}</span>` + lapHist.list.slice().reverse().map(x =>
+    `<span class="lapchip ${x.t === bestH ? "best" : ""}"><small>T${x.n}</small> ${fmtLap(x.t)}${x.t === bestH ? "" : ` <em>+${(x.t - bestH).toFixed(2)}</em>`}</span>`).join("") : "";
   $("sectab").innerHTML = rows.join("") || `<tr><td colspan="5">${T("Après le premier tour complet…", "After the first full lap…")}</td></tr>`;
 }
 
@@ -745,6 +811,28 @@ document.querySelectorAll(".wsmode").forEach(b => b.onclick = async () => {
   await fetch("/api/setup/mode", { method: "POST", body: JSON.stringify({ mode: b.dataset.m }) });
   $("wsfolder").value = ""; wsLoad(false);
 });
+// ---- premiers pas : petite liste pour bien démarrer (masquée quand tout est fait, ou si on la ferme)
+const OB = { voiceTested: false };
+try { OB.voiceTested = localStorage.getItem("apex_vtested") === "1"; } catch (e) {}
+function obHidden() { try { return localStorage.getItem("apex_onboard") === "done"; } catch (e) { return false; } }
+function renderOnboard(d) {
+  if (obHidden()) { $("onboard").hidden = true; return; }
+  const t = d.ptt || {}, s = d.snap || {};
+  const steps = [
+    [!!t.button, T("Choisis ton bouton radio (volant ou clavier)", "Pick your radio button (wheel or keyboard)"), "set"],
+    [OB.voiceTested, T("Teste la voix de l'ingénieur", "Test the engineer's voice"), "set"],
+    [!!t.heard, T("Appuie sur ton bouton radio et dis « tu m'entends ? »", "Hold your radio button and say \"can you hear me?\""), "set"],
+    [!!s.connected, T("Lance Le Mans Ultimate", "Start Le Mans Ultimate"), null],
+  ];
+  if (t.heard) try { localStorage.setItem("apex_heard", "1"); } catch (e) {}
+  try { if (localStorage.getItem("apex_heard") === "1") steps[2][0] = true; } catch (e) {}
+  if (steps.every(x => x[0])) { try { localStorage.setItem("apex_onboard", "done"); } catch (e) {} $("onboard").hidden = true; return; }
+  $("onboard").hidden = false;
+  $("oblist").innerHTML = steps.map(([ok, txt, act], i) => `<li class="${ok ? "done" : ""}"><b class="ck">${ok ? "✓" : i + 1}</b><span>${txt}</span>${!ok && act ? `<button data-ob="${act}">${T("Régler", "Set up")}</button>` : ""}</li>`).join("");
+}
+$("oblist").onclick = e => { if (e.target.dataset.ob) $("setopen").click(); };
+$("obx").onclick = () => { try { localStorage.setItem("apex_onboard", "done"); } catch (e) {} $("onboard").hidden = true; };
+$("vtest").addEventListener("click", () => { OB.voiceTested = true; try { localStorage.setItem("apex_vtested", "1"); } catch (e) {} });
 $("setopen").onclick = () => { $("set").hidden = false; };
 $("setclose").onclick = () => { $("set").hidden = true; };
 $("set").onclick = e => { if (e.target.id === "set") $("set").hidden = true; };

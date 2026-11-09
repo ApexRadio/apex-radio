@@ -1,6 +1,16 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
 ## 🆕 1.2.7
+- 🇫🇷 Premiers pas : au premier lancement, une petite liste guide les nouveaux (bouton radio, test de la voix, « tu m'entends ? », lancer LMU).
+- 🇬🇧 Getting started: on first launch, a short checklist guides new users (radio button, voice test, "can you hear me?", start LMU).
+- 🇫🇷 Gros « J'ÉCOUTE… » bien visible en bas de l'écran quand tu appuies sur le bouton radio (puis « JE RÉFLÉCHIS… »).
+- 🇬🇧 Big "LISTENING…" banner at the bottom of the screen while you hold the radio button (then "THINKING…").
+- 🇫🇷 Messages de l'ingénieur en couleur : rouge pour les alertes, orange pour la stratégie, vert pour les encouragements.
+- 🇬🇧 Colour-coded engineer messages: red for alerts, orange for strategy, green for encouragement.
+- 🇫🇷 En essais et en qualif, les tuiles Écarts et Arrêt deviennent « Mon rythme » (meilleur tour, écart au record) et « Potentiel » (tour idéal, temps à gagner).
+- 🇬🇧 In practice and qualifying, the Gaps and Pit stop tiles become "My pace" (best lap, gap to record) and "Potential" (ideal lap, time to gain).
+- 🇫🇷 Carte du circuit plus compacte et derniers tours de la séance affichés sous les chronos.
+- 🇬🇧 More compact track map, and the session's last laps shown under the lap times.
 - 🇫🇷 Encouragements « Motivant » plus présents : l'ingénieur t'encourage aussi au fil des tours, même seul ou loin derrière après un accident (bon tour, régularité, remontée…), à chaque tour sur les longs circuits.
 - 🇬🇧 "Hype" encouragement is more present: the engineer also cheers you on lap after lap, even alone or far behind after an accident (good lap, consistency, comeback…), every lap on long tracks.
 - 🇫🇷 Volant : correction pour les volants qui apparaissent deux fois dans Windows (ex. Fanatec) : le bouton radio est maintenant bien détecté en jeu. Merci à l'utilisateur qui l'a signalé !

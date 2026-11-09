@@ -35,7 +35,7 @@ def set_encourage(level: str) -> None:
 
 
 def WHEEL_NAME(i: int) -> str:
-    return L("avant gauche|avant droit|arrière gauche|arrière droit", "front left|front right|rear left|rear right").split("|")[i]
+    return L("avant gauche|avant droite|arrière gauche|arrière droite", "front left|front right|rear left|rear right").split("|")[i]
 
 
 def class_name(c: str) -> str:
@@ -210,7 +210,10 @@ class Traffic:
             name = class_name(c["cls"])
             corner = self.beh.corner_at((me["f"] + t * speed / L) % 1) if self.beh else None
             where = L_(f", tu la rattrapes au virage {corner}", f", you'll catch it at turn {corner}") if corner else ""
-            sec = L_(f"{gap:.0f} seconde{'s' if round(gap) > 1 else ''}", f"{gap:.0f} second{'s' if round(gap) != 1 else ''}")
+            if gap < 1.0:
+                sec = L_("moins d'une seconde", "less than a second")
+            else:
+                sec = L_(f"{gap:.0f} seconde{'s' if round(gap) > 1 else ''}", f"{gap:.0f} second{'s' if round(gap) != 1 else ''}")
             if len(group) > 1:
                 where = where.replace("la rattrapes", "les rattrapes").replace("catch it", "catch them")
                 say(None, L_(f"{len(group)} {name} devant, à {sec}{where}.", f"{len(group)} {name} cars ahead, {sec}{where}."))
@@ -386,7 +389,7 @@ class Places:
             say(None, L(f"{n}, tu es P{pos}. ", f"{n}, you're P{pos}. ") + pep)
         else:
             k = -diff
-            say(None, L(f"Tu perds {k} place{'s' if k > 1 else ''}, P{pos}. ", f"You lose {k} place{'s' if k > 1 else ''}, P{pos}. ")
+            say(None, L(f"Tu perds {k if k > 1 else 'une'} place{'s' if k > 1 else ''}, P{pos}. ", f"You lose {k} place{'s' if k > 1 else ''}, P{pos}. ")
                 + random.choice([L("Accroche-toi, on va la reprendre.", "Hang on, we'll get it back."),
                                  L("Pas grave, reste concentré.", "No worries, stay focused."),
                                  L("Respire, la course est longue.", "Breathe, it's a long race.")]))
@@ -395,13 +398,13 @@ class Places:
         d = self.start - pos
         disc = ENCOURAGE == "discret"
         if d > 0:
-            msg = L(f"Bon départ, tu as gagné {d} place{'s' if d > 1 else ''}, tu es P{pos}.",
+            msg = L(f"Bon départ, tu as gagné {d if d > 1 else 'une'} place{'s' if d > 1 else ''}, tu es P{pos}.",
                     f"Good start, you gained {d} place{'s' if d > 1 else ''}, you're P{pos}.")
             if not disc:
                 msg += " " + random.choice([L("Superbe !", "Superb!"), L("Continue comme ça !", "Keep it up!"),
                                             L("Excellent premier tour !", "Excellent first lap!")])
         elif d < 0:
-            msg = L(f"Premier tour difficile, tu as perdu {-d} place{'s' if d < -1 else ''}, tu es P{pos}.",
+            msg = L(f"Premier tour difficile, tu as perdu {-d if d < -1 else 'une'} place{'s' if d < -1 else ''}, tu es P{pos}.",
                     f"Tough first lap, you lost {-d} place{'s' if d < -1 else ''}, you're P{pos}.")
             if not disc:
                 msg += " " + random.choice([L("Pas grave, on va les reprendre.", "No worries, we'll get them back."),
@@ -710,6 +713,8 @@ class Damage:
             j = lmu_get("/rest/garage/UIScreen/RepairAndRefuel")
             w = (j or {}).get("wearables") or {}
             aero = (w.get("body") or {}).get("aero")
+            if aero is not None:
+                aero = max(0.0, min(1.0, float(aero)))   # LMU peut dépasser 100 % après un gros choc
             susp = w.get("suspension") or []
             new = {"aero": aero, "susp": susp[:4]}
             old = self.wear

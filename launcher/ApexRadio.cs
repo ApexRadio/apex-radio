@@ -14,6 +14,8 @@ using System.Windows.Forms;
 
 static class ApexRadio
 {
+    const string RELEASES = "https://github.com/ApexRadio/apex-radio/releases";
+
     [STAThread]
     static int Main(string[] args)
     {
@@ -36,13 +38,35 @@ static class ApexRadio
         psi.WorkingDirectory = dir;
         psi.UseShellExecute = false;
         psi.CreateNoWindow = true;
-        try { Process.Start(psi); }
+        Process p;
+        try { p = Process.Start(psi); }
         catch (Exception e)
         {
             MessageBox.Show("Impossible de lancer Apex Radio / Cannot start Apex Radio:\n" + e.Message,
                             "Apex Radio", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 1;
         }
+        // Secours : si l'appli s'arrête en erreur dans les premières secondes (mise à jour ratée…),
+        // on propose d'ouvrir la page des versions pour réinstaller la précédente.
+        try
+        {
+            if (p != null && p.WaitForExit(20000) && p.ExitCode != 0)
+            {
+                DialogResult r = MessageBox.Show(
+                    "Apex Radio s'est arrêté au démarrage.\n\n" +
+                    "Tu peux réinstaller la version précédente par-dessus : tes réglages, records et setups sont gardés.\n" +
+                    "Ouvrir la page des versions ?\n\n" +
+                    "Apex Radio stopped while starting.\n" +
+                    "You can install the previous version over this one: your settings, records and setups are kept.\n" +
+                    "Open the versions page?\n\n" +
+                    "(journal.txt : %LOCALAPPDATA%\\Apex Radio)",
+                    "Apex Radio", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (r == DialogResult.Yes)
+                    Process.Start(new ProcessStartInfo(RELEASES) { UseShellExecute = true });
+                return 1;
+            }
+        }
+        catch (Exception) { }
         return 0;
     }
 }

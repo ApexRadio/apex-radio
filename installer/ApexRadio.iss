@@ -36,9 +36,13 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "..\build\app\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
+[INI]
+Filename: "{app}\versions-precedentes.url"; Section: "InternetShortcut"; Key: "URL"; String: "https://github.com/ApexRadio/apex-radio/releases"
+
 [Icons]
 Name: "{group}\Apex Radio"; Filename: "{app}\ApexRadio.exe"; WorkingDir: "{app}"
 Name: "{group}\Apex Radio (demo)"; Filename: "{app}\ApexRadio.exe"; Parameters: "--demo"; WorkingDir: "{app}"
+Name: "{group}\Apex Radio - versions precedentes"; Filename: "{app}\versions-precedentes.url"
 Name: "{group}\{cm:UninstallProgram,Apex Radio}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\Apex Radio"; Filename: "{app}\ApexRadio.exe"; WorkingDir: "{app}"; Tasks: desktopicon
 
@@ -46,6 +50,7 @@ Name: "{autodesktop}\Apex Radio"; Filename: "{app}\ApexRadio.exe"; WorkingDir: "
 Filename: "{app}\ApexRadio.exe"; WorkingDir: "{app}"; Description: "{cm:LaunchProgram,Apex Radio}"; Flags: nowait postinstall skipifsilent unchecked
 
 [UninstallDelete]
+Type: files; Name: "{app}\versions-precedentes.url"
 Type: filesandordirs; Name: "{app}\python"
 Type: filesandordirs; Name: "{app}\__pycache__"
 Type: filesandordirs; Name: "{app}\webview"

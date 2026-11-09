@@ -350,6 +350,14 @@
       <div class="setrow"><span data-en="Colour">Couleur</span><div class="setctl"><select id="accent" aria-label="Couleur" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><span data-en="Language">Langue</span><div class="setctl"><button id="lang" title="Langue / Language">FR</button></div></div>
     </section>
+    <section class="setsec"><h2>🔄 <span data-en="Version">Version</span></h2>
+      <div class="setrow"><span data-en="Installed version">Version installée</span><div class="setctl"><b id="vernow">–</b></div></div>
+      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="A problem since the last update? Download the previous version and install it over this one: your settings, records and setups are kept.">Un problème depuis la dernière mise à jour ? Télécharge la version précédente et installe-la par-dessus : tes réglages, records et setups sont gardés.</div>
+      <div class="row" style="gap:8px;flex-wrap:wrap;justify-content:flex-start">
+        <a id="verprev" class="pill" href="#" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none" hidden></a>
+        <a id="verall" class="pill" href="https://github.com/ApexRadio/apex-radio/releases" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none" data-en="All versions">Toutes les versions</a>
+      </div>
+    </section>
   </div>
 </div>
 <div id="ws" hidden>
@@ -463,6 +471,13 @@ function render(d) {
     $("delta").innerHTML = `${dlt > 0 ? "+" : dlt < 0 ? "−" : "±"}${Math.abs(dlt).toFixed(2)}<small>vs ${tmD.delta_ref === "record" ? "record" : T("meilleur tour", "best lap")}</small>`;
   }
   const up = d.update || {};
+  if (up.version) $("vernow").textContent = up.version;
+  if (up.all) $("verall").href = up.all;
+  $("verprev").hidden = !(up.previous && up.previous.version);
+  if (up.previous && up.previous.version) {
+    $("verprev").textContent = T(`↩ Revenir à la ${up.previous.version}`, `↩ Go back to ${up.previous.version}`);
+    $("verprev").href = up.previous.url;
+  }
   let hid = null; try { hid = localStorage.getItem("apex-upd-hide"); } catch (e) {}
   $("upd").style.display = up.latest && hid !== up.latest ? "flex" : "none";
   if (up.latest) {

@@ -17,6 +17,8 @@ Download **ApexRadio-Setup.exe** below, run it, click Next. That's it: Python an
 Windows may show "Windows protected your PC" (the app isn't signed yet): click **More info**, then **Run anyway**.
 On first launch, the voice and speech recognition download (a few minutes, only once).
 
+🔏 Code signing: free code signing provided by SignPath.io, certificate by SignPath Foundation (application in progress) · [policy / politique](https://github.com/ApexRadio/apex-radio/blob/main/CODE_SIGNING_POLICY.md)
+
 Licence: GNU GPL v3 · Voices: MaryTTS upmc (CC BY-SA 4.0), LJ Speech (public domain).
 
 Historique complet / full changelog : [CHANGELOG.md](https://github.com/ApexRadio/apex-radio/blob/main/CHANGELOG.md)

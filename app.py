@@ -694,12 +694,38 @@ class _Tee:
 LMU_STEAM_ID = 2399420
 
 
+def _steam_exe() -> str | None:
+    """Chemin de steam.exe (registre Windows), pour lancer LMU sans passer par le lien steam://."""
+    try:
+        import winreg
+        for root, key, name in ((winreg.HKEY_CURRENT_USER, r"Software\Valve\Steam", "SteamExe"),
+                                (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\Valve\Steam", "InstallPath")):
+            try:
+                with winreg.OpenKey(root, key) as k:
+                    v = str(winreg.QueryValueEx(k, name)[0])
+                p = Path(v) if v.lower().endswith(".exe") else Path(v) / "steam.exe"
+                if p.exists():
+                    return str(p)
+            except OSError:
+                continue
+    except Exception:
+        pass
+    return None
+
+
 def launch_lmu() -> bool:
-    """Lance Le Mans Ultimate par Steam (steam://rungameid/…)."""
+    """Lance Le Mans Ultimate par Steam : steam.exe -applaunch (pas de fenêtre de confirmation),
+    sinon le lien steam://rungameid/…"""
     url = f"steam://rungameid/{LMU_STEAM_ID}"
     try:
         if sys.platform == "win32":
-            os.startfile(url)
+            exe = _steam_exe()
+            if exe:
+                import subprocess
+                subprocess.Popen([exe, "-applaunch", str(LMU_STEAM_ID)], close_fds=True,
+                                 creationflags=getattr(subprocess, "DETACHED_PROCESS", 0))
+            else:
+                os.startfile(url)
         else:
             import webbrowser
             webbrowser.open(url)

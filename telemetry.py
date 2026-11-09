@@ -151,6 +151,27 @@ class LMUSource:
         self._fast = lmu_mmap.MMapControl(lmu_data.LMUConstants.LMU_SHARED_MEMORY_FILE, lmu_data.LMUObjectOut)
         self._fast.create(1)
         self._player_sc = 0
+        self._alive_t = 0.0   # dernière fois où l'interface web de LMU (port 6397) a répondu
+        self._probe_t = 0.0
+        self._last_et = None  # temps de séance : s'il avance, le jeu tourne
+
+    def _game_alive(self, et: float | None = None) -> bool:
+        """La mémoire partagée garde les dernières données après la fermeture du jeu :
+        on vérifie aussi que LMU répond encore sur son port local (6397)."""
+        now = time.time()
+        if et is not None and et != self._last_et:
+            if self._last_et is not None:
+                self._alive_t = now   # secours si le port est bloqué : la séance avance
+            self._last_et = et
+        if now - self._probe_t > 3:
+            self._probe_t = now
+            try:
+                import socket
+                socket.create_connection(("127.0.0.1", 6397), timeout=0.3).close()
+                self._alive_t = now
+            except OSError:
+                pass
+        return now - self._alive_t < 20
 
     def close(self) -> None:
         self._mm.close()
@@ -189,7 +210,7 @@ class LMUSource:
         self._mm.update()
         d = self._mm.data
         s = Snapshot()
-        if not d.generic.gameVersion:
+        if not d.generic.gameVersion or not self._game_alive(float(d.scoring.scoringInfo.mCurrentET)):
             return s
         s.connected = True
 

@@ -1,6 +1,8 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
 ## 🆕 1.2.10
+- 🇫🇷 Bouton radio au choix : rester appuyé pour parler, ou appuyer une fois et réappuyer pour couper (⚙️ Réglages → Radio et volant).
+- 🇬🇧 Radio button your way: hold to talk, or press once and press again to stop (⚙️ Settings → Radio & wheel).
 - 🇫🇷 Dans le Gestionnaire des tâches, Apex s'appelle maintenant « Apex Radio » (avec son logo) au lieu de « Python ».
 - 🇬🇧 In Task Manager, Apex now shows as "Apex Radio" (with its logo) instead of "Python".
 

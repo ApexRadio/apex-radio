@@ -295,6 +295,7 @@ def loop(state: State, demo: bool) -> None:
                 "radio": list(eng.radio),
                 "accent": state.radio.cfg.get("accent", "bleu"),
                 "encourage": state.radio.cfg.get("encourage", "normal"),
+                "ptt_mode": state.radio.cfg.get("ptt_mode", "hold"),
                 "autolaunch_lmu": bool(state.radio.cfg.get("autolaunch_lmu")),
                 "voice": {"on": state.voice.enabled, "engine": state.voice.engine, "volume": state.voice.volume,
                           "quiet": state.voice.quiet, "choice": voices.current_id(), "list": voices.catalog(),
@@ -501,6 +502,11 @@ def make_handler(state: State):
             elif self.path == "/api/lmu/autolaunch":
                 n = int(self.headers.get("Content-Length") or 0)
                 state.radio.cfg["autolaunch_lmu"] = bool(json.loads(self.rfile.read(n) or b"{}").get("on"))
+                save_config(state.radio.cfg)
+            elif self.path == "/api/pttmode":
+                n = int(self.headers.get("Content-Length") or 0)
+                m = json.loads(self.rfile.read(n) or b"{}").get("mode", "hold")
+                state.radio.cfg["ptt_mode"] = "toggle" if m == "toggle" else "hold"
                 save_config(state.radio.cfg)
             elif self.path == "/api/encourage":
                 n = int(self.headers.get("Content-Length") or 0)

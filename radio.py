@@ -353,9 +353,20 @@ class Radio:
                     continue
                 self._check_shortcuts()
                 now = self._ptt_pressed()
+                toggle = self.cfg.get("ptt_mode") == "toggle"
+                if toggle:
+                    # appuyer une fois = parler, réappuyer = couper (et coupure de sécurité au bout de 20 s)
+                    stop = (now and not pressed) or (time.time() - getattr(self, "_rec_t0", 0) > 20)
+                    if self.state == "écoute" and stop:
+                        audio = self._stop_rec()
+                        threading.Thread(target=self._process, args=(audio,), daemon=True).start()
+                        pressed = now
+                        time.sleep(0.02)
+                        continue
                 if now and not pressed and self.state in ("prêt", "erreur"):
                     try:
                         self._start_rec()
+                        self._rec_t0 = time.time()
                         self.state = "écoute"
                         self.detail = ""
                     except Exception as e:
@@ -368,7 +379,7 @@ class Radio:
                                             f"Microphone unavailable: {e!r}. Pick your mic in the list below, and check "
                                             "Windows Settings > Sound > Input (default mic) and Privacy > Microphone.")
                         print("  " + self.detail)
-                elif not now and pressed and self.state == "écoute":
+                elif not toggle and not now and pressed and self.state == "écoute":
                     audio = self._stop_rec()
                     threading.Thread(target=self._process, args=(audio,), daemon=True).start()
                 pressed = now

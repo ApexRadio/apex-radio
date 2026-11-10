@@ -337,6 +337,7 @@
       <div class="setrow" style="align-items:center"><span data-en="Mic">Micro</span><select id="mic" aria-label="Micro"></select></div>
       <div class="setrow"><span data-en="Radio button">Bouton radio</span><div class="setctl"><span id="pttbtn2" style="color:var(--accent)">–</span></div></div>
       <button class="act" id="learn" data-en="CHOOSE THE RADIO BUTTON">CHOISIR LE BOUTON RADIO</button>
+      <div class="setrow"><span data-en="Button use">Utilisation du bouton</span><div class="setctl"><select id="pttmode" aria-label="Bouton radio" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <details id="shortcuts" open style="font-size:13px">
             <summary style="cursor:pointer;color:var(--muted)" data-en="Shortcuts (wheel / keyboard)">Raccourcis (volant / clavier)</summary>
             <div id="sclist" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"></div>
@@ -521,6 +522,7 @@ function render(d) {
   renderShortcuts(t);
   renderOnboard(d);
   if (d.encourage && document.activeElement !== $("encourage")) $("encourage").value = d.encourage;
+  if (d.ptt_mode && document.activeElement !== $("pttmode")) $("pttmode").value = d.ptt_mode;
   if (d.accent && document.activeElement !== $("accent")) { $("accent").value = d.accent; applyAccent(d.accent); }
   $("heard").textContent = t.heard ? `« ${t.heard} »` : "";
   $("pttdetail").textContent = t.detail || (t.whisper === false ? T("Reconnaissance vocale en cours de chargement…", "Speech recognition loading…") : "");
@@ -733,6 +735,9 @@ $("accent").onchange = e => { applyAccent(e.target.value);
 // ---- niveau d'encouragements
 const ENC = [["discret", "Discret", "Low-key"], ["normal", "Normal", "Normal"], ["motivant", "Motivant", "Hype"]];
 $("encourage").innerHTML = ENC.map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
+$("pttmode").innerHTML = [["hold", "Rester appuyé pour parler", "Hold to talk"], ["toggle", "Appuyer une fois, réappuyer pour couper", "Press once, press again to stop"]]
+  .map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
+$("pttmode").onchange = e => fetch("/api/pttmode", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
 $("encourage").onchange = e => fetch("/api/encourage", { method: "POST", body: JSON.stringify({ level: e.target.value }) });
 
 // ---- raccourcis : spotter, radio, mode silence

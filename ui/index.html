@@ -800,7 +800,11 @@ async function wsLoad(keepChecks) {
     fillFiles();
   }
   $("wscurrent").textContent = WS.factory ? T("Setup en cours : setup d'usine (pas encore enregistré)", "Current setup: default setup (not saved yet)") : WS.current ? T(`Setup en cours : ${WS.current}`, `Current setup: ${WS.current}`) : T("Aucun setup choisi pour ce circuit.", "No setup chosen for this track.");
-  if (WS.mismatch) $("wscurrent").textContent += "  ⚠️ " + T(`Ce setup a été fait pour la ${carLabel(WS.mismatch.setup)}, mais tu es en ${carLabel(WS.mismatch.car)}.`, `This setup was made for the ${carLabel(WS.mismatch.setup)}, but you're in the ${carLabel(WS.mismatch.car)}.`);
+  if (WS.mismatch) {
+    const lmp2 = ["LMP2", "LMP2_ELMS"].includes(WS.mismatch.setup) && ["LMP2", "LMP2_ELMS"].includes(WS.mismatch.car);
+    $("wscurrent").textContent += "  ⚠️ " + T(`Ce setup a été fait pour la ${carLabel(WS.mismatch.setup)}, mais tu es en ${carLabel(WS.mismatch.car)}.`, `This setup was made for the ${carLabel(WS.mismatch.setup)}, but you're in the ${carLabel(WS.mismatch.car)}.`)
+      + (lmp2 ? T(" Même voiture : la copie APEX sera convertie pour ta version.", " Same car: the APEX copy will be converted for your version.") : "");
+  }
   const ch = WS.changes || [];
   if (WS.factory) $("wsstatus").textContent = WS.error || "";
   else if (!WS.current) $("wsstatus").textContent = T("Choisis d'abord le setup chargé dans le jeu (étape 1).", "First choose the setup loaded in the game (step 1).");
@@ -841,7 +845,11 @@ async function wsLoad(keepChecks) {
 function fillFiles() {
   const f = (WS.folders || []).find(x => x.name === $("wsfolder").value);
   const files = f ? f.files : [];
-  $("wsfile").innerHTML = files.map(n => `<option ${n === WS.current ? "selected" : ""}>${esc(n)}</option>`).join("");
+  const tags = (f && f.tags) || {};
+  const mine = WS.series || "";
+  // les setups de la version en piste (ELMS / WEC) d'abord
+  const sorted = mine ? [...files].sort((a, b) => ((tags[b] === mine) - (tags[a] === mine))) : files;
+  $("wsfile").innerHTML = sorted.map(n => `<option value="${esc(n)}" ${n === WS.current ? "selected" : ""}>${esc(n)}${tags[n] && !n.toUpperCase().includes(tags[n]) ? ` (${tags[n]})` : ""}</option>`).join("");
 }
 $("wsfolder").onchange = fillFiles;
 function renderRace() {
@@ -904,6 +912,7 @@ $("wscreate").onclick = async () => {
   if (!keys.length) return;
   const r = await (await fetch("/api/setup/create", { method: "POST", body: JSON.stringify({ keys }) })).json();
   $("wsresult").innerHTML = r.error ? `<span class="bad">${esc(r.error)}</span>` : T(`<span class="good">${esc(r.file)} mis à jour (${esc(r.version)})</span> — recharge-le au garage dans LMU, puis roule quelques tours pour comparer.`, `<span class="good">${esc(r.file)} updated (${esc(r.version)})</span> — reload it in the LMU garage, then do a few laps to compare.`);
+  if (!r.error && r.converted) $("wsresult").innerHTML += "<br>" + T(`Ton setup de départ était ${esc(r.converted[0])} : j'ai converti la copie APEX pour la LMP2 ${esc(r.converted[1])} (même voiture, Oreca 07). Vérifie les réglages dans le garage avant de rouler.`, `Your base setup was ${esc(r.converted[0])}: I converted the APEX copy for the LMP2 ${esc(r.converted[1])} (same car, Oreca 07). Check the settings in the garage before driving.`);
   wsLoad(false);
 };
 tick();

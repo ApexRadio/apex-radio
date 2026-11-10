@@ -204,6 +204,13 @@ def loop(state: State, demo: bool) -> None:
         if k in warned_setup:
             return
         warned_setup.add(k)
+        if {m["setup"], m["car"]} <= {"LMP2", "LMP2_ELMS"}:
+            say(None, i18n.L(
+                f"Ton setup {m['file'][:-4]} est fait pour la {car_label(m['setup'])}, et tu es en {car_label(m['car'], sn.car)}. "
+                "Pas de souci : c'est la même voiture, je convertirai la copie APEX pour ta version.",
+                f"Your setup {m['file'][:-4]} is made for the {car_label(m['setup'])}, and you're in the {car_label(m['car'], sn.car)}. "
+                "No problem: it's the same car, I'll convert the APEX copy for your version."), urgent=False)
+            return
         say(None, i18n.L(
             f"Attention, ton setup {m['file'][:-4]} a été fait pour la {car_label(m['setup'])}, "
             f"mais tu es en {car_label(m['car'], sn.car)}. Charge plutôt un setup fait pour cette voiture.",

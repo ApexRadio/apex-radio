@@ -109,8 +109,13 @@ class Setup:
     def get(self, section: str, key: str):
         return self.values.get((section, key))
 
-    def write_copy(self, dest: Path, changes: list[dict], note: str, overwrite: bool = False) -> None:
+    def write_copy(self, dest: Path, changes: list[dict], note: str, overwrite: bool = False, vehicle: str | None = None) -> None:
         lines = list(self.lines)
+        if vehicle:
+            for i, line in enumerate(lines):
+                if line.startswith("VehicleClassSetting="):
+                    lines[i] = f'VehicleClassSetting="{vehicle}"'
+                    break
         for c in changes:
             idx, disp, n = self.values[(c["section"], c["key"])]
             shown = c["to_disp"] if not str(c["to_disp"]).startswith("cran") else f"APEX (avant : {c['from_disp']})"
@@ -267,7 +272,17 @@ class Workshop:
         for d in sorted(p for p in self.dir.iterdir() if p.is_dir()):
             files = sorted(f.name for f in d.glob("*.svm"))
             if files:
-                out.append({"name": d.name, "files": files})
+                tags = {}
+                for fn in files:
+                    try:
+                        with open(d / fn, encoding="utf-8", errors="ignore") as fh:
+                            for _, line in zip(range(40), fh):
+                                if line.startswith("VehicleClassSetting="):
+                                    tags[fn] = series_tag(setup_class(line.split("=", 1)[1].strip().strip('"')))
+                                    break
+                    except OSError:
+                        pass
+                out.append({"name": d.name, "files": files, "tags": tags})
         return out
 
     def guess_folder(self, track: str) -> str | None:
@@ -297,13 +312,42 @@ class Workshop:
         t = self.tag()
         return f"{folder} · {t} · {self.mode}" if t else f"{folder} · {self.mode}"
 
+    LMP2_FAMILY = {"LMP2", "LMP2_ELMS"}
+    VEHICLE_DEFAULT = {"LMP2_ELMS": "ELMS2025 LMP2_ELMS Oreca_07", "LMP2": "LMP2 Oreca_07 WEC2026"}
+
+    def target_vehicle(self, base: "Setup") -> str | None:
+        """Setup WEC alors qu'on roule en LMP2 ELMS (ou l'inverse) : même voiture (Oreca 07), on convertit
+        la copie APEX vers la version en piste. Renvoie la ligne VehicleClassSetting à écrire, sinon None."""
+        car = (self.car_class or "").upper()
+        sc = setup_class(base.vehicle)
+        if not sc or sc == car or car not in self.LMP2_FAMILY or sc not in self.LMP2_FAMILY:
+            return None
+        seen: dict = {}
+        try:
+            for f in self.dir.glob("*/*.svm"):
+                try:
+                    for line in f.read_text(encoding="utf-8", errors="ignore").splitlines()[:40]:
+                        if line.startswith("VehicleClassSetting="):
+                            v = line.split("=", 1)[1].strip().strip('"')
+                            if setup_class(v) == car:
+                                seen[v] = seen.get(v, 0) + 1
+                            break
+                except OSError:
+                    continue
+        except OSError:
+            pass
+        if seen:
+            # la version la plus récente (année dans le nom), puis la plus fréquente
+            return max(seen, key=lambda v: (max([int(y) for y in re.findall(r"20\d\d", v)] or [0]), seen[v]))
+        return self.VEHICLE_DEFAULT.get(car)
+
     def apex_name(self, folder: str, base: "Setup | None" = None) -> str:
         """Nom du fichier APEX. La version (ELMS / WEC) est celle du setup de départ, pas celle de la voiture :
         un setup WEC reste un setup WEC, même créé pendant qu'on roule en LMP2 ELMS."""
         t = self.tag()
         if base is not None:
             sc = setup_class(base.vehicle)
-            if sc:
+            if sc and not self.target_vehicle(base):   # converti : le nom suit la voiture en piste
                 t = series_tag(sc)
         return f"APEX {folder} {t} {self.mode}.svm" if t else f"APEX {folder} {self.mode}.svm"
 
@@ -602,8 +646,12 @@ class Workshop:
         from_label = st["label"] if st["current"] == name else "v1" if st["current"] == h["versions"][0]["base"] else st["current"]
         note = "Apex Radio %s v%d (depuis %s) : %s" % (self.mode, n, from_label, "; ".join(
             f"{c['label']} {c['from_disp']} -> {c['to_disp']}" for c in changes))
+        conv = self.target_vehicle(base)
+        if conv:
+            note = note.replace("Apex Radio %s v%d" % (self.mode, n), "Apex Radio %s v%d (converti %s -> %s)" % (
+                self.mode, n, series_tag(setup_class(base.vehicle)), self.tag()), 1)
         try:
-            base.write_copy(apex, changes, note[:500], overwrite=apex.exists())
+            base.write_copy(apex, changes, note[:500], overwrite=apex.exists(), vehicle=conv)
         except PermissionError:
             return {"error": L("Windows refuse l'écriture dans le dossier des setups. "
                                "Lance Apex Radio en administrateur, ou déplace LMU hors de Program Files.",
@@ -616,7 +664,8 @@ class Workshop:
         h["current"], h["apex_file"], h["apex_label"] = name, name, f"v{n}"
         self._save()
         self.scan(force=True)
-        return {"file": name, "version": f"v{n}", "error": None}
+        return {"file": name, "version": f"v{n}", "error": None,
+                "converted": (series_tag(setup_class(base.vehicle)), self.tag()) if conv else None}
 
     def restore(self, track: str, version: int) -> dict:
         """Remet une ancienne version dans le fichier APEX du circuit."""

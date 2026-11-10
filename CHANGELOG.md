@@ -9,6 +9,8 @@
 - 🇬🇧 The engineer understands you better: more ways to ask your questions and better recognition of racing words. He also varies his phrases (attack, defend, gaps, quick laps, warm tyres, box) so he repeats himself less.
 - 🇫🇷 ⚙️ Réglages : une petite partie « ❤️ Soutenir Apex Radio » avec Ko-fi (offrir un café) et Patreon.
 - 🇬🇧 ⚙️ Settings: a small "❤️ Support Apex Radio" section with Ko-fi (buy me a coffee) and Patreon.
+- 🇫🇷 Atelier setup, LMP2 : tu roules en ELMS mais tu n'as qu'un setup WEC (ou l'inverse) ? Apex convertit la copie APEX pour ta version (même voiture, Oreca 07) au lieu de créer un fichier qui ne colle pas. Dans la liste, chaque setup affiche sa version (WEC / ELMS), ceux de ta voiture en premier.
+- 🇬🇧 Setup workshop, LMP2: driving the ELMS car with only a WEC setup (or the other way round)? Apex converts the APEX copy to your version (same car, Oreca 07). The list shows each setup's version (WEC / ELMS), yours first.
 
 ## 1.2.9
 - 🇫🇷 L'ingénieur parle mieux français : « une place », « 1 tour », « 3 minutes », « 2,3 secondes », « suspension avant droite », « à moins d'une seconde », et une meilleure prononciation de setup, ELMS, Hypercar et GT3. Les dégâts aéro ne dépassent plus 100 %.

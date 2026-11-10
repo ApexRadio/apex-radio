@@ -5,6 +5,8 @@
 - 🇬🇧 Radio button your way: hold to talk, or press once and press again to stop (⚙️ Settings → Radio & wheel).
 - 🇫🇷 Dans le Gestionnaire des tâches, Apex s'appelle maintenant « Apex Radio » (avec son logo) au lieu de « Python ».
 - 🇬🇧 In Task Manager, Apex now shows as "Apex Radio" (with its logo) instead of "Python".
+- 🇫🇷 L'ingénieur te comprend mieux : plus de façons de poser tes questions (« quel temps il fait », « je tourne en combien », « fais-moi le point », « où je perds du temps », « prépare-moi l'arrêt »…) et une meilleure reconnaissance des mots de course. Il varie aussi ses phrases (attaque, défense, écarts, tours rapides, pneus chauds, box) pour moins se répéter.
+- 🇬🇧 The engineer understands you better: more ways to ask your questions and better recognition of racing words. He also varies his phrases (attack, defend, gaps, quick laps, warm tyres, box) so he repeats himself less.
 
 ## 1.2.9
 - 🇫🇷 L'ingénieur parle mieux français : « une place », « 1 tour », « 3 minutes », « 2,3 secondes », « suspension avant droite », « à moins d'une seconde », et une meilleure prononciation de setup, ELMS, Hypercar et GT3. Les dégâts aéro ne dépassent plus 100 %.

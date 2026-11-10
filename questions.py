@@ -196,14 +196,14 @@ TOPICS = [
     (r"essence|des sens|d sens|carbu|fuel|conso|litre|reservoir|jus|gasoil|\bgas\b|petrol|consumption|\btank", fuel),
     (r"energie|batterie|virtuel|energy|battery|virtual", energy),
     (r"stand|\bbox|arret|rentr|\bpit|ravitaill|strateg|\bstop\b|come in", pit),
-    (r"pneu|gomme|usure|\btyre|\btire|rubber|\bwear", tyres),
+    (r"pneu|gomme|usure|pression|\btyre|\btire|rubber|\bwear|\bpressure", tyres),
     (r"ecart|devant|derriere|\bgap|attaque|revient|ahead|behind|in front|catching", gaps),
-    (r"repar|degat|dommage|abime|damage|repair", repairs),
-    (r"position|place|classement|quelle p\b|combien.*(je suis|suis je)|where am i|what p\b", position),
-    (r"meteo|pluie|pleut|pleuvoir|mouill|humid|sec\b|temperature|nuage|weather|\brain|\bwet\b|\bdry\b|cloud", weather),
-    (r"chrono|dernier tour|meilleur tour|temps au tour|mon tour|rythme|lap time|last lap|best lap|\bpace\b", laptimes),
-    (r"combien de tour|tours restant|reste.*tour|temps restant|reste.*minute|\bfin\b|arrivee|damier|how many laps|laps (left|to go|remaining)|time (left|remaining)|finish", laps),
-    (r"point complet|situation|resume|tout va|comment ca va|ca donne quoi|recap|update|summary|how are we|status|how s it going", status),
+    (r"repar|degat|degare|dommage|abime|casse|damage|repair", repairs),
+    (r"position|place|classement|placement|cassement|quelle p\b|combien ?t?i?eme|combien siam|combien.*(je suis|suis je)|je suis ou\b|where am i|what p\b", position),
+    (r"meteo|pluie|pleut|pleuvoir|mouill|humid|sec\b|temperature (de la piste|piste|de l air|exterieur)|nuage|quel temps|temps qu il fait|temps il fait|weather|\brain|\bwet\b|\bdry\b|cloud", weather),
+    (r"chrono|dernier tour|meilleur tour|temps au tour|mon tour|rythme|tourne en|je tourne|lap time|last lap|best lap|\bpace\b", laptimes),
+    (r"combien de tour|tours restant|reste.*tour|temps restant|reste.*minute|reste combien de temps|combien de temps.*reste|\bfin\b|arrivee|damier|how many laps|laps (left|to go|remaining)|time (left|remaining)|finish", laps),
+    (r"point complet|fais (moi )?le point|\ble point\b|situation|resume|tout va|comment ca va|ca donne quoi|ca se passe|recap|update|summary|how are we|status|how s it going", status),
 ]
 
 
@@ -255,12 +255,12 @@ def penalty(s: Snapshot, p: Plan) -> str:
 
 TOPICS[:0] = [
     (r"penalit|drive through|stop (and|n|et) go|penalty", penalty),
-    (r"(prepare|regle|mets|programme|set up|setup the|program).*(stand|arret|box|menu|pit|stop)|(stand|arret).*(prepare|regle)", pit_command),
-    (r"comporte|sous vir|sousvir|survir|equilibr|reglage|setup|conseil|glisse|bloqu|patin|tient pas|braqu|tourne pas|ralenti|pousse|lourde|decroche|chasse|instable|nerveuse|freinage|balance|understeer|oversteer|handling|advice|sliding|locking|wheelspin|loose|snap|braking|won t turn", behavior),
+    (r"(prepare|regle|regule|mets|programme|set up|setup the|program).*(stand|arret|box|menu|pit|stop)|(stand|arret).*(prepare|regle)|prepare (moi )?(l arret|tout|la re)|je rentre (ce tour|au stand|maintenant|ce tout)|box this lap|i m pitting|pitting this lap", pit_command),
+    (r"comporte|sous vir|sousvir|survir|equilibr|reglage|setup|conseil|satope|sur virage|plus vite|ameliorer|progresser|glisse|bloqu|patin|tient pas|braqu|tourne pas|ralenti|pousse|lourde|decroche|chasse|instable|nerveuse|freinage|balance|understeer|oversteer|handling|advice|sliding|locking|wheelspin|loose|snap|braking|won t turn", behavior),
     (r"record|meilleur temps (ici|du circuit)|tour ideal|personal best|ideal lap", record),
     (r"(secteur|perd|gagne|reprend|compar|plus rapide|plus lent|sector|losing|gaining|faster|slower).*(devant|ahead|in front)|(devant|ahead|in front).*(secteur|perd|gagne|rapide|lent|sector|losing|gaining|faster|slower)", sectors_ahead),
     (r"(secteur|perd|gagne|reprend|compar|plus rapide|plus lent|sector|losing|gaining|faster|slower).*(derriere|behind)|(derriere|behind).*(secteur|perd|gagne|rapide|lent|sector|losing|gaining|faster|slower)", sectors_behind),
-    (r"secteur|ou je perds|ou je gagne|ou est ce que je perds|compar|sector|where am i losing|where do i lose", sectors),
+    (r"secteur|ou je perds?|ou je gagne|perds? du temps|compar|sector|where am i losing|where do i lose", sectors),
 ]
 
 
@@ -269,8 +269,8 @@ ENG = None        # pour répéter le dernier message
 
 COMMANDS = [
     (r"\bsilence\b|tais toi|taise|chut\b|moins de message|arrete de parler|mode calme|plus que l urgent|be quiet|shut up|quiet mode|less talk|only urgent", "quiet"),
-    (r"reparle|parle a nouveau|tu peux parler|fin du silence|toutes les infos|remets? (la radio|les annonces)|talk again|you can talk|all info|unmute|resume radio", "talk"),
-    (r"repete|redis|redire|j ai pas (compris|entendu)|pardon\b|t as dit quoi|qu est ce que tu as dit|repeat|say again|come again|what did you say", "repeat"),
+    (r"reparle|repale|reparler|parle a nouveau|tu peux parler|fin du silence|toutes les infos|remets? (la radio|les annonces)|talk again|you can talk|all info|unmute|resume radio", "talk"),
+    (r"repete|repeter|redis|redire|j ai pas (compris|entendu)|pardon\b|t as dit quoi|qu est ce que tu as dit|repeat|say again|come again|what did you say", "repeat"),
 ]
 
 
@@ -357,11 +357,11 @@ CHAT = [
     (r"^(bonjour|salut|hello|coucou|hey|bonsoir|hi)\b", _hello),
     (r"\bmerci\b|thank", _thanks),
     (r"qui es tu|t es qui|tu es qui|comment tu t appelles|ton nom|ton prenom|who are you|your name", _who),
-    (r"que (peux|sais) tu|qu est ce que tu (peux|sais)|tu sais faire|tu peux faire quoi|\baide\b|\bhelp\b|what can you", _help),
+    (r"que (peux|sais) tu|qu est ce que tu (peux|sais)|sais faire|tu peux faire quoi|tu fais quoi|\baide\b|\bhelp\b|what can you", _help),
     (r"quelle heure|l heure qu il|what time", _time),
     (r"\bca va\b|comment vas tu|how are you", _how_are_you),
     (r"blague|joke|funny", _joke),
-    (r"\belms\b|\be l m s\b|\bwec\b|\bw e c\b|quelle voiture|quelle categorie|quel championnat|"
+    (r"\belms\b|\be l m s\b|\belm\b|\bwec\b|\bw e c\b|\bwc\b|quelle voiture|quelle categorie|quel championnat|"
      r"which car|what car|which class|which championship", _car),
 ]
 
@@ -384,14 +384,16 @@ NO_REPAIR = (r"\b(pas|plus|sans|aucune?|annule|enleve|leve|retire|supprime|oubli
              r"\brepar\w*\b.*\b(non|pas|enleve|annule|retire|supprime)\b|\bne repare|"
              r"don t (fix|repair)|no repairs?\b|skip (the )?repairs?|cancel (the )?repairs?|"
              r"\b(remove|no) (the )?(repairs?|damage)")
-DO_REPAIR = (r"\b(repare|reparer|reparez|reparation|reparations)\b|\bfix (the )?(car|damage)|\brepair")
+DO_REPAIR = (r"\b(repare|reparer|reparez|reparation|reparations|reparte)\b|\brepart (tout|juste|la carrosserie|seulement)|\bfix (the )?(car|damage)|\brepair")
 
 
 def repair_command(t: str) -> str | None:
     """« pas de réparation » / « répare la voiture » : change le menu des stands."""
+    if re.search(r"^(il faut|faut il|est ce qu|on doit|je dois|tu crois|ca vaut)", t):
+        return None   # c'est une question (« il faut réparer ? »), pas un ordre
     if re.search(NO_REPAIR, t):
         want = False
-    elif re.search(DO_REPAIR, t) and re.search(r"\b(repare|reparer|reparez|tout|carrosserie|fix|repair the|do the|on repare)\b", t):
+    elif re.search(DO_REPAIR, t) and re.search(r"\b(repare|reparer|reparez|reparte|repart|tout|toutes|carrosserie|fix|repair the|do the|on repare)\b", t):
         want = True
     else:
         return None

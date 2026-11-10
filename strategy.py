@@ -10,6 +10,7 @@ Moteur de stratégie : transforme les données de course en décisions d'ingéni
 from __future__ import annotations
 
 import math
+import random
 import statistics
 from collections import deque
 from dataclasses import dataclass, field
@@ -278,7 +279,9 @@ class Engineer:
         if p.laps_until_box is None or s.in_pits or s.game_phase == 8:   # 8 = drapeau à damier : plus d'arrêt
             return
         if p.laps_until_box <= 1:
-            self.say("stint:box", L(f"Box, box ce tour ! On met {self._pit_service(p)}.", f"Box, box this lap! {self._pit_service(p)}."), urgent=True, elapsed=et)
+            self.say("stint:box", random.choice([L(f"Box, box ce tour ! On met {self._pit_service(p)}.", f"Box, box this lap! {self._pit_service(p)}."),
+                                                 L(f"Tu rentres à la fin de ce tour, box box ! On met {self._pit_service(p)}.",
+                                                   f"Pit at the end of this lap, box box! {self._pit_service(p)}.")]), urgent=True, elapsed=et)
         elif p.laps_until_box <= 3:
             self.say("stint:box3", L(f"Arrêt dans {p.laps_until_box} tours. Prévu : {self._pit_service(p)}.",
                                      f"Pit stop in {p.laps_until_box} laps. Plan: {self._pit_service(p)}."), elapsed=et)

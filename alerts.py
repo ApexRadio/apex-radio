@@ -279,14 +279,20 @@ class GapTrend:
             return None
         if rate < -0.12:
             if gap < 1.0:
-                return L(f"Tu es dans les roues de P{place}, attaque !", f"You're on P{place}'s gearbox, attack!") + self._pep(
+                return var("att", [(f"Tu es dans les roues de P{place}, attaque !", f"You're on P{place}'s gearbox, attack!"),
+                                    (f"Tu es collé à P{place}, c'est le moment d'attaquer !", f"You're glued to P{place}, time to attack!"),
+                                    (f"P{place} est juste devant, à moins d'une seconde. Attaque !", f"P{place} is just ahead, under a second. Attack!")]) + self._pep(
                     ["Mets-lui la pression, montre-toi dans ses rétros.", "Il est à portée, cherche l'ouverture au freinage.",
                      "Il commence à craquer, reste collé et attends sa faute."],
                     ["Put him under pressure, show yourself in his mirrors.", "He's in range, look for a gap under braking.",
                      "He's starting to crack, stay close and wait for his mistake."])
             n = math.ceil((gap - 0.8) / -rate)
-            return L(f"Tu reprends {_dix(rate)} par tour sur P{place}, dans ses roues dans {n} tour{'s' if n > 1 else ''}.",
-                     f"You're gaining {_dix(rate)} a lap on P{place}, on his gearbox in {n} lap{'s' if n > 1 else ''}.") + self._pep(
+            return var("gain", [(f"Tu reprends {_dix(rate)} par tour sur P{place}, dans ses roues dans {n} tour{'s' if n > 1 else ''}.",
+                                     f"You're gaining {_dix(rate)} a lap on P{place}, on his gearbox in {n} lap{'s' if n > 1 else ''}."),
+                                    (f"Tu reviens sur P{place}, {_dix(rate)} par tour. Tu seras sur lui dans {n} tour{'s' if n > 1 else ''}.",
+                                     f"You're closing on P{place}, {_dix(rate)} a lap. You'll be on him in {n} lap{'s' if n > 1 else ''}."),
+                                    (f"P{place} est à portée : tu lui prends {_dix(rate)} par tour.",
+                                     f"P{place} is in range: you're taking {_dix(rate)} a lap off him.")]) + self._pep(
                     ["Continue comme ça !", "Pousse, il perd du temps !", "Super rythme, va le chercher !",
                      "Il est en difficulté, mets-lui la pression !"],
                     ["Keep it up!", "Push, he's losing time!", "Great pace, go get him!", "He's struggling, put the pressure on!"])
@@ -294,7 +300,8 @@ class GapTrend:
             return L(f"Tu grappilles sur P{place}, petit à petit.", f"You're chipping away at P{place}, bit by bit.") + self._pep(
                 ["Continue comme ça.", "Reste régulier, ça va payer."], ["Keep it going.", "Stay consistent, it'll pay off."])
         if rate > 0.15:
-            return L(f"P{place} s'échappe de {_dix(rate)} par tour.", f"P{place} is pulling away by {_dix(rate)} a lap.") + self._pep(
+            return var("esc", [(f"P{place} s'échappe de {_dix(rate)} par tour.", f"P{place} is pulling away by {_dix(rate)} a lap."),
+                                   (f"P{place} prend le large, {_dix(rate)} par tour.", f"P{place} is getting away, {_dix(rate)} a lap.")]) + self._pep(
                 ["Accroche-toi, ne le laisse pas filer.", "Reste concentré, fais ta course.", "Pas de panique, la course est longue."],
                 ["Hang on, don't let him go.", "Stay focused, run your own race.", "No panic, it's a long race."])
         return None
@@ -305,21 +312,37 @@ class GapTrend:
             return None
         if rate < -0.12:
             if gap < 1.0:
-                return L(f"P{place} est dans tes roues, défends !", f"P{place} is right behind you, defend!") + self._pep(
+                return var("def", [(f"P{place} est dans tes roues, défends !", f"P{place} is right behind you, defend!"),
+                                    (f"Attention, P{place} est collé derrière toi. Défends ta place !", f"Careful, P{place} is glued to you. Defend your place!"),
+                                    (f"P{place} est juste derrière, à moins d'une seconde !", f"P{place} is right behind, under a second!")]) + self._pep(
                     ["Ferme l'intérieur aux freinages.", "Pas d'erreur, soigne tes sorties de virage.", "Ne lui laisse aucune ouverture."],
                     ["Cover the inside into the braking zones.", "No mistakes, nail your corner exits.", "Don't give him any gap."])
             n = math.ceil((gap - 0.8) / -rate)
-            return L(f"P{place} revient de {_dix(rate)} par tour, il sera sur toi dans {n} tour{'s' if n > 1 else ''}.",
-                     f"P{place} is closing by {_dix(rate)} a lap, he'll be on you in {n} lap{'s' if n > 1 else ''}.") + self._pep(
+            return var("close", [(f"P{place} revient de {_dix(rate)} par tour, il sera sur toi dans {n} tour{'s' if n > 1 else ''}.",
+                                      f"P{place} is closing by {_dix(rate)} a lap, he'll be on you in {n} lap{'s' if n > 1 else ''}."),
+                                     (f"Attention derrière : P{place} te reprend {_dix(rate)} par tour.",
+                                      f"Watch your mirrors: P{place} is taking {_dix(rate)} a lap off you.")]) + self._pep(
                     ["Il est plus rapide, pousse un peu plus.", "Ne lâche rien, garde ton rythme.",
                      "Reste propre, fais tes trajectoires et il ne passera pas."],
                     ["He's quicker, push a bit harder.", "Don't give up, keep your pace.",
                      "Stay clean, hit your lines and he won't get by."])
         if rate > 0.15:
-            return L(f"Tu creuses l'écart sur P{place}, {_dix(rate)} par tour.", f"You're pulling away from P{place}, {_dix(rate)} a lap.") + self._pep(
+            return var("pull", [(f"Tu creuses l'écart sur P{place}, {_dix(rate)} par tour.", f"You're pulling away from P{place}, {_dix(rate)} a lap."),
+                                    (f"Tu prends le large sur P{place}, {_dix(rate)} par tour.", f"You're getting away from P{place}, {_dix(rate)} a lap.")]) + self._pep(
                 ["Super boulot, continue comme ça !", "Tu le décroches, garde ce rythme.", "Parfait, il ne peut pas suivre."],
                 ["Great job, keep it up!", "You're dropping him, keep this pace.", "Perfect, he can't keep up."])
         return None
+
+
+_LAST_VAR: dict = {}
+
+
+def var(key: str, opts: list) -> str:
+    """Une formulation au hasard parmi plusieurs (fr, en), jamais deux fois la même d'affilée."""
+    idx = [i for i in range(len(opts)) if i != _LAST_VAR.get(key)] or [0]
+    i = random.choice(idx)
+    _LAST_VAR[key] = i
+    return L(*opts[i])
 
 
 MORE_PEP_FR = ["Allez, allez !", "On y croit !", "Tu es en feu aujourd'hui !", "Superbe pilotage !", "On lâche rien !",
@@ -382,7 +405,9 @@ class Places:
         if abs(diff) > 3:
             return                 # gros saut : arrêts des autres, pénalité… pas un vrai dépassement
         if diff > 0:
-            n = L(f"{diff} places de plus" if diff > 1 else "Une place de plus", f"{diff} places gained" if diff > 1 else "One place up")
+            n = (L(f"{diff} places de plus", f"{diff} places gained") if diff > 1 else
+                 var("up", [("Une place de plus", "One place up"), ("Et une place de gagnée", "And that's a place gained"),
+                            ("Tu gagnes une place", "You gain a place")]))
             pep = random.choice([L("Bien joué !", "Nice one!"), L("Superbe dépassement !", "Great move!"), L("Continue !", "Keep going!")])
             if ENCOURAGE == "motivant":
                 j = random.randrange(len(MORE_PEP_FR)); pep += " " + L(MORE_PEP_FR[j], MORE_PEP_EN[j])
@@ -459,10 +484,15 @@ class Morale:
         lines = []
         if prev and last < prev - 0.3:
             d = prev - last
-            lines.append(L(f"Super tour, {d:.1f} seconde de mieux que le précédent !".replace(".", ","),
-                           f"Great lap, {d:.1f} seconds quicker than the last one!"))
+            lines.append(var("lap", [(f"Super tour, {d:.1f} seconde de mieux que le précédent !".replace(".", ","),
+                                      f"Great lap, {d:.1f} seconds quicker than the last one!"),
+                                     (f"Gros tour ! {d:.1f} seconde de mieux.".replace(".", ","), f"Big lap! {d:.1f} seconds quicker."),
+                                     (f"Excellent, tu as gagné {d:.1f} seconde sur ce tour.".replace(".", ","),
+                                      f"Excellent, you found {d:.1f} seconds on that lap.")]))
         elif prev and abs(last - prev) < 0.4:
-            lines.append(L("Belle régularité, continue sur ce rythme.", "Nice and consistent, keep this pace."))
+            lines.append(var("reg", [("Belle régularité, continue sur ce rythme.", "Nice and consistent, keep this pace."),
+                                     ("Très régulier, c'est parfait.", "Very consistent, that's perfect."),
+                                     ("Même chrono que le tour d'avant, super régularité.", "Same time as last lap, great consistency.")]))
         if self.trouble_lap is not None and s.laps_done - self.trouble_lap <= 6:
             lines.append(random.choice([
                 L("On a eu un coup dur, mais tu remontes. Continue comme ça !", "We had a tough moment, but you're coming back. Keep it up!"),
@@ -587,8 +617,10 @@ class WarmUp:
             return
         if not tc and not bc:
             self.watch = None
-            say(None, L("Pneus et freins en température. Vas-y, tu peux attaquer !",
-                            "Tyres and brakes are up to temperature. Go on, you can push now!"))
+            say(None, var("warm", [("Pneus et freins en température. Vas-y, tu peux attaquer !",
+                                    "Tyres and brakes are up to temperature. Go on, you can push now!"),
+                                   ("Tout est chaud, pneus et freins. À toi de jouer !", "Everything's warm, tyres and brakes. Over to you!"),
+                                   ("C'est bon, pneus et freins sont prêts. Tu peux pousser !", "All good, tyres and brakes are ready. You can push!")]))
 
 
 # ======================================================================= 10. voiture en piste

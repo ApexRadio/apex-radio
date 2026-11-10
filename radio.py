@@ -27,8 +27,10 @@ from i18n import L
 
 PROMPT_EN = ("Race car radio. Fuel, consumption, energy, tyres, wear, pit, box, stop, "
              "gap ahead, behind, position, weather, rain, laps left, lap time.")
-PROMPT = ("Radio course automobile. Essence, conso, énergie, pneus, usure, stand, box, arrêt, "
-          "écart devant, derrière, position, météo, pluie, tours restants, chrono.")
+PROMPT = ("Radio d'ingénieur de course, Le Mans Ultimate. Questions du pilote : essence, carburant, conso, énergie, pneus, "
+          "usure, pression, stand, box, arrêt, prépare l'arrêt, répare la carrosserie, dégâts, écart devant, derrière, position, "
+          "classement, météo, pluie, tours restants, chrono, meilleur tour, secteurs, pénalité, setup, sous-virage, survirage, "
+          "répète, silence, tais-toi, ELMS, WEC, LMP2, Hypercar, GT3.")
 
 
 def load_config() -> dict:

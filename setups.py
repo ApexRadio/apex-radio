@@ -29,6 +29,7 @@ from paths import DATA, LOCAL  # noqa: E402
 HISTORY = DATA / "setups_history.json"
 BACKUPS = DATA / "setup_backups"   # anciennes versions, gardées hors du dossier LMU
 DEFAULT_DIR = r"C:\Program Files (x86)\Steam\steamapps\common\Le Mans Ultimate\UserData\player\Settings"
+LMU_APPID = 2399420
 WHEEL_SECTIONS = ["FRONTLEFT", "FRONTRIGHT", "REARLEFT", "REARRIGHT"]
 FIXED = ("n/a", "non-adjustable", "non adjustable")
 
@@ -164,11 +165,68 @@ def setup_class(vehicle: str) -> str:
     return ""
 
 
+def find_settings_dir() -> str:
+    """Dossier des setups de LMU, où que soit installé le jeu : bibliothèques Steam
+    (libraryfolders.vdf, appmanifest de LMU), puis emplacements courants, sinon l'emplacement par défaut."""
+    import os
+    import re as _re
+    cands: list[Path] = []
+    roots: list[Path] = []
+    try:
+        import winreg
+        for hive, key, name in ((winreg.HKEY_CURRENT_USER, r"Software\Valve\Steam", "SteamPath"),
+                                (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\WOW6432Node\Valve\Steam", "InstallPath"),
+                                (winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Valve\Steam", "InstallPath")):
+            try:
+                with winreg.OpenKey(hive, key) as k:
+                    roots.append(Path(str(winreg.QueryValueEx(k, name)[0])))
+            except OSError:
+                pass
+    except Exception:
+        pass
+    roots.append(Path(r"C:\Program Files (x86)\Steam"))
+    libs: list[Path] = []
+    for r in roots:
+        libs.append(r)
+        try:
+            vdf = (r / "steamapps" / "libraryfolders.vdf").read_text(encoding="utf-8", errors="ignore")
+            libs += [Path(m.replace("\\\\", "\\")) for m in _re.findall(r'"path"\s+"([^"]+)"', vdf)]
+        except OSError:
+            pass
+    for lib in libs:
+        sa = lib / "steamapps"
+        name = "Le Mans Ultimate"
+        try:
+            acf = (sa / f"appmanifest_{LMU_APPID}.acf").read_text(encoding="utf-8", errors="ignore")
+            m = _re.search(r'"installdir"\s+"([^"]+)"', acf)
+            if m:
+                name = m.group(1)
+        except OSError:
+            pass
+        cands.append(sa / "common" / name / "UserData" / "player" / "Settings")
+    for d in "CDEFGH":
+        for base in (r"SteamLibrary", r"Steam", r"Program Files (x86)\Steam", r"Program Files\Steam", r"Games\Steam", r"Jeux\Steam"):
+            cands.append(Path(f"{d}:\\") / base / "steamapps" / "common" / "Le Mans Ultimate" / "UserData" / "player" / "Settings")
+    seen = set()
+    for c in cands:
+        k = str(c).lower()
+        if k in seen:
+            continue
+        seen.add(k)
+        try:
+            if c.is_dir():
+                return str(c)
+        except OSError:
+            continue
+    return DEFAULT_DIR
+
+
 # ===================================================================== atelier
 class Workshop:
     def __init__(self, cfg: dict) -> None:
         self.cfg = cfg
-        self.dir = Path(cfg.get("setups_dir") or DEFAULT_DIR)
+        own = cfg.get("setups_dir")
+        self.dir = Path(own) if own and Path(own).is_dir() else Path(find_settings_dir())
         try:
             self.history = json.loads(HISTORY.read_text(encoding="utf-8"))
         except Exception:

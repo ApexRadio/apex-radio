@@ -367,6 +367,12 @@
     <div class="row" style="align-items:center"><span data-en="Working file">Fichier travaillé</span>
       <span><button class="wsmode" data-m="Qualif" data-en="QUALI">QUALIF</button> <button class="wsmode" data-m="Course" data-en="RACE">COURSE</button></span></div>
     <div id="wserr" class="warn" style="font-size:14px"></div>
+    <div id="wsdirbox" class="row" style="gap:8px;flex-wrap:wrap;justify-content:flex-start;margin:6px 0" hidden>
+      <button id="wspick" class="pill" data-en="📁 Choose the LMU folder">📁 Choisir le dossier de LMU</button>
+      <input id="wsdir" type="text" style="flex:1;min-width:220px" placeholder="D:\SteamLibrary\steamapps\common\Le Mans Ultimate">
+      <button id="wsdirok" class="pill">OK</button>
+      <div class="sub" style="font-size:13px;width:100%;font-family:inherit;letter-spacing:0" id="wsdirmsg" data-en="LMU is installed elsewhere? Pick the game folder (Le Mans Ultimate), Apex finds the setups inside.">LMU est installé ailleurs ? Choisis le dossier du jeu (Le Mans Ultimate), Apex trouve les setups dedans.</div>
+    </div>
     <section class="card">
       <h2 data-en="1 · The setup you're using">1 · Le setup que tu utilises</h2>
       <div class="row" style="align-items:center"><span data-en="Track">Circuit</span><select id="wsfolder" aria-label="Dossier du circuit"></select></div>
@@ -758,11 +764,22 @@ $("vtest").onclick = () => fetch("/api/voice/test", { method: "POST" });
 $("vchoice").onchange = () => { fetch("/api/voice/choose", { method: "POST", body: JSON.stringify({ id: $("vchoice").value }) }); $("vchoice").blur(); };
 // ------------------------------------------------------------ atelier setup
 let WS = null, wsTimer = null, wsSeen = new Set();
+async function wsSetDir(path) {
+  $("wsdirmsg").textContent = T("Recherche…", "Searching…");
+  const r = await (await fetch(path ? "/api/setup/dir" : "/api/setup/pickdir", {method: "POST", body: JSON.stringify({dir: path || ""})})).json();
+  if (r.ok) { $("wsdirmsg").textContent = T(`Dossier trouvé : ${r.dir}`, `Folder found: ${r.dir}`); wsLoad(); }
+  else $("wsdirmsg").textContent = r.cancel ? T("Aucun dossier choisi.", "No folder chosen.") : (r.error || "?");
+}
+document.addEventListener("click", e => {
+  if (e.target.id === "wspick") wsSetDir("");
+  if (e.target.id === "wsdirok" && $("wsdir").value.trim()) wsSetDir($("wsdir").value.trim());
+});
 async function wsLoad(keepChecks) {
   const checks = keepChecks ? new Set([...document.querySelectorAll(".wschk:checked")].map(c => c.value)) : null;
   WS = await (await fetch("/api/setup")).json();
   $("wstrack").textContent = WS.track ? T(`Circuit détecté : ${WS.track}`, `Track detected: ${WS.track}`) : T("Aucun circuit détecté pour l'instant (lance le jeu, ou choisis le dossier).", "No track detected yet (start the game, or choose the folder).");
   $("wserr").textContent = WS.ok === false ? T(`Dossier des setups LMU introuvable : ${WS.dir || ""}`, `LMU setups folder not found: ${WS.dir || ""}`) : "";
+  $("wsdirbox").hidden = WS.ok !== false;
   document.querySelectorAll(".wsmode").forEach(b => b.classList.toggle("on", b.dataset.m === WS.mode));
   const folders = WS.folders || [];
   if (document.activeElement !== $("wsfolder")) {

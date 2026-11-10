@@ -509,6 +509,16 @@ def make_handler(state: State):
                     state.radio.cfg["encourage"] = lv
                     save_config(state.radio.cfg)
                     set_encourage(lv)
+            elif self.path in ("/api/setup/dir", "/api/setup/pickdir"):
+                n = int(self.headers.get("Content-Length") or 0)
+                want = (json.loads(self.rfile.read(n) or b"{}").get("dir") or "").strip().strip('"')
+                if self.path == "/api/setup/pickdir":
+                    want = pick_folder() or ""
+                res = set_setups_dir(state, want) if want else {"ok": False, "cancel": True}
+                body = json.dumps(res).encode()
+                self.send_response(200); self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body))); self.end_headers(); self.wfile.write(body)
+                return
             elif self.path == "/api/accent":
                 n = int(self.headers.get("Content-Length") or 0)
                 a = json.loads(self.rfile.read(n) or b"{}").get("accent", "bleu")
@@ -711,6 +721,40 @@ def _steam_exe() -> str | None:
     except Exception:
         pass
     return None
+
+
+def pick_folder() -> str | None:
+    """Fenêtre Windows « Choisir un dossier » (par PowerShell, rien à installer)."""
+    if sys.platform != "win32":
+        return None
+    import subprocess
+    ps = ("Add-Type -AssemblyName System.Windows.Forms;"
+          "$o=New-Object System.Windows.Forms.Form;$o.TopMost=$true;"
+          "$f=New-Object System.Windows.Forms.FolderBrowserDialog;"
+          "$f.Description='Dossier Le Mans Ultimate (ou UserData\\player\\Settings)';"
+          "if($f.ShowDialog($o) -eq 'OK'){[Console]::OutputEncoding=[Text.Encoding]::UTF8;$f.SelectedPath}")
+    try:
+        r = subprocess.run(["powershell", "-NoProfile", "-STA", "-Command", ps], capture_output=True, timeout=600,
+                           creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+        return r.stdout.decode("utf-8", "ignore").strip() or None
+    except Exception:
+        return None
+
+
+def set_setups_dir(state, raw: str) -> dict:
+    """Dossier des setups choisi à la main : on accepte aussi le dossier du jeu ou UserData."""
+    p = Path(raw)
+    for c in (p / "UserData" / "player" / "Settings", p / "player" / "Settings", p / "Settings", p):
+        if c.is_dir() and (c.name.lower() == "settings" or any(c.glob("*/*.svm"))):
+            state.radio.cfg["setups_dir"] = str(c)
+            save_config(state.radio.cfg)
+            state.workshop.dir = c
+            try:
+                state.workshop.scan(force=True)
+            except Exception:
+                pass
+            return {"ok": True, "dir": str(c)}
+    return {"ok": False, "error": i18n.L("Ce dossier ne contient pas les setups de LMU.", "This folder doesn't contain LMU setups.")}
 
 
 def launch_lmu() -> bool:

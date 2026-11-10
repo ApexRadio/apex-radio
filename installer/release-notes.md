@@ -3,6 +3,8 @@
 ## 🆕 1.2.9
 - 🇫🇷 L'ingénieur parle mieux français : « une place », « 1 tour », « 3 minutes », « 2,3 secondes », « suspension avant droite », « à moins d'une seconde », et une meilleure prononciation de setup, ELMS, Hypercar et GT3. Les dégâts aéro ne dépassent plus 100 %.
 - 🇬🇧 Better French from the engineer: correct agreements (places, laps, minutes, seconds), "less than a second", and better pronunciation of setup, ELMS, Hypercar and GT3. Aero damage no longer goes above 100 %.
+- 🇫🇷 Atelier setup : Apex trouve tout seul LMU installé sur un autre disque ou une autre bibliothèque Steam. Sinon, un bouton « 📁 Choisir le dossier de LMU » permet de l'indiquer.
+- 🇬🇧 Setup workshop: Apex now finds LMU installed on another drive or Steam library. Otherwise, a "📁 Choose the LMU folder" button lets you point to it.
 
 ## 🇫🇷 Installation
 Télécharge **ApexRadio-Setup.exe** ci-dessous, lance-le, clique sur Suivant. C'est tout : Python et tous les composants sont inclus.

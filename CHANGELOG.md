@@ -1,5 +1,9 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.2.9
+- 🇫🇷 L'ingénieur parle mieux français : « une place », « 1 tour », « 3 minutes », « 2,3 secondes », « suspension avant droite », « à moins d'une seconde », et une meilleure prononciation de setup, ELMS, Hypercar et GT3. Les dégâts aéro ne dépassent plus 100 %.
+- 🇬🇧 Better French from the engineer: correct agreements (places, laps, minutes, seconds), "less than a second", and better pronunciation of setup, ELMS, Hypercar and GT3. Aero damage no longer goes above 100 %.
+
 ## 1.2.8
 - 🇫🇷 Lancer LMU : un bouton « ▶ Lancer LMU » en haut du tableau de bord (et dans les Premiers pas) démarre Le Mans Ultimate par Steam. Option dans ⚙️ Réglages → Jeu : lancer LMU automatiquement à l'ouverture d'Apex.
 - 🇬🇧 Launch LMU: a "▶ Launch LMU" button at the top of the dashboard (and in Getting started) starts Le Mans Ultimate through Steam. Option in ⚙️ Settings → Game: launch LMU automatically when Apex opens.

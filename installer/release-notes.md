@@ -1,13 +1,8 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
-## 🆕 1.2.8
-- 🇫🇷 Lancer LMU : un bouton « ▶ Lancer LMU » en haut du tableau de bord (et dans les Premiers pas) démarre Le Mans Ultimate par Steam. Option dans ⚙️ Réglages → Jeu : lancer LMU automatiquement à l'ouverture d'Apex.
-- 🇬🇧 Launch LMU: a "▶ Launch LMU" button at the top of the dashboard (and in Getting started) starts Le Mans Ultimate through Steam. Option in ⚙️ Settings → Game: launch LMU automatically when Apex opens.
-- 🇫🇷 Secours si une mise à jour pose problème : ⚙️ Réglages → Version propose « ↩ Revenir à la version précédente » (installe-la par-dessus, tes réglages, records et setups sont gardés). Si Apex s'arrête au démarrage, une fenêtre propose d'ouvrir la page des versions, et un raccourci « Apex Radio - versions precedentes » est dans le menu Démarrer.
-- 🇬🇧 Fallback if an update goes wrong: ⚙️ Settings → Version offers "↩ Go back to the previous version" (install it over this one, your settings, records and setups are kept). If Apex stops while starting, a window offers to open the versions page, and an "Apex Radio - versions precedentes" shortcut is in the Start menu.
-- 🇫🇷 Correction : quand tu fermes LMU, Apex le voit bien (le voyant « LMU connecté » s'éteint).
-- 🇬🇧 Fix: when you close LMU, Apex now notices (the "LMU connected" light turns off).
-
+## 🆕 1.2.9
+- 🇫🇷 L'ingénieur parle mieux français : « une place », « 1 tour », « 3 minutes », « 2,3 secondes », « suspension avant droite », « à moins d'une seconde », et une meilleure prononciation de setup, ELMS, Hypercar et GT3. Les dégâts aéro ne dépassent plus 100 %.
+- 🇬🇧 Better French from the engineer: correct agreements (places, laps, minutes, seconds), "less than a second", and better pronunciation of setup, ELMS, Hypercar and GT3. Aero damage no longer goes above 100 %.
 
 ## 🇫🇷 Installation
 Télécharge **ApexRadio-Setup.exe** ci-dessous, lance-le, clique sur Suivant. C'est tout : Python et tous les composants sont inclus.

@@ -7,6 +7,8 @@
 - 🇬🇧 In Task Manager, Apex now shows as "Apex Radio" (with its logo) instead of "Python".
 - 🇫🇷 L'ingénieur te comprend mieux : plus de façons de poser tes questions (« quel temps il fait », « je tourne en combien », « fais-moi le point », « où je perds du temps », « prépare-moi l'arrêt »…) et une meilleure reconnaissance des mots de course. Il varie aussi ses phrases (attaque, défense, écarts, tours rapides, pneus chauds, box) pour moins se répéter.
 - 🇬🇧 The engineer understands you better: more ways to ask your questions and better recognition of racing words. He also varies his phrases (attack, defend, gaps, quick laps, warm tyres, box) so he repeats himself less.
+- 🇫🇷 ⚙️ Réglages : une petite partie « ❤️ Soutenir Apex Radio » avec Ko-fi (offrir un café) et Patreon.
+- 🇬🇧 ⚙️ Settings: a small "❤️ Support Apex Radio" section with Ko-fi (buy me a coffee) and Patreon.
 
 ## 🇫🇷 Installation
 Télécharge **ApexRadio-Setup.exe** ci-dessous, lance-le, clique sur Suivant. C'est tout : Python et tous les composants sont inclus.

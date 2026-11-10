@@ -56,6 +56,20 @@ jobs:
         working-directory: build\app
         run: python\python.exe ..\..\.github\scripts\smoke_window.py
 
+      - name: Processus nommé « Apex Radio » (copie de pythonw.exe)
+        shell: pwsh
+        working-directory: build\app
+        run: |
+          Copy-Item python\pythonw.exe python\ApexRadio.exe
+          try {
+            Invoke-WebRequest "https://github.com/electron/rcedit/releases/download/v2.0.0/rcedit-x64.exe" -OutFile rcedit.exe
+            .\rcedit.exe python\ApexRadio.exe --set-version-string FileDescription "Apex Radio" --set-version-string ProductName "Apex Radio" --set-version-string OriginalFilename "ApexRadio.exe" --set-version-string InternalName "ApexRadio" --set-icon ..\..\apex.ico
+            Remove-Item rcedit.exe
+          } catch { Write-Warning "rcedit indisponible : nom de fichier seulement ($_)" }
+          $p = Start-Process python\ApexRadio.exe -ArgumentList '-c "import webview, piper, sys; sys.exit(7)"' -Wait -PassThru
+          if ($p.ExitCode -ne 7) { throw "ApexRadio.exe ne démarre pas Python correctement (code $($p.ExitCode))" }
+          Write-Host "ApexRadio.exe OK"
+
       - name: Installateur (Inno Setup)
         shell: pwsh
         run: |

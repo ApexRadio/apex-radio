@@ -21,6 +21,7 @@ static class ApexRadio
     {
         string dir = AppDomain.CurrentDomain.BaseDirectory;
         string[] candidates = {
+            Path.Combine(dir, "python", "ApexRadio.exe"),   // pythonw renommé : « Apex Radio » dans le Gestionnaire des tâches
             Path.Combine(dir, "python", "pythonw.exe"),
             Path.Combine(dir, ".venv", "Scripts", "pythonw.exe")
         };

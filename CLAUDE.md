@@ -44,6 +44,8 @@ Créateur : Laurent (pseudo lolotuner), francophone : **réponds-lui en françai
 - GitHub : https://github.com/ApexRadio/apex-radio (ancien nom laurent22230, redirigé).
 - Discord : https://discord.gg/ZHg4qXd26g (lien permanent, créé le 07/11/2026 ; l'ancien wpqNBpMaa expire le 02/12/2026)
 - Patreon : https://www.patreon.com/lolotuner
+- Ko-fi (dons ponctuels, PayPal relié) : https://ko-fi.com/apexradio — aussi dans le README, `.github/FUNDING.yml` (bouton Sponsor) et ⚙️ Réglages de l'appli.
+- Annonce Discord avec image sans navigateur : workflow `annonce.yml` (workflow_dispatch, message + image du dépôt, webhook #annonces-news ou #accès-anticipé).
 - OverTake.gg : fiche « Apex Radio - Voice Race Engineer » (LMU Misc), validée le 07/11/2026 : publier une « mise à jour » à chaque version.
 - Reddit : publications retirées par les filtres anti-spam (compte récent). Attendre, participer, puis une seule publication à la fois.
 - Toujours demander à Laurent de valider un texte avant de le publier à son nom.

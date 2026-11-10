@@ -1,0 +1,36 @@
+name: Annonce Discord (message + image)
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: "Texte du message"
+        required: true
+      image:
+        description: "Image du dépôt à joindre (ex. docs/promo/teaser.jpg), facultatif"
+        required: false
+        default: ""
+      early:
+        description: "Poster dans #accès-anticipé au lieu de #annonces-news"
+        type: boolean
+        default: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Envoi
+        env:
+          HOOK: ${{ inputs.early && secrets.DISCORD_WEBHOOK_EARLY || secrets.DISCORD_WEBHOOK }}
+          MESSAGE: ${{ inputs.message }}
+          IMAGE: ${{ inputs.image }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "Pas de webhook configuré"; exit 1; fi
+          payload=$(python3 -c 'import json,os; print(json.dumps({"content": os.environ["MESSAGE"], "username": "Apex Radio"}))')
+          if [ -n "$IMAGE" ]; then
+            curl -fsS -F "payload_json=$payload" -F "file1=@$IMAGE" "$HOOK?wait=true" > out.json
+          else
+            curl -fsS -H "Content-Type: application/json" -d "$payload" "$HOOK?wait=true" > out.json
+          fi
+          python3 -c 'import json; d=json.load(open("out.json")); print("message", d.get("id"), "salon", d.get("channel_id"))'

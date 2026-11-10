@@ -6,7 +6,7 @@
 
 🇬🇧 [English](#english) · 🇫🇷 [Français](#français)
 
-**⬇️ [Download / Télécharger](https://github.com/ApexRadio/apex-radio/releases/latest)** · 💬 [Discord](https://discord.gg/ZHg4qXd26g) · ❤️ [Patreon](https://www.patreon.com/lolotuner)
+**⬇️ [Download / Télécharger](https://github.com/ApexRadio/apex-radio/releases/latest)** · 💬 [Discord](https://discord.gg/ZHg4qXd26g) · ❤️ [Patreon](https://www.patreon.com/lolotuner) · ☕ [Ko-fi](https://ko-fi.com/apexradio)
 
 ![Apex Radio dashboard](docs/dashboard-en.png)
 
@@ -53,7 +53,7 @@ Not affiliated with Studio 397, Motorsport Games or the ACO.
 
 ### Community and support
 Questions, bugs, ideas: join the [Discord](https://discord.gg/ZHg4qXd26g). The app is free and will stay free;
-if it helps you find a few tenths, you can support its development on [Patreon](https://www.patreon.com/lolotuner).
+if it helps you find a few tenths, you can support its development on [Patreon](https://www.patreon.com/lolotuner) or with a coffee on [Ko-fi](https://ko-fi.com/apexradio).
 
 ---
 
@@ -98,4 +98,4 @@ Sans lien avec Studio 397, Motorsport Games ou l'ACO.
 
 ### Communauté et soutien
 Questions, bugs, idées : rejoins le [Discord](https://discord.gg/ZHg4qXd26g). L'appli est gratuite et le restera ;
-si elle t'aide à gagner quelques dixièmes, tu peux soutenir son développement sur [Patreon](https://www.patreon.com/lolotuner).
+si elle t'aide à gagner quelques dixièmes, tu peux soutenir son développement sur [Patreon](https://www.patreon.com/lolotuner) ou m'offrir un café sur [Ko-fi](https://ko-fi.com/apexradio).

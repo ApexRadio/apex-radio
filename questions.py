@@ -304,7 +304,8 @@ def _here(s: Snapshot) -> str:
 
 
 def _hello(s: Snapshot) -> str:
-    return L("Salut ! Je suis là, prête quand tu veux.", "Hi! I'm here, ready when you are.")
+    import voice
+    return L(f"Salut ! Je suis là, {'prête' if voice.engineer_female() else 'prêt'} quand tu veux.", "Hi! I'm here, ready when you are.")
 
 
 def _thanks(s: Snapshot) -> str:
@@ -335,7 +336,8 @@ def _time(s: Snapshot) -> str:
 def _how_are_you(s: Snapshot) -> str | None:
     if s.on_track:   # en piste, « ça va ? » = le point complet (sujet status)
         return None
-    return L("Ça va très bien, merci ! Prête pour la course.", "All good, thanks! Ready for the race.")
+    import voice
+    return L(f"Ça va très bien, merci ! {'Prête' if voice.engineer_female() else 'Prêt'} pour la course.", "All good, thanks! Ready for the race.")
 
 
 def _car(s: Snapshot) -> str:

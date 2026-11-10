@@ -103,6 +103,40 @@ def _download(url: str, dest: Path, progress=None) -> None:
     tmp.replace(dest)
 
 
+# ------------------------------------------------------------ prononciation (français)
+_FEM = {"place", "seconde", "minute", "pénalité", "voiture", "fois", "position"}
+_WORDS = ("tour", "seconde", "minute", "litre", "arrêt", "place", "pénalité", "degré", "dixième", "voiture", "position")
+_PL_RE = re.compile(r"(?<![\d,.])(\d+(?:[.,]\d+)?)\s(" + "|".join(_WORDS) + r")s?\b")
+_SPELL = [
+    (re.compile(r"\bsetups\b", re.I), "sétups"), (re.compile(r"\bsetup\b", re.I), "sétup"),
+    (re.compile(r"\bELMS\b"), "E L M S"),
+    (re.compile(r"\bHypercars?\b", re.I), "Hyper car"),
+    (re.compile(r"\bGT(\d)\b"), r"GT \1"), (re.compile(r"\bGTE\b"), "GT E"),
+    (re.compile(r"\bLMDh\b", re.I), "L M D H"), (re.compile(r"\bLMH\b"), "L M H"),
+]
+
+
+def speakable_fr(text: str) -> str:
+    """Texte affiché -> texte prononcé : accords (« 1 place » -> « une place », « 1 tours » -> « 1 tour »,
+    « 3 minute » -> « 3 minutes »), virgule décimale, et mots que la voix lit mal (setup, ELMS, Hypercar…)."""
+    t = re.sub(r"(\d)\.(\d)", r"\1,\2", text)
+
+    def agree(m: re.Match) -> str:
+        num, word = m.group(1), m.group(2)
+        try:
+            v = float(num.replace(",", "."))
+        except ValueError:
+            return m.group(0)
+        if num == "1" and word in _FEM:
+            return f"une {word}"
+        return f"{num} {word}{'s' if v >= 2 else ''}"
+
+    t = _PL_RE.sub(agree, t)
+    for rx, rep in _SPELL:
+        t = rx.sub(rep, t)
+    return t
+
+
 def _radio(pcm16: bytes, rate: int, volume: float = 1.3) -> bytes:
     """Effet radio : bande 300–3400 Hz, saturation douce, petit clic de micro."""
     import numpy as np
@@ -219,6 +253,8 @@ class Voice:
         cfg = SynthesisConfig(speaker_id=getattr(self, "speaker", SPEAKER), length_scale=SPEED)
         pcm = bytearray()
         rate = 22050
+        if not i18n.en():
+            text = speakable_fr(text)
         for chunk in self._piper.synthesize(text, syn_config=cfg):
             pcm += chunk.audio_int16_bytes
             rate = chunk.sample_rate

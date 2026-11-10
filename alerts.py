@@ -323,7 +323,7 @@ class GapTrend:
 
 
 MORE_PEP_FR = ["Allez, allez !", "On y croit !", "Tu es en feu aujourd'hui !", "Superbe pilotage !", "On lâche rien !",
-               "C'est exactement ce qu'il faut faire.", "Je suis fier de toi."]
+               "C'est exactement ce qu'il faut faire.", "Bravo, c'est du beau travail."]
 MORE_PEP_EN = ["Come on, come on!", "We believe in it!", "You're on fire today!", "Superb driving!", "Never give up!",
                "That's exactly what we need.", "Proud of you."]
 

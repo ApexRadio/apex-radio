@@ -226,10 +226,22 @@ class Traffic:
 class GapTrend:
     EVERY = 3
 
+    LAST = None   # instance en cours, lue par questions.py (« il revient derrière ? »)
+
     def __init__(self) -> None:
         self.laps = None
         self.ahead, self.behind = [], []
         self.count = 0
+        GapTrend.LAST = self
+
+    def trend(self, side: str):
+        """Évolution de l'écart par tour (au moins 2 tours sur la même voiture) : (par tour, écart, place) ou None."""
+        series = self.ahead if side == "ahead" else self.behind
+        series = [x for x in series if x[1] is not None]
+        if len(series) < 2 or len({p for p, _ in series[-3:]}) != 1:
+            return None
+        series = series[-3:]
+        return (series[-1][1] - series[0][1]) / (len(series) - 1), series[-1][1], series[-1][0]
 
     def update(self, s, say) -> None:
         if not s.on_track or s.session != "course":

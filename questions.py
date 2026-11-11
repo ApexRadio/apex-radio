@@ -71,8 +71,15 @@ def laps(s: Snapshot, p: Plan) -> str:
         parts.append(L(f"Il reste {max(0, s.max_laps - s.laps_done)} tours.", f"{max(0, s.max_laps - s.laps_done)} laps to go."))
     elif s.time_left is not None:
         m = int(s.time_left // 60)
-        parts.append(L(f"Il reste {m} minutes", f"{m} minutes to go")
-                     + (L(f", environ {_f(p.laps_to_finish, 0)} tours.", f", about {_f(p.laps_to_finish, 0)} laps.") if p.laps_to_finish else "."))
+        left = round(p.laps_to_finish) if p.laps_to_finish else None
+        if s.time_left <= 0 or (left is not None and left <= 1):
+            parts.append(L("C'est le dernier tour, donne tout !", "This is the last lap, give it everything!"))
+        elif m < 1:
+            parts.append(L(f"Moins d'une minute, encore environ {left} tours.", f"Under a minute, about {left} laps to go.") if left
+                         else L("Moins d'une minute.", "Under a minute to go."))
+        else:
+            parts.append(L(f"Il reste {m} minute{'s' if m > 1 else ''}", f"{m} minute{'s' if m > 1 else ''} to go")
+                         + (L(f", environ {left} tours.", f", about {left} laps.") if left else "."))
     if not parts:
         return L(f"Tu as bouclé {s.laps_done} tours.", f"You've done {s.laps_done} laps.")
     return " ".join(parts)
@@ -133,6 +140,35 @@ def gaps(s: Snapshot, p: Plan) -> str:
     front = bool(re.search(r"devant|ahead|in front|attaque|premier|leader|tete", t))
     back = bool(re.search(r"derriere|behind|revient|catching|suit", t))
     leader = s.ahead is None and (s.class_position or s.position) == 1
+    # « il revient / il remonte / je reprends du temps ? » : on répond avec l'évolution de l'écart
+    if re.search(r"remont|revien|rapproch|mont(e|ent|ant)? fort|fond(s)? sur|reprend|recoll|s eloign|echapp|lache|creuse|catching|closing|pulling", t):
+        try:
+            from alerts import GapTrend, _dix
+            tr = GapTrend.LAST
+        except Exception:
+            tr = None
+        side = "behind" if (back and not front) or (not front and re.search(r"remont|revien|rapproch|mont", t)) else "ahead"
+        r = tr.trend(side) if tr else None
+        if r:
+            rate, gap, place = r
+            who = f"P{place}" if place else L("la voiture", "the car")
+            if side == "behind":
+                if rate < -0.05:
+                    n = int(gap / -rate) + 1
+                    return L(f"Oui, {who} revient de {_dix(rate)} par tour. Il est à {_sec(gap)}, sur toi dans {n} tour{'s' if n > 1 else ''} à ce rythme.",
+                             f"Yes, {who} is closing by {_dix(rate)} a lap. He's {_sec(gap)} back, on you in {n} lap{'s' if n > 1 else ''} at this pace.")
+                if rate > 0.05:
+                    return L(f"Non, tu creuses : tu prends {_dix(rate)} par tour à {who}, il est à {_sec(gap)}.",
+                             f"No, you're pulling away: {_dix(rate)} a lap on {who}, he's {_sec(gap)} back.")
+                return L(f"L'écart est stable avec {who}, à {_sec(gap)}.", f"The gap to {who} is stable, {_sec(gap)}.")
+            if rate < -0.05:
+                n = int(gap / -rate) + 1
+                return L(f"Oui, tu reprends {_dix(rate)} par tour à {who}. Il est à {_sec(gap)}, dans ses roues dans {n} tour{'s' if n > 1 else ''}.",
+                         f"Yes, you're gaining {_dix(rate)} a lap on {who}. He's {_sec(gap)} ahead, on his gearbox in {n} lap{'s' if n > 1 else ''}.")
+            if rate > 0.05:
+                return L(f"Non, {who} s'éloigne de {_dix(rate)} par tour, il est à {_sec(gap)}.",
+                         f"No, {who} is pulling away by {_dix(rate)} a lap, {_sec(gap)} ahead.")
+            return L(f"L'écart est stable avec {who}, à {_sec(gap)}.", f"The gap to {who} is stable, {_sec(gap)}.")
     if front and not back:
         if ga is not None:
             return L(f"La voiture devant est à {_sec(ga)}.", f"The car ahead is {_sec(ga)} up the road.")
@@ -196,8 +232,8 @@ TOPICS = [
     (r"essence|des sens|d sens|carbu|fuel|conso|litre|reservoir|jus|gasoil|\bgas\b|petrol|consumption|\btank", fuel),
     (r"energie|batterie|virtuel|energy|battery|virtual", energy),
     (r"stand|\bbox|arret|rentr|\bpit|ravitaill|strateg|\bstop\b|come in", pit),
-    (r"pneu|gomme|usure|pression|\btyre|\btire|rubber|\bwear|\bpressure", tyres),
-    (r"ecart|devant|derriere|\bgap|attaque|revient|ahead|behind|in front|catching", gaps),
+    (r"pneu|pner|peneu|gomme|usure|pression|\btyre|\btire|rubber|\bwear|\bpressure", tyres),
+    (r"ecart|devant|derriere|\bgap|attaque|revient|remont|rapproch|monte fort|montant fort|ahead|behind|in front|catching|closing", gaps),
     (r"repar|degat|degare|dommage|abime|casse|damage|repair", repairs),
     (r"position|place|classement|placement|cassement|quelle p\b|combien ?t?i?eme|combien siam|combien.*(je suis|suis je)|je suis ou\b|where am i|what p\b", position),
     (r"meteo|pluie|pleut|pleuvoir|mouill|humid|sec\b|temperature (de la piste|piste|de l air|exterieur)|nuage|quel temps|temps qu il fait|temps il fait|weather|\brain|\bwet\b|\bdry\b|cloud", weather),

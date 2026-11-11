@@ -27,10 +27,11 @@ from i18n import L
 
 PROMPT_EN = ("Race car radio. Fuel, consumption, energy, tyres, wear, pit, box, stop, "
              "gap ahead, behind, position, weather, rain, laps left, lap time.")
-PROMPT = ("Radio d'ingénieur de course, Le Mans Ultimate. Questions du pilote : essence, carburant, conso, énergie, pneus, "
-          "usure, pression, stand, box, arrêt, prépare l'arrêt, répare la carrosserie, dégâts, écart devant, derrière, position, "
-          "classement, météo, pluie, tours restants, chrono, meilleur tour, secteurs, pénalité, setup, sous-virage, survirage, "
-          "répète, silence, tais-toi, ELMS, WEC, LMP2, Hypercar, GT3.")
+PROMPT = ("Radio d'ingénieur de course, Le Mans Ultimate. Questions du pilote : combien il me reste d'essence ? "
+          "C'est quoi la météo ? Il va pleuvoir ? Est-ce qu'il remonte derrière ? P6 revient ? Je reprends du temps devant ? "
+          "Dans quel secteur je perds du temps ? L'état de mes pneus ? Quand est-ce que je rentre au stand ? Prépare l'arrêt. "
+          "Répare la carrosserie. Dégâts, écart, position, classement, tours restants, chrono, meilleur tour, pénalité, setup, "
+          "sous-virage, survirage, répète, silence. ELMS, WEC, LMP2, Hypercar, GT3.")
 
 
 def load_config() -> dict:
@@ -163,9 +164,30 @@ class Radio:
             print("  " + self.detail)
 
     def transcribe(self, audio) -> str:
-        segs, _ = self._whisper.transcribe(audio, language=i18n.LANG, beam_size=1, initial_prompt=PROMPT_EN if i18n.en() else PROMPT,
+        segs, _ = self._whisper.transcribe(audio, language=i18n.LANG, beam_size=3, initial_prompt=PROMPT_EN if i18n.en() else PROMPT,
                                            condition_on_previous_text=False, vad_filter=False)
-        return " ".join(s.text.strip() for s in segs).strip()
+        text = " ".join(s.text.strip() for s in segs).strip()
+        self._keep_clip(audio, text)
+        return text
+
+    def _keep_clip(self, audio, text: str) -> None:
+        """Garde les 30 dernières questions (son + texte compris) sur le PC, dans %LOCALAPPDATA%\\Apex Radio\\questions,
+        pour améliorer la compréhension. Rien n'est envoyé nulle part."""
+        try:
+            import numpy as np, wave
+            d = LOCAL / "questions"
+            d.mkdir(parents=True, exist_ok=True)
+            stamp = time.strftime("%Y%m%d-%H%M%S")
+            pcm = (np.clip(audio, -1, 1) * 32767).astype("<i2").tobytes()
+            with wave.open(str(d / f"{stamp}.wav"), "wb") as w:
+                w.setnchannels(1); w.setsampwidth(2); w.setframerate(RATE); w.writeframes(pcm)
+            (d / f"{stamp}.txt").write_text(text, encoding="utf-8")
+            files = sorted(d.glob("*.wav"))
+            for f in files[:-30]:
+                f.unlink(missing_ok=True)
+                f.with_suffix(".txt").unlink(missing_ok=True)
+        except Exception:
+            pass
 
     # ------------------------------------------------------------- micro
     def _start_rec(self) -> None:

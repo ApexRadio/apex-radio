@@ -13,6 +13,8 @@
 - 🇬🇧 Setup workshop, LMP2: driving the ELMS car with only a WEC setup (or the other way round)? Apex converts the APEX copy to your version (same car, Oreca 07). The list shows each setup's version (WEC / ELMS), yours first.
 - 🇫🇷 Prononciation : les GTE sont maintenant annoncées « LM GTE », pour ne plus les confondre avec les GT3.
 - 🇬🇧 Pronunciation (French voice): GTE cars are now called "LM GTE" so they're not mixed up with GT3.
+- 🇫🇷 Questions : « il remonte derrière ? », « je reprends du temps devant ? » donnent maintenant l'évolution de l'écart (par tour, et dans combien de tours il sera sur toi). Reconnaissance vocale plus précise, et fin de course mieux annoncée (« C'est le dernier tour »). Apex garde tes 30 dernières questions sur ton PC pour qu'on puisse améliorer la compréhension (rien n'est envoyé).
+- 🇬🇧 Questions: "is he closing behind?", "am I gaining on the car ahead?" now give the gap trend (per lap, and in how many laps). More accurate speech recognition, better end-of-race answers. Apex keeps your last 30 questions on your PC to help improve recognition (nothing is sent).
 
 ## 1.2.9
 - 🇫🇷 L'ingénieur parle mieux français : « une place », « 1 tour », « 3 minutes », « 2,3 secondes », « suspension avant droite », « à moins d'une seconde », et une meilleure prononciation de setup, ELMS, Hypercar et GT3. Les dégâts aéro ne dépassent plus 100 %.

@@ -744,7 +744,7 @@ $("accent").onchange = e => { applyAccent(e.target.value);
 // ---- niveau d'encouragements
 const ENC = [["discret", "Discret", "Low-key"], ["normal", "Normal", "Normal"], ["motivant", "Motivant", "Hype"]];
 $("encourage").innerHTML = ENC.map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
-$("pttmode").innerHTML = [["hold", "Rester appuyé pour parler", "Hold to talk"], ["toggle", "Appuyer une fois, réappuyer pour couper", "Press once, press again to stop"]]
+$("pttmode").innerHTML = [["hold", "Rester appuyé pour parler", "Hold to talk"], ["toggle", "Appuyer une fois (arrêt tout seul à la fin de la phrase)", "Press once (stops by itself when you finish)"]]
   .map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
 $("lmumode").innerHTML = [["ask", "Demander (fenêtre de Steam)", "Ask (Steam window)"], ["normal", "Normal (écran)", "Normal (screen)"],
   ["vr", "VR – SteamVR", "VR – SteamVR"], ["openxr", "VR – OpenXR", "VR – OpenXR"]]

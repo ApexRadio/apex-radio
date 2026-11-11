@@ -201,9 +201,20 @@ class Radio:
         import sounddevice as sd
         self._frames = []
 
+        self._noise, self._voice_t, self._speech = None, 0.0, False
+
         def cb(indata, frames, t, status):
             self._frames.append(indata.copy())
             self.level = max(self.level * 0.8, float(abs(indata).max()))
+            # détection de la voix (mode « appuyer une fois » : arrêt tout seul quand tu as fini de parler)
+            rms = float((indata ** 2).mean()) ** 0.5
+            if self._noise is None or rms < self._noise:
+                self._noise = rms                     # le bruit de fond, c'est le niveau le plus bas entendu
+            elif rms < self._noise * 1.5:
+                self._noise = self._noise * 0.95 + rms * 0.05
+            if rms > max(0.015, (self._noise or 0) * 3):
+                self._voice_t = time.time()
+                self._speech = True
 
         dev = self.cfg.get("mic")
         self.level = 0.0
@@ -412,8 +423,13 @@ class Radio:
                     # appuyer une fois = parler, réappuyer = couper (et coupure de sécurité au bout de 20 s).
                     # Les 0,4 premières secondes sont ignorées : un rebond du bouton ne coupe pas tout de suite.
                     age = time.time() - getattr(self, "_rec_t0", 0)
-                    if self.state == "écoute" and ((edge and age > 0.4) or age > 20):
-                        print("  Bouton radio : fin d'écoute" + (" (20 s, coupure de sécurité)" if not edge else ""))
+                    quiet = time.time() - getattr(self, "_voice_t", 0)
+                    done_talking = getattr(self, "_speech", False) and age > 1.0 and quiet > 1.3   # tu as fini ta phrase
+                    nothing = not getattr(self, "_speech", False) and age > 8                       # rien dit en 8 s
+                    if self.state == "écoute" and ((edge and age > 0.4) or age > 20 or done_talking or nothing):
+                        why = (" (fin de ta phrase)" if done_talking and not edge else " (rien entendu)" if nothing and not edge
+                               else " (20 s, coupure de sécurité)" if not edge else "")
+                        print("  Bouton radio : fin d'écoute" + why)
                         audio = self._stop_rec()
                         threading.Thread(target=self._process, args=(audio,), daemon=True).start()
                         pressed = now
@@ -428,7 +444,7 @@ class Radio:
                         self._start_rec()
                         self._rec_t0 = time.time()
                         if toggle:
-                            print("  Bouton radio : début d'écoute (réappuie pour couper)")
+                            print("  Bouton radio : début d'écoute (parle, j'arrête toute seule à la fin de ta phrase)")
                         self.state = "écoute"
                         self.detail = ""
                     except Exception as e:

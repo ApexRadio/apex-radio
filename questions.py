@@ -417,9 +417,9 @@ def _joke(s: Snapshot) -> str:
 
 
 CHAT = [
-    (r"\bm entends?\b|\bm entendez\b|tu me recois|me recois tu|tu recois|radio check|test radio|\ballo\b|"
+    (r"\bm entends?\b|\bm entendez\b|\bm as t en\b|\bm attends\b|\bmentend|tu m en tends|tu me recois|me recois tu|tu recois|radio check|test radio|\ballo\b|"
      r"can you hear|do you hear|hear me|do you copy|you copy", _radio_check),
-    (r"\b(t es|tu es|es tu|t es bien) la\b|t es toujours la|you there|are you there", _here),
+    (r"\b(t es|tu es|es tu|t es bien) la\b|t es toujours la|\b(tu es|t es|es tu) (pret|prete)s?\b|on y va\b|you there|are you there|are you ready|ready\b", _here),
     (r"^(bonjour|salut|hello|coucou|hey|bonsoir|hi)\b", _hello),
     (r"\bmerci\b|thank", _thanks),
     (r"qui es tu|t es qui|tu es qui|comment tu t appelles|ton nom|ton prenom|who are you|your name", _who),

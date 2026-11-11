@@ -164,6 +164,13 @@ class Radio:
             print("  " + self.detail)
 
     def transcribe(self, audio) -> str:
+        try:
+            import numpy as np
+            peak = float(np.max(np.abs(audio))) if len(audio) else 0.0
+            if 0.005 < peak < 0.5:
+                audio = (audio * (0.7 / peak)).astype(audio.dtype)   # micro trop bas : on remonte le volume
+        except Exception:
+            pass
         segs, _ = self._whisper.transcribe(audio, language=i18n.LANG, beam_size=3, initial_prompt=PROMPT_EN if i18n.en() else PROMPT,
                                            condition_on_previous_text=False, vad_filter=False)
         text = " ".join(s.text.strip() for s in segs).strip()

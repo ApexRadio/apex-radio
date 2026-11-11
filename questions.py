@@ -115,17 +115,47 @@ def pit(s: Snapshot, p: Plan) -> str:
 
 
 def tyres(s: Snapshot, p: Plan) -> str:
-    wear = [w * 100 for w in s.tyre_wear]
-    worst = min(range(4), key=lambda i: wear[i])
-    out = L(f"Pneus à {_f(sum(wear) / 4, 0)} % en moyenne, le plus usé c'est l'{_tyre_names([worst])} à {_f(wear[worst], 0)} %.",
-            f"Tyres at {_f(sum(wear) / 4, 0)} % on average, the most worn is the {_tyre_names([worst])} at {_f(wear[worst], 0)} %.")
+    out = []
+    flats = [i for i, f in enumerate(getattr(s, "flat", []) or []) if f]
+    if flats:
+        out.append(L(f"Crevaison {_tyre_names(flats)} ! Rentre au stand doucement.", f"Puncture {_tyre_names(flats)}! Bring it in slowly."))
+    wear = [w * 100 for w in s.tyre_wear]          # LMU : 100 % = pneu neuf
+    if any(wear):
+        avg = sum(wear) / 4
+        worst = min(range(4), key=lambda i: wear[i])
+        state = (L("Ils sont comme neufs", "They're like new") if avg >= 95 else
+                 L("Ils sont en bon état", "They're in good shape") if avg >= 80 else
+                 L("Ils commencent à s'user", "They're starting to wear") if avg >= 60 else
+                 L("Ils sont bien usés", "They're well worn") if avg >= 40 else
+                 L("Ils sont très usés, pense à les changer", "They're very worn, think about changing them"))
+        out.append(L(f"{state} : il reste {_f(avg, 0)} % de gomme en moyenne, le plus usé c'est l'{_tyre_names([worst])} à {_f(wear[worst], 0)} %.",
+                     f"{state}: {_f(avg, 0)} % of rubber left on average, the most worn is the {_tyre_names([worst])} at {_f(wear[worst], 0)} %."))
     if p.tyre_laps_left is not None:
-        out += L(f" Encore environ {_f(p.tyre_laps_left, 0)} tours avant qu'ils soient vraiment usés.",
-                 f" About {_f(p.tyre_laps_left, 0)} more laps before they're really worn.")
-    temps = s.tyre_temp
-    if any(temps):
-        out += L(f" Températures autour de {_f(sum(temps) / 4, 0)} degrés.", f" Temperatures around {_f(sum(temps) / 4, 0)} degrees.")
-    return out
+        out.append(L(f"Encore environ {_f(p.tyre_laps_left, 0)} tours avant qu'ils soient vraiment usés.",
+                     f"About {_f(p.tyre_laps_left, 0)} more laps before they're really worn."))
+    temps = [x for x in (s.tyre_temp or []) if x and x > -50]
+    opt = getattr(s, "tyre_opt", None)
+    if len(temps) == 4:
+        avg_t = sum(temps) / 4
+        if opt:
+            if avg_t < opt - 15:
+                out.append(L(f"Ils sont encore froids : {_f(avg_t, 0)} degrés, l'idéal est vers {_f(opt, 0)}.",
+                             f"They're still cold: {_f(avg_t, 0)} degrees, ideal is around {_f(opt, 0)}."))
+            elif avg_t > opt + 15:
+                out.append(L(f"Ils sont trop chauds : {_f(avg_t, 0)} degrés, l'idéal est vers {_f(opt, 0)}. Ménage-les un peu.",
+                             f"They're too hot: {_f(avg_t, 0)} degrees, ideal is around {_f(opt, 0)}. Look after them a bit."))
+            else:
+                out.append(L(f"Bonne température, {_f(avg_t, 0)} degrés.", f"Good temperature, {_f(avg_t, 0)} degrees."))
+        else:
+            out.append(L(f"Températures autour de {_f(avg_t, 0)} degrés.", f"Temperatures around {_f(avg_t, 0)} degrees."))
+        front, rear = (temps[0] + temps[1]) / 2, (temps[2] + temps[3]) / 2
+        if abs(front - rear) > 12:
+            hot = L("l'avant", "the fronts") if front > rear else L("l'arrière", "the rears")
+            out.append(L(f"{hot.capitalize()} chauffe plus, de {_f(abs(front - rear), 0)} degrés.",
+                         f"{hot.capitalize()} {'are' if True else 'is'} running {_f(abs(front - rear), 0)} degrees hotter."))
+    if not out:
+        return L("Je n'arrive pas à lire tes pneus pour l'instant.", "I can't read your tyres right now.")
+    return " ".join(out)
 
 
 def _sec(g: float) -> str:
@@ -232,9 +262,9 @@ TOPICS = [
     (r"essence|des sens|d sens|carbu|fuel|conso|litre|reservoir|jus|gasoil|\bgas\b|petrol|consumption|\btank", fuel),
     (r"energie|batterie|virtuel|energy|battery|virtual", energy),
     (r"stand|\bbox|arret|rentr|\bpit|ravitaill|strateg|\bstop\b|come in", pit),
-    (r"pneu|pner|peneu|gomme|usure|pression|\btyre|\btire|rubber|\bwear|\bpressure", tyres),
+    (r"pneu|pner|peneu|pneumatique|gomme|usure|pression|crev|\betat d(u|e|es)\b(?!.*(voiture|caisse|carrosserie|course|jeu de la))|\btyre|\btire|rubber|\bwear|\bpressure", tyres),
     (r"ecart|devant|derriere|\bgap|attaque|revient|remont|rapproch|monte fort|montant fort|ahead|behind|in front|catching|closing", gaps),
-    (r"repar|degat|degare|dommage|abime|casse|damage|repair", repairs),
+    (r"repar|degat|degare|dommage|abime|casse|etat de (la|ma) (voiture|caisse|bagnole)|damage|repair", repairs),
     (r"position|place|classement|placement|cassement|quelle p\b|combien ?t?i?eme|combien siam|combien.*(je suis|suis je)|je suis ou\b|where am i|what p\b", position),
     (r"meteo|pluie|pleut|pleuvoir|mouill|humid|sec\b|temperature (de la piste|piste|de l air|exterieur)|nuage|quel temps|temps qu il fait|temps il fait|weather|\brain|\bwet\b|\bdry\b|cloud", weather),
     (r"chrono|dernier tour|meilleur tour|temps au tour|mon tour|rythme|tourne en|je tourne|lap time|last lap|best lap|\bpace\b", laptimes),

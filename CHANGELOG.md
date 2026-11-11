@@ -17,6 +17,8 @@
 - 🇬🇧 Questions: "is he closing behind?", "am I gaining on the car ahead?" now give the gap trend (per lap, and in how many laps). More accurate speech recognition, better end-of-race answers. Apex keeps your last 30 questions on your PC to help improve recognition (nothing is sent).
 - 🇫🇷 Tu peux maintenant demander une voiture précise : « où est P6 ? », « P2 roule plus vite que moi ? », « dans quel secteur P6 est plus rapide ? », « le sixième revient ? ». L'ingénieur donne l'écart, son rythme comparé au tien et le secteur où il te prend du temps.
 - 🇬🇧 You can now ask about a specific car: "where's P6?", "is P2 quicker than me?", "which sector is P6 faster in?". The engineer gives the gap, his pace vs yours and the sector where he's quicker.
+- 🇫🇷 « L'état de mes pneus ? » : réponse plus claire (comme neufs, en bon état, usés…), gomme restante, pneu le plus usé, température par rapport à l'idéal (froids, bons, trop chauds) et avant/arrière.
+- 🇬🇧 "How are my tyres?": clearer answer (like new, good, worn…), rubber left, most worn tyre, temperature vs ideal and front/rear balance.
 
 ## 1.2.9
 - 🇫🇷 L'ingénieur parle mieux français : « une place », « 1 tour », « 3 minutes », « 2,3 secondes », « suspension avant droite », « à moins d'une seconde », et une meilleure prononciation de setup, ELMS, Hypercar et GT3. Les dégâts aéro ne dépassent plus 100 %.

@@ -251,7 +251,16 @@ class Radio:
         pg = self._pg
         if pg is None:
             return
+        b = self.cfg.get("ptt") or {}
         for ev in pg.event.get():
+            if ev.type == pg.JOYBUTTONDOWN and b.get("type") != "key":
+                # appui même très bref sur le bouton radio (le mode « appuyer une fois » ne doit rien rater)
+                j = self._joys.get(getattr(ev, "instance_id", None))
+                try:
+                    if j is not None and j.get_guid() == b.get("guid") and ev.button == b.get("button"):
+                        self._ptt_edge = True
+                except Exception:
+                    pass
             if ev.type == pg.JOYDEVICEADDED:
                 j = pg.joystick.Joystick(ev.device_index)
                 self._joys[j.get_instance_id()] = j
@@ -269,6 +278,14 @@ class Radio:
             except Exception:
                 pass
         return out
+
+    def _key_tapped(self) -> bool:
+        """Touche clavier appuyée depuis le dernier passage (même relâchée entre-temps)."""
+        b = self.cfg.get("ptt") or {}
+        if b.get("type") != "key" or sys.platform != "win32" or self.cfg.get("ptt_mode") != "toggle":
+            return False
+        import ctypes
+        return bool(ctypes.windll.user32.GetAsyncKeyState(b["vk"]) & 0x0001)
 
     def _ptt_pressed(self) -> bool:
         return self._pressed(self.cfg.get("ptt"))
@@ -356,19 +373,29 @@ class Radio:
                 self._check_shortcuts()
                 now = self._ptt_pressed()
                 toggle = self.cfg.get("ptt_mode") == "toggle"
+                edge = (now and not pressed) or getattr(self, "_ptt_edge", False) or self._key_tapped()
+                self._ptt_edge = False
                 if toggle:
-                    # appuyer une fois = parler, réappuyer = couper (et coupure de sécurité au bout de 20 s)
-                    stop = (now and not pressed) or (time.time() - getattr(self, "_rec_t0", 0) > 20)
-                    if self.state == "écoute" and stop:
+                    # appuyer une fois = parler, réappuyer = couper (et coupure de sécurité au bout de 20 s).
+                    # Les 0,4 premières secondes sont ignorées : un rebond du bouton ne coupe pas tout de suite.
+                    age = time.time() - getattr(self, "_rec_t0", 0)
+                    if self.state == "écoute" and ((edge and age > 0.4) or age > 20):
+                        print("  Bouton radio : fin d'écoute" + (" (20 s, coupure de sécurité)" if not edge else ""))
                         audio = self._stop_rec()
                         threading.Thread(target=self._process, args=(audio,), daemon=True).start()
                         pressed = now
                         time.sleep(0.02)
                         continue
-                if now and not pressed and self.state in ("prêt", "erreur"):
+                    if self.state == "écoute":
+                        pressed = now
+                        time.sleep(0.02)
+                        continue
+                if (edge if toggle else (now and not pressed)) and self.state in ("prêt", "erreur"):
                     try:
                         self._start_rec()
                         self._rec_t0 = time.time()
+                        if toggle:
+                            print("  Bouton radio : début d'écoute (réappuie pour couper)")
                         self.state = "écoute"
                         self.detail = ""
                     except Exception as e:

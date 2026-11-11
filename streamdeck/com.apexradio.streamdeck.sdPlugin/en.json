@@ -1,0 +1,37 @@
+{
+  "Name": "Apex Radio",
+  "Description": "Voice race engineer for Le Mans Ultimate: radio button, spotter, quiet mode and live race info (position, fuel, gaps, box). Requires the free Apex Radio app.",
+  "Category": "Apex Radio",
+  "com.apexradio.streamdeck.radio": {
+    "Name": "Radio (talk)",
+    "Tooltip": "Hold to talk to your race engineer, like the radio button on your wheel."
+  },
+  "com.apexradio.streamdeck.info": {
+    "Name": "Live info",
+    "Tooltip": "Shows position, fuel, gaps, box or lap time. Press: the engineer says it on the radio."
+  },
+  "com.apexradio.streamdeck.spotter": {
+    "Name": "Spotter on/off",
+    "Tooltip": "Turns the spotter (car left / right) on or off."
+  },
+  "com.apexradio.streamdeck.quiet": {
+    "Name": "Quiet mode",
+    "Tooltip": "Quiet mode: only urgent calls."
+  },
+  "com.apexradio.streamdeck.voice": {
+    "Name": "Radio on/off",
+    "Tooltip": "Mutes or unmutes the race engineer."
+  },
+  "com.apexradio.streamdeck.repeat": {
+    "Name": "Repeat",
+    "Tooltip": "The engineer repeats her last message."
+  },
+  "com.apexradio.streamdeck.ask": {
+    "Name": "Question",
+    "Tooltip": "Asks the engineer a question you write in the key settings."
+  },
+  "com.apexradio.streamdeck.launch": {
+    "Name": "Start LMU",
+    "Tooltip": "Starts Le Mans Ultimate."
+  }
+}

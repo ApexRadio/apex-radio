@@ -343,7 +343,20 @@ class Radio:
         return bool(ctypes.windll.user32.GetAsyncKeyState(b["vk"]) & 0x0001)
 
     def _ptt_pressed(self) -> bool:
-        return self._pressed(self.cfg.get("ptt"))
+        return self._pressed(self.cfg.get("ptt")) or self._ext_held()
+
+    def ext_ptt(self, down: bool) -> None:
+        """Bouton radio externe (touche Stream Deck) : appui / relâchement envoyés par l'API."""
+        if down:
+            self._ext_t = time.time()
+            self._ptt_edge = True
+        self._ext_down = down
+
+    def _ext_held(self) -> bool:
+        # sécurité : si le relâchement n'arrive jamais (plugin fermé), on relâche au bout de 30 s
+        if getattr(self, "_ext_down", False) and time.time() - getattr(self, "_ext_t", 0) > 30:
+            self._ext_down = False
+        return getattr(self, "_ext_down", False)
 
     def _pressed(self, b) -> bool:
         if not b:

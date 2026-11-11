@@ -244,6 +244,8 @@ class Voice:
         if not self.enabled or (self.quiet and not urgent and not spot):
             return
         self._n += 1
+        if not spot:
+            self.last_text = text          # pour « répète » (touche Stream Deck)
         import time as _t
         self._q.put((-1 if spot else 0 if urgent else 1, self._n, text, _t.monotonic(), spot))
 

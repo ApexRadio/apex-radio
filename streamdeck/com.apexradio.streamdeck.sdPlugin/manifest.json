@@ -1,0 +1,175 @@
+{
+  "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
+  "Name": "Apex Radio",
+  "Version": "0.1.0.0",
+  "Author": "lolotuner",
+  "UUID": "com.apexradio.streamdeck",
+  "Description": "Voice race engineer for Le Mans Ultimate: radio button, spotter, quiet mode and live race info (position, fuel, gaps, box). Requires the free Apex Radio app.",
+  "URL": "https://github.com/ApexRadio/apex-radio",
+  "Icon": "imgs/plugin",
+  "CategoryIcon": "imgs/category",
+  "Category": "Apex Radio",
+  "CodePath": "bin/plugin.js",
+  "Nodejs": {
+    "Version": "20",
+    "Debug": "enabled"
+  },
+  "SDKVersion": 2,
+  "Software": {
+    "MinimumVersion": "6.4"
+  },
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "Actions": [
+    {
+      "UUID": "com.apexradio.streamdeck.radio",
+      "Name": "Radio (talk)",
+      "Tooltip": "Hold to talk to your race engineer, like the radio button on your wheel.",
+      "Icon": "imgs/actions/radio",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/actions/radio-key",
+          "TitleAlignment": "bottom",
+          "ShowTitle": false
+        }
+      ],
+      "UserTitleEnabled": false,
+      "SupportedInMultiActions": false
+    },
+    {
+      "UUID": "com.apexradio.streamdeck.info",
+      "Name": "Live info",
+      "Tooltip": "Shows position, fuel, gaps, box or lap time. Press: the engineer says it on the radio.",
+      "Icon": "imgs/actions/info",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/actions/info-key",
+          "TitleAlignment": "bottom",
+          "ShowTitle": false
+        }
+      ],
+      "UserTitleEnabled": false,
+      "SupportedInMultiActions": false,
+      "PropertyInspectorPath": "ui/info.html"
+    },
+    {
+      "UUID": "com.apexradio.streamdeck.spotter",
+      "Name": "Spotter on/off",
+      "Tooltip": "Turns the spotter (car left / right) on or off.",
+      "Icon": "imgs/actions/spotter",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/actions/spotter-key",
+          "TitleAlignment": "bottom",
+          "ShowTitle": false
+        }
+      ],
+      "UserTitleEnabled": false,
+      "SupportedInMultiActions": true
+    },
+    {
+      "UUID": "com.apexradio.streamdeck.quiet",
+      "Name": "Quiet mode",
+      "Tooltip": "Quiet mode: only urgent calls.",
+      "Icon": "imgs/actions/quiet",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/actions/quiet-key",
+          "TitleAlignment": "bottom",
+          "ShowTitle": false
+        }
+      ],
+      "UserTitleEnabled": false,
+      "SupportedInMultiActions": true
+    },
+    {
+      "UUID": "com.apexradio.streamdeck.voice",
+      "Name": "Radio on/off",
+      "Tooltip": "Mutes or unmutes the race engineer.",
+      "Icon": "imgs/actions/voice",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/actions/voice-key",
+          "TitleAlignment": "bottom",
+          "ShowTitle": false
+        }
+      ],
+      "UserTitleEnabled": false,
+      "SupportedInMultiActions": true
+    },
+    {
+      "UUID": "com.apexradio.streamdeck.repeat",
+      "Name": "Repeat",
+      "Tooltip": "The engineer repeats her last message.",
+      "Icon": "imgs/actions/repeat",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/actions/repeat-key",
+          "TitleAlignment": "bottom",
+          "ShowTitle": false
+        }
+      ],
+      "UserTitleEnabled": false,
+      "SupportedInMultiActions": true
+    },
+    {
+      "UUID": "com.apexradio.streamdeck.ask",
+      "Name": "Question",
+      "Tooltip": "Asks the engineer a question you write in the key settings.",
+      "Icon": "imgs/actions/ask",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/actions/ask-key",
+          "TitleAlignment": "bottom",
+          "ShowTitle": false
+        }
+      ],
+      "UserTitleEnabled": false,
+      "SupportedInMultiActions": true,
+      "PropertyInspectorPath": "ui/ask.html"
+    },
+    {
+      "UUID": "com.apexradio.streamdeck.launch",
+      "Name": "Start LMU",
+      "Tooltip": "Starts Le Mans Ultimate.",
+      "Icon": "imgs/actions/launch",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/actions/launch-key",
+          "TitleAlignment": "bottom",
+          "ShowTitle": false
+        }
+      ],
+      "UserTitleEnabled": false,
+      "SupportedInMultiActions": true
+    }
+  ]
+}

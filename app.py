@@ -434,7 +434,10 @@ def make_handler(state: State):
                 self.end_headers()
                 self.wfile.write(body)
                 return
-            if self.path.startswith("/api/state"):
+            if self.path.startswith("/api/sd"):
+                # état résumé pour le plugin Stream Deck (léger, interrogé chaque seconde)
+                body, ctype = json.dumps(sd_state(state), default=lambda o: None).encode(), "application/json"
+            elif self.path.startswith("/api/state"):
                 with state.lock:
                     body = state.payload
                 ctype = "application/json"
@@ -459,6 +462,11 @@ def make_handler(state: State):
             v = state.voice
             if self.path == "/api/voice/toggle":
                 state.toggle_voice()
+            elif self.path in ("/api/ptt/down", "/api/ptt/up"):
+                state.radio.ext_ptt(self.path.endswith("down"))
+            elif self.path == "/api/voice/repeat":
+                last = getattr(v, "last_text", "")
+                v.say(last or L("Rien à répéter pour l'instant.", "Nothing to repeat yet."), urgent=True)
             elif self.path == "/api/lang":
                 n = int(self.headers.get("Content-Length") or 0)
                 lang = json.loads(self.rfile.read(n) or b"{}").get("lang", "fr")
@@ -782,6 +790,24 @@ def set_setups_dir(state, raw: str) -> dict:
 
 # options de lancement de LMU dans Steam (appinfo) : 0 = normal, 2 = « vr » (+VR, SteamVR), 3 = « openxr » (+XR)
 LMU_MODES = {"normal": "default", "vr": "vr", "openxr": "openxr"}
+
+
+def sd_state(state) -> dict:
+    """Résumé pour le Stream Deck : place, essence, écarts, box, et l'état des boutons."""
+    s, p = getattr(state, "snap", None), getattr(state, "plan", None)
+    sp = getattr(state, "spotter", None)
+    r = state.radio
+    out = {"ok": True, "lang": i18n.LANG, "connected": bool(s and s.connected), "on_track": bool(s and s.on_track),
+           "radio": r.state, "voice_on": state.voice.enabled, "quiet": state.voice.quiet,
+           "spotter": bool(sp and sp.enabled)}
+    if s and s.on_track:
+        out.update({"pos": s.class_position or s.position, "cars": s.num_cars, "fuel": round(s.fuel, 1),
+                    "fuel_cap": s.fuel_capacity, "energy": s.energy, "gap_ahead": s.gap_class_ahead,
+                    "gap_behind": s.gap_class_behind, "last": s.last_lap, "best": s.best_lap,
+                    "in_pits": s.in_pits})
+    if p:
+        out.update({"range_laps": p.range_laps, "box_in": p.laps_until_box, "fuel_per_lap": p.fuel_per_lap})
+    return out
 
 
 def launch_lmu(mode: str = "ask") -> bool:

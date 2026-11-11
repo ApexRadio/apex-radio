@@ -402,7 +402,11 @@ class Radio:
                 self._check_shortcuts()
                 now = self._ptt_pressed()
                 toggle = self.cfg.get("ptt_mode") == "toggle"
-                edge = (now and not pressed) or getattr(self, "_ptt_edge", False) or self._key_tapped()
+                ev_edge = getattr(self, "_ptt_edge", False)
+                if toggle and (now != pressed or ev_edge):
+                    # journal de diagnostic : chaque changement du bouton radio
+                    print(f"  [bouton radio] {'appuyé' if now else 'relâché'}{' (événement)' if ev_edge else ''} · état {self.state}")
+                edge = (now and not pressed) or ev_edge or self._key_tapped()
                 self._ptt_edge = False
                 if toggle:
                     # appuyer une fois = parler, réappuyer = couper (et coupure de sécurité au bout de 20 s).

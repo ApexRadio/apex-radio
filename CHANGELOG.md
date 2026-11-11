@@ -19,6 +19,8 @@
 - 🇬🇧 You can now ask about a specific car: "where's P6?", "is P2 quicker than me?", "which sector is P6 faster in?". The engineer gives the gap, his pace vs yours and the sector where he's quicker.
 - 🇫🇷 « L'état de mes pneus ? » : réponse plus claire (comme neufs, en bon état, usés…), gomme restante, pneu le plus usé, température par rapport à l'idéal (froids, bons, trop chauds) et avant/arrière.
 - 🇬🇧 "How are my tyres?": clearer answer (like new, good, worn…), rubber left, most worn tyre, temperature vs ideal and front/rear balance.
+- 🇫🇷 Lancer LMU en VR : dans ⚙️ Réglages → Jeu, « Mode de lancement » permet de choisir Normal, VR – SteamVR ou VR – OpenXR (ou de laisser Steam demander). Idée d'un membre du Discord, merci !
+- 🇬🇧 Launch LMU in VR: ⚙️ Settings → Game → "Launch mode": Normal, VR – SteamVR or VR – OpenXR (or let Steam ask). Idea from a Discord member, thanks!
 
 ## 1.2.9
 - 🇫🇷 L'ingénieur parle mieux français : « une place », « 1 tour », « 3 minutes », « 2,3 secondes », « suspension avant droite », « à moins d'une seconde », et une meilleure prononciation de setup, ELMS, Hypercar et GT3. Les dégâts aéro ne dépassent plus 100 %.

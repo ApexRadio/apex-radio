@@ -345,6 +345,7 @@
     </section>
     <section class="setsec"><h2>🏁 <span data-en="Game">Jeu</span></h2>
       <div class="setrow"><label for="autolmu" data-en="Launch Le Mans Ultimate when Apex opens">Lancer Le Mans Ultimate à l'ouverture d'Apex</label><div class="setctl"><input type="checkbox" id="autolmu"></div></div>
+      <div class="setrow"><span data-en="Launch mode">Mode de lancement</span><div class="setctl"><select id="lmumode" aria-label="Mode de lancement" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <button id="lmulaunch2" data-en="▶ LAUNCH LE MANS ULTIMATE">▶ LANCER LE MANS ULTIMATE</button>
     </section>
     <section class="setsec"><h2>🎨 <span data-en="Look">Apparence</span></h2>
@@ -530,6 +531,7 @@ function render(d) {
   renderOnboard(d);
   if (d.encourage && document.activeElement !== $("encourage")) $("encourage").value = d.encourage;
   if (d.ptt_mode && document.activeElement !== $("pttmode")) $("pttmode").value = d.ptt_mode;
+  if (d.lmu_mode && document.activeElement !== $("lmumode")) $("lmumode").value = d.lmu_mode;
   if (d.accent && document.activeElement !== $("accent")) { $("accent").value = d.accent; applyAccent(d.accent); }
   $("heard").textContent = t.heard ? `« ${t.heard} »` : "";
   $("pttdetail").textContent = t.detail || (t.whisper === false ? T("Reconnaissance vocale en cours de chargement…", "Speech recognition loading…") : "");
@@ -744,6 +746,10 @@ const ENC = [["discret", "Discret", "Low-key"], ["normal", "Normal", "Normal"], 
 $("encourage").innerHTML = ENC.map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
 $("pttmode").innerHTML = [["hold", "Rester appuyé pour parler", "Hold to talk"], ["toggle", "Appuyer une fois, réappuyer pour couper", "Press once, press again to stop"]]
   .map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
+$("lmumode").innerHTML = [["ask", "Demander (fenêtre de Steam)", "Ask (Steam window)"], ["normal", "Normal (écran)", "Normal (screen)"],
+  ["vr", "VR – SteamVR", "VR – SteamVR"], ["openxr", "VR – OpenXR", "VR – OpenXR"]]
+  .map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
+$("lmumode").onchange = e => fetch("/api/lmu/mode", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
 $("pttmode").onchange = e => fetch("/api/pttmode", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
 $("encourage").onchange = e => fetch("/api/encourage", { method: "POST", body: JSON.stringify({ level: e.target.value }) });
 

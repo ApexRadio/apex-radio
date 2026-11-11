@@ -448,6 +448,72 @@ def repair_command(t: str) -> str | None:
     return out
 
 
+NUM_WORDS = {"un": 1, "premier": 1, "deux": 2, "trois": 3, "quatre": 4, "cinq": 5, "six": 6, "sept": 7, "huit": 8,
+             "neuf": 9, "dix": 10, "onze": 11, "douze": 12, "treize": 13, "quatorze": 14, "quinze": 15}
+
+
+def _wanted_place(t: str) -> int | None:
+    """« P6 », « p 6 », « pe six », « le 6e », « la sixième », « position 6 » -> 6."""
+    m = re.search(r"\bp ?(\d{1,2})\b|\bposition (\d{1,2})\b|\b(\d{1,2}) ?(e|eme|ieme)\b", t)
+    if m:
+        return int(next(g for g in m.groups()[:3] if g))
+    m = re.search(r"\b(?:pe|pee|p) (" + "|".join(NUM_WORDS) + r")\b", t)
+    if m:
+        return NUM_WORDS[m.group(1)]
+    m = re.search(r"\b(" + "|".join(w[:-1] if w.endswith("e") else w for w in NUM_WORDS if w not in ("un", "premier")) + r")ieme\b", t)
+    if m:
+        for w, n in NUM_WORDS.items():
+            if (w[:-1] if w.endswith("e") else w) == m.group(1):
+                return n
+    return None
+
+
+def rival(t: str, s: Snapshot) -> str | None:
+    """Question sur une voiture précise : « où est P6 ? », « P2 roule plus vite ? », « dans quel secteur P6 est plus rapide ? »."""
+    if not s.rivals or re.search(r"\b(je suis|suis je|ma position|ma place)\b", t):
+        return None
+    n = _wanted_place(t)
+    if n is None:
+        return None
+    me_pos = s.class_position or s.position
+    if n == me_pos and not any(r.get("place") == n for r in s.rivals):
+        return L(f"P{n}, c'est toi !", f"P{n}, that's you!")
+    # P = position générale si une voiture de ta catégorie l'occupe, sinon position dans ta catégorie
+    car = next((r for r in s.rivals if r.get("place") == n), None) or next((r for r in s.rivals if r.get("cpos") == n), None)
+    if car is None:
+        return L(f"Je ne vois pas de P{n} dans ta catégorie.", f"I can't see a P{n} in your class.")
+    name = (car.get("name") or "").split(" ")[-1] or L("ce pilote", "that driver")
+    who = f"P{n}, {name},"
+    parts = []
+    g = car.get("gap")
+    if car.get("in_pits"):
+        parts.append(L(f"{who} est aux stands.", f"{who} is in the pits."))
+    elif g is not None:
+        parts.append(L(f"{who} est {_sec(abs(g))} {'devant' if g > 0 else 'derrière'} toi.",
+                       f"{who} is {_sec(abs(g))} {'ahead of' if g > 0 else 'behind'} you."))
+    else:
+        parts.append(L(f"{who} n'est pas dans le même tour que toi.", f"{who} isn't on the same lap as you."))
+    mine, his = s.last_lap, car.get("last_lap")
+    if mine and his:
+        d = his - mine
+        if abs(d) < 0.1:
+            parts.append(L("Vous tournez dans le même rythme.", "You're lapping at the same pace."))
+        else:
+            parts.append(L(f"Il tourne {_f(abs(d))} seconde{'s' if abs(d) >= 2 else ''} {'plus vite' if d < 0 else 'moins vite'} que toi au dernier tour.",
+                           f"He was {_f(abs(d))} s {'quicker' if d < 0 else 'slower'} than you last lap."))
+    if re.search(r"secteur|perd|plus rapide|plus vite|gagne|sector", t):
+        a, b = s.sectors, car.get("sectors")
+        if a and b and all(a) and all(b):
+            diffs = [b[i] - a[i] for i in range(3)]
+            i = min(range(3), key=lambda k: diffs[k])
+            if diffs[i] < -0.05:
+                parts.append(L(f"Il te prend le plus de temps dans le secteur {i + 1}, {_f(-diffs[i])} seconde.",
+                               f"He's quickest against you in sector {i + 1}, {_f(-diffs[i])} s."))
+            else:
+                parts.append(L("Tu es plus rapide que lui dans les trois secteurs.", "You're quicker than him in all three sectors."))
+    return " ".join(parts)
+
+
 def answer(text: str, s: Snapshot, p: Plan) -> str:
     global LAST_TEXT
     c = command(text)
@@ -473,6 +539,9 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
                  "le stand, les écarts, la position ou la météo.",
                  "I hear you, but I didn't get that. Once you're on track, ask me about fuel, tyres, "
                  "pit stop, gaps, position or weather.")
+    rv = rival(t, s)
+    if rv:
+        return rv
     said = chat(t, s, alone=not any(re.search(pattern, t) for pattern, _ in TOPICS))
     replies = []
     for pattern, fn in TOPICS:

@@ -67,6 +67,7 @@ class Snapshot:
     ahead: dict | None = None        # voiture devant dans ta catégorie
     behind: dict | None = None       # voiture derrière dans ta catégorie
     cars: list = field(default_factory=list)  # toutes les voitures, pour la carte
+    rivals: list = field(default_factory=list)  # les autres voitures de ta catégorie (place, cpos, gap, tours…)
     session_code: int = 0            # code LMU de la session (0-13)
     track_len: float = 0.0           # longueur du tour (m)
     tl_steps: int = 0                # limites de piste : avertissements cumulés
@@ -275,6 +276,17 @@ class LMUSource:
                     "sectors": split_sectors(v.mLastSector1, v.mLastSector2, v.mLastLapTime),
                     "in_pits": bool(v.mInPits)}
 
+        # toute ta catégorie, pour les questions sur une position précise (« où est P6 ? »)
+        if me is not None:
+            for k, v in enumerate(same):
+                if v.mIsPlayer:
+                    continue
+                o = other(v)
+                o["cpos"] = k + 1
+                g = gap(v, sc) if k < me else gap(sc, v)
+                o["gap"] = (g if k < me else -g) if g is not None else None   # > 0 : devant toi
+                o["best"] = v.mBestLapTime if v.mBestLapTime > 0 else None
+                s.rivals.append(o)
         if me is not None:
             s.ahead = other(same[me - 1]) if me > 0 else None
             s.behind = other(same[me + 1]) if me + 1 < len(same) else None

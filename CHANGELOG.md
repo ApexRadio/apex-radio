@@ -1,5 +1,13 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.2.11
+- 🇫🇷 Reconnaissance vocale au choix (⚙️ Réglages → Radio et volant) : Rapide, ou Précise, qui te comprend nettement mieux mais répond un peu plus lentement (1,5 Go à télécharger la première fois).
+- 🇬🇧 Choose your voice recognition (⚙️ Settings → Radio & wheel): Fast, or Precise, which understands you much better but answers a bit slower (1.5 GB download the first time).
+- 🇫🇷 Météo à venir : « il va pleuvoir ? », « la météo pour la course ? », « c'est pour les qualifs ou la course ? » donnent le risque de pluie et quand.
+- 🇬🇧 Weather forecast: "will it rain?", "weather for the race?", "for qualifying or the race?" give the rain chance and when.
+- 🇫🇷 Quand tu parles à quelqu'un d'autre micro ouvert, l'ingénieur ne te récite plus tout le point : il te demande de reposer ta question.
+- 🇬🇧 When you talk to someone else with the mic open, the engineer no longer reads the whole update: he asks you to repeat your question.
+
 ## 1.2.10
 - 🇫🇷 Bouton radio au choix : rester appuyé pour parler, ou appuyer une fois : l'ingénieur arrête d'écouter tout seul quand tu as fini ta phrase (tu peux aussi réappuyer pour couper). ⚙️ Réglages → Radio et volant.
 - 🇬🇧 Radio button your way: hold to talk, or press once: the engineer stops listening by itself when you finish your sentence (or press again). ⚙️ Settings → Radio & wheel.

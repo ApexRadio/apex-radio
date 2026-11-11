@@ -154,14 +154,29 @@ class Radio:
     def _load_whisper(self) -> None:
         try:
             from faster_whisper import WhisperModel
-            print("  Reconnaissance vocale : chargement (le 1er lancement télécharge ~480 Mo)…")
-            self._whisper = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8", cpu_threads=min(4, os.cpu_count() or 4),
-                                         download_root=str(LOCAL / "models" / "whisper"))
+            model = "medium" if self.cfg.get("asr") == "precise" else WHISPER_MODEL
+            self.asr_loading = True
+            print(f"  Reconnaissance vocale ({'précise' if model == 'medium' else 'rapide'}) : chargement "
+                  f"(la 1re fois télécharge ~{'1,5 Go' if model == 'medium' else '480 Mo'})…")
+            w = WhisperModel(model, device="cpu", compute_type="int8", cpu_threads=min(4, os.cpu_count() or 4),
+                             download_root=str(LOCAL / "models" / "whisper"))
+            self._whisper = w
+            self.asr_model = model
             print("  Reconnaissance vocale : prête")
         except Exception as e:
             import traceback; traceback.print_exc()
             self.detail = L(f"Reconnaissance vocale indisponible : {e!r}", f"Speech recognition unavailable: {e!r}")
             print("  " + self.detail)
+        finally:
+            self.asr_loading = False
+
+    def set_asr(self, mode: str) -> None:
+        """Change la reconnaissance (rapide = small, précise = medium) ; l'ancienne reste active pendant le chargement."""
+        self.cfg["asr"] = "precise" if mode == "precise" else "fast"
+        save_config(self.cfg)
+        want = "medium" if self.cfg["asr"] == "precise" else WHISPER_MODEL
+        if getattr(self, "asr_model", None) != want and not getattr(self, "asr_loading", False):
+            threading.Thread(target=self._load_whisper, daemon=True).start()
 
     def transcribe(self, audio) -> str:
         try:

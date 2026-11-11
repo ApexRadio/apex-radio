@@ -303,6 +303,7 @@ def loop(state: State, demo: bool) -> None:
                 "accent": state.radio.cfg.get("accent", "bleu"),
                 "encourage": state.radio.cfg.get("encourage", "normal"),
                 "ptt_mode": state.radio.cfg.get("ptt_mode", "hold"),
+                "asr": state.radio.cfg.get("asr", "fast"), "asr_loading": bool(getattr(state.radio, "asr_loading", False)),
                 "lmu_mode": state.radio.cfg.get("lmu_mode", "ask"),
                 "autolaunch_lmu": bool(state.radio.cfg.get("autolaunch_lmu")),
                 "voice": {"on": state.voice.enabled, "engine": state.voice.engine, "volume": state.voice.volume,
@@ -516,6 +517,9 @@ def make_handler(state: State):
                 n = int(self.headers.get("Content-Length") or 0)
                 state.radio.cfg["autolaunch_lmu"] = bool(json.loads(self.rfile.read(n) or b"{}").get("on"))
                 save_config(state.radio.cfg)
+            elif self.path == "/api/asr":
+                n = int(self.headers.get("Content-Length") or 0)
+                state.radio.set_asr(json.loads(self.rfile.read(n) or b"{}").get("mode", "fast"))
             elif self.path == "/api/pttmode":
                 n = int(self.headers.get("Content-Length") or 0)
                 m = json.loads(self.rfile.read(n) or b"{}").get("mode", "hold")

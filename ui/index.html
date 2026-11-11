@@ -337,6 +337,8 @@
       <div class="setrow" style="align-items:center"><span data-en="Mic">Micro</span><select id="mic" aria-label="Micro"></select></div>
       <div class="setrow"><span data-en="Radio button">Bouton radio</span><div class="setctl"><span id="pttbtn2" style="color:var(--accent)">–</span></div></div>
       <button class="act" id="learn" data-en="CHOOSE THE RADIO BUTTON">CHOISIR LE BOUTON RADIO</button>
+      <div class="setrow"><span data-en="Voice recognition">Reconnaissance vocale</span><div class="setctl"><select id="asr" aria-label="Reconnaissance vocale" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
+      <div class="sub" id="asrnote" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Precise: understands you better, but answers ~2× slower (1.5 GB download the first time).">Précise : te comprend mieux, mais répond environ 2 fois moins vite (1,5 Go à télécharger la première fois).</div>
       <div class="setrow"><span data-en="Button use">Utilisation du bouton</span><div class="setctl"><select id="pttmode" aria-label="Bouton radio" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <details id="shortcuts" open style="font-size:13px">
             <summary style="cursor:pointer;color:var(--muted)" data-en="Shortcuts (wheel / keyboard)">Raccourcis (volant / clavier)</summary>
@@ -531,6 +533,10 @@ function render(d) {
   renderOnboard(d);
   if (d.encourage && document.activeElement !== $("encourage")) $("encourage").value = d.encourage;
   if (d.ptt_mode && document.activeElement !== $("pttmode")) $("pttmode").value = d.ptt_mode;
+  if (d.asr && document.activeElement !== $("asr")) $("asr").value = d.asr;
+  if (d.asr_loading) $("asrnote").textContent = T("Chargement de la reconnaissance vocale… (l'ancienne reste active en attendant)", "Loading speech recognition… (the previous one stays active meanwhile)");
+  else if ($("asrnote").dataset.loading) $("asrnote").textContent = T("Reconnaissance vocale prête.", "Speech recognition ready.");
+  $("asrnote").dataset.loading = d.asr_loading ? "1" : "";
   if (d.lmu_mode && document.activeElement !== $("lmumode")) $("lmumode").value = d.lmu_mode;
   if (d.accent && document.activeElement !== $("accent")) { $("accent").value = d.accent; applyAccent(d.accent); }
   $("heard").textContent = t.heard ? `« ${t.heard} »` : "";
@@ -746,6 +752,9 @@ const ENC = [["discret", "Discret", "Low-key"], ["normal", "Normal", "Normal"], 
 $("encourage").innerHTML = ENC.map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
 $("pttmode").innerHTML = [["hold", "Rester appuyé pour parler", "Hold to talk"], ["toggle", "Appuyer une fois (arrêt tout seul à la fin de la phrase)", "Press once (stops by itself when you finish)"]]
   .map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
+$("asr").innerHTML = [["fast", "Rapide", "Fast"], ["precise", "Précise (plus lente)", "Precise (slower)"]]
+  .map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
+$("asr").onchange = e => fetch("/api/asr", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
 $("lmumode").innerHTML = [["ask", "Demander (fenêtre de Steam)", "Ask (Steam window)"], ["normal", "Normal (écran)", "Normal (screen)"],
   ["vr", "VR – SteamVR", "VR – SteamVR"], ["openxr", "VR – OpenXR", "VR – OpenXR"]]
   .map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");

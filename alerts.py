@@ -801,7 +801,10 @@ SKY_EN = ["clear", "few clouds", "cloudy", "overcast", "heavy overcast", "drizzl
 class Weather:
     NODES = ["START", "NODE_25", "NODE_50", "NODE_75", "FINISH"]
 
+    LAST = None   # instance en cours, lue par questions.py (« il va pleuvoir ? »)
+
     def __init__(self, demo: bool = False) -> None:
+        Weather.LAST = self
         self.demo = demo
         self.forecast = []          # [{"at": 0..1, "rain": 0..1, "sky": int, "temp": °C}]
         self.said = set()
@@ -852,6 +855,23 @@ class Weather:
             pass
         finally:
             self._fetching = False
+
+    @classmethod
+    def session_forecast(cls, which: str) -> list:
+        """Prévisions d'une autre séance (PRACTICE / QUALIFY / RACE), lues dans LMU."""
+        try:
+            sess = (lmu_get("/rest/sessions/weather") or {}).get(which) or {}
+        except Exception:
+            return []
+        out = []
+        for i, name in enumerate(cls.NODES):
+            n = sess.get(name)
+            if not n:
+                continue
+            val = lambda k: (n.get(k) or {}).get("currentValue")
+            out.append({"at": i / 4, "rain": (val("WNV_RAIN_CHANCE") or 0) / 100, "sky": int(val("WNV_SKY") or 0),
+                        "temp": val("WNV_TEMPERATURE")})
+        return out
 
     def _announce(self, s, say) -> None:
         if not self.forecast or s.time_left is None:

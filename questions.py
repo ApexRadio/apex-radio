@@ -8,6 +8,7 @@ données de course. Plusieurs sujets dans la même phrase = plusieurs réponses.
 from __future__ import annotations
 
 import re
+import i18n
 import unicodedata
 
 from strategy import Plan
@@ -238,9 +239,59 @@ def position(s: Snapshot, p: Plan) -> str:
     return out + "."
 
 
+def _forecast_text(fc: list, now: float, total: float | None, label: str) -> str:
+    """Résumé des prévisions : pluie prévue (quand, combien) ou temps sec."""
+    try:
+        from alerts import SKY_FR, SKY_EN
+    except Exception:
+        SKY_FR = SKY_EN = []
+    ahead = [n for n in fc if n["at"] >= now - 0.01]
+    if not ahead:
+        return ""
+    wet = [n for n in ahead if n["rain"] >= 0.3]
+    if not wet:
+        return L(f"{label} : pas de pluie prévue.", f"{label}: no rain expected.")
+    n = max(wet, key=lambda x: x["rain"])
+    sky = (SKY_FR if not i18n.en() else SKY_EN)[n["sky"]] if 0 <= n["sky"] < len(SKY_FR) else ""
+    when = ""
+    if total:
+        mins = (n["at"] - now) * total / 60
+        when = (L(" maintenant", " now") if mins < 2 else L(f" dans environ {int(mins)} minutes", f" in about {int(mins)} minutes"))
+    else:
+        when = L([" au départ", " au premier quart", " à mi-séance", " au troisième quart", " vers la fin"][min(4, round(n['at'] * 4))],
+                 [" at the start", " at the first quarter", " at half distance", " at the third quarter", " near the end"][min(4, round(n['at'] * 4))])
+    return L(f"{label} : risque de pluie {_f(n['rain'] * 100, 0)} %{when}{', ' + sky if sky else ''}.",
+             f"{label}: {_f(n['rain'] * 100, 0)} % chance of rain{when}{', ' + sky if sky else ''}.")
+
+
+def forecast_answer(t: str, s: Snapshot) -> str:
+    """« Il va pleuvoir ? », « la météo pour la course ? », « c'est pour les qualifs ou la course ? »."""
+    try:
+        from alerts import Weather
+    except Exception:
+        return ""
+    parts = []
+    want_q = re.search(r"qualif|calif|kalif|qualy|qualifying", t)
+    want_r = re.search(r"\bcourse\b|\brace\b", t)
+    cur = Weather.LAST.forecast if Weather.LAST else []
+    if cur and not (want_q or want_r):
+        total = (s.elapsed + s.time_left) if s.time_left else None
+        now = s.elapsed / total if total else 0.0
+        parts.append(_forecast_text(cur, now, total, L("Pour cette séance", "This session")))
+    if want_q:
+        parts.append(_forecast_text(Weather.session_forecast("QUALIFY"), 0.0, None, L("Pour les qualifs", "Qualifying")))
+    if want_r or (not parts and not want_q):
+        parts.append(_forecast_text(Weather.session_forecast("RACE"), 0.0, None, L("Pour la course", "The race")))
+    return " ".join(x for x in parts if x)
+
+
 def weather(s: Snapshot, p: Plan) -> str:
     out = L(f"{p.weather or 'Sec'}. Air {_f(s.air_temp, 0)} degrés, piste {_f(s.track_temp, 0)}.",
             f"{p.weather or 'Dry'}. Air {_f(s.air_temp, 0)} degrees, track {_f(s.track_temp, 0)}.")
+    if re.search(r"pleuv|pluie|prevu|prevision|va (faire|y avoir)|course|qualif|calif|tout a l heure|plus tard|forecast|later|rain|qualy", LAST_TEXT):
+        fc = forecast_answer(LAST_TEXT, s)
+        if fc:
+            out += " " + fc
     if p.tyre_compound == "pluie":
         out += L(" Je te conseille les pneus pluie au prochain arrêt.", " I'd go to wets at the next stop.")
     elif p.tyre_compound == "slicks":
@@ -266,7 +317,7 @@ TOPICS = [
     (r"ecart|devant|derriere|\bgap|attaque|revient|remont|rapproch|monte fort|montant fort|ahead|behind|in front|catching|closing", gaps),
     (r"repar|degat|degare|dommage|abime|casse|etat de (la|ma) (voiture|caisse|bagnole)|damage|repair", repairs),
     (r"position|place|classement|placement|cassement|quelle p\b|combien ?t?i?eme|combien siam|combien.*(je suis|suis je)|je suis ou\b|where am i|what p\b", position),
-    (r"meteo|pluie|pleut|pleuvoir|mouill|humid|sec\b|temperature (de la piste|piste|de l air|exterieur)|nuage|quel temps|temps qu il fait|temps il fait|weather|\brain|\bwet\b|\bdry\b|cloud", weather),
+    (r"meteo|pluie|pleut|pleuvoir|mouill|humid|sec\b|temperature (de la piste|piste|de l air|exterieur)|nuage|quel temps|temps qu il fait|temps il fait|sous la pluie|a la pluie|qualif|calif|weather|\brain|\bwet\b|\bdry\b|cloud", weather),
     (r"chrono|dernier tour|meilleur tour|temps au tour|mon tour|rythme|tourne en|je tourne|lap time|last lap|best lap|\bpace\b", laptimes),
     (r"combien de tour|tours restant|reste.*tour|temps restant|reste.*minute|reste combien de temps|combien de temps.*reste|\bfin\b|arrivee|damier|how many laps|laps (left|to go|remaining)|time (left|remaining)|finish", laps),
     (r"point complet|fais (moi )?le point|\ble point\b|situation|resume|tout va|comment ca va|ca donne quoi|ca se passe|recap|update|summary|how are we|status|how s it going", status),
@@ -584,6 +635,10 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
                 continue
             replies.append((fn, fn(s, p)))
     if not replies and not said:
-        # jamais sans réponse : on donne le point complet
+        # longue phrase sans question claire (tu parlais peut-être à quelqu'un d'autre) : on demande de répéter
+        if len(t.split()) > 9:
+            return L("Je n'ai pas compris ta question. Pose-la-moi en une phrase courte.",
+                     "I didn't get your question. Ask me in one short sentence.")
+        # phrase courte : on donne le point complet
         return L("Pas sûr d'avoir compris, voilà le point. ", "Not sure I got that, here's the update. ") + status(s, p)
     return " ".join(said + [r[1] for r in replies[:3]])

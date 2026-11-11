@@ -78,7 +78,12 @@ class Spotter:
         now = time.monotonic()
         x, z = m["me"]
         self.hist.append((now, x, z))
-        self.hist = [h for h in self.hist if now - h[0] < 0.35]
+        # 0,35 s d'historique pour connaître ta direction ; si les lectures arrivent espacées (PC chargé),
+        # on garde au moins la précédente (jusqu'à 1 s) au lieu de te croire à l'arrêt
+        keep = [h for h in self.hist if now - h[0] < 0.35]
+        if len(keep) < 2 and len(self.hist) >= 2 and now - self.hist[-2][0] < 1.0:
+            keep = self.hist[-2:]
+        self.hist = keep
         t0, x0, z0 = self.hist[0]
         dx, dz = x - x0, z - z0
         dist = math.hypot(dx, dz)

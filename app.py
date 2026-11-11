@@ -233,9 +233,17 @@ def loop(state: State, demo: bool) -> None:
     def fast_loop():
         """Lecture rapide (50 fois/s) de la dynamique pour l'analyse du comportement."""
         k = 0
+        n_ok, t_rate = 0, time.monotonic()
         while True:
             try:
-                beh.feed(source.fast_sample())
+                m = source.fast_sample()
+                if m:
+                    n_ok += 1
+                if time.monotonic() - t_rate >= 60:
+                    if n_ok:   # diagnostic dans le journal : ~50/s attendu (moins = PC trop chargé)
+                        print(f"  Lecture rapide : {n_ok / (time.monotonic() - t_rate):.0f}/s")
+                    n_ok, t_rate = 0, time.monotonic()
+                beh.feed(m)
                 k += 1
                 if k % 2 == 0:
                     spotter.feed(source.spot_sample())
@@ -851,13 +859,8 @@ def main() -> None:
     sys.stdout = _Tee(sys.stdout, log)
     sys.stderr = _Tee(sys.stderr, log)
     print(f"Python {sys.version.split()[0]} · {sys.platform}")
-    if sys.platform == "win32":
-        # priorité « inférieure à la normale » : le jeu passe toujours avant Apex
-        try:
-            import ctypes
-            ctypes.windll.kernel32.SetPriorityClass(ctypes.windll.kernel32.GetCurrentProcess(), 0x00004000)
-        except Exception:
-            pass
+    # (1.2.10 mettait Apex en priorité « inférieure à la normale » : quand le jeu occupe le processeur, la lecture
+    # rapide (spotter, analyse du setup) n'était plus assez souvent lue. On reste en priorité normale.)
     ensure_packages()
     ap = argparse.ArgumentParser()
     ap.add_argument("--demo", action="store_true", help="course simulée, sans le jeu")

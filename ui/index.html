@@ -337,6 +337,7 @@
       <div class="setrow" style="align-items:center"><span data-en="Mic">Micro</span><select id="mic" aria-label="Micro"></select></div>
       <div class="setrow"><span data-en="Radio button">Bouton radio</span><div class="setctl"><span id="pttbtn2" style="color:var(--accent)">–</span></div></div>
       <button class="act" id="learn" data-en="CHOOSE THE RADIO BUTTON">CHOISIR LE BOUTON RADIO</button>
+      <div class="setrow"><span data-en="Button use">Utilisation du bouton</span><div class="setctl"><select id="pttmode" aria-label="Bouton radio" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <details id="shortcuts" open style="font-size:13px">
             <summary style="cursor:pointer;color:var(--muted)" data-en="Shortcuts (wheel / keyboard)">Raccourcis (volant / clavier)</summary>
             <div id="sclist" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"></div>
@@ -344,6 +345,7 @@
     </section>
     <section class="setsec"><h2>🏁 <span data-en="Game">Jeu</span></h2>
       <div class="setrow"><label for="autolmu" data-en="Launch Le Mans Ultimate when Apex opens">Lancer Le Mans Ultimate à l'ouverture d'Apex</label><div class="setctl"><input type="checkbox" id="autolmu"></div></div>
+      <div class="setrow"><span data-en="Launch mode">Mode de lancement</span><div class="setctl"><select id="lmumode" aria-label="Mode de lancement" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <button id="lmulaunch2" data-en="▶ LAUNCH LE MANS ULTIMATE">▶ LANCER LE MANS ULTIMATE</button>
     </section>
     <section class="setsec"><h2>🎨 <span data-en="Look">Apparence</span></h2>
@@ -356,6 +358,13 @@
       <div class="row" style="gap:8px;flex-wrap:wrap;justify-content:flex-start">
         <a id="verprev" class="pill" href="#" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none" hidden></a>
         <a id="verall" class="pill" href="https://github.com/ApexRadio/apex-radio/releases" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none" data-en="All versions">Toutes les versions</a>
+      </div>
+    </section>
+    <section class="setsec"><h2>❤️ <span data-en="Support Apex Radio">Soutenir Apex Radio</span></h2>
+      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Apex Radio is free and will stay free. If it helps you, you can buy me a coffee or support it every month.">Apex Radio est gratuit et le restera. S'il t'aide, tu peux m'offrir un café ou le soutenir chaque mois.</div>
+      <div class="row" style="gap:8px;flex-wrap:wrap;justify-content:flex-start">
+        <a class="pill" href="https://ko-fi.com/apexradio" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none" data-en="☕ Buy me a coffee (Ko-fi)">☕ M'offrir un café (Ko-fi)</a>
+        <a class="pill" href="https://www.patreon.com/lolotuner" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none">❤️ Patreon</a>
       </div>
     </section>
   </div>
@@ -521,6 +530,8 @@ function render(d) {
   renderShortcuts(t);
   renderOnboard(d);
   if (d.encourage && document.activeElement !== $("encourage")) $("encourage").value = d.encourage;
+  if (d.ptt_mode && document.activeElement !== $("pttmode")) $("pttmode").value = d.ptt_mode;
+  if (d.lmu_mode && document.activeElement !== $("lmumode")) $("lmumode").value = d.lmu_mode;
   if (d.accent && document.activeElement !== $("accent")) { $("accent").value = d.accent; applyAccent(d.accent); }
   $("heard").textContent = t.heard ? `« ${t.heard} »` : "";
   $("pttdetail").textContent = t.detail || (t.whisper === false ? T("Reconnaissance vocale en cours de chargement…", "Speech recognition loading…") : "");
@@ -699,7 +710,7 @@ function drawMap(d) {
 async function tick() {
   try { const r = await fetch("/api/state", { cache: "no-store" }); render(await r.json()); }
   catch { $("statustxt").textContent = T("Appli arrêtée", "App stopped"); $("status").className = "pill"; }
-  setTimeout(tick, 300);
+  setTimeout(tick, document.hidden ? 2000 : 300);   // fenêtre réduite : on rafraîchit beaucoup moins souvent
 }
 function loadMics() {
   fetch("/api/mics").then(r => r.json()).then(list => {
@@ -733,6 +744,13 @@ $("accent").onchange = e => { applyAccent(e.target.value);
 // ---- niveau d'encouragements
 const ENC = [["discret", "Discret", "Low-key"], ["normal", "Normal", "Normal"], ["motivant", "Motivant", "Hype"]];
 $("encourage").innerHTML = ENC.map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
+$("pttmode").innerHTML = [["hold", "Rester appuyé pour parler", "Hold to talk"], ["toggle", "Appuyer une fois (arrêt tout seul à la fin de la phrase)", "Press once (stops by itself when you finish)"]]
+  .map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
+$("lmumode").innerHTML = [["ask", "Demander (fenêtre de Steam)", "Ask (Steam window)"], ["normal", "Normal (écran)", "Normal (screen)"],
+  ["vr", "VR – SteamVR", "VR – SteamVR"], ["openxr", "VR – OpenXR", "VR – OpenXR"]]
+  .map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
+$("lmumode").onchange = e => fetch("/api/lmu/mode", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
+$("pttmode").onchange = e => fetch("/api/pttmode", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
 $("encourage").onchange = e => fetch("/api/encourage", { method: "POST", body: JSON.stringify({ level: e.target.value }) });
 
 // ---- raccourcis : spotter, radio, mode silence
@@ -788,7 +806,11 @@ async function wsLoad(keepChecks) {
     fillFiles();
   }
   $("wscurrent").textContent = WS.factory ? T("Setup en cours : setup d'usine (pas encore enregistré)", "Current setup: default setup (not saved yet)") : WS.current ? T(`Setup en cours : ${WS.current}`, `Current setup: ${WS.current}`) : T("Aucun setup choisi pour ce circuit.", "No setup chosen for this track.");
-  if (WS.mismatch) $("wscurrent").textContent += "  ⚠️ " + T(`Ce setup a été fait pour la ${carLabel(WS.mismatch.setup)}, mais tu es en ${carLabel(WS.mismatch.car)}.`, `This setup was made for the ${carLabel(WS.mismatch.setup)}, but you're in the ${carLabel(WS.mismatch.car)}.`);
+  if (WS.mismatch) {
+    const lmp2 = ["LMP2", "LMP2_ELMS"].includes(WS.mismatch.setup) && ["LMP2", "LMP2_ELMS"].includes(WS.mismatch.car);
+    $("wscurrent").textContent += "  ⚠️ " + T(`Ce setup a été fait pour la ${carLabel(WS.mismatch.setup)}, mais tu es en ${carLabel(WS.mismatch.car)}.`, `This setup was made for the ${carLabel(WS.mismatch.setup)}, but you're in the ${carLabel(WS.mismatch.car)}.`)
+      + (lmp2 ? T(" Même voiture : la copie APEX sera convertie pour ta version.", " Same car: the APEX copy will be converted for your version.") : "");
+  }
   const ch = WS.changes || [];
   if (WS.factory) $("wsstatus").textContent = WS.error || "";
   else if (!WS.current) $("wsstatus").textContent = T("Choisis d'abord le setup chargé dans le jeu (étape 1).", "First choose the setup loaded in the game (step 1).");
@@ -829,7 +851,11 @@ async function wsLoad(keepChecks) {
 function fillFiles() {
   const f = (WS.folders || []).find(x => x.name === $("wsfolder").value);
   const files = f ? f.files : [];
-  $("wsfile").innerHTML = files.map(n => `<option ${n === WS.current ? "selected" : ""}>${esc(n)}</option>`).join("");
+  const tags = (f && f.tags) || {};
+  const mine = WS.series || "";
+  // les setups de la version en piste (ELMS / WEC) d'abord
+  const sorted = mine ? [...files].sort((a, b) => ((tags[b] === mine) - (tags[a] === mine))) : files;
+  $("wsfile").innerHTML = sorted.map(n => `<option value="${esc(n)}" ${n === WS.current ? "selected" : ""}>${esc(n)}${tags[n] && !n.toUpperCase().includes(tags[n]) ? ` (${tags[n]})` : ""}</option>`).join("");
 }
 $("wsfolder").onchange = fillFiles;
 function renderRace() {
@@ -892,6 +918,7 @@ $("wscreate").onclick = async () => {
   if (!keys.length) return;
   const r = await (await fetch("/api/setup/create", { method: "POST", body: JSON.stringify({ keys }) })).json();
   $("wsresult").innerHTML = r.error ? `<span class="bad">${esc(r.error)}</span>` : T(`<span class="good">${esc(r.file)} mis à jour (${esc(r.version)})</span> — recharge-le au garage dans LMU, puis roule quelques tours pour comparer.`, `<span class="good">${esc(r.file)} updated (${esc(r.version)})</span> — reload it in the LMU garage, then do a few laps to compare.`);
+  if (!r.error && r.converted) $("wsresult").innerHTML += "<br>" + T(`Ton setup de départ était ${esc(r.converted[0])} : j'ai converti la copie APEX pour la LMP2 ${esc(r.converted[1])} (même voiture, Oreca 07). Vérifie les réglages dans le garage avant de rouler.`, `Your base setup was ${esc(r.converted[0])}: I converted the APEX copy for the LMP2 ${esc(r.converted[1])} (same car, Oreca 07). Check the settings in the garage before driving.`);
   wsLoad(false);
 };
 tick();

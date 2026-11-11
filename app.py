@@ -204,6 +204,13 @@ def loop(state: State, demo: bool) -> None:
         if k in warned_setup:
             return
         warned_setup.add(k)
+        if {m["setup"], m["car"]} <= {"LMP2", "LMP2_ELMS"}:
+            say(None, i18n.L(
+                f"Ton setup {m['file'][:-4]} est fait pour la {car_label(m['setup'])}, et tu es en {car_label(m['car'], sn.car)}. "
+                "Pas de souci : c'est la même voiture, je convertirai la copie APEX pour ta version.",
+                f"Your setup {m['file'][:-4]} is made for the {car_label(m['setup'])}, and you're in the {car_label(m['car'], sn.car)}. "
+                "No problem: it's the same car, I'll convert the APEX copy for your version."), urgent=False)
+            return
         say(None, i18n.L(
             f"Attention, ton setup {m['file'][:-4]} a été fait pour la {car_label(m['setup'])}, "
             f"mais tu es en {car_label(m['car'], sn.car)}. Charge plutôt un setup fait pour cette voiture.",
@@ -295,6 +302,8 @@ def loop(state: State, demo: bool) -> None:
                 "radio": list(eng.radio),
                 "accent": state.radio.cfg.get("accent", "bleu"),
                 "encourage": state.radio.cfg.get("encourage", "normal"),
+                "ptt_mode": state.radio.cfg.get("ptt_mode", "hold"),
+                "lmu_mode": state.radio.cfg.get("lmu_mode", "ask"),
                 "autolaunch_lmu": bool(state.radio.cfg.get("autolaunch_lmu")),
                 "voice": {"on": state.voice.enabled, "engine": state.voice.engine, "volume": state.voice.volume,
                           "quiet": state.voice.quiet, "choice": voices.current_id(), "list": voices.catalog(),
@@ -497,10 +506,20 @@ def make_handler(state: State):
                 target = (json.loads(self.rfile.read(n) or b"{}") if n else {}).get("target", "ptt")
                 state.radio.start_learning(target)
             elif self.path == "/api/lmu/launch":
-                launch_lmu()
+                launch_lmu(state.radio.cfg.get("lmu_mode", "ask"))
+            elif self.path == "/api/lmu/mode":
+                n = int(self.headers.get("Content-Length") or 0)
+                m = json.loads(self.rfile.read(n) or b"{}").get("mode", "ask")
+                state.radio.cfg["lmu_mode"] = m if m in ("ask", "normal", "vr", "openxr") else "ask"
+                save_config(state.radio.cfg)
             elif self.path == "/api/lmu/autolaunch":
                 n = int(self.headers.get("Content-Length") or 0)
                 state.radio.cfg["autolaunch_lmu"] = bool(json.loads(self.rfile.read(n) or b"{}").get("on"))
+                save_config(state.radio.cfg)
+            elif self.path == "/api/pttmode":
+                n = int(self.headers.get("Content-Length") or 0)
+                m = json.loads(self.rfile.read(n) or b"{}").get("mode", "hold")
+                state.radio.cfg["ptt_mode"] = "toggle" if m == "toggle" else "hold"
                 save_config(state.radio.cfg)
             elif self.path == "/api/encourage":
                 n = int(self.headers.get("Content-Length") or 0)
@@ -757,17 +776,27 @@ def set_setups_dir(state, raw: str) -> dict:
     return {"ok": False, "error": i18n.L("Ce dossier ne contient pas les setups de LMU.", "This folder doesn't contain LMU setups.")}
 
 
-def launch_lmu() -> bool:
-    """Lance Le Mans Ultimate par Steam : steam.exe -applaunch (pas de fenêtre de confirmation),
-    sinon le lien steam://rungameid/…"""
+# options de lancement de LMU dans Steam (appinfo) : 0 = normal, 2 = « vr » (+VR, SteamVR), 3 = « openxr » (+XR)
+LMU_MODES = {"normal": "default", "vr": "vr", "openxr": "openxr"}
+
+
+def launch_lmu(mode: str = "ask") -> bool:
+    """Lance Le Mans Ultimate par Steam. mode « ask » : steam.exe -applaunch (Steam propose ses options s'il y en a) ;
+    « normal » / « vr » / « openxr » : on demande directement cette option à Steam (steam://launch/<id>/<type>)."""
     url = f"steam://rungameid/{LMU_STEAM_ID}"
     try:
         if sys.platform == "win32":
             exe = _steam_exe()
-            if exe:
-                import subprocess
-                subprocess.Popen([exe, "-applaunch", str(LMU_STEAM_ID)], close_fds=True,
-                                 creationflags=getattr(subprocess, "DETACHED_PROCESS", 0))
+            import subprocess
+            flags = getattr(subprocess, "DETACHED_PROCESS", 0)
+            if mode in LMU_MODES:
+                url = f"steam://launch/{LMU_STEAM_ID}/{LMU_MODES[mode]}"
+                if exe:
+                    subprocess.Popen([exe, url], close_fds=True, creationflags=flags)
+                else:
+                    os.startfile(url)
+            elif exe:
+                subprocess.Popen([exe, "-applaunch", str(LMU_STEAM_ID)], close_fds=True, creationflags=flags)
             else:
                 os.startfile(url)
         else:
@@ -784,7 +813,7 @@ def autolaunch_lmu(state) -> None:
     """Option : si LMU n'est pas déjà lancé quelques secondes après l'ouverture d'Apex, on le démarre."""
     time.sleep(6)
     if state.radio.cfg.get("autolaunch_lmu") and not getattr(state.snap, "connected", False):
-        launch_lmu()
+        launch_lmu(state.radio.cfg.get("lmu_mode", "ask"))
 
 
 def main() -> None:
@@ -792,6 +821,13 @@ def main() -> None:
     sys.stdout = _Tee(sys.stdout, log)
     sys.stderr = _Tee(sys.stderr, log)
     print(f"Python {sys.version.split()[0]} · {sys.platform}")
+    if sys.platform == "win32":
+        # priorité « inférieure à la normale » : le jeu passe toujours avant Apex
+        try:
+            import ctypes
+            ctypes.windll.kernel32.SetPriorityClass(ctypes.windll.kernel32.GetCurrentProcess(), 0x00004000)
+        except Exception:
+            pass
     ensure_packages()
     ap = argparse.ArgumentParser()
     ap.add_argument("--demo", action="store_true", help="course simulée, sans le jeu")

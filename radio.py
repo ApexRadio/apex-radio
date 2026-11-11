@@ -27,8 +27,11 @@ from i18n import L
 
 PROMPT_EN = ("Race car radio. Fuel, consumption, energy, tyres, wear, pit, box, stop, "
              "gap ahead, behind, position, weather, rain, laps left, lap time.")
-PROMPT = ("Radio course automobile. Essence, conso, énergie, pneus, usure, stand, box, arrêt, "
-          "écart devant, derrière, position, météo, pluie, tours restants, chrono.")
+PROMPT = ("Radio d'ingénieur de course, Le Mans Ultimate. Questions du pilote : combien il me reste d'essence ? "
+          "C'est quoi la météo ? Il va pleuvoir ? Est-ce qu'il remonte derrière ? P6 revient ? Je reprends du temps devant ? "
+          "Dans quel secteur je perds du temps ? L'état de mes pneus ? Quand est-ce que je rentre au stand ? Prépare l'arrêt. "
+          "Répare la carrosserie. Dégâts, écart, position, classement, tours restants, chrono, meilleur tour, pénalité, setup, "
+          "sous-virage, survirage, répète, silence. ELMS, WEC, LMP2, Hypercar, GT3.")
 
 
 def load_config() -> dict:
@@ -152,7 +155,7 @@ class Radio:
         try:
             from faster_whisper import WhisperModel
             print("  Reconnaissance vocale : chargement (le 1er lancement télécharge ~480 Mo)…")
-            self._whisper = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8",
+            self._whisper = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8", cpu_threads=min(4, os.cpu_count() or 4),
                                          download_root=str(LOCAL / "models" / "whisper"))
             print("  Reconnaissance vocale : prête")
         except Exception as e:
@@ -161,18 +164,57 @@ class Radio:
             print("  " + self.detail)
 
     def transcribe(self, audio) -> str:
-        segs, _ = self._whisper.transcribe(audio, language=i18n.LANG, beam_size=1, initial_prompt=PROMPT_EN if i18n.en() else PROMPT,
+        try:
+            import numpy as np
+            peak = float(np.max(np.abs(audio))) if len(audio) else 0.0
+            if 0.005 < peak < 0.5:
+                audio = (audio * (0.7 / peak)).astype(audio.dtype)   # micro trop bas : on remonte le volume
+        except Exception:
+            pass
+        segs, _ = self._whisper.transcribe(audio, language=i18n.LANG, beam_size=3, initial_prompt=PROMPT_EN if i18n.en() else PROMPT,
                                            condition_on_previous_text=False, vad_filter=False)
-        return " ".join(s.text.strip() for s in segs).strip()
+        text = " ".join(s.text.strip() for s in segs).strip()
+        self._keep_clip(audio, text)
+        return text
+
+    def _keep_clip(self, audio, text: str) -> None:
+        """Garde les 30 dernières questions (son + texte compris) sur le PC, dans %LOCALAPPDATA%\\Apex Radio\\questions,
+        pour améliorer la compréhension. Rien n'est envoyé nulle part."""
+        try:
+            import numpy as np, wave
+            d = LOCAL / "questions"
+            d.mkdir(parents=True, exist_ok=True)
+            stamp = time.strftime("%Y%m%d-%H%M%S")
+            pcm = (np.clip(audio, -1, 1) * 32767).astype("<i2").tobytes()
+            with wave.open(str(d / f"{stamp}.wav"), "wb") as w:
+                w.setnchannels(1); w.setsampwidth(2); w.setframerate(RATE); w.writeframes(pcm)
+            (d / f"{stamp}.txt").write_text(text, encoding="utf-8")
+            files = sorted(d.glob("*.wav"))
+            for f in files[:-30]:
+                f.unlink(missing_ok=True)
+                f.with_suffix(".txt").unlink(missing_ok=True)
+        except Exception:
+            pass
 
     # ------------------------------------------------------------- micro
     def _start_rec(self) -> None:
         import sounddevice as sd
         self._frames = []
 
+        self._noise, self._voice_t, self._speech = None, 0.0, False
+
         def cb(indata, frames, t, status):
             self._frames.append(indata.copy())
             self.level = max(self.level * 0.8, float(abs(indata).max()))
+            # détection de la voix (mode « appuyer une fois » : arrêt tout seul quand tu as fini de parler)
+            rms = float((indata ** 2).mean()) ** 0.5
+            if self._noise is None or rms < self._noise:
+                self._noise = rms                     # le bruit de fond, c'est le niveau le plus bas entendu
+            elif rms < self._noise * 1.5:
+                self._noise = self._noise * 0.95 + rms * 0.05
+            if rms > max(0.015, (self._noise or 0) * 3):
+                self._voice_t = time.time()
+                self._speech = True
 
         dev = self.cfg.get("mic")
         self.level = 0.0
@@ -249,7 +291,16 @@ class Radio:
         pg = self._pg
         if pg is None:
             return
+        b = self.cfg.get("ptt") or {}
         for ev in pg.event.get():
+            if ev.type == pg.JOYBUTTONDOWN and b.get("type") != "key":
+                # appui même très bref sur le bouton radio (le mode « appuyer une fois » ne doit rien rater)
+                j = self._joys.get(getattr(ev, "instance_id", None))
+                try:
+                    if j is not None and j.get_guid() == b.get("guid") and ev.button == b.get("button"):
+                        self._ptt_edge = True
+                except Exception:
+                    pass
             if ev.type == pg.JOYDEVICEADDED:
                 j = pg.joystick.Joystick(ev.device_index)
                 self._joys[j.get_instance_id()] = j
@@ -267,6 +318,14 @@ class Radio:
             except Exception:
                 pass
         return out
+
+    def _key_tapped(self) -> bool:
+        """Touche clavier appuyée depuis le dernier passage (même relâchée entre-temps)."""
+        b = self.cfg.get("ptt") or {}
+        if b.get("type") != "key" or sys.platform != "win32" or self.cfg.get("ptt_mode") != "toggle":
+            return False
+        import ctypes
+        return bool(ctypes.windll.user32.GetAsyncKeyState(b["vk"]) & 0x0001)
 
     def _ptt_pressed(self) -> bool:
         return self._pressed(self.cfg.get("ptt"))
@@ -353,9 +412,39 @@ class Radio:
                     continue
                 self._check_shortcuts()
                 now = self._ptt_pressed()
-                if now and not pressed and self.state in ("prêt", "erreur"):
+                toggle = self.cfg.get("ptt_mode") == "toggle"
+                ev_edge = getattr(self, "_ptt_edge", False)
+                if toggle and (now != pressed or ev_edge):
+                    # journal de diagnostic : chaque changement du bouton radio
+                    print(f"  [bouton radio] {'appuyé' if now else 'relâché'}{' (événement)' if ev_edge else ''} · état {self.state}")
+                edge = (now and not pressed) or ev_edge or self._key_tapped()
+                self._ptt_edge = False
+                if toggle:
+                    # appuyer une fois = parler, réappuyer = couper (et coupure de sécurité au bout de 20 s).
+                    # Les 0,4 premières secondes sont ignorées : un rebond du bouton ne coupe pas tout de suite.
+                    age = time.time() - getattr(self, "_rec_t0", 0)
+                    quiet = time.time() - getattr(self, "_voice_t", 0)
+                    done_talking = getattr(self, "_speech", False) and age > 1.0 and quiet > 1.3   # tu as fini ta phrase
+                    nothing = not getattr(self, "_speech", False) and age > 8                       # rien dit en 8 s
+                    if self.state == "écoute" and ((edge and age > 0.4) or age > 20 or done_talking or nothing):
+                        why = (" (fin de ta phrase)" if done_talking and not edge else " (rien entendu)" if nothing and not edge
+                               else " (20 s, coupure de sécurité)" if not edge else "")
+                        print("  Bouton radio : fin d'écoute" + why)
+                        audio = self._stop_rec()
+                        threading.Thread(target=self._process, args=(audio,), daemon=True).start()
+                        pressed = now
+                        time.sleep(0.02)
+                        continue
+                    if self.state == "écoute":
+                        pressed = now
+                        time.sleep(0.02)
+                        continue
+                if (edge if toggle else (now and not pressed)) and self.state in ("prêt", "erreur"):
                     try:
                         self._start_rec()
+                        self._rec_t0 = time.time()
+                        if toggle:
+                            print("  Bouton radio : début d'écoute (parle, j'arrête toute seule à la fin de ta phrase)")
                         self.state = "écoute"
                         self.detail = ""
                     except Exception as e:
@@ -368,7 +457,7 @@ class Radio:
                                             f"Microphone unavailable: {e!r}. Pick your mic in the list below, and check "
                                             "Windows Settings > Sound > Input (default mic) and Privacy > Microphone.")
                         print("  " + self.detail)
-                elif not now and pressed and self.state == "écoute":
+                elif not toggle and not now and pressed and self.state == "écoute":
                     audio = self._stop_rec()
                     threading.Thread(target=self._process, args=(audio,), daemon=True).start()
                 pressed = now

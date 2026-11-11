@@ -821,6 +821,13 @@ def main() -> None:
     sys.stdout = _Tee(sys.stdout, log)
     sys.stderr = _Tee(sys.stderr, log)
     print(f"Python {sys.version.split()[0]} · {sys.platform}")
+    if sys.platform == "win32":
+        # priorité « inférieure à la normale » : le jeu passe toujours avant Apex
+        try:
+            import ctypes
+            ctypes.windll.kernel32.SetPriorityClass(ctypes.windll.kernel32.GetCurrentProcess(), 0x00004000)
+        except Exception:
+            pass
     ensure_packages()
     ap = argparse.ArgumentParser()
     ap.add_argument("--demo", action="store_true", help="course simulée, sans le jeu")

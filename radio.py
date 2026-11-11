@@ -155,7 +155,7 @@ class Radio:
         try:
             from faster_whisper import WhisperModel
             print("  Reconnaissance vocale : chargement (le 1er lancement télécharge ~480 Mo)…")
-            self._whisper = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8",
+            self._whisper = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8", cpu_threads=min(4, os.cpu_count() or 4),
                                          download_root=str(LOCAL / "models" / "whisper"))
             print("  Reconnaissance vocale : prête")
         except Exception as e:

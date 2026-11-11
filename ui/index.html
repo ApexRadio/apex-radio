@@ -710,7 +710,7 @@ function drawMap(d) {
 async function tick() {
   try { const r = await fetch("/api/state", { cache: "no-store" }); render(await r.json()); }
   catch { $("statustxt").textContent = T("Appli arrêtée", "App stopped"); $("status").className = "pill"; }
-  setTimeout(tick, 300);
+  setTimeout(tick, document.hidden ? 2000 : 300);   // fenêtre réduite : on rafraîchit beaucoup moins souvent
 }
 function loadMics() {
   fetch("/api/mics").then(r => r.json()).then(list => {

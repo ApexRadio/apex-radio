@@ -21,6 +21,8 @@
 - 🇬🇧 "How are my tyres?": clearer answer (like new, good, worn…), rubber left, most worn tyre, temperature vs ideal and front/rear balance.
 - 🇫🇷 Lancer LMU en VR : dans ⚙️ Réglages → Jeu, « Mode de lancement » permet de choisir Normal, VR – SteamVR ou VR – OpenXR (ou de laisser Steam demander). Idée d'un membre du Discord, merci !
 - 🇬🇧 Launch LMU in VR: ⚙️ Settings → Game → "Launch mode": Normal, VR – SteamVR or VR – OpenXR (or let Steam ask). Idea from a Discord member, thanks!
+- 🇫🇷 Performances : Apex tourne en priorité basse (le jeu passe toujours avant), la reconnaissance vocale utilise au plus 4 cœurs, et le tableau de bord se met en veille quand la fenêtre est réduite.
+- 🇬🇧 Performance: Apex runs at low priority (the game always comes first), speech recognition uses at most 4 cores, and the dashboard idles when its window is minimized.
 
 ## 🇫🇷 Installation
 Télécharge **ApexRadio-Setup.exe** ci-dessous, lance-le, clique sur Suivant. C'est tout : Python et tous les composants sont inclus.

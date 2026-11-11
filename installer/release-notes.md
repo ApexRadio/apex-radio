@@ -1,6 +1,8 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
 ## 🆕 1.2.11
+- 🇫🇷 Correctif : le spotter et l'analyse du setup refonctionnent (depuis la 1.2.10, ils ne recevaient plus assez de données quand le jeu occupait le processeur).
+- 🇬🇧 Fix: the spotter and setup analysis work again (since 1.2.10, they weren't getting enough data while the game was using the CPU).
 - 🇫🇷 Reconnaissance vocale au choix (⚙️ Réglages → Radio et volant) : Rapide, ou Précise, qui te comprend nettement mieux mais répond un peu plus lentement (1,5 Go à télécharger la première fois).
 - 🇬🇧 Choose your voice recognition (⚙️ Settings → Radio & wheel): Fast, or Precise, which understands you much better but answers a bit slower (1.5 GB download the first time).
 - 🇫🇷 Météo à venir : « il va pleuvoir ? », « la météo pour la course ? », « c'est pour les qualifs ou la course ? » donnent le risque de pluie et quand.

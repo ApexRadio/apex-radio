@@ -48,7 +48,7 @@ jobs:
       - name: Test de démarrage (import de l'appli)
         shell: pwsh
         working-directory: build\app
-        run: python\python.exe -c "import strategy, questions, laptimes, behavior, setups, tactics, alerts, debrief, i18n, updates, desktop, pystray; print('appli OK')"
+        run: python\python.exe -c "import phrases, strategy, questions, laptimes, behavior, setups, tactics, alerts, debrief, i18n, updates, desktop, pystray; print('appli OK')"
 
       - name: Test de la fenêtre intégrée (WebView2)
         shell: pwsh

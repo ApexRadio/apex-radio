@@ -17,6 +17,7 @@ from dataclasses import dataclass, field
 
 from telemetry import Snapshot
 from i18n import L, dec
+from phrases import pick, dress
 
 MARGIN_LAPS = 0.5        # marge de sécurité en tours d'essence / énergie (quantité à mettre, arrêts nécessaires)
 BOX_RESERVE = 0.2        # réserve gardée en arrivant au stand : on roule jusqu'au dernier tour possible
@@ -79,6 +80,7 @@ class Engineer:
             if key in self._said:
                 return
             self._said.add(key)
+        text = dress(text, urgent=urgent)
         self.radio.appendleft({"t": elapsed, "text": text, "urgent": urgent})
         if self.on_say:
             self.on_say(text, urgent)
@@ -207,7 +209,11 @@ class Engineer:
             self.plan = p          # juste après l'arrêt : on attend un tour propre avant de parler essence
             return p
         if p.stops_needed == 0:
-            self.say("once:enough", L("Tu as ce qu'il faut pour aller au bout, pas besoin de rentrer.", "You've got enough to make the finish, no need to pit."), elapsed=et)
+            self.say("once:enough", pick("enough", [
+                ("Tu as ce qu'il faut pour aller au bout, pas besoin de rentrer.", "You've got enough to make the finish, no need to pit."),
+                ("Bonne nouvelle : l'essence suffit jusqu'à l'arrivée, on ne s'arrête plus.", "Good news: fuel's fine to the end, no more stops."),
+                ("C'est bon pour l'essence, on va au bout sans rentrer.", "Fuel is good, we go to the end without pitting."),
+                ("Plus d'arrêt prévu, tu as assez pour finir. Concentre-toi sur le pilotage.", "No more stops, you've got enough to finish. Just drive.")]), elapsed=et)
             self.plan = p
             return p
 
@@ -215,10 +221,16 @@ class Engineer:
         if p.stops_needed == 1 and short < 1.2 and p.limited_by == "essence":
             p.save_per_lap = short * fpl / max(p.laps_to_finish, 1)
         if p.save_per_lap and 0.1 <= p.save_per_lap <= 0.15 * fpl and p.laps_to_finish >= 3:
-            self.say("stint:save",
-                     L(f"Il manque un peu d'essence pour finir. Si tu économises {p.save_per_lap:.1f} litre par tour, on évite l'arrêt.",
-                       f"We're a little short on fuel. Save {p.save_per_lap:.1f} litres a lap and we can skip the stop."),
-                     elapsed=et)
+            q = f"{p.save_per_lap:.1f}"
+            self.say("stint:save", pick("save", [
+                (f"Il manque un peu d'essence pour finir. Si tu économises {q} litre par tour, on évite l'arrêt.",
+                 f"We're a little short on fuel. Save {q} litres a lap and we can skip the stop."),
+                (f"On est juste en essence. Gagne {q} litre par tour et on va au bout sans s'arrêter.",
+                 f"Fuel is tight. Find {q} litres a lap and we go to the end without stopping."),
+                (f"Mode économie : {q} litre par tour à gagner, lève un peu plus tôt avant les freinages, et l'arrêt saute.",
+                 f"Fuel save mode: {q} litres a lap, lift a bit earlier before braking, and we skip the stop."),
+                (f"Si tu veux éviter l'arrêt, il faut {q} litre de moins par tour. Lift and coast, c'est jouable.",
+                 f"To skip the stop we need {q} litres less a lap. Lift and coast, it's doable.")]), elapsed=et)
 
         # tour d'arrêt
         k = math.floor(s.lap_frac + p.range_laps - BOX_RESERVE)
@@ -279,19 +291,32 @@ class Engineer:
         if p.laps_until_box is None or s.in_pits or s.game_phase == 8:   # 8 = drapeau à damier : plus d'arrêt
             return
         if p.laps_until_box <= 1:
-            self.say("stint:box", random.choice([L(f"Box, box ce tour ! On met {self._pit_service(p)}.", f"Box, box this lap! {self._pit_service(p)}."),
-                                                 L(f"Tu rentres à la fin de ce tour, box box ! On met {self._pit_service(p)}.",
-                                                   f"Pit at the end of this lap, box box! {self._pit_service(p)}.")]), urgent=True, elapsed=et)
+            sv = self._pit_service(p)
+            self.say("stint:box", pick("box", [
+                (f"Box, box ce tour ! On met {sv}.", f"Box, box this lap! {sv}."),
+                (f"Tu rentres à la fin de ce tour, box box ! On met {sv}.", f"Pit at the end of this lap, box box! {sv}."),
+                (f"Box box box ! L'équipe est prête : {sv}.", f"Box box box! The crew is ready: {sv}."),
+                (f"Ce tour, c'est le bon : box, box ! Au programme, {sv}.", f"This is the lap: box, box! On the list, {sv}."),
+                (f"Box cette fois ! Attention à la limite de vitesse dans la voie des stands. On met {sv}.",
+                 f"Box this time! Watch the pit speed limit. {sv}.")]), urgent=True, elapsed=et)
         elif p.laps_until_box <= 3:
-            self.say("stint:box3", L(f"Arrêt dans {p.laps_until_box} tours. Prévu : {self._pit_service(p)}.",
-                                     f"Pit stop in {p.laps_until_box} laps. Plan: {self._pit_service(p)}."), elapsed=et)
+            n, sv = p.laps_until_box, self._pit_service(p)
+            self.say("stint:box3", pick("box3", [
+                (f"Arrêt dans {n} tours. Prévu : {sv}.", f"Pit stop in {n} laps. Plan: {sv}."),
+                (f"On s'arrête dans {n} tours. L'équipe prépare {sv}.", f"We stop in {n} laps. The crew is getting {sv} ready."),
+                (f"Encore {n} tours et on rentre. Au menu : {sv}.", f"{n} more laps and we pit. On the menu: {sv}."),
+                (f"Prépare-toi, box dans {n} tours. On met {sv}.", f"Get ready, box in {n} laps. {sv}.")]), elapsed=et)
         if not ("stint:plan" in self._said):
             lim = L("l'énergie", "energy") if p.limited_by == "énergie" else L("l'essence", "fuel")
-            self.say("stint:plan",
-                     L(f"Conso {p.fuel_per_lap:.1f} litres par tour. Autonomie {p.range_laps:.1f} tours, c'est {lim} qui limite. "
-                       f"Il faudra {p.stops_needed} arrêt{'s' if p.stops_needed > 1 else ''}.",
-                       f"Using {p.fuel_per_lap:.1f} litres a lap. Range {p.range_laps:.1f} laps, {lim} is the limit. "
-                       f"We need {p.stops_needed} stop{'s' if p.stops_needed > 1 else ''}."),
+            c, r, k = f"{p.fuel_per_lap:.1f}", f"{p.range_laps:.1f}", p.stops_needed
+            st_fr, st_en = f"{k} arrêt{'s' if k > 1 else ''}", f"{k} stop{'s' if k > 1 else ''}"
+            self.say("stint:plan", pick("plan", [
+                (f"Conso {c} litres par tour. Autonomie {r} tours, c'est {lim} qui limite. Il faudra {st_fr}.",
+                 f"Using {c} litres a lap. Range {r} laps, {lim} is the limit. We need {st_en}."),
+                (f"Point stratégie : tu consommes {c} litres au tour, ça fait {r} tours d'autonomie. On part sur {st_fr}, c'est {lim} qui décide.",
+                 f"Strategy update: {c} litres a lap, that's {r} laps of range. We're on {st_en}, {lim} decides."),
+                (f"Le plan : {st_fr}. Tu tiens {r} tours avec ce que tu as, à {c} litres par tour. C'est {lim} qui limite.",
+                 f"The plan: {st_en}. You can do {r} laps on what you've got, at {c} litres a lap. {lim} is the limit.")]),
                      elapsed=et)
 
     def _weather(self, s: Snapshot, p: Plan) -> None:
@@ -299,7 +324,11 @@ class Engineer:
         wet = s.wetness > 0.35 or s.raining > 0.3
         dry = s.wetness < 0.12 and s.raining < 0.05
         if s.raining > 0.1 and not self._was_wet:
-            self.say(None, L("Il commence à pleuvoir, attention à l'adhérence.", "It's starting to rain, watch the grip."), elapsed=et)
+            self.say(None, pick("rain", [
+                ("Il commence à pleuvoir, attention à l'adhérence.", "It's starting to rain, watch the grip."),
+                ("Quelques gouttes sur le circuit, sois doux sur les gaz.", "Some drops on track, be gentle on the throttle."),
+                ("La pluie arrive. Freine un peu plus tôt et méfie-toi des vibreurs.", "Rain's coming. Brake a bit earlier and watch the kerbs."),
+                ("Ça commence à mouiller, garde de la marge.", "It's getting wet out there, keep some margin.")]), elapsed=et)
             self._was_wet = True
         if dry:
             self._was_wet = False
@@ -310,13 +339,17 @@ class Engineer:
         if wet and not s.wet_tyres:
             p.tyre_compound = "pluie"
             p.weather = L("Piste mouillée — pneus pluie conseillés", "Wet track — wets recommended")
-            self.say("stint:wets", L("La piste est bien mouillée, on passe en pneus pluie au prochain arrêt.",
-                                     "Track's properly wet, we go to wets at the next stop."), elapsed=et)
+            self.say("stint:wets", pick("wets", [
+                ("La piste est bien mouillée, on passe en pneus pluie au prochain arrêt.", "Track's properly wet, we go to wets at the next stop."),
+                ("Ça devient trop mouillé pour les slicks. Pneus pluie au prochain arrêt.", "Too wet for slicks now. Wets at the next stop."),
+                ("On change de plan : pneus pluie au prochain passage au stand.", "Change of plan: wets at the next stop.")]), elapsed=et)
         elif dry and s.wet_tyres:
             p.tyre_compound = "slicks"
             p.weather = L("Piste sèche — repasser en slicks", "Drying track — back to slicks")
-            self.say("stint:slicks", L("La piste sèche, on repasse en slicks au prochain arrêt.",
-                                       "Track is drying, back to slicks at the next stop."), elapsed=et)
+            self.say("stint:slicks", pick("slicks", [
+                ("La piste sèche, on repasse en slicks au prochain arrêt.", "Track is drying, back to slicks at the next stop."),
+                ("Une trajectoire sèche apparaît. Slicks au prochain arrêt.", "A dry line is coming. Slicks at the next stop."),
+                ("Ça sèche bien. On remet les slicks au prochain passage.", "It's drying nicely. Slicks back on at the next stop.")]), elapsed=et)
         elif s.raining > 0.05:
             p.weather = L(f"Pluie {s.raining * 100:.0f} %, piste humide à {s.wetness * 100:.0f} %",
                           f"Rain {s.raining * 100:.0f} %, track {s.wetness * 100:.0f} % wet")
@@ -325,9 +358,19 @@ class Engineer:
 
     def _flags(self, s: Snapshot) -> None:
         if s.yellow and not self._was_yellow:
-            self.say(None, L("Neutralisation ! Drapeau jaune, ralentis.", "Full course yellow! Slow down."), urgent=True, elapsed=s.elapsed)
+            self.say(None, pick("yellow", [
+                ("Neutralisation ! Drapeau jaune, ralentis.", "Full course yellow! Slow down."),
+                ("Drapeau jaune sur tout le circuit, on ralentit !", "Full course yellow, slow it down!"),
+                ("Neutralisation ! Pas de dépassement, on lève le pied.", "Full course yellow! No overtaking, ease off.")]), urgent=True, elapsed=s.elapsed)
         if not s.yellow and self._was_yellow:
-            self.say(None, L("Fin de neutralisation, la course reprend.", "Yellow's over, we're racing again."), elapsed=s.elapsed)
+            self.say(None, pick("green", [
+                ("Fin de neutralisation, la course reprend.", "Yellow's over, we're racing again."),
+                ("Vert, vert, vert ! On repart à l'attaque.", "Green, green, green! Back to racing."),
+                ("C'est reparti, la piste est libre. Remets les pneus en température.", "We're back on, track is clear. Get the heat back in the tyres.")]), elapsed=s.elapsed)
         self._was_yellow = s.yellow
         if s.done:
-            self.say("once:finish", L("Drapeau à damier ! Bien joué.", "Chequered flag! Well done."), elapsed=s.elapsed)
+            self.say("once:finish", pick("finish", [
+                ("Drapeau à damier ! Bien joué.", "Chequered flag! Well done."),
+                ("Et c'est le drapeau à damier ! Superbe course, merci pour le boulot.", "And that's the chequered flag! Great race, thanks for the work."),
+                ("Damier ! Course terminée, bravo. Tour de décélération tranquille.", "Chequered flag! Race done, well driven. Easy on the cool-down lap."),
+                ("C'est fini ! Beau travail, toute l'équipe est contente.", "That's it! Great job, the whole team is happy.")]), elapsed=s.elapsed)

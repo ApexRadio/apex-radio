@@ -332,6 +332,7 @@
     </section>
     <section class="setsec"><h2>💬 <span data-en="Engineer">Ingénieur</span></h2>
       <div class="setrow"><span data-en="Encouragement">Encouragements</span><div class="setctl"><select id="encourage" aria-label="Encouragements" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
+      <div class="setrow"><span data-en="Radio tone">Ton de la radio</span><div class="setctl"><select id="tone" aria-label="Ton de la radio" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
     </section>
     <section class="setsec"><h2>🎮 <span data-en="Radio &amp; wheel">Radio et volant</span></h2>
       <div class="setrow" style="align-items:center"><span data-en="Mic">Micro</span><select id="mic" aria-label="Micro"></select></div>
@@ -532,6 +533,7 @@ function render(d) {
   renderShortcuts(t);
   renderOnboard(d);
   if (d.encourage && document.activeElement !== $("encourage")) $("encourage").value = d.encourage;
+  if (d.tone && document.activeElement !== $("tone")) $("tone").value = d.tone;
   if (d.ptt_mode && document.activeElement !== $("pttmode")) $("pttmode").value = d.ptt_mode;
   if (d.asr && document.activeElement !== $("asr")) $("asr").value = d.asr;
   if (d.asr_loading) $("asrnote").textContent = T("Chargement de la reconnaissance vocale… (l'ancienne reste active en attendant)", "Loading speech recognition… (the previous one stays active meanwhile)");
@@ -760,6 +762,9 @@ $("lmumode").innerHTML = [["ask", "Demander (fenêtre de Steam)", "Ask (Steam wi
   .map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
 $("lmumode").onchange = e => fetch("/api/lmu/mode", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
 $("pttmode").onchange = e => fetch("/api/pttmode", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
+$("tone").innerHTML = [["sobre", "Sobre (juste l'info)", "Plain (just the info)"], ["radio", "Radio d'équipe", "Team radio"],
+  ["detente", "Détendu", "Laid-back"]].map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
+$("tone").onchange = e => fetch("/api/tone", { method: "POST", body: JSON.stringify({ tone: e.target.value }) });
 $("encourage").onchange = e => fetch("/api/encourage", { method: "POST", body: JSON.stringify({ level: e.target.value }) });
 
 // ---- raccourcis : spotter, radio, mode silence

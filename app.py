@@ -40,6 +40,7 @@ from behavior import Behavior
 from setups import Workshop
 from incidents import Incidents
 from lmu_probe import Probe
+import phrases
 from alerts import Spotter, Traffic, GapTrend, TrackLimits, Damage, Weather, WarmUp, CarInfo, Places, Morale, car_label, set_encourage
 import debrief
 from pitmenu import PitCrew
@@ -115,7 +116,7 @@ class State:
 
     def on_question(self, text: str) -> None:
         from strategy import Plan
-        reply = answer(text, self.snap, self.plan or Plan())
+        reply = phrases.dress(answer(text, self.snap, self.plan or Plan()), answer=True)
         if self.eng is not None:
             self.eng.radio.appendleft({"t": self.snap.elapsed, "text": f"Toi : {text}", "urgent": False, "me": True})
             self.eng.radio.appendleft({"t": self.snap.elapsed, "text": reply, "urgent": False})
@@ -153,6 +154,7 @@ def loop(state: State, demo: bool) -> None:
     traffic, trend, limits, damage = Traffic(beh), GapTrend(), TrackLimits(beh), Damage()
     warmup, carinfo, places, morale = WarmUp(), CarInfo(), Places(), Morale()
     set_encourage(state.radio.cfg.get("encourage", "normal"))
+    phrases.set_tone(state.radio.cfg.get("tone", "radio"))
     weather = Weather(demo)
     recorder = debrief.Recorder()
     session_end = {"key": None, "prompt": 0}
@@ -320,6 +322,7 @@ def loop(state: State, demo: bool) -> None:
                 "radio": list(eng.radio),
                 "accent": state.radio.cfg.get("accent", "bleu"),
                 "encourage": state.radio.cfg.get("encourage", "normal"),
+                "tone": state.radio.cfg.get("tone", "radio"),
                 "ptt_mode": state.radio.cfg.get("ptt_mode", "hold"),
                 "asr": state.radio.cfg.get("asr", "fast"), "asr_loading": bool(getattr(state.radio, "asr_loading", False)),
                 "lmu_mode": state.radio.cfg.get("lmu_mode", "ask"),
@@ -558,6 +561,13 @@ def make_handler(state: State):
                     state.radio.cfg["encourage"] = lv
                     save_config(state.radio.cfg)
                     set_encourage(lv)
+            elif self.path == "/api/tone":
+                n = int(self.headers.get("Content-Length") or 0)
+                tn = json.loads(self.rfile.read(n) or b"{}").get("tone", "radio")
+                if tn in phrases.TONES:
+                    state.radio.cfg["tone"] = tn
+                    save_config(state.radio.cfg)
+                    phrases.set_tone(tn)
             elif self.path in ("/api/setup/dir", "/api/setup/pickdir"):
                 n = int(self.headers.get("Content-Length") or 0)
                 want = (json.loads(self.rfile.read(n) or b"{}").get("dir") or "").strip().strip('"')

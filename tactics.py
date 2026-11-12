@@ -15,6 +15,7 @@ import time
 from pathlib import Path
 
 from i18n import L, dec
+from phrases import pick
 
 HERE = Path(__file__).parent
 from paths import DATA, LOCAL  # noqa: E402
@@ -61,7 +62,9 @@ class Penalties:
         elif n < self.count:
             if n == 0:
                 self.given_lap = None
-                say(None, L("Pénalité purgée, c'est bon.", "Penalty served, all good."))
+                say(None, pick("pen_ok", [("Pénalité purgée, c'est bon.", "Penalty served, all good."),
+                                          ("C'est bon, pénalité effacée. On repart.", "Done, penalty cleared. Let's go."),
+                                          ("Pénalité purgée, on n'en parle plus. Remets du rythme.", "Penalty served, forget it. Build the pace back up.")]))
             else:
                 say(None, L(f"Une pénalité purgée, il en reste {n}.", f"One penalty served, {n} left."))
         elif n and self.given_lap is not None and s.laps_done != self.said_lap and not s.in_pits:
@@ -71,7 +74,9 @@ class Penalties:
                 say(None, L("Dernier tour pour purger la pénalité, rentre au stand à la fin de ce tour !",
                             "Last lap to serve the penalty, box at the end of this lap!"), urgent=True)
             elif left > 1:
-                say(None, L(f"Pénalité toujours à purger, plus que {left} tours.", f"Penalty still to serve, {left} laps left."))
+                say(None, pick("pen_left", [(f"Pénalité toujours à purger, plus que {left} tours.", f"Penalty still to serve, {left} laps left."),
+                                            (f"N'oublie pas la pénalité : il te reste {left} tours pour la faire.", f"Don't forget the penalty: {left} laps left to serve it."),
+                                            (f"Rappel, pénalité à purger dans les {left} prochains tours.", f"Reminder, penalty to serve within {left} laps.")]))
         self.count = n
 
     def ui(self, s) -> dict:

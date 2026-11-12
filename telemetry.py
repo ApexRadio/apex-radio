@@ -48,7 +48,8 @@ class Snapshot:
     fuel_capacity: float = 0.0
     energy: float | None = None      # énergie virtuelle 0..1 (Hypercar / LMGT3), None si absente
     tyre_wear: list = field(default_factory=lambda: [1.0] * 4)   # 1.0 = neuf
-    tyre_temp: list = field(default_factory=lambda: [0.0] * 4)   # °C
+    tyre_temp: list = field(default_factory=lambda: [0.0] * 4)   # °C (couche intérieure de la gomme)
+    tyre_surface_temp: list = field(default_factory=lambda: [0.0] * 4)   # °C (surface, varie très vite)
     tyre_opt: float = 0.0                                        # température idéale des pneus (°C)
     brake_temp: list = field(default_factory=lambda: [0.0] * 4)  # °C
     tyre_pressure: list = field(default_factory=lambda: [0.0] * 4)  # kPa
@@ -338,7 +339,13 @@ class LMUSource:
 
         w = tel.mWheels
         s.tyre_wear = [w[i].mWear for i in range(4)]
-        s.tyre_temp = [sum(w[i].mTemperature) / 3 - 273.15 for i in range(4)]
+        # température annoncée : couche de gomme intérieure (stable, c'est elle qui donne le grip et
+        # c'est ce qu'affichent le jeu et les outils). La surface refroidit très vite dans les lignes droites
+        # (un joueur avait 60 °C annoncés pour 85 °C en jeu) ; on la garde seulement en secours.
+        surf = [sum(w[i].mTemperature) / 3 - 273.15 for i in range(4)]
+        inner = [sum(w[i].mTireInnerLayerTemperature) / 3 - 273.15 for i in range(4)]
+        s.tyre_temp = [n if -30 < n < 250 else t for n, t in zip(inner, surf)]
+        s.tyre_surface_temp = surf
         s.tyre_pressure = [w[i].mPressure for i in range(4)]
         s.tyre_opt = float(w[0].mOptimalTemp)
         s.brake_temp = [float(w[i].mBrakeTemp) for i in range(4)]

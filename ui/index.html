@@ -207,7 +207,7 @@
       <button id="lmulaunch" class="act" hidden title="Démarre Le Mans Ultimate par Steam" data-en-title="Starts Le Mans Ultimate through Steam">▶ <span data-en="Launch LMU">Lancer LMU</span></button>
       <div class="racebtns" role="group" aria-label="En course">
         <button id="vtoggle" class="tog" title="Radio : l'ingénieur parle ou se tait" data-en-title="Radio: the engineer talks or stays silent">🔊 Radio</button>
-        <button id="quiet" class="tog" title="Mode silence : l'ingénieur ne dit plus que l'urgent (box, neutralisation, spotter, réponses). Tu peux aussi dire « silence » ou « reparle » à la radio." data-en-title="Quiet mode: urgent calls only (box, yellow flag, spotter, answers). You can also say &quot;be quiet&quot; or &quot;talk again&quot; on the radio.">🤫 <span data-en="Quiet">Silence</span></button>
+        <button id="quiet" class="tog" title="Mode silence : l'ingénieur ne dit plus que l'urgent (box, drapeau jaune, spotter, réponses). Tu peux aussi dire « silence » ou « reparle » à la radio." data-en-title="Quiet mode: urgent calls only (box, yellow flag, spotter, answers). You can also say &quot;be quiet&quot; or &quot;talk again&quot; on the radio.">🤫 <span data-en="Quiet">Silence</span></button>
         <button id="spot" class="tog" title="Spotter gauche / droite" data-en-title="Left / right spotter">👀 Spotter</button>
       </div>
       <button id="wsopen" class="act" style="border-radius:999px" data-en="SETUP WORKSHOP">ATELIER SETUP</button>
@@ -450,7 +450,7 @@ const KIND_EN = { "sous-virage": "UNDERSTEER", "survirage": "OVERSTEER", "blocag
 function callout(s, p, radio) {
   const last = radio.find(m => !m.me);
   if (!s.on_track) return [T("EN ATTENTE", "WAITING"), s.connected ? T("Jeu détecté, monte dans ta voiture.", "Game detected, get in your car.") : T("Lance Le Mans Ultimate et monte dans ta voiture.", "Start Le Mans Ultimate and get in your car."), false];
-  if (s.yellow) return [T("NEUTRALISATION", "FULL COURSE YELLOW"), T("Drapeau jaune, ralentis.", "Yellow flag, slow down."), true];
+  if (s.yellow) return [T("DRAPEAU JAUNE", "FULL COURSE YELLOW"), T("Drapeau jaune, ralentis.", "Yellow flag, slow down."), true];
   if (p.ready && p.stops_needed > 0 && p.laps_until_box <= 1) return ["BOX BOX", last && last.urgent ? last.text : T("Rentre ce tour.", "Pit this lap."), true];
   if (p.ready && p.stops_needed > 0 && p.laps_until_box <= 3) return [T(`BOX DANS ${p.laps_until_box}`, `BOX IN ${p.laps_until_box}`), T(`Arrêt à la fin du tour ${p.box_lap}.`, `Stop at the end of lap ${p.box_lap}.`), false];
   if (s.game_phase === 8) return [T("DAMIER", "CHEQUERED"), T("Course terminée.", "Race over."), false];

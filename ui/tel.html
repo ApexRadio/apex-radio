@@ -87,7 +87,7 @@ function render(d) {
   if (!s.on_track) return;
   const last = radio.find(m => !m.me);
   let title = T("EN PISTE", "ON TRACK"), text = "", alert = false;
-  if (s.yellow) { title = T("NEUTRALISATION", "YELLOW"); alert = true; }
+  if (s.yellow) { title = T("DRAPEAU JAUNE", "YELLOW"); alert = true; }
   else if (p.ready && p.stops_needed > 0 && p.laps_until_box <= 1) { title = "BOX BOX"; alert = true; text = T("Rentre ce tour", "Pit this lap"); }
   else if (p.ready && p.stops_needed > 0 && p.laps_until_box <= 3) { title = T(`BOX DANS ${p.laps_until_box}`, `BOX IN ${p.laps_until_box}`); text = T(`fin du tour ${p.box_lap}`, `end of lap ${p.box_lap}`); }
   else if (s.game_phase === 8) title = T("DAMIER", "CHEQUERED");

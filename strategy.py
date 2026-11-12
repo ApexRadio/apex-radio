@@ -359,12 +359,12 @@ class Engineer:
     def _flags(self, s: Snapshot) -> None:
         if s.yellow and not self._was_yellow:
             self.say(None, pick("yellow", [
-                ("Neutralisation ! Drapeau jaune, ralentis.", "Full course yellow! Slow down."),
+                ("Drapeau jaune ! Ralentis.", "Full course yellow! Slow down."),
                 ("Drapeau jaune sur tout le circuit, on ralentit !", "Full course yellow, slow it down!"),
-                ("Neutralisation ! Pas de dépassement, on lève le pied.", "Full course yellow! No overtaking, ease off.")]), urgent=True, elapsed=s.elapsed)
+                ("Drapeau jaune ! Pas de dépassement, on lève le pied.", "Full course yellow! No overtaking, ease off.")]), urgent=True, elapsed=s.elapsed)
         if not s.yellow and self._was_yellow:
             self.say(None, pick("green", [
-                ("Fin de neutralisation, la course reprend.", "Yellow's over, we're racing again."),
+                ("Fin du drapeau jaune, la course reprend.", "Yellow's over, we're racing again."),
                 ("Vert, vert, vert ! On repart à l'attaque.", "Green, green, green! Back to racing."),
                 ("C'est reparti, la piste est libre. Remets les pneus en température.", "We're back on, track is clear. Get the heat back in the tyres.")]), elapsed=s.elapsed)
         self._was_yellow = s.yellow

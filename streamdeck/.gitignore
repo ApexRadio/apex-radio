@@ -4,3 +4,7 @@ dist/
 *.sdPlugin/logs/
 *.sdPlugin/imgs/actions/
 *.sdPlugin/imgs/category.svg
+profile/preview/
+profile/_tmp.gif
+com.apexradio.streamdeck.sdPlugin/profiles/
+profile/__pycache__/

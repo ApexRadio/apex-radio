@@ -1,13 +1,13 @@
 {
   "name": "apex-radio-streamdeck",
-  "version": "0.1.0",
+  "version": "0.2.3",
   "private": true,
   "type": "module",
   "description": "Plugin Stream Deck pour Apex Radio",
   "license": "GPL-3.0-only",
   "scripts": {
     "build": "node build.mjs",
-    "pack": "node build.mjs && streamdeck pack com.apexradio.streamdeck.sdPlugin --output dist --force"
+    "pack": "node build.mjs && python3 profile/build_profile.py && streamdeck pack com.apexradio.streamdeck.sdPlugin --output dist --force"
   },
   "dependencies": {
     "@elgato/streamdeck": "2.1.2"

@@ -30,6 +30,7 @@ pythonnet, clr_loader              MIT
 bottle, proxy_tools                MIT
 Microsoft Edge WebView2 Runtime    Microsoft licence    Part of Windows, not bundled
 Orbitron font (dashboard)          SIL OFL 1.1          Loaded from Google Fonts
+Tabler Icons (Stream Deck profile) MIT                  Drawn into key images; licence in streamdeck/profile/fonts/TABLER-LICENSE.txt
 
 Voices and speech models are downloaded on first use from Hugging Face; they are not bundled.
 Le Mans Ultimate is a trademark of its owners. Apex Radio is not affiliated with Studio 397, Motorsport Games or the ACO.

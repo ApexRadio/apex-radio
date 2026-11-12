@@ -497,8 +497,11 @@ def chat(t: str, s: Snapshot, alone: bool = True) -> list[str]:
     return out
 
 
-NO_REPAIR = (r"\b(pas|plus|sans|aucune?|annule|enleve|leve|retire|supprime|oublie|non)\b.*\brepar|"
-             r"\brepar\w*\b.*\b(non|pas|enleve|annule|retire|supprime)\b|\bne repare|"
+# la négation doit porter sur la réparation elle-même (« pas de réparation »), pas sur un autre mot
+# de la phrase (« réparation sans ravitaillement » = on répare !)
+NO_REPAIR = (r"\b(pas|plus|sans|aucune?) (besoin )?(de |d |la |les |des )?repar|"
+             r"\b(annule|annuler|enleve|enlever|retire|retirer|supprime|supprimer|oublie|leve|lever) (les |la |des )?repar|"
+             r"\bne (le |la |les )?repar\w* (pas|rien)|\brepar\w* non\b|\bne repare pas|"
              r"don t (fix|repair)|no repairs?\b|skip (the )?repairs?|cancel (the )?repairs?|"
              r"\b(remove|no) (the )?(repairs?|damage)")
 DO_REPAIR = (r"\b(repare|reparer|reparez|reparation|reparations|reparte)\b|\brepart (tout|juste|la carrosserie|seulement)|\bfix (the )?(car|damage)|\brepair")
@@ -510,7 +513,8 @@ def repair_command(t: str) -> str | None:
         return None   # c'est une question (« il faut réparer ? »), pas un ordre
     if re.search(NO_REPAIR, t):
         want = False
-    elif re.search(DO_REPAIR, t) and re.search(r"\b(repare|reparer|reparez|reparte|repart|tout|toutes|carrosserie|fix|repair the|do the|on repare)\b", t):
+    elif re.search(DO_REPAIR, t) and re.search(r"\b(repare|reparer|reparez|reparte|repart|tout|toutes|carrosserie|fix|repair the|do the|on repare)\b|"
+                                            r"\b(pour|juste|seulement|avec) (la |les |une |des )?repar", t):
         want = True
     else:
         return None
@@ -527,6 +531,23 @@ def repair_command(t: str) -> str | None:
     if menu:
         out += L(" Je corrige le menu des stands.", " Updating the pit menu.")
     return out
+
+
+NO_FUEL = (r"\b(pas|sans|aucun|zero|0) (de |d |du )?(essence|ravitaill\w*|carbu\w*|plein|fuel|refuel\w*|litres?)\b|"
+           r"\bne (mets|met|mettez|ajoute|rajoute|remets) (pas|rien) (d |de )?(essence|carbu)|"
+           r"\bno (fuel|refuel\w*)\b|without (fuel|refuel\w*)|don t (add )?(any )?fuel|skip (the )?(fuel|refuel\w*)")
+FUEL_SET = None   # fonction() : pas d'essence au prochain arrêt ; renvoie True si le menu est re-réglé
+
+
+def fuel_command(t: str) -> str | None:
+    """« sans ravitaillement » / « pas d'essence » : on ne remet pas d'essence au prochain arrêt."""
+    if re.search(r"^(il faut|faut il|est ce qu|on doit|je dois|tu crois|ca vaut)", t) or not re.search(NO_FUEL, t):
+        return None
+    if FUEL_SET is None:
+        return L("Je ne peux pas changer l'essence pour l'instant.", "I can't change the fuel right now.")
+    menu = FUEL_SET()
+    out = L("C'est noté, pas d'essence au prochain arrêt.", "Copy, no fuel at the next stop.")
+    return out + (L(" Je corrige le menu des stands.", " Updating the pit menu.") if menu else "")
 
 
 NUM_WORDS = {"un": 1, "premier": 1, "deux": 2, "trois": 3, "quatre": 4, "cinq": 5, "six": 6, "sept": 7, "huit": 8,
@@ -604,9 +625,13 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
     if not t:
         return L("Je n'ai rien entendu, répète.", "I didn't hear anything, say again.")
     LAST_TEXT = t
+    # ordres pour le prochain arrêt : réparations et/ou essence (« répare mais sans ravitaillement »)
+    f = fuel_command(t)
     r = repair_command(t)
-    if r:
-        return r
+    if f and r:
+        return r.replace(" Je corrige le menu des stands.", "").replace(" Updating the pit menu.", "") + " " + f
+    if f or r:
+        return f or r
     if not s.on_track:
         # hors piste, « comment ça va » est une politesse, pas une demande de point complet
         polite = bool(re.search(r"\bca va\b|comment vas tu|how are you", t))

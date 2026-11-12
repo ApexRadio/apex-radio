@@ -55,7 +55,13 @@ def plan_menu(menu: list, fuel_total: float | None, tyres: str | None, compound:
     menu = json.loads(json.dumps(menu))   # copie
     changes = []
     it = _item(menu, FUEL)
-    if it and fuel_total is not None:
+    if it and fuel_total == 0:   # le pilote a dit « pas d'essence » : niveau le plus bas = on n'ajoute rien
+        opts = [(i, _liters(s.get("text"))) for i, s in enumerate(it["settings"])]
+        opts = [(i, l) for i, l in opts if l is not None]
+        if opts:
+            it["currentSetting"] = min(opts, key=lambda o: o[1])[0]
+            changes.append(L("pas d'essence", "no fuel"))
+    elif it and fuel_total is not None:
         opts = [(i, _liters(s.get("text"))) for i, s in enumerate(it["settings"])]
         opts = [(i, l) for i, l in opts if l is not None]
         if opts:
@@ -118,11 +124,25 @@ class PitCrew:
         self.demo = demo
         self.mode = cfg.get("pit_auto", "auto")   # "auto" / "demande" / "off"
         self.done_for = None                        # n° d'arrêt déjà préparé
+        self.no_fuel_for = None                     # n° d'arrêt pour lequel le pilote a dit « pas d'essence »
         self.status = ""                            # pour le tableau de bord
         self.busy = False
         self.say = None
+        self.dumped = False                         # liste des lignes du menu déjà écrite dans le journal
+
+    def _dump(self) -> None:
+        """Écrit une fois dans le journal toutes les lignes du menu des stands (pour préparer le choix pneu par pneu)."""
+        try:
+            for it in read_menu():
+                opts = [x.get("text", "") for x in it.get("settings", [])]
+                print(f"  Menu stand [{it.get('PMC Value')}] {it.get('name')} : {len(opts)} choix, ex. {opts[:4]}")
+        except Exception as e:
+            print(f"  Menu stand : lecture impossible ({e.__class__.__name__})")
 
     def update(self, s, p) -> None:
+        if not self.dumped and s.on_track and not self.demo:
+            self.dumped = True
+            threading.Thread(target=self._dump, daemon=True).start()
         if self.mode != "auto" or not s.on_track or s.in_pits or s.session != "course" or s.game_phase == 8:
             return
         if p.ready and p.stops_needed and p.laps_until_box is not None and p.laps_until_box <= 1:
@@ -135,7 +155,7 @@ class PitCrew:
         if not p or p.fuel_to_add is None and not asked:
             return
         self.done_for = s.pit_stops
-        fuel_total = getattr(p, "fuel_total", None)
+        fuel_total = 0.0 if self.no_fuel_for == s.pit_stops else getattr(p, "fuel_total", None)
         tyres = "Wet" if p.tyre_compound == "pluie" else "dry" if p.tyre_compound == "slicks" else \
             "same" if p.change_tyres else "keep" if p.change_tyres is False else None
         self.busy = True
@@ -148,7 +168,8 @@ class PitCrew:
         try:
             if self.demo:
                 time.sleep(0.5)
-                txt = ", ".join(x for x in [L(f"essence à {fuel_total:.0f} litres", f"fuel to {fuel_total:.0f} litres") if fuel_total else "",
+                txt = ", ".join(x for x in [L(f"essence à {fuel_total:.0f} litres", f"fuel to {fuel_total:.0f} litres") if fuel_total
+                                            else L("pas d'essence", "no fuel") if fuel_total == 0 else "",
                                             {"keep": L("on garde les pneus", "keep the tyres"), "same": L("pneus neufs", "new tyres"),
                                              "Wet": L("pneus pluie", "wet tyres"), "dry": L("pneus slicks", "slick tyres")}.get(tyres, ""),
                                             (L("on répare tout", "full repairs") if repair == "all" else L("réparation de la carrosserie", "bodywork repairs")) if repair

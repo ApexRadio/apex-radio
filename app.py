@@ -177,6 +177,16 @@ def loop(state: State, demo: bool) -> None:
 
     questions.REPAIR_SET = set_repair
 
+    def set_no_fuel() -> bool:
+        """Le pilote dit « pas d'essence » / « sans ravitaillement » : valable pour le prochain arrêt."""
+        crew.no_fuel_for = state.snap.pit_stops if state.snap is not None else None
+        if crew.done_for == state.snap.pit_stops and state.snap.on_track and not state.snap.in_pits:
+            crew.prepare(state.snap, state.plan, asked=True)
+            return True
+        return False
+
+    questions.FUEL_SET = set_no_fuel
+
     def setup_sync():
         """Toutes les 15 s : quel setup est chargé dans LMU ? (sélection automatique dans l'atelier)"""
         while not demo:

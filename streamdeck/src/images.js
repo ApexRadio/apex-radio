@@ -1,4 +1,5 @@
-// Images des touches (SVG 144 x 144), style néon d'Apex Radio.
+// Images des touches (SVG 144 x 144), style Apex Radio : fond noir, coin bleu en haut à gauche,
+// coin rose en bas à droite, grosse icône blanche (ou de la couleur de l'état), texte en gras.
 // Pas de filtres SVG (le Stream Deck ne les affiche pas toujours) : la lueur est faite avec des traits superposés.
 
 const CYAN = "#22e3ff";
@@ -6,6 +7,8 @@ const RED = "#ff3b5c";
 const GREEN = "#2ee59d";
 const AMBER = "#ffb02e";
 const GREY = "#5b6573";
+const PINK = "#ff2e88";
+const WHITE = "#ffffff";
 const FONT = "Arial, Helvetica, sans-serif";
 
 const T = {
@@ -27,14 +30,24 @@ const T = {
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-function frame(color, inner, dim = false) {
+// kind "cmd" : bandes de course (touches qui agissent) ; "info" : cadre néon bleu → rose (infos en direct)
+function frame(color, inner, dim = false, kind = "cmd") {
+    const c1 = dim ? GREY : CYAN, c2 = dim ? GREY : PINK;
+    const deco = kind === "info"
+        ? `<defs><clipPath id="br"><path d="M144 0 L144 144 L0 144 Z"/></clipPath></defs>
+<rect x="5.5" y="5.5" width="133" height="133" rx="19" fill="none" stroke="${c1}" stroke-width="7"/>
+<rect x="5.5" y="5.5" width="133" height="133" rx="19" fill="none" stroke="${c2}" stroke-width="7" clip-path="url(#br)"/>`
+        : `<path d="M0 0 H40 L0 40 Z" fill="${c1}"/><path d="M0 50 L50 0 H58 L0 58 Z" fill="${c1}"/>
+<path d="M144 144 H104 L144 104 Z" fill="${c2}"/><path d="M144 94 L94 144 H86 L144 86 Z" fill="${c2}"/>`;
     return `<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 144 144">
-<rect width="144" height="144" fill="#06090f"/>
-<rect x="6" y="6" width="132" height="132" rx="18" fill="none" stroke="${color}" stroke-opacity="${dim ? 0.12 : 0.22}" stroke-width="10"/>
-<rect x="6" y="6" width="132" height="132" rx="18" fill="#0b111b" stroke="${color}" stroke-opacity="${dim ? 0.45 : 1}" stroke-width="3"/>
+<rect width="144" height="144" fill="#08080a"/>
+${deco}
 ${inner}
 </svg>`;
 }
+
+// couleur de l'icône et du gros texte : blanc par défaut, couleur seulement si elle signale un état
+const ink = (color) => (color === CYAN ? WHITE : color);
 
 function text(x, y, s, size, color, weight = "bold", opacity = 1) {
     return `<text x="${x}" y="${y}" font-family="${FONT}" font-size="${size}" font-weight="${weight}" fill="${color}" fill-opacity="${opacity}" text-anchor="middle">${esc(s)}</text>`;
@@ -43,13 +56,11 @@ function text(x, y, s, size, color, weight = "bold", opacity = 1) {
 // texte qui rétrécit pour tenir dans la touche
 function fit(s, max, width = 118) {
     const n = String(s).length || 1;
-    return Math.max(12, Math.min(max, Math.floor(width / (n * 0.6))));
+    return Math.max(14, Math.min(max, Math.floor(width / (n * 0.62))));
 }
 
-function glow(path, color, w = 6) {
-    return `<g fill="none" stroke-linecap="round" stroke-linejoin="round">
-<path d="${path}" stroke="${color}" stroke-opacity="0.25" stroke-width="${w * 2.4}"/>
-<path d="${path}" stroke="${color}" stroke-width="${w}"/></g>`;
+function glow(path, color, w = 10) {
+    return `<g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="${path}" stroke="${color}" stroke-width="${w}"/></g>`;
 }
 
 const ICONS = {
@@ -63,9 +74,9 @@ const ICONS = {
 };
 
 function iconKey(icon, label, color, sub, subColor) {
-    return frame(color, `${glow(ICONS[icon], color)}
-${text(72, sub ? 112 : 120, label, fit(label, 20), color)}
-${sub ? text(72, 131, sub, 13, subColor || color, "bold", 0.85) : ""}`);
+    return frame(color, `<g transform="translate(72 ${sub ? 46 : 52}) scale(1.15) translate(-72 -60)">${glow(ICONS[icon], ink(color))}</g>
+${text(72, sub ? 100 : 112, label, fit(label, 28, 100), WHITE)}
+${sub ? text(72, 124, sub, 20, subColor || ink(color)) : ""}`, color === GREY);
 }
 
 function fmtGap(g, sign) {
@@ -109,9 +120,9 @@ function infoKey(what, sd, t) {
     } else if (what === "last" || what === "best") {
         big = fmtLap(what === "last" ? sd.last : sd.best);
     }
-    return frame(color, `${text(72, 38, label, 16, color, "bold", 0.85)}
-${text(72, 90, big, fit(big, 44, 122), color)}
-${sub ? text(72, 122, sub, 15, color, "bold", 0.75) : ""}`);
+    return frame(color, `${text(72, 38, label, 22, WHITE, "bold", 0.85)}
+${text(72, 92, big, fit(big, 54, 118), ink(color))}
+${sub ? text(72, 122, sub, 20, WHITE, "bold", 0.8) : ""}`, false, "info");
 }
 
 export function keyImage(kind, sd, settings) {

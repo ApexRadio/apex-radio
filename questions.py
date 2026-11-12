@@ -14,6 +14,7 @@ import unicodedata
 from strategy import Plan
 from telemetry import Snapshot
 from i18n import L, dec
+from phrases import pick
 
 
 def _norm(t: str) -> str:
@@ -40,15 +41,23 @@ def _tyre_names(idx: list[int]) -> str:
 
 # --------------------------------------------------------------------- sujets
 def fuel(s: Snapshot, p: Plan) -> str:
-    out = L(f"Il te reste {_f(s.fuel, 0)} litres.", f"You have {_f(s.fuel, 0)} litres left.")
+    q = _f(s.fuel, 0)
+    out = pick("a_fuel", [(f"Il te reste {q} litres.", f"You have {q} litres left."),
+                          (f"{q} litres dans le réservoir.", f"{q} litres in the tank."),
+                          (f"Côté essence, tu as {q} litres.", f"Fuel-wise, you've got {q} litres.")])
     if p.fuel_per_lap:
-        out += L(f" Tu consommes {_f(p.fuel_per_lap)} par tour, ça fait {_f(s.fuel / p.fuel_per_lap)} tours d'essence.",
-                 f" You're using {_f(p.fuel_per_lap)} a lap, that's {_f(s.fuel / p.fuel_per_lap)} laps of fuel.")
+        c, n = _f(p.fuel_per_lap), _f(s.fuel / p.fuel_per_lap)
+        out += " " + pick("a_fuel2", [(f"Tu consommes {c} par tour, ça fait {n} tours d'essence.",
+                                       f"You're using {c} a lap, that's {n} laps of fuel."),
+                                      (f"À {c} litres par tour, tu tiens {n} tours.", f"At {c} litres a lap, you can do {n} laps."),
+                                      (f"Ça te laisse {n} tours, avec une conso de {c} par tour.", f"That gives you {n} laps, using {c} a lap.")])
     else:
         out += L(" J'ai besoin d'encore un ou deux tours propres pour calculer la conso.",
                  " I need one or two more clean laps to work out consumption.")
     if p.stops_needed == 0:
-        out += L(" C'est bon pour aller au bout.", " That's enough to the finish.")
+        out += " " + pick("a_fuel3", [("C'est bon pour aller au bout.", "That's enough to the finish."),
+                                      ("Largement de quoi finir.", "Plenty to make the finish."),
+                                      ("Tu es tranquille jusqu'à l'arrivée.", "You're fine all the way to the flag.")])
     if p.save_per_lap:
         out += L(f" Si tu économises {_f(p.save_per_lap)} litre par tour, on évite l'arrêt.",
                  f" Save {_f(p.save_per_lap)} litres a lap and we skip the stop.")
@@ -69,7 +78,9 @@ def energy(s: Snapshot, p: Plan) -> str:
 def laps(s: Snapshot, p: Plan) -> str:
     parts = []
     if s.max_laps:
-        parts.append(L(f"Il reste {max(0, s.max_laps - s.laps_done)} tours.", f"{max(0, s.max_laps - s.laps_done)} laps to go."))
+        n = max(0, s.max_laps - s.laps_done)
+        parts.append(pick("a_laps", [(f"Il reste {n} tours.", f"{n} laps to go."), (f"Encore {n} tours.", f"{n} more laps."),
+                                     (f"Plus que {n} tours avant l'arrivée.", f"Just {n} laps to the finish.")]))
     elif s.time_left is not None:
         m = int(s.time_left // 60)
         left = round(p.laps_to_finish) if p.laps_to_finish else None
@@ -92,12 +103,16 @@ def pit(s: Snapshot, p: Plan) -> str:
     if not p.ready:
         return L("Je calcule encore, donne-moi un ou deux tours propres.", "Still calculating, give me one or two clean laps.")
     if p.stops_needed == 0:
-        return L("Pas besoin de rentrer, tu as de quoi finir.", "No need to pit, you can make the finish.")
+        return pick("a_nopit", [("Pas besoin de rentrer, tu as de quoi finir.", "No need to pit, you can make the finish."),
+                                ("Aucun arrêt prévu, on va au bout comme ça.", "No stop planned, we go to the end like this."),
+                                ("On ne s'arrête plus, tu as tout ce qu'il faut.", "No more stops, you've got everything you need.")])
     if p.laps_until_box is not None and p.laps_until_box <= 1:
         when = L("Box ce tour.", "Box this lap.")
     else:
-        when = L(f"Tu rentres à la fin du tour {p.box_lap}, dans {p.laps_until_box} tours.",
-                 f"You pit at the end of lap {p.box_lap}, in {p.laps_until_box} laps.")
+        b, n = p.box_lap, p.laps_until_box
+        when = pick("a_pitwhen", [(f"Tu rentres à la fin du tour {b}, dans {n} tours.", f"You pit at the end of lap {b}, in {n} laps."),
+                                  (f"Box dans {n} tours, à la fin du tour {b}.", f"Box in {n} laps, end of lap {b}."),
+                                  (f"On t'attend au stand dans {n} tours, tour {b}.", f"We'll see you in the pits in {n} laps, lap {b}.")])
     serv = []
     if p.fuel_to_add is not None:
         serv.append(L(f"{_f(p.fuel_to_add, 0)} litres", f"{_f(p.fuel_to_add, 0)} litres of fuel"))
@@ -229,11 +244,14 @@ def repairs(s: Snapshot, p: Plan) -> str:
     if s.repair:
         return L("Oui, la voiture est abîmée : je prévois les réparations au prochain arrêt. Dis « pas de réparation » si tu n'en veux pas.",
                  "Yes, the car is damaged: I'm planning repairs at the next stop. Say \"no repairs\" if you don't want them.")
-    return L("Pas de dégâts importants, pas besoin de réparer.", "No significant damage, no need for repairs.")
+    return pick("a_norep", [("Pas de dégâts importants, pas besoin de réparer.", "No significant damage, no need for repairs."),
+                            ("La voiture va bien, rien à réparer.", "The car looks fine, nothing to fix."),
+                            ("Je ne vois pas de dégâts sérieux, on ne répare pas.", "No serious damage on my side, no repairs needed.")])
 
 
 def position(s: Snapshot, p: Plan) -> str:
-    out = L(f"Tu es P{s.position}", f"You're P{s.position}")
+    out = pick("a_pos", [(f"Tu es P{s.position}", f"You're P{s.position}"), (f"Tu roules P{s.position}", f"You're running P{s.position}"),
+                         (f"Position : P{s.position}", f"Position: P{s.position}")])
     if s.class_position and s.class_position != s.position:
         out += L(f", P{s.class_position} dans ta catégorie", f", P{s.class_position} in class")
     return out + "."
@@ -413,11 +431,14 @@ def command(text: str) -> str | None:
 # ------------------------------------------------------------ discussion
 # Petites phrases de radio qui marchent partout, même hors de la voiture.
 def _radio_check(s: Snapshot) -> str:
-    return L("Oui, je t'entends, cinq sur cinq.", "Yes, I hear you loud and clear.")
+    return pick("a_check", [("Oui, je t'entends, cinq sur cinq.", "Yes, I hear you loud and clear."),
+                            ("Cinq sur cinq, je te reçois parfaitement.", "Five by five, reading you perfectly."),
+                            ("Reçu fort et clair.", "Loud and clear.")])
 
 
 def _here(s: Snapshot) -> str:
-    return L("Je suis là, je t'écoute.", "I'm here, go ahead.")
+    return pick("a_here", [("Je suis là, je t'écoute.", "I'm here, go ahead."), ("Toujours là, vas-y.", "Still here, go ahead."),
+                           ("Présent, je t'écoute.", "Here, listening.")])
 
 
 def _hello(s: Snapshot) -> str:
@@ -426,7 +447,8 @@ def _hello(s: Snapshot) -> str:
 
 
 def _thanks(s: Snapshot) -> str:
-    return L("Avec plaisir.", "You're welcome.")
+    return pick("a_thanks", [("Avec plaisir.", "You're welcome."), ("De rien, c'est mon boulot.", "No problem, that's my job."),
+                             ("Pas de quoi, on fait équipe.", "Anytime, we're a team.")])
 
 
 def _who(s: Snapshot) -> str:

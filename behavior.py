@@ -347,7 +347,9 @@ class Behavior:
         self.issues = [{"kind": k, "corner": c, "where": w, "text": self.describe((k, c, w)), "tip": self.tip((k, c, w))}
                        for k, c, w in confirmed]
         # annonces regroupées ("sous-virage au milieu des virages 4, 5 et 6"), au plus 1 tous les 3 tours
-        if not self.say or self.laps_seen - self.last_say < SAY_EVERY:
+        import alerts   # niveau d'encouragements choisi : « motivant » parle plus souvent
+        lvl = alerts.ENCOURAGE
+        if not self.say or self.laps_seen - self.last_say < {"discret": 4, "normal": SAY_EVERY, "motivant": 2}[lvl]:
             return
         groups = {}
         for k, c, w in confirmed:
@@ -358,7 +360,7 @@ class Behavior:
             new_corners = prev is None or not set(corners) <= set(prev[0])
             if self.repeats[(k, corners[0], w)] >= MAX_REPEAT and not new_corners:
                 continue   # déjà dit 2 fois : on ne radote pas (toujours dispo si tu demandes)
-            if new_corners or self.laps_seen - prev[1] >= 10:
+            if new_corners or self.laps_seen - prev[1] >= (6 if lvl == "motivant" else 10):
                 self.repeats[(k, corners[0], w)] += 1
                 self.group_said[(k, w)] = (corners, self.laps_seen)
                 self.last_say = self.laps_seen
@@ -372,7 +374,7 @@ class Behavior:
                 else:
                     if self.repeats[(k, corners[0], w)] > 1:
                         continue   # problème de garage : dit une seule fois en piste
-                    if time.monotonic() - self.garage_said < 45 * 60:
+                    if time.monotonic() - self.garage_said < {"discret": 45, "normal": 20, "motivant": 10}[lvl] * 60:
                         continue   # une seule annonce « garage » par session : le reste est noté pour la fin
                     self.garage_said = time.monotonic()
                     self.say(None, L(f"{d}. Ça se corrige au garage, je te le rappelle après la course.",

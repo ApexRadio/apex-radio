@@ -47,6 +47,14 @@ def class_name(c: str) -> str:
     return c or L("voiture", "car")
 
 
+def _sec(x: float, en: bool = False) -> str:
+    """2,3 secondes / 0,8 seconde"""
+    v = abs(x)
+    if en:
+        return f"{v:.1f} second{'s' if v >= 2 else ''}"
+    return dec(f"{v:.1f} seconde{'s' if v >= 2 else ''}")
+
+
 def _dix(x: float) -> str:
     d = round(abs(x) * 10)
     if d >= 10:
@@ -241,12 +249,8 @@ class GapTrend:
 
     def trend(self, side: str):
         """Évolution de l'écart par tour (au moins 2 tours sur la même voiture) : (par tour, écart, place) ou None."""
-        series = self.ahead if side == "ahead" else self.behind
-        series = [x for x in series if x[1] is not None]
-        if len(series) < 2 or len({p for p, _ in series[-3:]}) != 1:
-            return None
-        series = series[-3:]
-        return (series[-1][1] - series[0][1]) / (len(series) - 1), series[-1][1], series[-1][0]
+        rate, gap, place = self._rate(self.ahead if side == "ahead" else self.behind)
+        return None if rate is None else (rate, gap, place)
 
     def update(self, s, say) -> None:
         if not s.on_track or s.session != "course":
@@ -259,24 +263,54 @@ class GapTrend:
             return
         self.laps = s.laps_done
         self.count += 1
-        pa = (s.ahead or {}).get("place")
-        pb = (s.behind or {}).get("place")
-        self.ahead.append((pa, s.gap_class_ahead))
-        self.behind.append((pb, s.gap_class_behind))
+        # on suit la voiture par son pilote (pas par sa place, qui change à chaque dépassement)
+        a, b = s.ahead or {}, s.behind or {}
+        self.ahead.append((a.get("name") or a.get("place"), s.gap_class_ahead, a.get("place")))
+        self.behind.append((b.get("name") or b.get("place"), s.gap_class_behind, b.get("place")))
         self.ahead, self.behind = self.ahead[-4:], self.behind[-4:]
-        every = {"discret": 5, "normal": self.EVERY, "motivant": 2}[ENCOURAGE]
-        if self.count % every != 1 % every or s.in_pits:
+        if s.in_pits or s.laps_done < 2:
             return
-        msg = self._ahead_msg() or self._behind_msg()
-        msg = msg and msg.replace("PNone", L("la voiture", "the car"))
+        # tendance (on se rapproche, il s'échappe…) : chaque tour en « motivant », 1 sur 2 en normal, 1 sur 4 en discret
+        every = {"discret": 4, "normal": 2, "motivant": 1}[ENCOURAGE]
+        msg = None
+        if self.count % every == 0:
+            msg = self._ahead_msg() or self._behind_msg()
+        # sinon, un simple point sur les écarts de temps en temps
+        point_every = {"discret": 6, "normal": 3, "motivant": 2}[ENCOURAGE]
+        if not msg and self.count - self.last_point >= point_every:
+            msg = self._point(s)
         if msg:
-            say(None, msg)
+            self.last_point = self.count
+            say(None, msg.replace("PNone", L("la voiture", "the car")))
+
+    last_point = 0
 
     @staticmethod
     def _rate(series):
-        if len(series) < 4 or any(g is None for _, g in series) or len({p for p, _ in series}) != 1:
+        """Évolution par tour sur les 3 derniers tours derrière la même voiture (au moins 2 tours)."""
+        tail = []
+        for x in reversed(series):
+            if x[1] is None or (tail and x[0] != tail[0][0]):
+                break
+            tail.insert(0, x)
+        tail = tail[-3:]
+        if len(tail) < 2:
             return None, None, None   # pas assez de tours, ou ce n'est plus la même voiture
-        return (series[-1][1] - series[0][1]) / 3, series[-1][1], series[-1][0]
+        return (tail[-1][1] - tail[0][1]) / (len(tail) - 1), tail[-1][1], tail[-1][2]
+
+    def _point(self, s):
+        """« P12 à 2,3 secondes devant, P14 à 1,1 seconde derrière. »"""
+        a = self.ahead[-1] if self.ahead else (None, None, None)
+        b = self.behind[-1] if self.behind else (None, None, None)
+        parts = []
+        if a[1] is not None and a[1] < 30:
+            parts.append(L(f"P{a[2]} à {_sec(a[1])} devant", f"P{a[2]} {_sec(a[1], en=True)} ahead"))
+        if b[1] is not None and b[1] < 30:
+            parts.append(L(f"P{b[2]} à {_sec(b[1])} derrière", f"P{b[2]} {_sec(b[1], en=True)} behind"))
+        if not parts:
+            return None
+        head = var("point", [("Point écarts :", "Gaps:"), ("Les écarts :", "Gap check:"), ("Côté écarts,", "On the gaps,")])
+        return f"{head} {L(', ', ', ').join(parts)}."
 
     # phrases d'ingénieur, tirées au hasard pour ne pas répéter toujours la même chose
     @staticmethod

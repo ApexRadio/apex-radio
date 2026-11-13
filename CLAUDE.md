@@ -50,6 +50,15 @@ Créateur : Laurent (pseudo lolotuner), francophone : **réponds-lui en françai
 - Reddit : publications retirées par les filtres anti-spam (compte récent). Attendre, participer, puis une seule publication à la fois.
 - Toujours demander à Laurent de valider un texte avant de le publier à son nom.
 
+## En cours (13/11/2026)
+- Branche `test-streamdeck-stand` : plugin Stream Deck 0.3.0 (non publié, Laurent doit l'essayer en course d'abord).
+  Touches « Commande voiture » (action `car`, réglage `cmd`) qui affichent l'état réel (phares, contact, limiteur, essuie-glaces,
+  TC/ABS/TC Cut/TC Slip/carto/frein) et touches « Tchat rapide » (action `chat`). Côté Apex : `lmukeys.py` lit les touches LMU
+  du joueur (UserData\Controller / UserData\player, format supposé [appareil, code DIK], appareil 0 = clavier : À VÉRIFIER sur
+  le vrai fichier) et appuie avec SendInput (scancode) ; `/api/lmu/key`, `/api/lmu/chat` ; `snap.car` dans `/api/sd`.
+- Reste à faire : vérifier le fichier de touches LMU de Laurent, copier `app.py`, `telemetry.py`, `lmukeys.py` dans IngenieurCourse,
+  déposer le plugin (construit avec l'identifiant de son Stream Deck, qui ne va pas dans le dépôt) dans ses Téléchargements.
+
 ## Idées / à faire
 - Vidéo de démo (Reel/Short) : question essence → réponse, spotter, « box box » + menu des stands réglé.
 - Option de repli si la mise à jour échoue ; signature de code un jour (message SmartScreen).

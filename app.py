@@ -189,6 +189,17 @@ def loop(state: State, demo: bool) -> None:
 
     questions.FUEL_SET = set_no_fuel
 
+    def set_tyres(wheels: tuple) -> bool:
+        """Le pilote dit « change juste les deux avant » / « garde les pneus » : valable pour le prochain arrêt."""
+        order = (state.snap.pit_stops, tuple(wheels)) if state.snap is not None else None
+        crew.tyres_for = eng.tyre_order = order
+        if crew.done_for == state.snap.pit_stops and state.snap.on_track and not state.snap.in_pits:
+            crew.prepare(state.snap, state.plan, asked=True)
+            return True
+        return False
+
+    questions.TYRES_SET = set_tyres
+
     def setup_sync():
         """Toutes les 15 s : quel setup est chargé dans LMU ? (sélection automatique dans l'atelier)"""
         while not demo:

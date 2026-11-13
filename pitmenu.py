@@ -24,6 +24,7 @@ from i18n import L
 BASE = "http://localhost:6397"
 _OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 FUEL, TIRES, DAMAGE = 7, 8, 2
+WHEELS = (13, 14, 15, 16)   # FL TIRE, FR TIRE, RL TIRE, RR TIRE : un pneu à la fois
 
 
 def _req(method: str, path: str, body=None):
@@ -72,6 +73,8 @@ def plan_menu(menu: list, fuel_total: float | None, tyres: str | None, compound:
                 it["currentSetting"] = idx
             changes.append(L(f"essence à {lit:.0f} litres", f"fuel to {lit:.0f} litres"))
     it = _item(menu, TIRES)
+    if isinstance(tyres, tuple):   # ordre du pilote, pneu par pneu
+        return _plan_wheels(menu, tyres, compound, changes, repair)
     if it and tyres:
         idx = 0
         if tyres != "keep":
@@ -94,6 +97,10 @@ def plan_menu(menu: list, fuel_total: float | None, tyres: str | None, compound:
         typ = (it["settings"][idx].get("type") or "") if idx else ""
         changes.append(L("on garde les pneus", "keep the tyres") if idx == 0 else L("pneus pluie neufs", "new wet tyres") if typ == "Wet"
                        else L(f"pneus neufs {typ.lower()}", f"new {typ.lower()} tyres").strip())
+    return _plan_damage(menu, changes, repair)
+
+
+def _plan_damage(menu: list, changes: list, repair) -> tuple[list, list]:
     it = _item(menu, DAMAGE)
     if it and repair:
         print(f"  Menu stand, réparations possibles : {[s.get('text') for s in it.get('settings', [])]}")
@@ -117,6 +124,43 @@ def plan_menu(menu: list, fuel_total: float | None, tyres: str | None, compound:
     return menu, changes
 
 
+def _new_tyre_index(settings: list, compound: str) -> int:
+    """Indice du pneu neuf du même type que celui monté (sinon le premier sec neuf)."""
+    cur = (compound or "").strip().lower()
+    ok = [(i, s) for i, s in enumerate(settings)
+          if i and not s.get("isUsed") and "INVALID" not in s.get("text", "").upper() and "mixte" not in s.get("text", "").lower()]
+    same = next((i for i, s in ok if cur and (cur in (s.get("type") or "").lower() or cur in s.get("text", "").lower())), None)
+    dry = next((i for i, s in ok if (s.get("type") or "") != "Wet" and "mouill" not in s.get("text", "").lower()), None)
+    return same or dry or 0
+
+
+def _plan_wheels(menu: list, wheels: tuple, compound: str, changes: list, repair) -> tuple[list, list]:
+    from questions import wheels_text
+    per = [_item(menu, pmc) for pmc in WHEELS]
+    allw = _item(menu, TIRES)
+    if wheels and len(wheels) < 4 and not all(per):
+        changes.append(L("pas de choix pneu par pneu sur cette voiture, je change les quatre",
+                         "no tyre-by-tyre choice on this car, changing all four"))
+        wheels = (0, 1, 2, 3)
+    if allw is not None:
+        if not wheels:
+            allw["currentSetting"] = 0
+        elif len(wheels) == 4:
+            allw["currentSetting"] = _new_tyre_index(allw["settings"], compound)
+        else:   # « Pneus mixtes » : c'est la ligne de chaque roue qui compte
+            mixed = next((i for i, s in enumerate(allw["settings"]) if "mixte" in s.get("text", "").lower()
+                          or "mixed" in s.get("text", "").lower()), None)
+            if mixed is not None:
+                allw["currentSetting"] = mixed
+    for k, it in enumerate(per):
+        if it:
+            it["currentSetting"] = _new_tyre_index(it["settings"], compound) if k in wheels else 0
+    changes.append(wheels_text(wheels) if not wheels else L("4 pneus neufs", "four new tyres") if len(wheels) == 4
+                   else L(f"pneus neufs : {wheels_text(wheels)}", f"new tyres: {wheels_text(wheels)}"))
+    menu, changes = _plan_damage(menu, changes, repair)
+    return menu, changes
+
+
 class PitCrew:
     """Règle le menu des stands au moment du « box » (mode Auto) ou à la demande."""
 
@@ -126,6 +170,7 @@ class PitCrew:
         self.mode = cfg.get("pit_auto", "auto")   # "auto" / "demande" / "off"
         self.done_for = None                        # n° d'arrêt déjà préparé
         self.no_fuel_for = None                     # n° d'arrêt pour lequel le pilote a dit « pas d'essence »
+        self.tyres_for = None                       # (n° d'arrêt, roues) : « change juste les deux avant »
         self.status = ""                            # pour le tableau de bord
         self.busy = False
         self.say = None
@@ -159,6 +204,8 @@ class PitCrew:
         fuel_total = 0.0 if self.no_fuel_for == s.pit_stops else getattr(p, "fuel_total", None)
         tyres = "Wet" if p.tyre_compound == "pluie" else "dry" if p.tyre_compound == "slicks" else \
             "same" if p.change_tyres else "keep" if p.change_tyres is False else None
+        if self.tyres_for and self.tyres_for[0] == s.pit_stops and not p.tyre_compound:
+            tyres = tuple(self.tyres_for[1])   # l'ordre du pilote passe avant le calcul
         self.busy = True
         threading.Thread(target=self._run, args=(fuel_total, tyres, s.compound,
                                                        ("all" if getattr(p, "repair_all", False) else "body") if getattr(p, "repair", False)
@@ -187,7 +234,7 @@ class PitCrew:
             check = read_menu()
             bad = [it["name"] for it in new
                    if (c := _item(check, it["PMC Value"])) and c["currentSetting"] != it["currentSetting"]
-                   and it["PMC Value"] in (FUEL, TIRES, DAMAGE)]
+                   and it["PMC Value"] in (FUEL, TIRES, DAMAGE) + WHEELS]
             if bad:
                 self.status = L("⚠ Menu non pris en compte : ", "⚠ Menu not applied: ") + ", ".join(bad)
                 self._say(L("Attention, je n'ai pas réussi à régler tout le menu des stands, vérifie-le.",

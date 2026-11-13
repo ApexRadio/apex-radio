@@ -576,6 +576,73 @@ def fuel_command(t: str) -> str | None:
     return out + (L(" Je corrige le menu des stands.", " Updating the pit menu.") if menu else "")
 
 
+# ---- pneus pneu par pneu : « change juste les deux avant », « les pneus gauches », « garde les pneus »
+TYRES_SET = None   # fonction(roues: tuple d'indices 0=AVG 1=AVD 2=ARG 3=ARD) ; renvoie True si le menu est re-réglé
+_FRONT, _REAR, _LEFT, _RIGHT = r"avants?|fronts?", r"arrieres?|rears?|back", r"gauches?|left", r"droite?s?|right"
+
+
+def wheels_text(w) -> str:
+    """(0, 1) -> « les deux pneus avant »"""
+    w = tuple(sorted(w))
+    named = {(): L("on garde les pneus", "we keep the tyres"), (0, 1, 2, 3): L("les quatre pneus", "all four tyres"),
+             (0, 1): L("les deux pneus avant", "the two fronts"), (2, 3): L("les deux pneus arrière", "the two rears"),
+             (0, 2): L("les deux pneus gauches", "the two left tyres"), (1, 3): L("les deux pneus droits", "the two right tyres")}
+    if w in named:
+        return named[w]
+    if len(w) == 1:
+        return L(f"le pneu {_tyre_names(list(w))}", f"the {_tyre_names(list(w))} tyre")
+    names = [_tyre_names([i]) for i in w]
+    return L("les pneus ", "the ") + ", ".join(names[:-1]) + L(" et ", " and ") + names[-1] + L("", " tyres")
+
+
+def parse_wheels(t: str):
+    """Renvoie un tuple de roues, () pour « on garde les pneus », ou None si la phrase ne parle pas de changer des pneus."""
+    if not re.search(r"\b(pneus?|gommes?|roues?|tyres?|tires?|wheels?)\b|\bles (deux|2|quatre|4) (avant|arriere|gauche|droit)|"
+                     r"\b(seulement|juste|que|change|changez|uniquement) (l |le |les )?(avant|arriere)s? (gauche|droit)", t):
+        return None
+    if re.search(r"^(il faut|faut il|est ce qu|on doit|je dois|tu crois|ca vaut|comment|combien|quel|quand)", t):
+        return None   # une question sur les pneus, pas un ordre
+    if re.search(r"\b(pluie|mouille|wets?|slicks?|secs?)\b", t):
+        return None   # le type de pneus (pluie / slicks) est géré par la stratégie météo
+    if re.search(r"\b(garde|gardez|garder|on garde|laisse|laisser)\b.*\b(pneus?|gommes?)\b|"
+                 r"\b(pas|aucun|sans) (de |d |les |le )?(changement de )?(pneus?|gommes?)\b|"
+                 r"\bne (change|changez|changer|touche|touchez) (pas|rien)\b.*\bpneu|keep (the )?tyres|no (new )?tyres", t):
+        return ()
+    if not re.search(r"\b(change|changez|changer|changes|remplace|remplacer|mets|met|mettez|monte|chausse|"
+                     r"seulement|juste|que|uniquement|neufs?|nouveaux?|change|swap|new|only|just|fit)\b", t):
+        return None
+    if re.search(r"\b(quatre|4|tous|toutes|all|four)\b", t):
+        return (0, 1, 2, 3)
+    f, r = bool(re.search(rf"\b({_FRONT})", t)), bool(re.search(rf"\b({_REAR})", t))
+    l, d = bool(re.search(rf"\b({_LEFT})\b", t)), bool(re.search(rf"\b({_RIGHT})\b", t))
+    one = bool(re.search(r"\b(le|un|l|seul|one) (seul )?(pneu |tyre |tire )?(avant|arriere|front|rear)\b", t)) and \
+        not re.search(r"\b(les|deux|2|two|both)\b", t)
+    if not (f or r or l or d):
+        # « change les pneus » sans préciser : les quatre
+        return (0, 1, 2, 3) if re.search(r"\b(change|changez|changer|remplace|mets|met)\b.*\b(pneus|tyres|tires)\b", t) else None
+    fr = [0, 1] if f and not r else [2, 3] if r and not f else [0, 1, 2, 3]   # indices des roues retenues (avant / arrière)
+    side = [0, 2] if l and not d else [1, 3] if d and not l else [0, 1, 2, 3]
+    w = tuple(i for i in range(4) if i in fr and i in side)
+    if one and len(w) > 1 and not (l or d):
+        return None   # « le pneu avant » sans côté : trop flou
+    return w or None
+
+
+def tyre_command(t: str) -> str | None:
+    w = parse_wheels(t)
+    if w is None:
+        return None
+    if TYRES_SET is None:
+        return L("Je ne peux pas changer les pneus pour l'instant.", "I can't change the tyres right now.")
+    menu = TYRES_SET(w)
+    if not w:
+        out = L("C'est noté, on garde les pneus au prochain arrêt.", "Copy, we keep the tyres at the next stop.")
+    else:
+        what = wheels_text(w)
+        out = L(f"C'est noté, on change {what} au prochain arrêt.", f"Copy, we change {what} at the next stop.")
+    return out + (L(" Je corrige le menu des stands.", " Updating the pit menu.") if menu else "")
+
+
 NUM_WORDS = {"un": 1, "premier": 1, "deux": 2, "trois": 3, "quatre": 4, "cinq": 5, "six": 6, "sept": 7, "huit": 8,
              "neuf": 9, "dix": 10, "onze": 11, "douze": 12, "treize": 13, "quatorze": 14, "quinze": 15}
 
@@ -654,10 +721,17 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
     # ordres pour le prochain arrêt : réparations et/ou essence (« répare mais sans ravitaillement »)
     f = fuel_command(t)
     r = repair_command(t)
-    if f and r:
-        return r.replace(" Je corrige le menu des stands.", "").replace(" Updating the pit menu.", "") + " " + f
-    if f or r:
-        return f or r
+    w = tyre_command(t)
+    orders = [x for x in (r, w, f) if x]
+    if orders:
+        # « répare, change les avants et pas d'essence » : une seule phrase, « je corrige le menu » une fois à la fin
+        tail = [L(" Je corrige le menu des stands.", " Updating the pit menu.")]
+        fix = any(tail[0] in o for o in orders)
+        body = [o.replace(tail[0], "") for o in orders]
+        body = [body[0]] + [b.replace("C'est noté, ", "Et ").replace("Copy, ", "And ") for b in body[1:]]
+        nxt = (L(" au prochain arrêt", " at the next stop"))
+        body = [b.replace(nxt, "") for b in body[:-1]] + body[-1:]
+        return " ".join(body) + (tail[0] if fix else "")
     if not s.on_track:
         # hors piste, « comment ça va » est une politesse, pas une demande de point complet
         polite = bool(re.search(r"\bca va\b|comment vas tu|how are you", t))

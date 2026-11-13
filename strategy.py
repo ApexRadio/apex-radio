@@ -40,6 +40,7 @@ class Plan:
     fuel_to_add: float | None = None
     energy_target: float | None = None  # niveau d'énergie à viser au stand (0..1)
     change_tyres: bool | None = None
+    tyre_wheels: tuple | None = None    # ordre du pilote : roues à changer (0=AVG 1=AVD 2=ARG 3=ARD), () = on garde
     tyre_compound: str = ""             # "pluie" / "slicks" / ""
     tyre_laps_left: float | None = None
     save_per_lap: float | None = None   # litres à économiser par tour pour éviter un arrêt
@@ -165,6 +166,9 @@ class Engineer:
         p.repair = s.repair
         p.no_repair = s.no_repair
         p.repair_all = s.repair_all
+        order = getattr(self, "tyre_order", None)
+        if order and order[0] == s.pit_stops:
+            p.tyre_wheels = order[1]
 
         # nouveau relais après un arrêt
         if s.pit_stops != self._last_stops:
@@ -292,6 +296,10 @@ class Engineer:
             parts.append(L("pneus pluie", "wet tyres"))
         elif p.tyre_compound == "slicks":
             parts.append(L("retour en slicks", "back to slicks"))
+        elif p.tyre_wheels is not None:
+            from questions import wheels_text
+            parts.append(wheels_text(p.tyre_wheels) if not p.tyre_wheels else L("4 pneus neufs", "four new tyres") if len(p.tyre_wheels) == 4
+                         else L(f"pneus neufs : {wheels_text(p.tyre_wheels)}", f"new tyres: {wheels_text(p.tyre_wheels)}"))
         elif p.change_tyres:
             parts.append(L("4 pneus neufs", "four new tyres"))
         elif p.change_tyres is False:

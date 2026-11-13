@@ -58,7 +58,7 @@ def _sec(x: float, en: bool = False) -> str:
 def _dix(x: float) -> str:
     d = round(abs(x) * 10)
     if d >= 10:
-        return dec(L(f"{abs(x):.1f} seconde", f"{abs(x):.1f} seconds"))
+        return dec(L(f"{abs(x):.1f} seconde{'s' if abs(x) >= 2 else ''}", f"{abs(x):.1f} seconds"))
     return L(f"{max(1, d)} dixième" + ("s" if d > 1 else ""), f"{max(1, d)} tenth" + ("s" if d > 1 else ""))
 
 
@@ -320,8 +320,7 @@ class GapTrend:
         i = random.randrange(len(fr))
         out = " " + L(fr[i], en[i])
         if ENCOURAGE == "motivant" and random.random() < 0.5:
-            j = random.randrange(len(MORE_PEP_FR))
-            out += " " + L(MORE_PEP_FR[j], MORE_PEP_EN[j])
+            out += " " + more_pep()
         return out
 
     def _ahead_msg(self):
@@ -396,10 +395,18 @@ def var(key: str, opts: list) -> str:
     return L(*opts[i])
 
 
-MORE_PEP_FR = ["Allez, allez !", "On y croit !", "Tu es en feu aujourd'hui !", "Superbe pilotage !", "On lâche rien !",
-               "C'est exactement ce qu'il faut faire.", "Bravo, c'est du beau travail."]
-MORE_PEP_EN = ["Come on, come on!", "We believe in it!", "You're on fire today!", "Superb driving!", "Never give up!",
-               "That's exactly what we need.", "Proud of you."]
+MORE_PEP_FR = ["Allez, allez !", "On y croit !", "Tu es en forme aujourd'hui !", "Superbe pilotage !", "On lâche rien !",
+               "C'est exactement ce qu'il faut faire.", "Bravo, c'est du beau travail.", "Tu as le rythme aujourd'hui !",
+               "Très propre, continue.", "C'est du solide."]
+MORE_PEP_EN = ["Come on, come on!", "We believe in it!", "You're in great shape today!", "Superb driving!", "Never give up!",
+               "That's exactly what we need.", "Proud of you.", "You've got the pace today!",
+               "Very clean, keep going.", "Solid stuff."]
+
+
+def more_pep() -> str:
+    """Un encouragement en plus (réglage « motivant »), sans redire un des derniers."""
+    from phrases import pick
+    return pick("more_pep", list(zip(MORE_PEP_FR, MORE_PEP_EN)))
 
 
 # ======================================================================= 11. places gagnées / perdues
@@ -461,7 +468,7 @@ class Places:
                             ("Tu gagnes une place", "You gain a place")]))
             pep = random.choice([L("Bien joué !", "Nice one!"), L("Superbe dépassement !", "Great move!"), L("Continue !", "Keep going!")])
             if ENCOURAGE == "motivant":
-                j = random.randrange(len(MORE_PEP_FR)); pep += " " + L(MORE_PEP_FR[j], MORE_PEP_EN[j])
+                pep += " " + more_pep()
             say(None, L(f"{n}, tu es P{pos}. ", f"{n}, you're P{pos}. ") + pep)
         else:
             k = -diff
@@ -561,7 +568,7 @@ class Morale:
         msg = random.choice(fresh)
         self.last_msg = msg
         if ENCOURAGE == "motivant" and random.random() < 0.4:
-            j = random.randrange(len(MORE_PEP_FR)); msg += " " + L(MORE_PEP_FR[j], MORE_PEP_EN[j])
+            msg += " " + more_pep()
         say(None, msg)
 
 
@@ -617,7 +624,7 @@ class WarmUp:
         opt = s.tyre_opt if 40 <= (s.tyre_opt or 0) <= 150 else 80.0
         c = (s.car_class or "").upper()
         brake = 250.0 if any(k in c for k in CARBON) else 180.0
-        return opt - 15.0, brake
+        return opt - 20.0, brake
 
     def cold(self, s) -> tuple[bool, bool]:
         tyre_ok, brake_ok = self.limits(s)

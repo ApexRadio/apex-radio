@@ -254,6 +254,11 @@ def loop(state: State, demo: bool) -> None:
                 if time.monotonic() - t_rate >= 60:
                     if n_ok:   # diagnostic dans le journal : ~50/s attendu (moins = PC trop chargé)
                         print(f"  Lecture rapide : {n_ok / (time.monotonic() - t_rate):.0f}/s")
+                    sn = state.snap
+                    if sn.on_track and not sn.in_pits:   # pour vérifier les températures pneus face au jeu
+                        r = lambda v: "/".join(f"{x:.0f}" for x in v)
+                        print(f"  Pneus °C (AVG/AVD/ARG/ARD) surface {r(sn.tyre_surface_temp)} · couche {r(sn.tyre_inner_temp)}"
+                              f" · carcasse {r(sn.tyre_carcass_temp)} · idéal {sn.tyre_opt:.0f}")
                     n_ok, t_rate = 0, time.monotonic()
                 beh.feed(m)
                 k += 1

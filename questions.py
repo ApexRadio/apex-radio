@@ -154,7 +154,7 @@ def tyres(s: Snapshot, p: Plan) -> str:
     if len(temps) == 4:
         avg_t = sum(temps) / 4
         if opt:
-            if avg_t < opt - 15:
+            if avg_t < opt - 20:
                 out.append(L(f"Ils sont encore froids : {_f(avg_t, 0)} degrés, l'idéal est vers {_f(opt, 0)}.",
                              f"They're still cold: {_f(avg_t, 0)} degrees, ideal is around {_f(opt, 0)}."))
             elif avg_t > opt + 15:

@@ -50,6 +50,8 @@ class Snapshot:
     tyre_wear: list = field(default_factory=lambda: [1.0] * 4)   # 1.0 = neuf
     tyre_temp: list = field(default_factory=lambda: [0.0] * 4)   # °C (couche intérieure de la gomme)
     tyre_surface_temp: list = field(default_factory=lambda: [0.0] * 4)   # °C (surface, varie très vite)
+    tyre_carcass_temp: list = field(default_factory=lambda: [0.0] * 4)   # °C (carcasse, la plus stable)
+    tyre_inner_temp: list = field(default_factory=lambda: [0.0] * 4)     # °C (couche intérieure de la gomme)
     tyre_opt: float = 0.0                                        # température idéale des pneus (°C)
     brake_temp: list = field(default_factory=lambda: [0.0] * 4)  # °C
     tyre_pressure: list = field(default_factory=lambda: [0.0] * 4)  # kPa
@@ -344,8 +346,13 @@ class LMUSource:
         # (un joueur avait 60 °C annoncés pour 85 °C en jeu) ; on la garde seulement en secours.
         surf = [sum(w[i].mTemperature) / 3 - 273.15 for i in range(4)]
         inner = [sum(w[i].mTireInnerLayerTemperature) / 3 - 273.15 for i in range(4)]
-        s.tyre_temp = [n if -30 < n < 250 else t for n, t in zip(inner, surf)]
+        carc = [w[i].mTireCarcassTemperature - 273.15 for i in range(4)]
+        # en GT3 la couche intérieure plafonnait vers 69 °C pour un idéal à 90 : on prend la plus chaude
+        # des deux mesures stables (couche intérieure, carcasse), la surface seulement en secours
+        s.tyre_temp = [max([x for x in (n, c) if -30 < x < 250] or [t]) for n, c, t in zip(inner, carc, surf)]
         s.tyre_surface_temp = surf
+        s.tyre_carcass_temp = carc
+        s.tyre_inner_temp = inner
         s.tyre_pressure = [w[i].mPressure for i in range(4)]
         s.tyre_opt = float(w[0].mOptimalTemp)
         s.brake_temp = [float(w[i].mBrakeTemp) for i in range(4)]

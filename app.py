@@ -41,6 +41,7 @@ from setups import Workshop
 from incidents import Incidents
 from lmu_probe import Probe
 import phrases
+import lmukeys
 from alerts import Spotter, Traffic, GapTrend, TrackLimits, Damage, Weather, WarmUp, CarInfo, Places, Morale, car_label, set_encourage
 import debrief
 from pitmenu import PitCrew
@@ -251,6 +252,11 @@ def loop(state: State, demo: bool) -> None:
         state.workshop = Workshop(state.radio.cfg)
     state.workshop.scan(force=True)
     print(f"  Setups LMU : {state.workshop.dir} ({'trouvé' if state.workshop.ok() else 'introuvable'})")
+    if state.workshop.ok():   # touches LMU du joueur, pour les commandes voiture du Stream Deck
+        try:
+            lmukeys.load(Path(state.workshop.dir).parent.parent)
+        except Exception as e:
+            print(f"  Touches LMU : lecture impossible ({e.__class__.__name__})")
     last_lap_seen = None
 
     def fast_loop():
@@ -551,6 +557,14 @@ def make_handler(state: State):
                 n = int(self.headers.get("Content-Length") or 0)
                 target = (json.loads(self.rfile.read(n) or b"{}") if n else {}).get("target", "ptt")
                 state.radio.start_learning(target)
+            elif self.path in ("/api/lmu/key", "/api/lmu/chat"):
+                n = int(self.headers.get("Content-Length") or 0)
+                body = json.loads(self.rfile.read(n) or b"{}") if n else {}
+                ok = lmukeys.press(str(body.get("cmd", ""))) if self.path.endswith("key") else lmukeys.chat(str(body.get("text", "")))
+                if not ok:
+                    self.send_response(409)
+                    self.end_headers()
+                    return
             elif self.path == "/api/lmu/launch":
                 launch_lmu(state.radio.cfg.get("lmu_mode", "ask"))
             elif self.path == "/api/lmu/mode":
@@ -848,7 +862,8 @@ def sd_state(state) -> dict:
         out.update({"pos": s.class_position or s.position, "cars": s.num_cars, "fuel": round(s.fuel, 1),
                     "fuel_cap": s.fuel_capacity, "energy": s.energy, "gap_ahead": s.gap_class_ahead,
                     "gap_behind": s.gap_class_behind, "last": s.last_lap, "best": s.best_lap,
-                    "in_pits": s.in_pits})
+                    "in_pits": s.in_pits, "car": s.car})
+    out["keys"] = lmukeys.available()
     if p:
         out.update({"range_laps": p.range_laps, "box_in": p.laps_until_box, "fuel_per_lap": p.fuel_per_lap})
     return out

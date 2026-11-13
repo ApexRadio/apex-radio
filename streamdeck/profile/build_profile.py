@@ -323,8 +323,9 @@ def decor(page, frames):
 
 def apex(kind, **settings):
     names = {"radio": "Radio (talk)", "info": "Live info", "spotter": "Spotter on/off", "quiet": "Quiet mode",
-             "voice": "Radio on/off", "repeat": "Repeat", "ask": "Question", "launch": "Start LMU"}
-    return entry(f"{PLUGIN}.{kind}", names[kind], PLUGIN, "Apex Radio", "0.2.3", settings, state())
+             "voice": "Radio on/off", "repeat": "Repeat", "ask": "Question", "launch": "Start LMU",
+             "car": "Car command", "chat": "Quick chat"}
+    return entry(f"{PLUGIN}.{kind}", names[kind], PLUGIN, "Apex Radio", "0.3.0", settings, state())
 
 
 def build():
@@ -333,6 +334,7 @@ def build():
     live = Page("7aa7a9ad-616f-4285-8b7f-7169d18078a4")
     car = Page("5b0c1a52-7d3e-4c1e-9a51-3c8f2e6a1001")
     aids = Page("5b0c1a52-7d3e-4c1e-9a51-3c8f2e6a1002")
+    chat = Page("5b0c1a52-7d3e-4c1e-9a51-3c8f2e6a1003")
 
     # accueil : la livrée Apex Radio sur les 15 touches ; la touche MENU (en haut à gauche) ouvre le menu
     import home_styles
@@ -356,7 +358,7 @@ def build():
     m.put(1, 2, apex("ask", q="prépare-moi l'arrêt", label="Box"))
     m.put(2, 2, folder(m, car, tile("car", "VOITURE", AMBER, kind="folder")))
     m.put(3, 2, folder(m, aids, tile("adjustments", "AIDES", AMBER, kind="folder")))
-    m.put(4, 2, decor(m, tile("video", "BIENTÔT", AMBER, anim="none", kind="folder")))
+    m.put(4, 2, folder(m, chat, tile("message-circle", "TCHAT", AMBER, kind="folder")))
 
     # en course : infos en direct
     l = live
@@ -372,17 +374,13 @@ def build():
     l.put(3, 2, apex("repeat"))
     l.put(4, 2, apex("ask", q="fais-moi le point", label="Le point"))
 
-    # voiture : touches de LMU (clavier AZERTY, réglages de Laurent pour l'instant)
+    # voiture : Apex appuie sur la touche LMU du joueur et la touche affiche l'état réel (phares allumés…)
     v = car
     v.put(0, 0, back(v))
-    v.put(1, 0, hotkey(v, tile("key", "CONTACT", AMBER), letter("I")))
-    v.put(2, 0, hotkey(v, tile("engine", "DÉMARRER", AMBER), letter("O")))
-    v.put(3, 0, hotkey(v, tile("gauge", "LIMITEUR", AMBER), letter("E")))
-    v.put(4, 0, hotkey(v, tile("bulb", "PHARES", AMBER), letter("T")))
-    v.put(0, 1, hotkey(v, tile("brightness-up", "APPEL", AMBER), letter("Y")))
-    v.put(1, 1, hotkey(v, tile("wiper", "ESSUIE", AMBER), letter("U")))
-    v.put(2, 1, hotkey(v, tile("letter-n", "NEUTRE", AMBER), hk(192, 217)))
-    v.put(3, 1, hotkey(v, tile("tool", "STAND", AMBER), letter("Z")))
+    for (c, r), cmd in {(1, 0): "ignition", (2, 0): "starter", (3, 0): "limiter", (4, 0): "lights",
+                        (0, 1): "flash", (1, 1): "wipers", (2, 1): "neutral", (3, 1): "pit_request"}.items():
+        v.put(c, r, apex("car", cmd=cmd))
+    # touches de l'interface du jeu (pas d'état à afficher) : touches clavier de Laurent pour l'instant
     v.put(4, 1, hotkey(v, tile("player-skip-forward", "SKIP TOUR", AMBER), hk(8, 16777219)))
     v.put(0, 2, hotkey(v, tile("layout-dashboard", "RÉTRO", AMBER), hk(51, 51)))
     v.put(1, 2, hotkey(v, tile("dashboard", "HUD", AMBER), hk(54, 54)))
@@ -390,26 +388,25 @@ def build():
     v.put(3, 2, hotkey(v, tile("player-pause", "PAUSE", AMBER), letter("P")))
     v.put(4, 2, hotkey(v, tile("door-exit", "ÉCHAP", AMBER), hk(27, 16777216)))
 
-    # aides au pilotage
+    # aides au pilotage : la touche affiche la valeur actuelle (TC 4, ABS 6, frein 53,5 %…)
     a = aids
     a.put(0, 0, back(a))
-    a.put(1, 0, hotkey(a, adjust_tile("TC", True), letter("Q")))
-    a.put(2, 0, hotkey(a, adjust_tile("TC", False), letter("W")))
-    a.put(3, 0, hotkey(a, adjust_tile("ABS", True), letter("F")))
-    a.put(4, 0, hotkey(a, adjust_tile("ABS", False), letter("V")))
-    a.put(0, 1, hotkey(a, adjust_tile("TC CUT", True), letter("S")))
-    a.put(1, 1, hotkey(a, adjust_tile("TC CUT", False), letter("X")))
-    a.put(2, 1, hotkey(a, adjust_tile("TC SLIP", True), letter("D")))
-    a.put(3, 1, hotkey(a, adjust_tile("TC SLIP", False), letter("C")))
-    a.put(4, 1, hotkey(a, adjust_tile("FREIN ▲", True, CYAN), letter("G")))
-    a.put(0, 2, hotkey(a, adjust_tile("FREIN ▼", False, CYAN), letter("B")))
-    a.put(1, 2, hotkey(a, adjust_tile("CARTO", True), letter("J")))
-    a.put(2, 2, hotkey(a, adjust_tile("CARTO", False), hk(188, 44)))
-    a.put(3, 2, hotkey(a, adjust_tile("RÉGÉN", True), letter("M")))
-    a.put(4, 2, hotkey(a, adjust_tile("RÉGÉN", False), hk(223, 33)))
+    for (c, r), cmd in {(1, 0): "tc_up", (2, 0): "tc_down", (3, 0): "abs_up", (4, 0): "abs_down",
+                        (0, 1): "tccut_up", (1, 1): "tccut_down", (2, 1): "tcslip_up", (3, 1): "tcslip_down",
+                        (4, 1): "bias_fwd", (0, 2): "bias_rear", (1, 2): "map_up", (2, 2): "map_down",
+                        (3, 2): "regen_up", (4, 2): "regen_down"}.items():
+        a.put(c, r, apex("car", cmd=cmd))
+
+    # tchat : messages tout prêts (texte modifiable sous chaque touche)
+    t = chat
+    t.put(0, 0, back(t))
+    for (c, r), (label, text) in {(1, 0): ("DÉSOLÉ", "Sorry!"), (2, 0): ("MERCI", "Thanks!"), (3, 0): ("GL HF", "Good luck, have fun!"),
+                                  (4, 0): ("GG", "GG, good race!"), (0, 1): ("PASSE", "Go ahead, I'll let you by"),
+                                  (1, 1): ("ATTENTION", "Careful, car stopped on track")}.items():
+        t.put(c, r, apex("chat", label=label, text=text))
 
     empty = Page("4722c796-e705-4a70-aabf-4440297ba767")   # page « par défaut » vide, comme dans les profils du logiciel
-    pages = [home, menu, live, car, aids, empty]
+    pages = [home, menu, live, car, aids, chat, empty]
     prof_id = "71DB85AF-2AC5-484C-88C3-4494522CC216"
     base = f"{prof_id}.sdProfile/"
     OUT.parent.mkdir(parents=True, exist_ok=True)

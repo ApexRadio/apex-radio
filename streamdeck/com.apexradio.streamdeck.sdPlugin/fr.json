@@ -1,6 +1,6 @@
 {
   "Name": "Apex Radio",
-  "Description": "Ingénieur de course vocal pour Le Mans Ultimate : bouton radio, spotter, mode silence et infos de course en direct (place, essence, écarts, box). Nécessite l'appli gratuite Apex Radio.",
+  "Description": "Ingénieur de course vocal pour Le Mans Ultimate : bouton radio, spotter, infos de course en direct, commandes de la voiture qui affichent leur état réel et messages rapides dans le tchat. Nécessite l'appli gratuite Apex Radio.",
   "Category": "Apex Radio",
   "com.apexradio.streamdeck.radio": {
     "Name": "Radio (parler)",
@@ -33,5 +33,13 @@
   "com.apexradio.streamdeck.launch": {
     "Name": "Lancer LMU",
     "Tooltip": "Lance Le Mans Ultimate."
+  },
+  "com.apexradio.streamdeck.car": {
+    "Name": "Commande voiture",
+    "Tooltip": "Phares, contact, limiteur, essuie-glaces, TC, ABS… Apex appuie sur ta touche LMU et la touche affiche l'état réel de la voiture."
+  },
+  "com.apexradio.streamdeck.chat": {
+    "Name": "Tchat rapide",
+    "Tooltip": "Envoie un message tout prêt dans le tchat de LMU."
   }
 }

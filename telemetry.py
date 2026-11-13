@@ -52,6 +52,7 @@ class Snapshot:
     tyre_surface_temp: list = field(default_factory=lambda: [0.0] * 4)   # °C (surface, varie très vite)
     tyre_carcass_temp: list = field(default_factory=lambda: [0.0] * 4)   # °C (carcasse, la plus stable)
     tyre_inner_temp: list = field(default_factory=lambda: [0.0] * 4)     # °C (couche intérieure de la gomme)
+    car: dict = field(default_factory=dict)   # phares, contact, limiteur, essuie-glaces, TC, ABS… (Stream Deck)
     tyre_opt: float = 0.0                                        # température idéale des pneus (°C)
     brake_temp: list = field(default_factory=lambda: [0.0] * 4)  # °C
     tyre_pressure: list = field(default_factory=lambda: [0.0] * 4)  # kPa
@@ -336,6 +337,14 @@ class LMUSource:
         s.gap_behind = tel.mTimeGapCarBehind if tel.mTimeGapCarBehind > 0 else None
 
         s.fuel = tel.mFuel
+        try:
+            s.car = {"lights": bool(tel.mHeadlights), "ign": int(tel.mIgnitionStarter), "rpm": int(tel.mEngineRPM), "limiter": bool(tel.mSpeedLimiter),
+                     "wipers": int(tel.mWiperState), "tc": int(tel.mTC), "tc_max": int(tel.mTCMax),
+                     "tcslip": int(tel.mTCSlip), "tccut": int(tel.mTCCut), "abs": int(tel.mABS), "abs_max": int(tel.mABSMax),
+                     "map": int(tel.mMotorMap), "map_max": int(tel.mMotorMapMax),
+                     "bias": round(100 * (1 - tel.mRearBrakeBias), 1) if 0 < tel.mRearBrakeBias < 1 else None}
+        except (AttributeError, ValueError):
+            s.car = {}
         s.fuel_capacity = tel.mFuelCapacity
         s.energy = tel.mVirtualEnergy if tel.mVirtualEnergy > 0 else None
 

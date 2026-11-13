@@ -1,10 +1,10 @@
 {
   "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
   "Name": "Apex Radio",
-  "Version": "0.2.3.0",
+  "Version": "0.3.0.0",
   "Author": "lolotuner",
   "UUID": "com.apexradio.streamdeck",
-  "Description": "Voice race engineer for Le Mans Ultimate: radio button, spotter, quiet mode and live race info (position, fuel, gaps, box). Requires the free Apex Radio app.",
+  "Description": "Voice race engineer for Le Mans Ultimate: radio button, spotter, live race info, car commands that show their real state, and quick chat messages. Requires the free Apex Radio app.",
   "URL": "https://github.com/ApexRadio/apex-radio",
   "Icon": "imgs/plugin",
   "CategoryIcon": "imgs/category",
@@ -170,6 +170,44 @@
       ],
       "UserTitleEnabled": false,
       "SupportedInMultiActions": true
+    },
+    {
+      "UUID": "com.apexradio.streamdeck.car",
+      "Name": "Car command",
+      "Tooltip": "Lights, ignition, limiter, wipers, TC, ABS… Apex presses your own LMU key and the key shows the car's real state.",
+      "Icon": "imgs/actions/car",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/actions/car-key",
+          "TitleAlignment": "bottom",
+          "ShowTitle": false
+        }
+      ],
+      "UserTitleEnabled": false,
+      "SupportedInMultiActions": true,
+      "PropertyInspectorPath": "ui/car.html"
+    },
+    {
+      "UUID": "com.apexradio.streamdeck.chat",
+      "Name": "Quick chat",
+      "Tooltip": "Sends a ready-made message in the LMU chat.",
+      "Icon": "imgs/actions/chat",
+      "Controllers": [
+        "Keypad"
+      ],
+      "States": [
+        {
+          "Image": "imgs/actions/chat-key",
+          "TitleAlignment": "bottom",
+          "ShowTitle": false
+        }
+      ],
+      "UserTitleEnabled": false,
+      "SupportedInMultiActions": true,
+      "PropertyInspectorPath": "ui/chat.html"
     }
   ],
   "Profiles": [

@@ -1,5 +1,17 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.2.12
+- 🇫🇷 Ton de la radio au choix (⚙️ Réglages → Ingénieur) : Sobre (juste l'info), Radio d'équipe ou Détendu. L'ingénieur varie aussi beaucoup plus ses phrases pour moins se répéter.
+- 🇬🇧 Pick your radio tone (⚙️ Settings → Engineer): Plain (just the info), Team radio or Laid-back. The engineer also varies his phrases a lot more so he repeats himself less.
+- 🇫🇷 Pneus au stand, un par un : « change juste les deux avant », « les pneus gauches », « seulement l'arrière droit », « garde les pneus ».
+- 🇬🇧 Tyres at the stop, one by one: "just change the fronts", "the left tyres", "only the rear right", "keep the tyres".
+- 🇫🇷 Plus d'infos en course : écarts avec les voitures devant et derrière, conseils de setup. La fréquence suit ton niveau d'encouragements.
+- 🇬🇧 More info during the race: gaps to the cars ahead and behind, setup tips. How often depends on your encouragement level.
+- 🇫🇷 Fin de course : s'il ne manque qu'un peu d'essence, l'ingénieur te dit d'économiser au lieu de t'appeler au stand.
+- 🇬🇧 End of race: if you're only slightly short on fuel, the engineer tells you to save instead of calling you in.
+- 🇫🇷 Correctifs : température des pneus identique à celle du jeu, « pneus froids » seulement quand ils le sont vraiment, « répare mais sans essence » bien compris, nouvel ordre « pas d'essence », « drapeau jaune » au lieu de « neutralisation ».
+- 🇬🇧 Fixes: tyre temperature now matches the game, "cold tyres" only when they really are, "repair but no fuel" understood, new "no fuel" order, "yellow flag" wording.
+
 ## 1.2.11
 - 🇫🇷 Correctif : le spotter et l'analyse du setup refonctionnent (depuis la 1.2.10, ils ne recevaient plus assez de données quand le jeu occupait le processeur).
 - 🇬🇧 Fix: the spotter and setup analysis work again (since 1.2.10, they weren't getting enough data while the game was using the CPU).

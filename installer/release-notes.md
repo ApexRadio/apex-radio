@@ -1,14 +1,16 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
-## 🆕 1.2.11
-- 🇫🇷 Correctif : le spotter et l'analyse du setup refonctionnent (depuis la 1.2.10, ils ne recevaient plus assez de données quand le jeu occupait le processeur).
-- 🇬🇧 Fix: the spotter and setup analysis work again (since 1.2.10, they weren't getting enough data while the game was using the CPU).
-- 🇫🇷 Reconnaissance vocale au choix (⚙️ Réglages → Radio et volant) : Rapide, ou Précise, qui te comprend nettement mieux mais répond un peu plus lentement (1,5 Go à télécharger la première fois).
-- 🇬🇧 Choose your voice recognition (⚙️ Settings → Radio & wheel): Fast, or Precise, which understands you much better but answers a bit slower (1.5 GB download the first time).
-- 🇫🇷 Météo à venir : « il va pleuvoir ? », « la météo pour la course ? », « c'est pour les qualifs ou la course ? » donnent le risque de pluie et quand.
-- 🇬🇧 Weather forecast: "will it rain?", "weather for the race?", "for qualifying or the race?" give the rain chance and when.
-- 🇫🇷 Quand tu parles à quelqu'un d'autre micro ouvert, l'ingénieur ne te récite plus tout le point : il te demande de reposer ta question.
-- 🇬🇧 When you talk to someone else with the mic open, the engineer no longer reads the whole update: he asks you to repeat your question.
+## 🆕 1.2.12
+- 🇫🇷 Ton de la radio au choix (⚙️ Réglages → Ingénieur) : Sobre (juste l'info), Radio d'équipe ou Détendu. L'ingénieur varie aussi beaucoup plus ses phrases pour moins se répéter.
+- 🇬🇧 Pick your radio tone (⚙️ Settings → Engineer): Plain (just the info), Team radio or Laid-back. The engineer also varies his phrases a lot more so he repeats himself less.
+- 🇫🇷 Pneus au stand, un par un : « change juste les deux avant », « les pneus gauches », « seulement l'arrière droit », « garde les pneus ».
+- 🇬🇧 Tyres at the stop, one by one: "just change the fronts", "the left tyres", "only the rear right", "keep the tyres".
+- 🇫🇷 Plus d'infos en course : écarts avec les voitures devant et derrière, conseils de setup. La fréquence suit ton niveau d'encouragements.
+- 🇬🇧 More info during the race: gaps to the cars ahead and behind, setup tips. How often depends on your encouragement level.
+- 🇫🇷 Fin de course : s'il ne manque qu'un peu d'essence, l'ingénieur te dit d'économiser au lieu de t'appeler au stand.
+- 🇬🇧 End of race: if you're only slightly short on fuel, the engineer tells you to save instead of calling you in.
+- 🇫🇷 Correctifs : température des pneus identique à celle du jeu, « pneus froids » seulement quand ils le sont vraiment, « répare mais sans essence » bien compris, nouvel ordre « pas d'essence », « drapeau jaune » au lieu de « neutralisation ».
+- 🇬🇧 Fixes: tyre temperature now matches the game, "cold tyres" only when they really are, "repair but no fuel" understood, new "no fuel" order, "yellow flag" wording.
 
 ## 🇫🇷 Installation
 Télécharge **ApexRadio-Setup.exe** ci-dessous, lance-le, clique sur Suivant. C'est tout : Python et tous les composants sont inclus.

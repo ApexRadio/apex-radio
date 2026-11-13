@@ -107,7 +107,8 @@ def plan_menu(menu: list, fuel_total: float | None, tyres: str | None, compound:
         pick = pick or (opts[-1] if want_all and opts else opts[0] if opts else None)
         if pick:
             it["currentSetting"] = pick[0]
-            changes.append(L("on répare tout", "full repairs") if want_all else L("réparation de la carrosserie", "bodywork repairs"))
+            got_all = any(k in pick[1] for k in ("tout", "all", "full"))   # certaines voitures (GT3) n'ont pas « Tout réparer »
+            changes.append(L("on répare tout", "full repairs") if got_all else L("réparation de la carrosserie", "bodywork repairs"))
     if it and repair is False and len(it["settings"]) > 1:   # le pilote a dit « pas de réparation »
         idx = next((i for i, s in enumerate(it["settings"])
                     if any(n in s.get("text", "").lower() for n in ("ne pas", "pas de", "not", "no ", "none", "aucun"))), 0)

@@ -285,7 +285,7 @@ class Behavior:
                         val = dec(L(f"à {(1 - v) * 100:.1f} % à l'avant", f"{(1 - v) * 100:.1f} % front"))
                     else:
                         val = L(f"sur {v}", f"{v}")
-                    self.say(None, L(f"{CTRL_NAME[k]} passée {val}, je réévalue.", f"{CTRL_NAME_EN[k]} now {val}, re-evaluating."))
+                    self.say(None, L(f"{CTRL_NAME[k]} {'passée' if k == 'bias' else 'passé'} {val}, je réévalue.", f"{CTRL_NAME_EN[k]} now {val}, re-evaluating."))
 
     def _reset_linked(self, k: str) -> None:
         links = LINKED.get(k, set())

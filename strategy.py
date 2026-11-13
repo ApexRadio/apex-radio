@@ -208,6 +208,22 @@ class Engineer:
         if s.pit_stops and self._stop_lap is not None and s.laps_done - self._stop_lap < 2:
             self.plan = p          # juste après l'arrêt : on attend un tour propre avant de parler essence
             return p
+        # il manque moins d'un demi-tour d'essence (sans la marge) : un arrêt coûterait bien plus cher
+        # que de lever un peu le pied. On ne rentre pas, on économise.
+        real_short = p.laps_to_finish - p.range_laps
+        if p.stops_needed == 1 and p.limited_by == "essence" and real_short < 0.5 and p.laps_to_finish >= 1.5:
+            p.stops_needed = 0
+            p.save_per_lap = max(0.1, (max(real_short, 0.0) + 0.2) * fpl / max(p.laps_to_finish, 1))
+            q = dec(f"{p.save_per_lap:.1f}")
+            self.say("stint:tight", pick("tight", [
+                (f"C'est juste en essence, mais on ne s'arrête pas. Économise environ {q} litre par tour.",
+                 f"Fuel is tight, but we're not stopping. Save about {q} litres a lap."),
+                (f"On va au bout sans s'arrêter, mais il faut gratter {q} litre par tour. Lève un peu plus tôt avant les freinages.",
+                 f"We go to the end without stopping, but find {q} litres a lap. Lift a bit earlier before braking."),
+                (f"Pas d'arrêt : un passage au stand coûterait trop cher. Gagne juste {q} litre par tour.",
+                 f"No stop: pitting would cost too much. Just save {q} litres a lap.")]), elapsed=et)
+            self.plan = p
+            return p
         if p.stops_needed == 0:
             self.say("once:enough", pick("enough", [
                 ("Tu as ce qu'il faut pour aller au bout, pas besoin de rentrer.", "You've got enough to make the finish, no need to pit."),
@@ -221,7 +237,7 @@ class Engineer:
         if p.stops_needed == 1 and short < 1.2 and p.limited_by == "essence":
             p.save_per_lap = short * fpl / max(p.laps_to_finish, 1)
         if p.save_per_lap and 0.1 <= p.save_per_lap <= 0.15 * fpl and p.laps_to_finish >= 3:
-            q = f"{p.save_per_lap:.1f}"
+            q = dec(f"{p.save_per_lap:.1f}")
             self.say("stint:save", pick("save", [
                 (f"Il manque un peu d'essence pour finir. Si tu économises {q} litre par tour, on évite l'arrêt.",
                  f"We're a little short on fuel. Save {q} litres a lap and we can skip the stop."),

@@ -255,6 +255,7 @@ class Voice:
         cfg = SynthesisConfig(speaker_id=getattr(self, "speaker", SPEAKER), length_scale=SPEED)
         pcm = bytearray()
         rate = 22050
+        text = re.sub(r"(?<=\w)#\s*|#(?=\s)", " ", text)   # pseudos du type « Yin# Long » : ne pas lire « dièse »
         if not i18n.en():
             text = speakable_fr(text)
         for chunk in self._piper.synthesize(text, syn_config=cfg):

@@ -347,9 +347,8 @@ class LMUSource:
         surf = [sum(w[i].mTemperature) / 3 - 273.15 for i in range(4)]
         inner = [sum(w[i].mTireInnerLayerTemperature) / 3 - 273.15 for i in range(4)]
         carc = [w[i].mTireCarcassTemperature - 273.15 for i in range(4)]
-        # en GT3 la couche intérieure plafonnait vers 69 °C pour un idéal à 90 : on prend la plus chaude
-        # des deux mesures stables (couche intérieure, carcasse), la surface seulement en secours
-        s.tyre_temp = [max([x for x in (n, c) if -30 < x < 250] or [t]) for n, c, t in zip(inner, carc, surf)]
+        # la couche intérieure correspond à ce qu'affiche le jeu (vérifié en GT3 : 69 °C des deux côtés)
+        s.tyre_temp = [n if -30 < n < 250 else t for n, t in zip(inner, surf)]
         s.tyre_surface_temp = surf
         s.tyre_carcass_temp = carc
         s.tyre_inner_temp = inner

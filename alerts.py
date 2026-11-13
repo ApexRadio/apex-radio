@@ -624,7 +624,7 @@ class WarmUp:
         opt = s.tyre_opt if 40 <= (s.tyre_opt or 0) <= 150 else 80.0
         c = (s.car_class or "").upper()
         brake = 250.0 if any(k in c for k in CARBON) else 180.0
-        return opt - 20.0, brake
+        return min(opt - 20.0, 55.0), brake   # LMU vise ~90 °C mais roule vers 70 : froid = sous 55 °C
 
     def cold(self, s) -> tuple[bool, bool]:
         tyre_ok, brake_ok = self.limits(s)

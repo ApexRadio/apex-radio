@@ -130,6 +130,9 @@ def pit(s: Snapshot, p: Plan) -> str:
     return (L(f"{when} On met {', '.join(serv)}.", f"{when} {', '.join(serv)}.") + extra) if serv else when + extra
 
 
+COLD_TYRE = 55.0   # °C : en dessous, les pneus sont vraiment froids
+
+
 def tyres(s: Snapshot, p: Plan) -> str:
     out = []
     flats = [i for i, f in enumerate(getattr(s, "flat", []) or []) if f]
@@ -154,9 +157,10 @@ def tyres(s: Snapshot, p: Plan) -> str:
     if len(temps) == 4:
         avg_t = sum(temps) / 4
         if opt:
-            if avg_t < opt - 20:
-                out.append(L(f"Ils sont encore froids : {_f(avg_t, 0)} degrés, l'idéal est vers {_f(opt, 0)}.",
-                             f"They're still cold: {_f(avg_t, 0)} degrees, ideal is around {_f(opt, 0)}."))
+            # la « température idéale » de LMU (~90 °C) n'est pas atteinte en roulage normal (69 °C en GT3,
+            # comme dans le jeu) : on ne parle de pneus froids que s'ils le sont vraiment
+            if avg_t < COLD_TYRE:
+                out.append(L(f"Ils sont encore froids : {_f(avg_t, 0)} degrés.", f"They're still cold: {_f(avg_t, 0)} degrees."))
             elif avg_t > opt + 15:
                 out.append(L(f"Ils sont trop chauds : {_f(avg_t, 0)} degrés, l'idéal est vers {_f(opt, 0)}. Ménage-les un peu.",
                              f"They're too hot: {_f(avg_t, 0)} degrees, ideal is around {_f(opt, 0)}. Look after them a bit."))

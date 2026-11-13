@@ -608,7 +608,7 @@ def parse_wheels(t: str):
                  r"\b(pas|aucun|sans) (de |d |les |le )?(changement de )?(pneus?|gommes?)\b|"
                  r"\bne (change|changez|changer|touche|touchez) (pas|rien)\b.*\bpneu|keep (the )?tyres|no (new )?tyres", t):
         return ()
-    if not re.search(r"\b(change|changez|changer|changes|remplace|remplacer|mets|met|mettez|monte|chausse|"
+    if not re.search(r"\b(change|changez|changer|changes|remplace|remplacer|mets|met|mettez|monte|chausse|prepare|preparez|prevois|"
                      r"seulement|juste|que|uniquement|neufs?|nouveaux?|change|swap|new|only|just|fit)\b", t):
         return None
     if re.search(r"\b(quatre|4|tous|toutes|all|four)\b", t):

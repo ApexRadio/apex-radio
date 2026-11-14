@@ -7,7 +7,7 @@ on:
         description: "Question (300 caractères max)"
         required: true
       answers:
-        description: "Réponses séparées par | (2 à 10, 55 caractères max chacune)"
+        description: "Réponses séparées par | (2 à 10, 55 caractères max chacune), ou - pour seulement supprimer"
         required: true
       hours:
         description: "Durée en heures (1 à 768)"
@@ -39,7 +39,8 @@ jobs:
           REPLACE: ${{ inputs.replace }}
         run: |
           if [ -z "$HOOK" ]; then echo "Pas de webhook configuré"; exit 1; fi
-          if [ -n "$REPLACE" ]; then curl -fsS -X DELETE "$HOOK/messages/$REPLACE" && echo "ancien sondage supprimé"; fi
+          if [ -n "$REPLACE" ]; then curl -sS -o /dev/null -w "suppression de l'ancien sondage : HTTP %{http_code}\n" -X DELETE "$HOOK/messages/$REPLACE"; fi
+          if [ "$ANSWERS" = "-" ]; then echo "suppression seule"; exit 0; fi
           python3 - <<'PY' > payload.json
           import json, os
           answers = [a.strip() for a in os.environ["ANSWERS"].split("|") if a.strip()]

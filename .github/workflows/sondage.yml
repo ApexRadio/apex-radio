@@ -16,6 +16,10 @@ on:
         description: "Autoriser plusieurs réponses"
         type: boolean
         default: false
+      replace:
+        description: "Numéro d'un ancien sondage à supprimer d'abord (facultatif)"
+        required: false
+        default: ""
       early:
         description: "Poster dans #accès-anticipé au lieu de #annonces-news"
         type: boolean
@@ -32,8 +36,10 @@ jobs:
           ANSWERS: ${{ inputs.answers }}
           HOURS: ${{ inputs.hours }}
           MULTI: ${{ inputs.multi }}
+          REPLACE: ${{ inputs.replace }}
         run: |
           if [ -z "$HOOK" ]; then echo "Pas de webhook configuré"; exit 1; fi
+          if [ -n "$REPLACE" ]; then curl -fsS -X DELETE "$HOOK/messages/$REPLACE" && echo "ancien sondage supprimé"; fi
           python3 - <<'PY' > payload.json
           import json, os
           answers = [a.strip() for a in os.environ["ANSWERS"].split("|") if a.strip()]

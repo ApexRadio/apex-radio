@@ -1,0 +1,5905 @@
+{
+ "_langue": "Português (Brasil)",
+ "_virgule_decimale": true,
+ "_aide": "Remplis « texte » pour chaque phrase (aide : « en »). Garde les {0}, {1}… : ce sont des valeurs.",
+ "textes": [
+  {
+   "fr": "Des deux côtés !",
+   "en": "Three wide!",
+   "ou": "alerts.py:129",
+   "texte": "Três lado a lado!"
+  },
+  {
+   "fr": "À gauche !",
+   "en": "Car left!",
+   "ou": "alerts.py:129",
+   "texte": "Carro à esquerda!"
+  },
+  {
+   "fr": "À droite !",
+   "en": "Car right!",
+   "ou": "alerts.py:130",
+   "texte": "Carro à direita!"
+  },
+  {
+   "fr": "Dégagé.",
+   "en": "Clear.",
+   "ou": "alerts.py:130",
+   "texte": "Livre."
+  },
+  {
+   "fr": "elle sera sur toi dans ce tour",
+   "en": "it'll be on you this lap",
+   "ou": "alerts.py:184",
+   "texte": "vai ser com você nesta volta"
+  },
+  {
+   "fr": "elle sera sur toi dans {0} tours",
+   "en": "it'll be on you in {0} laps",
+   "ou": "alerts.py:185",
+   "texte": "vai ser com você em {0} voltas"
+  },
+  {
+   "fr": "{0} qui arrive derrière, {1} seconde{2}, {3}.",
+   "en": "{0} coming up behind, {1} second{2}, {3}.",
+   "ou": "alerts.py:186",
+   "texte": "{0} vem chegando por trás, {1} {2?segundos:segundo}, {3}."
+  },
+  {
+   "fr": ", tu la rattrapes au virage {0}",
+   "en": ", you'll catch it at turn {0}",
+   "ou": "alerts.py:225",
+   "texte": ", você alcança na curva {0}"
+  },
+  {
+   "fr": "moins d'une seconde",
+   "en": "less than a second",
+   "ou": "alerts.py:227",
+   "texte": "menos de um segundo"
+  },
+  {
+   "fr": "{0} {1} plus lentes devant, à {2}{3}.",
+   "en": "{0} {1} cars ahead, {2}{3}.",
+   "ou": "alerts.py:232",
+   "texte": "{0} {1} mais lentos à frente, a {2}{3}."
+  },
+  {
+   "fr": "{0} plus lente devant, à {1}{2}.",
+   "en": "Slower {0} ahead, {1}{2}.",
+   "ou": "alerts.py:234",
+   "texte": "{0} mais lento à frente, a {1}{2}."
+  },
+  {
+   "fr": "la voiture",
+   "en": "the car",
+   "ou": "alerts.py:284",
+   "texte": "o carro"
+  },
+  {
+   "fr": "P{0} à {1} devant",
+   "en": "P{0} {1} ahead",
+   "ou": "alerts.py:307",
+   "texte": "P{0} {1} à frente"
+  },
+  {
+   "fr": "P{0} à {1} derrière",
+   "en": "P{0} {1} behind",
+   "ou": "alerts.py:309",
+   "texte": "P{0} {1} atrás"
+  },
+  {
+   "fr": "Point écarts :",
+   "en": "Gaps:",
+   "ou": "alerts.py:312",
+   "texte": "Diferenças:"
+  },
+  {
+   "fr": "Les écarts :",
+   "en": "Gap check:",
+   "ou": "alerts.py:312",
+   "texte": "Checagem das diferenças:"
+  },
+  {
+   "fr": "Côté écarts,",
+   "en": "On the gaps,",
+   "ou": "alerts.py:312",
+   "texte": "Sobre as diferenças:"
+  },
+  {
+   "fr": "Tu es dans les roues de P{0}, attaque !",
+   "en": "You're on P{0}'s gearbox, attack!",
+   "ou": "alerts.py:332",
+   "texte": "Você está colado na caixa de câmbio do P{0}, ataque!"
+  },
+  {
+   "fr": "Tu es collé à P{0}, c'est le moment d'attaquer !",
+   "en": "You're glued to P{0}, time to attack!",
+   "ou": "alerts.py:333",
+   "texte": "Você está grudado no P{0}, hora de atacar!"
+  },
+  {
+   "fr": "P{0} est juste devant, à moins d'une seconde. Attaque !",
+   "en": "P{0} is just ahead, under a second. Attack!",
+   "ou": "alerts.py:334",
+   "texte": "P{0} está logo à frente, a menos de um segundo. Ataque!"
+  },
+  {
+   "fr": "Mets-lui la pression, montre-toi dans ses rétros.",
+   "en": "Put him under pressure, show yourself in his mirrors.",
+   "ou": "alerts.py:334",
+   "texte": "Coloque pressão, apareça nos retrovisores dele."
+  },
+  {
+   "fr": "Il est à portée, cherche l'ouverture au freinage.",
+   "en": "He's in range, look for a gap under braking.",
+   "ou": "alerts.py:334",
+   "texte": "Ele está ao alcance, procure uma brecha na freada."
+  },
+  {
+   "fr": "Il commence à craquer, reste collé et attends sa faute.",
+   "en": "He's starting to crack, stay close and wait for his mistake.",
+   "ou": "alerts.py:334",
+   "texte": "Ele está começando a ceder, fique perto e espere o erro dele."
+  },
+  {
+   "fr": "Tu reprends {0} par tour sur P{1}, dans ses roues dans {2} tour{3}.",
+   "en": "You're gaining {0} a lap on P{1}, on his gearbox in {2} lap{3}.",
+   "ou": "alerts.py:340",
+   "texte": "Você tira {0} por volta do P{1}, em {2} {3?voltas:volta} você chega nele."
+  },
+  {
+   "fr": "Tu reviens sur P{0}, {1} par tour. Tu seras sur lui dans {2} tour{3}.",
+   "en": "You're closing on P{0}, {1} a lap. You'll be on him in {2} lap{3}.",
+   "ou": "alerts.py:342",
+   "texte": "Você está se aproximando do P{0}, {1} por volta. Vai chegar nele em {2} {3?voltas:volta}."
+  },
+  {
+   "fr": "P{0} est à portée : tu lui prends {1} par tour.",
+   "en": "P{0} is in range: you're taking {1} a lap off him.",
+   "ou": "alerts.py:344",
+   "texte": "P{0} está ao alcance: você tira {1} por volta dele."
+  },
+  {
+   "fr": "Pousse, il perd du temps !",
+   "en": "Push, he's losing time!",
+   "ou": "alerts.py:345",
+   "texte": "Acelera, ele está perdendo tempo!"
+  },
+  {
+   "fr": "Super rythme, va le chercher !",
+   "en": "Great pace, go get him!",
+   "ou": "alerts.py:345",
+   "texte": "Ótimo ritmo, vai pra cima dele!"
+  },
+  {
+   "fr": "Il est en difficulté, mets-lui la pression !",
+   "en": "He's struggling, put the pressure on!",
+   "ou": "alerts.py:345",
+   "texte": "Ele está sofrendo, coloque pressão!"
+  },
+  {
+   "fr": "Tu grappilles sur P{0}, petit à petit.",
+   "en": "You're chipping away at P{0}, bit by bit.",
+   "ou": "alerts.py:350",
+   "texte": "Você está tirando a diferença para o P{0}, aos poucos."
+  },
+  {
+   "fr": "Continue comme ça.",
+   "en": "Keep it going.",
+   "ou": "alerts.py:350",
+   "texte": "Continue assim."
+  },
+  {
+   "fr": "Reste régulier, ça va payer.",
+   "en": "Stay consistent, it'll pay off.",
+   "ou": "alerts.py:350",
+   "texte": "Seja constante, vai valer a pena."
+  },
+  {
+   "fr": "P{0} s'échappe de {1} par tour.",
+   "en": "P{0} is pulling away by {1} a lap.",
+   "ou": "alerts.py:353",
+   "texte": "P{0} está abrindo, {1} por volta."
+  },
+  {
+   "fr": "P{0} prend le large, {1} par tour.",
+   "en": "P{0} is getting away, {1} a lap.",
+   "ou": "alerts.py:354",
+   "texte": "P{0} está escapando, {1} por volta."
+  },
+  {
+   "fr": "Accroche-toi, ne le laisse pas filer.",
+   "en": "Hang on, don't let him go.",
+   "ou": "alerts.py:354",
+   "texte": "Aguenta, não deixa ele fugir."
+  },
+  {
+   "fr": "Reste concentré, fais ta course.",
+   "en": "Stay focused, run your own race.",
+   "ou": "alerts.py:354",
+   "texte": "Fique concentrado, faça a sua corrida."
+  },
+  {
+   "fr": "Pas de panique, la course est longue.",
+   "en": "No panic, it's a long race.",
+   "ou": "alerts.py:354",
+   "texte": "Sem pânico, a corrida é longa."
+  },
+  {
+   "fr": "P{0} est dans tes roues, défends !",
+   "en": "P{0} is right behind you, defend!",
+   "ou": "alerts.py:365",
+   "texte": "P{0} está logo atrás, defenda!"
+  },
+  {
+   "fr": "Attention, P{0} est collé derrière toi. Défends ta place !",
+   "en": "Careful, P{0} is glued to you. Defend your place!",
+   "ou": "alerts.py:366",
+   "texte": "Cuidado, P{0} está grudado em você. Defenda sua posição!"
+  },
+  {
+   "fr": "P{0} est juste derrière, à moins d'une seconde !",
+   "en": "P{0} is right behind, under a second!",
+   "ou": "alerts.py:367",
+   "texte": "P{0} está logo atrás, a menos de um segundo!"
+  },
+  {
+   "fr": "Ferme l'intérieur aux freinages.",
+   "en": "Cover the inside into the braking zones.",
+   "ou": "alerts.py:367",
+   "texte": "Feche a parte de dentro nas freadas."
+  },
+  {
+   "fr": "Pas d'erreur, soigne tes sorties de virage.",
+   "en": "No mistakes, nail your corner exits.",
+   "ou": "alerts.py:367",
+   "texte": "Sem erros, capriche nas saídas de curva."
+  },
+  {
+   "fr": "Ne lui laisse aucune ouverture.",
+   "en": "Don't give him any gap.",
+   "ou": "alerts.py:367",
+   "texte": "Não deixe nenhuma brecha."
+  },
+  {
+   "fr": "P{0} revient de {1} par tour, il sera sur toi dans {2} tour{3}.",
+   "en": "P{0} is closing by {1} a lap, he'll be on you in {2} lap{3}.",
+   "ou": "alerts.py:371",
+   "texte": "P{0} se aproxima {1} por volta, vai chegar em você em {2} {3?voltas:volta}."
+  },
+  {
+   "fr": "Attention derrière : P{0} te reprend {1} par tour.",
+   "en": "Watch your mirrors: P{0} is taking {1} a lap off you.",
+   "ou": "alerts.py:373",
+   "texte": "Olho nos retrovisores: P{0} tira {1} por volta de você."
+  },
+  {
+   "fr": "Il est plus rapide, pousse un peu plus.",
+   "en": "He's quicker, push a bit harder.",
+   "ou": "alerts.py:374",
+   "texte": "Ele é mais rápido, acelere um pouco mais."
+  },
+  {
+   "fr": "Ne lâche rien, garde ton rythme.",
+   "en": "Don't give up, keep your pace.",
+   "ou": "alerts.py:374",
+   "texte": "Não desista, mantenha seu ritmo."
+  },
+  {
+   "fr": "Reste propre, fais tes trajectoires et il ne passera pas.",
+   "en": "Stay clean, hit your lines and he won't get by.",
+   "ou": "alerts.py:374",
+   "texte": "Limpo, acerte suas linhas e ele não passa."
+  },
+  {
+   "fr": "avant gauche|avant droite|arrière gauche|arrière droite",
+   "en": "front left|front right|rear left|rear right",
+   "ou": "alerts.py:38",
+   "texte": "dianteiro esquerdo|dianteiro direito|traseiro esquerdo|traseiro direito"
+  },
+  {
+   "fr": "Tu creuses l'écart sur P{0}, {1} par tour.",
+   "en": "You're pulling away from P{0}, {1} a lap.",
+   "ou": "alerts.py:380",
+   "texte": "Você está abrindo do P{0}, {1} por volta."
+  },
+  {
+   "fr": "Tu prends le large sur P{0}, {1} par tour.",
+   "en": "You're getting away from P{0}, {1} a lap.",
+   "ou": "alerts.py:381",
+   "texte": "Você está escapando do P{0}, {1} por volta."
+  },
+  {
+   "fr": "Super boulot, continue comme ça !",
+   "en": "Great job, keep it up!",
+   "ou": "alerts.py:381",
+   "texte": "Ótimo trabalho, continue assim!"
+  },
+  {
+   "fr": "Tu le décroches, garde ce rythme.",
+   "en": "You're dropping him, keep this pace.",
+   "ou": "alerts.py:381",
+   "texte": "Você está deixando ele pra trás, mantenha esse ritmo."
+  },
+  {
+   "fr": "Parfait, il ne peut pas suivre.",
+   "en": "Perfect, he can't keep up.",
+   "ou": "alerts.py:381",
+   "texte": "Perfeito, ele não consegue acompanhar."
+  },
+  {
+   "fr": "HYPER",
+   "en": "Hypercar",
+   "ou": "alerts.py:43",
+   "texte": ""
+  },
+  {
+   "fr": "LMH",
+   "en": "Hypercar",
+   "ou": "alerts.py:43",
+   "texte": ""
+  },
+  {
+   "fr": "LMDH",
+   "en": "Hypercar",
+   "ou": "alerts.py:43",
+   "texte": ""
+  },
+  {
+   "fr": "LMP2",
+   "en": "LMP2",
+   "ou": "alerts.py:44",
+   "texte": ""
+  },
+  {
+   "fr": "LMP3",
+   "en": "LMP3",
+   "ou": "alerts.py:44",
+   "texte": ""
+  },
+  {
+   "fr": "{0} places de plus",
+   "en": "{0} places gained",
+   "ou": "alerts.py:466",
+   "texte": "{0} posições ganhas"
+  },
+  {
+   "fr": "Une place de plus",
+   "en": "One place up",
+   "ou": "alerts.py:467",
+   "texte": "Uma posição a mais"
+  },
+  {
+   "fr": "Et une place de gagnée",
+   "en": "And that's a place gained",
+   "ou": "alerts.py:467",
+   "texte": "E isso é uma posição ganha"
+  },
+  {
+   "fr": "Tu gagnes une place",
+   "en": "You gain a place",
+   "ou": "alerts.py:468",
+   "texte": "Você ganha uma posição"
+  },
+  {
+   "fr": "Bien joué !",
+   "en": "Nice one!",
+   "ou": "alerts.py:469",
+   "texte": "Boa!"
+  },
+  {
+   "fr": "Superbe dépassement !",
+   "en": "Great move!",
+   "ou": "alerts.py:469",
+   "texte": "Ótima ultrapassagem!"
+  },
+  {
+   "fr": "Continue !",
+   "en": "Keep going!",
+   "ou": "alerts.py:469",
+   "texte": "Continue assim!"
+  },
+  {
+   "fr": "voiture",
+   "en": "car",
+   "ou": "alerts.py:47",
+   "texte": "carro"
+  },
+  {
+   "fr": "{0}, tu es P{1}. ",
+   "en": "{0}, you're P{1}. ",
+   "ou": "alerts.py:472",
+   "texte": "{0}, você está em P{1}. "
+  },
+  {
+   "fr": "Tu perds {0} place{1}, P{2}. ",
+   "en": "You lose {0} place{1}, P{2}. ",
+   "ou": "alerts.py:475",
+   "texte": "Você perde {0} {1?posições:posição}, P{2}. "
+  },
+  {
+   "fr": "Accroche-toi, on va la reprendre.",
+   "en": "Hang on, we'll get it back.",
+   "ou": "alerts.py:476",
+   "texte": "Aguenta, a gente recupera."
+  },
+  {
+   "fr": "Pas grave, reste concentré.",
+   "en": "No worries, stay focused.",
+   "ou": "alerts.py:477",
+   "texte": "Tranquilo, fique concentrado."
+  },
+  {
+   "fr": "Respire, la course est longue.",
+   "en": "Breathe, it's a long race.",
+   "ou": "alerts.py:478",
+   "texte": "Respira, a corrida é longa."
+  },
+  {
+   "fr": "Bon départ, tu as gagné {0} place{1}, tu es P{2}.",
+   "en": "Good start, you gained {0} place{1}, you're P{2}.",
+   "ou": "alerts.py:484",
+   "texte": "Boa largada, você ganhou {0} {1?posições:posição}, está em P{2}."
+  },
+  {
+   "fr": "Superbe !",
+   "en": "Superb!",
+   "ou": "alerts.py:487",
+   "texte": "Excelente!"
+  },
+  {
+   "fr": "Continue comme ça !",
+   "en": "Keep it up!",
+   "ou": "alerts.py:487",
+   "texte": "Continue assim!"
+  },
+  {
+   "fr": "Excellent premier tour !",
+   "en": "Excellent first lap!",
+   "ou": "alerts.py:488",
+   "texte": "Excelente primeira volta!"
+  },
+  {
+   "fr": "Premier tour difficile, tu as perdu {0} place{1}, tu es P{2}.",
+   "en": "Tough first lap, you lost {0} place{1}, you're P{2}.",
+   "ou": "alerts.py:490",
+   "texte": "Primeira volta difícil, você perdeu {0} {1?posições:posição}, está em P{2}."
+  },
+  {
+   "fr": "Pas grave, on va les reprendre.",
+   "en": "No worries, we'll get them back.",
+   "ou": "alerts.py:493",
+   "texte": "Tranquilo, a gente recupera."
+  },
+  {
+   "fr": "La course est longue, reste calme.",
+   "en": "It's a long race, stay calm.",
+   "ou": "alerts.py:494",
+   "texte": "A corrida é longa, mantenha a calma."
+  },
+  {
+   "fr": "Premier tour propre, tu gardes ta place, P{0}.",
+   "en": "Clean first lap, you hold your place, P{0}.",
+   "ou": "alerts.py:496",
+   "texte": "Primeira volta limpa, você mantém sua posição, P{0}."
+  },
+  {
+   "fr": "Maintenant, on attaque !",
+   "en": "Now let's attack!",
+   "ou": "alerts.py:498",
+   "texte": "Agora vamos atacar!"
+  },
+  {
+   "fr": "Super tour, {0} seconde de mieux que le précédent !",
+   "en": "Great lap, {0} seconds quicker than the last one!",
+   "ou": "alerts.py:546",
+   "texte": "Ótima volta, {0} segundos melhor que a anterior!"
+  },
+  {
+   "fr": "Gros tour ! {0} seconde de mieux.",
+   "en": "Big lap! {0} seconds quicker.",
+   "ou": "alerts.py:548",
+   "texte": "Voltaço! {0} segundos melhor."
+  },
+  {
+   "fr": "Excellent, tu as gagné {0} seconde sur ce tour.",
+   "en": "Excellent, you found {0} seconds on that lap.",
+   "ou": "alerts.py:549",
+   "texte": "Excelente, você ganhou {0} segundos nesta volta."
+  },
+  {
+   "fr": "Belle régularité, continue sur ce rythme.",
+   "en": "Nice and consistent, keep this pace.",
+   "ou": "alerts.py:552",
+   "texte": "Bem constante, mantenha esse ritmo."
+  },
+  {
+   "fr": "Très régulier, c'est parfait.",
+   "en": "Very consistent, that's perfect.",
+   "ou": "alerts.py:553",
+   "texte": "Muito constante, perfeito."
+  },
+  {
+   "fr": "Même chrono que le tour d'avant, super régularité.",
+   "en": "Same time as last lap, great consistency.",
+   "ou": "alerts.py:554",
+   "texte": "Mesmo tempo da volta anterior, ótima consistência."
+  },
+  {
+   "fr": "On a eu un coup dur, mais tu remontes. Continue comme ça !",
+   "en": "We had a tough moment, but you're coming back. Keep it up!",
+   "ou": "alerts.py:557",
+   "texte": "Tivemos um momento difícil, mas você está voltando. Continue assim!"
+  },
+  {
+   "fr": "Oublie l'incident, regarde devant, tu vas plus vite qu'eux.",
+   "en": "Forget the incident, look ahead, you're quicker than them.",
+   "ou": "alerts.py:558",
+   "texte": "Esqueça o incidente, olhe pra frente, você é mais rápido que eles."
+  },
+  {
+   "fr": "Belle réaction après le pépin, je sens que tu vas remonter.",
+   "en": "Great reaction after the trouble, I can feel you climbing back.",
+   "ou": "alerts.py:559",
+   "texte": "Ótima reação depois do problema, sinto que você está subindo."
+  },
+  {
+   "fr": "P{0}, tu es sur le podium, garde la tête froide !",
+   "en": "P{0}, you're on the podium, stay cool!",
+   "ou": "alerts.py:561",
+   "texte": "P{0}, você está no pódio, fique tranquilo!"
+  },
+  {
+   "fr": "Tu fais du bon boulot, reste concentré.",
+   "en": "You're doing a good job, stay focused.",
+   "ou": "alerts.py:563",
+   "texte": "Você está fazendo um bom trabalho, fique concentrado."
+  },
+  {
+   "fr": "Chaque tour compte, on continue à pousser.",
+   "en": "Every lap counts, keep pushing.",
+   "ou": "alerts.py:564",
+   "texte": "Cada volta conta, continue acelerando."
+  },
+  {
+   "fr": "La course est longue, tout peut encore arriver.",
+   "en": "It's a long race, anything can still happen.",
+   "ou": "alerts.py:565",
+   "texte": "A corrida é longa, ainda pode acontecer de tudo."
+  },
+  {
+   "fr": "Bien, propre et régulier, c'est comme ça qu'on gagne des places.",
+   "en": "Good, clean and consistent, that's how we gain places.",
+   "ou": "alerts.py:566",
+   "texte": "Bom, limpo e constante, é assim que se ganha posição."
+  },
+  {
+   "fr": " au virage {0}",
+   "en": " at turn {0}",
+   "ou": "alerts.py:592",
+   "texte": " na curva {0}"
+  },
+  {
+   "fr": "Limites de piste{0}, avertissement {1} sur {2}.",
+   "en": "Track limits{0}, warning {1} of {2}.",
+   "ou": "alerts.py:596",
+   "texte": "Limites de pista{0}, advertência {1} de {2}."
+  },
+  {
+   "fr": "la prochaine, c'est la pénalité !",
+   "en": "next one is a penalty!",
+   "ou": "alerts.py:599",
+   "texte": "a próxima é punição!"
+  },
+  {
+   "fr": "encore {0} avant la pénalité.",
+   "en": "{0} more before a penalty.",
+   "ou": "alerts.py:600",
+   "texte": "mais {0} antes de uma punição."
+  },
+  {
+   "fr": "Limites de piste{0}, avertissement {1} sur {2}, {3}",
+   "en": "Track limits{0}, warning {1} of {2}, {3}",
+   "ou": "alerts.py:601",
+   "texte": "Limites de pista{0}, advertência {1} de {2}, {3}"
+  },
+  {
+   "fr": "Limites de piste{0}, avertissement numéro {1}.",
+   "en": "Track limits{0}, warning number {1}.",
+   "ou": "alerts.py:604",
+   "texte": "Limites de pista{0}, advertência número {1}."
+  },
+  {
+   "fr": "{0} seconde{1}",
+   "en": "{0} seconds",
+   "ou": "alerts.py:61",
+   "texte": "{0} {1?segundos:segundo}"
+  },
+  {
+   "fr": "{0} dixième{1}",
+   "en": "{0} tenth{1}",
+   "ou": "alerts.py:62",
+   "texte": "{0} {1?décimos:décimo}"
+  },
+  {
+   "fr": "Attention, pneus froids et freins froids. Doucement au premier freinage.",
+   "en": "Careful, cold tyres and cold brakes. Easy on the first braking zone.",
+   "ou": "alerts.py:666",
+   "texte": "Cuidado, pneus e freios frios. Devagar na primeira freada."
+  },
+  {
+   "fr": "Attention, pneus froids. Fais-les monter en température avant d'attaquer.",
+   "en": "Careful, cold tyres. Bring them up to temperature before you push.",
+   "ou": "alerts.py:669",
+   "texte": "Cuidado, pneus frios. Aqueça eles antes de acelerar."
+  },
+  {
+   "fr": "Attention, freins froids. Freine plus tôt les premiers virages.",
+   "en": "Careful, cold brakes. Brake earlier for the first few corners.",
+   "ou": "alerts.py:672",
+   "texte": "Cuidado, freios frios. Freie mais cedo nas primeiras curvas."
+  },
+  {
+   "fr": "Pneus et freins en température. Vas-y, tu peux attaquer !",
+   "en": "Tyres and brakes are up to temperature. Go on, you can push now!",
+   "ou": "alerts.py:679",
+   "texte": "Pneus e freios na temperatura. Vai, agora você pode acelerar!"
+  },
+  {
+   "fr": "Tout est chaud, pneus et freins. À toi de jouer !",
+   "en": "Everything's warm, tyres and brakes. Over to you!",
+   "ou": "alerts.py:681",
+   "texte": "Tudo quente, pneus e freios. É com você!"
+  },
+  {
+   "fr": "C'est bon, pneus et freins sont prêts. Tu peux pousser !",
+   "en": "All good, tyres and brakes are ready. You can push!",
+   "ou": "alerts.py:682",
+   "texte": "Tudo certo, pneus e freios prontos. Pode acelerar!"
+  },
+  {
+   "fr": "{0}, version {1}",
+   "en": "{0}, {1} version",
+   "ou": "alerts.py:691",
+   "texte": "{0}, versão {1}"
+  },
+  {
+   "fr": "Je ne vois pas encore ta voiture. Va au garage ou monte dans la voiture.",
+   "en": "I can't see your car yet. Go to the garage or get in the car.",
+   "ou": "alerts.py:696",
+   "texte": "Ainda não vejo seu carro. Vá para a garagem ou entre no carro."
+  },
+  {
+   "fr": "Tu es en {0}.",
+   "en": "You're in the {0}.",
+   "ou": "alerts.py:699",
+   "texte": "Você está no {0}."
+  },
+  {
+   "fr": " Charge bien un setup fait pour la {0} {1}.",
+   "en": " Make sure you load a setup made for the {1} {0}.",
+   "ou": "alerts.py:702",
+   "texte": " Carregue um setup feito para o {1} {0}."
+  },
+  {
+   "fr": "Contact ! ",
+   "en": "Contact! ",
+   "ou": "alerts.py:760",
+   "texte": "Contato! "
+  },
+  {
+   "fr": "Gros dégâts à la carrosserie.",
+   "en": "Heavy body damage.",
+   "ou": "alerts.py:761",
+   "texte": "Dano forte na carroceria."
+  },
+  {
+   "fr": "Dégâts légers à la carrosserie.",
+   "en": "Light body damage.",
+   "ou": "alerts.py:761",
+   "texte": "Dano leve na carroceria."
+  },
+  {
+   "fr": " Je regarde l'aéro et les suspensions.",
+   "en": " Checking aero and suspension.",
+   "ou": "alerts.py:762",
+   "texte": " Verificando aerodinâmica e suspensão."
+  },
+  {
+   "fr": "Crevaison {0} ! Rentre au stand, doucement.",
+   "en": "Puncture {0}! Box, take it easy.",
+   "ou": "alerts.py:770",
+   "texte": "Pneu furado {0}! Box, vá com calma."
+  },
+  {
+   "fr": "Roue {0} perdue ! Rentre au stand.",
+   "en": "Lost the {0} wheel! Box now.",
+   "ou": "alerts.py:773",
+   "texte": "Perdeu a roda {0}! Box agora."
+  },
+  {
+   "fr": "Une pièce s'est détachée de la voiture.",
+   "en": "A part has come off the car.",
+   "ou": "alerts.py:777",
+   "texte": "Uma peça se soltou do carro."
+  },
+  {
+   "fr": "Aéro endommagé à {0} %.",
+   "en": "Aero damaged {0} %.",
+   "ou": "alerts.py:816",
+   "texte": "Aerodinâmica danificada {0} %."
+  },
+  {
+   "fr": " On répare au prochain arrêt.",
+   "en": " We'll fix it at the next stop.",
+   "ou": "alerts.py:817",
+   "texte": " A gente arruma na próxima parada."
+  },
+  {
+   "fr": "Suspension {0} touchée à {1} %. Attention au comportement.",
+   "en": "{0} suspension damaged {1} %. Watch the handling.",
+   "ou": "alerts.py:823",
+   "texte": "Suspensão {0} danificada {1} %. Atenção ao comportamento do carro."
+  },
+  {
+   "fr": "Météo : pluie probable dans environ {0} minutes, {1} % de risque.",
+   "en": "Weather: rain likely in about {0} minutes, {1} % chance.",
+   "ou": "alerts.py:940",
+   "texte": "Clima: chuva provável em cerca de {0} minutos, {1} % de chance."
+  },
+  {
+   "fr": "Météo : éclaircie prévue dans environ {0} minutes.",
+   "en": "Weather: drying up in about {0} minutes.",
+   "ou": "alerts.py:944",
+   "texte": "Clima: secando em cerca de {0} minutos."
+  },
+  {
+   "fr": "Mode silence : je ne te dis plus que l'urgent.",
+   "en": "Quiet mode: urgent calls only.",
+   "ou": "app.py:101",
+   "texte": "Modo silencioso: só avisos urgentes."
+  },
+  {
+   "fr": "Fin du silence, je te redonne toutes les infos.",
+   "en": "Quiet mode off, back to full info.",
+   "ou": "app.py:102",
+   "texte": "Modo silencioso desligado, de volta com todas as informações."
+  },
+  {
+   "fr": "Spotter activé.",
+   "en": "Spotter on.",
+   "ou": "app.py:111",
+   "texte": "Spotter ligado."
+  },
+  {
+   "fr": "Spotter coupé.",
+   "en": "Spotter off.",
+   "ou": "app.py:111",
+   "texte": "Spotter desligado."
+  },
+  {
+   "fr": "Ton setup {0} est fait pour la {1}, et tu es en {2}. Pas de souci : c'est la même voiture, je convertirai la copie APEX pour ta version.",
+   "en": "Your setup {0} is made for the {1}, and you're in the {2}. No problem: it's the same car, I'll convert the APEX copy for your version.",
+   "ou": "app.py:230",
+   "texte": "Seu setup {0} foi feito para o {1}, e você está no {2}. Sem problema: é o mesmo carro, eu converto a cópia APEX para a sua versão."
+  },
+  {
+   "fr": "Attention, ton setup {0} a été fait pour la {1}, mais tu es en {2}. Charge plutôt un setup fait pour cette voiture.",
+   "en": "Careful, your setup {0} was made for the {1}, but you're in the {2}. Better load a setup made for this car.",
+   "ou": "app.py:236",
+   "texte": "Cuidado, seu setup {0} foi feito para o {1}, mas você está no {2}. Melhor carregar um setup feito para este carro."
+  },
+  {
+   "fr": "/tel",
+   "en": "/phone",
+   "ou": "app.py:484",
+   "texte": ""
+  },
+  {
+   "fr": "/api/ptt/down",
+   "en": "/api/ptt/up",
+   "ou": "app.py:503",
+   "texte": ""
+  },
+  {
+   "fr": "Rien à répéter pour l'instant.",
+   "en": "Nothing to repeat yet.",
+   "ou": "app.py:507",
+   "texte": "Nada para repetir ainda."
+  },
+  {
+   "fr": "Radio en français.",
+   "en": "Radio in English.",
+   "ou": "app.py:515",
+   "texte": "Rádio em português."
+  },
+  {
+   "fr": "Radio check, niveau du son.",
+   "en": "Radio check, volume level.",
+   "ou": "app.py:550",
+   "texte": "Teste de rádio, nível de volume."
+  },
+  {
+   "fr": "/api/setup/dir",
+   "en": "/api/setup/pickdir",
+   "ou": "app.py:588",
+   "texte": ""
+  },
+  {
+   "fr": "Setup remis en version {0}. Recharge-le au garage.",
+   "en": "Setup restored to version {0}. Reload it in the garage.",
+   "ou": "app.py:619",
+   "texte": "Setup restaurado para a versão {0}. Recarregue na garagem."
+  },
+  {
+   "fr": "Setup {0} mis à jour, version {1}. Recharge-le au garage, je refais l'analyse.",
+   "en": "{0} setup updated, version {1}. Reload it in the garage, I'll redo the analysis.",
+   "ou": "app.py:639",
+   "texte": "Setup {0} atualizado, versão {1}. Recarregue na garagem, eu refaço a análise."
+  },
+  {
+   "fr": "Je télécharge la voix de {0}, {1} prend la radio dans une minute.",
+   "en": "Downloading {0}'s voice, it'll take over the radio in a minute.",
+   "ou": "app.py:668",
+   "texte": "Baixando a voz de {0}, {1} assume o rádio em um minuto."
+  },
+  {
+   "fr": "Radio check. Tu m'entends bien ? On est prêts pour la course.",
+   "en": "Radio check. Do you copy? We're ready to race.",
+   "ou": "app.py:671",
+   "texte": "Teste de rádio. Na escuta? Estamos prontos para correr."
+  },
+  {
+   "fr": "Ce dossier ne contient pas les setups de LMU.",
+   "en": "This folder doesn't contain LMU setups.",
+   "ou": "app.py:833",
+   "texte": "Esta pasta não contém setups do LMU."
+  },
+  {
+   "fr": "Radio active.",
+   "en": "Radio on.",
+   "ou": "app.py:95",
+   "texte": "Rádio ligado."
+  },
+  {
+   "fr": "Répartition de freinage",
+   "en": "Brake bias",
+   "ou": "behavior.py:114",
+   "texte": "Balanço de freio"
+  },
+  {
+   "fr": "Contrôle de traction",
+   "en": "Traction control",
+   "ou": "behavior.py:114",
+   "texte": "Controle de tração"
+  },
+  {
+   "fr": "Barre antiroulis avant",
+   "en": "Front anti-roll bar",
+   "ou": "behavior.py:114",
+   "texte": "Barra estabilizadora dianteira"
+  },
+  {
+   "fr": "Barre antiroulis arrière",
+   "en": "Rear anti-roll bar",
+   "ou": "behavior.py:114",
+   "texte": "Barra estabilizadora traseira"
+  },
+  {
+   "fr": "tc",
+   "en": "abs",
+   "ou": "behavior.py:152",
+   "texte": ""
+  },
+  {
+   "fr": "à {0} % à l'avant",
+   "en": "{0} % front",
+   "ou": "behavior.py:285",
+   "texte": "em {0} % na dianteira"
+  },
+  {
+   "fr": "sur {0}",
+   "en": "{0}",
+   "ou": "behavior.py:287",
+   "texte": "em {0}"
+  },
+  {
+   "fr": "{0} {1} {2}, je réévalue.",
+   "en": "{3} now {2}, re-evaluating.",
+   "ou": "behavior.py:288",
+   "texte": "{0}: {2}, reavaliando."
+  },
+  {
+   "fr": "sous-virage",
+   "en": "entrée",
+   "ou": "behavior.py:35",
+   "texte": "subesterço"
+  },
+  {
+   "fr": "{0}. Conseil : {1}.",
+   "en": "{0}. Tip: {1}.",
+   "ou": "behavior.py:373",
+   "texte": "{0}. Dica: {1}."
+  },
+  {
+   "fr": "survirage",
+   "en": "entrée",
+   "ou": "behavior.py:38",
+   "texte": "sobre-esterço"
+  },
+  {
+   "fr": "{0}. Ça se corrige au garage, je te le rappelle après la course.",
+   "en": "{0}. That's a garage fix, I'll remind you after the race.",
+   "ou": "behavior.py:380",
+   "texte": "{0}. Isso se corrige na garagem, eu te lembro depois da corrida."
+  },
+  {
+   "fr": " et {0}",
+   "en": " and {0}",
+   "ou": "behavior.py:390",
+   "texte": " e {0}"
+  },
+  {
+   "fr": "blocage {0} au freinage des virages {1}",
+   "en": "{0} lock-up braking into turns {1}",
+   "ou": "behavior.py:392",
+   "texte": "travamento {0} na freada das curvas {1}"
+  },
+  {
+   "fr": "patinage en sortie des virages {0}",
+   "en": "wheelspin on exit of turns {0}",
+   "ou": "behavior.py:394",
+   "texte": "patinagem na saída das curvas {0}"
+  },
+  {
+   "fr": "trop d'angle de volant aux virages {0}, l'avant glisse",
+   "en": "too much steering at turns {0}, the front is sliding",
+   "ou": "behavior.py:396",
+   "texte": "volante demais nas curvas {0}, a dianteira está escorregando"
+  },
+  {
+   "fr": "{0} au milieu des virages {1}",
+   "en": "mid-corner {0} at turns {1}",
+   "ou": "behavior.py:398",
+   "texte": "{0} no meio das curvas {1}"
+  },
+  {
+   "fr": "{0} en {1} des virages {2}",
+   "en": "{0} on {1} at turns {2}",
+   "ou": "behavior.py:399",
+   "texte": "{0} na {1} das curvas {2}"
+  },
+  {
+   "fr": "blocage",
+   "en": "avant",
+   "ou": "behavior.py:41",
+   "texte": "travamento"
+  },
+  {
+   "fr": "plus chaud{s} à l'intérieur{d} : un peu moins de carrossage",
+   "en": "hotter on the inside{d}: a bit less camber",
+   "ou": "behavior.py:421",
+   "texte": "mais quente por dentro{d}: um pouco menos de cambagem"
+  },
+  {
+   "fr": "plus chaud{s} à l'extérieur : un peu plus de carrossage",
+   "en": "hotter on the outside: a bit more camber",
+   "ou": "behavior.py:422",
+   "texte": "mais quente por fora: um pouco mais de cambagem"
+  },
+  {
+   "fr": "chaud{s} au centre : pression un peu trop haute",
+   "en": "hot in the middle: pressure a bit too high",
+   "ou": "behavior.py:423",
+   "texte": "quente no centro: pressão um pouco alta demais"
+  },
+  {
+   "fr": "froid{s} au centre : pression un peu trop basse",
+   "en": "cold in the middle: pressure a bit too low",
+   "ou": "behavior.py:424",
+   "texte": "fria no centro: pressão um pouco baixa demais"
+  },
+  {
+   "fr": "avant gauche|avant droit|arrière gauche|arrière droit",
+   "en": "front left|front right|rear left|rear right",
+   "ou": "behavior.py:426",
+   "texte": "dianteiro esquerdo|dianteiro direito|traseiro esquerdo|traseiro direito"
+  },
+  {
+   "fr": "patinage",
+   "en": "",
+   "ou": "behavior.py:43",
+   "texte": "patinagem"
+  },
+  {
+   "fr": "avant",
+   "en": "front",
+   "ou": "behavior.py:430",
+   "texte": "dianteiros"
+  },
+  {
+   "fr": "arrière",
+   "en": "rear",
+   "ou": "behavior.py:430",
+   "texte": "traseiros"
+  },
+  {
+   "fr": "pneus {0} ",
+   "en": "{0} tyres ",
+   "ou": "behavior.py:434",
+   "texte": "pneus {0} "
+  },
+  {
+   "fr": "surbraquage",
+   "en": "",
+   "ou": "behavior.py:44",
+   "texte": "volante demais"
+  },
+  {
+   "fr": "pneu {0} ",
+   "en": "{0} tyre ",
+   "ou": "behavior.py:441",
+   "texte": "pneu {0} "
+  },
+  {
+   "fr": "Côté pneus : ",
+   "en": "Tyres: ",
+   "ou": "behavior.py:448",
+   "texte": "Pneus: "
+  },
+  {
+   "fr": ". C'est pour le garage, je te le rappelle après la course.",
+   "en": ". That's for the garage, I'll remind you after the race.",
+   "ou": "behavior.py:449",
+   "texte": ". Isso é para a garagem, eu te lembro depois da corrida."
+  },
+  {
+   "fr": "la voiture est globalement sous-vireuse",
+   "en": "the car is understeering overall",
+   "ou": "behavior.py:456",
+   "texte": "o carro está saindo de frente no geral"
+  },
+  {
+   "fr": "la voiture est globalement survireuse",
+   "en": "the car is oversteering overall",
+   "ou": "behavior.py:457",
+   "texte": "o carro está saindo de traseira no geral"
+  },
+  {
+   "fr": "blocage {0} au freinage du virage {1}",
+   "en": "{0} lock-up braking into turn {1}",
+   "ou": "behavior.py:459",
+   "texte": "travamento {0} na freada da curva {1}"
+  },
+  {
+   "fr": "patinage en sortie du virage {0}",
+   "en": "wheelspin on exit of turn {0}",
+   "ou": "behavior.py:461",
+   "texte": "patinagem na saída da curva {0}"
+  },
+  {
+   "fr": "trop d'angle de volant au virage {0}, l'avant glisse",
+   "en": "too much steering at turn {0}, the front is sliding",
+   "ou": "behavior.py:463",
+   "texte": "volante demais na curva {0}, a dianteira está escorregando"
+  },
+  {
+   "fr": "{0} au milieu du virage {1}",
+   "en": "mid-corner {0} at turn {1}",
+   "ou": "behavior.py:465",
+   "texte": "{0} no meio da curva {1}"
+  },
+  {
+   "fr": "{0} en {1} du virage {2}",
+   "en": "{0} on {1} of turn {2}",
+   "ou": "behavior.py:466",
+   "texte": "{0} na {1} da curva {2}"
+  },
+  {
+   "fr": "freine un peu moins fort à l'attaque du virage {0}, la répartition a déjà assez bougé",
+   "en": "brake a little less hard into turn {0}, the bias has moved enough already",
+   "ou": "behavior.py:475",
+   "texte": "freie um pouco menos forte na curva {0}, o balanço já foi mudado o suficiente"
+  },
+  {
+   "fr": "passe la répartition de freinage de {0} à {1} % à l'avant",
+   "en": "move the brake bias from {0} to {1} % front",
+   "ou": "behavior.py:479",
+   "texte": "mude o balanço de freio de {0} para {1} % na dianteira"
+  },
+  {
+   "fr": "recule la répartition de freinage de {0} à {1} % à l'avant",
+   "en": "move the brake bias back from {0} to {1} % front",
+   "ou": "behavior.py:485",
+   "texte": "leve o balanço de freio para trás, de {0} para {1} % na dianteira"
+  },
+  {
+   "fr": "recule un peu la répartition de freinage",
+   "en": "move the brake bias back a little",
+   "ou": "behavior.py:487",
+   "texte": "leve o balanço de freio um pouco para trás"
+  },
+  {
+   "fr": "avance la répartition de freinage de {0} à {1} % à l'avant",
+   "en": "move the brake bias forward from {0} to {1} % front",
+   "ou": "behavior.py:489",
+   "texte": "leve o balanço de freio para frente, de {0} para {1} % na dianteira"
+  },
+  {
+   "fr": "avance un peu la répartition de freinage",
+   "en": "move the brake bias forward a little",
+   "ou": "behavior.py:491",
+   "texte": "leve o balanço de freio um pouco para frente"
+  },
+  {
+   "fr": "monte le contrôle de traction d'un cran, et dose l'accélération en sortie",
+   "en": "one more click of traction control, and be smoother on exit",
+   "ou": "behavior.py:493",
+   "texte": "um clique a mais de controle de tração, e mais suave na saída"
+  },
+  {
+   "fr": "Pour le setup, voici ce que je changerais : ",
+   "en": "For the setup, here's what I'd change: ",
+   "ou": "behavior.py:510",
+   "texte": "Para o setup, eis o que eu mudaria: "
+  },
+  {
+   "fr": ". J'ouvre l'atelier setup avec mes propositions.",
+   "en": ". I'm opening the setup workshop with my suggestions.",
+   "ou": "behavior.py:511",
+   "texte": ". Estou abrindo a oficina de setup com minhas sugestões."
+  },
+  {
+   "fr": "J'ai besoin d'un tour complet pour connaître le circuit avant d'analyser la voiture.",
+   "en": "I need a full lap to learn the track before analysing the car.",
+   "ou": "behavior.py:516",
+   "texte": "Preciso de uma volta completa para conhecer a pista antes de analisar o carro."
+  },
+  {
+   "fr": "J'analyse encore, il me faut deux ou trois tours propres.",
+   "en": "Still analysing, I need two or three clean laps.",
+   "ou": "behavior.py:519",
+   "texte": "Ainda analisando, preciso de duas ou três voltas limpas."
+  },
+  {
+   "fr": "La voiture est plutôt équilibrée, rien de répétitif à signaler.",
+   "en": "The car is fairly balanced, nothing recurring to report.",
+   "ou": "behavior.py:524",
+   "texte": "O carro está bem equilibrado, nada recorrente para relatar."
+  },
+  {
+   "fr": "Pneus : ",
+   "en": "Tyres: ",
+   "ou": "behavior.py:526",
+   "texte": "Pneus: "
+  },
+  {
+   "fr": "recule un peu la répartition de freinage, ou assouplis la barre antiroulis avant",
+   "en": "move the brake bias back a little, or soften the front anti-roll bar",
+   "ou": "behavior.py:64",
+   "texte": "leve o balanço um pouco para trás, ou amacie a barra dianteira"
+  },
+  {
+   "fr": "assouplis la barre antiroulis avant, ou ajoute un cran d'aileron avant",
+   "en": "soften the front anti-roll bar, or add a click of front wing",
+   "ou": "behavior.py:64",
+   "texte": "amacie a barra dianteira, ou adicione um clique de asa dianteira"
+  },
+  {
+   "fr": "réduis le blocage du différentiel en accélération, ou assouplis l'avant",
+   "en": "reduce the diff power lock, or soften the front",
+   "ou": "behavior.py:64",
+   "texte": "reduza o bloqueio do diferencial na aceleração, ou amacie a dianteira"
+  },
+  {
+   "fr": "avance un peu la répartition de freinage, ou réduis le frein moteur",
+   "en": "move the brake bias forward a little, or reduce engine braking",
+   "ou": "behavior.py:64",
+   "texte": "leve o balanço um pouco para frente, ou reduza o freio motor"
+  },
+  {
+   "fr": "assouplis la barre antiroulis arrière, ou ajoute un cran d'aileron arrière",
+   "en": "soften the rear anti-roll bar, or add a click of rear wing",
+   "ou": "behavior.py:64",
+   "texte": "amacie a barra traseira, ou adicione um clique de asa traseira"
+  },
+  {
+   "fr": "monte le contrôle de traction d'un cran, ou assouplis la barre antiroulis arrière",
+   "en": "one more click of traction control, or soften the rear anti-roll bar",
+   "ou": "behavior.py:64",
+   "texte": "um clique a mais de controle de tração, ou amacie a barra traseira"
+  },
+  {
+   "fr": "recule la répartition de freinage d'un demi-point",
+   "en": "move the brake bias back half a point",
+   "ou": "behavior.py:64",
+   "texte": "leve o balanço de freio meio ponto para trás"
+  },
+  {
+   "fr": "avance la répartition de freinage d'un demi-point",
+   "en": "move the brake bias forward half a point",
+   "ou": "behavior.py:64",
+   "texte": "leve o balanço de freio meio ponto para frente"
+  },
+  {
+   "fr": "monte le contrôle de traction d'un cran, ou sois plus progressif à l'accélération",
+   "en": "one more click of traction control, or be smoother on the throttle",
+   "ou": "behavior.py:64",
+   "texte": "um clique a mais de controle de tração, ou mais suave no acelerador"
+  },
+  {
+   "fr": "tu tournes trop le volant, l'avant décroche et la voiture freine : moins d'angle, l'avant accrochera mieux",
+   "en": "too much steering lock, the front lets go and scrubs speed: less angle and the front will grip better",
+   "ou": "behavior.py:64",
+   "texte": "volante demais, a dianteira escapa e segura o carro: menos ângulo e a dianteira vai aderir melhor"
+  },
+  {
+   "fr": "barre antiroulis avant plus souple",
+   "en": "softer front anti-roll bar",
+   "ou": "behavior.py:76",
+   "texte": "barra dianteira mais macia"
+  },
+  {
+   "fr": "différentiel moins bloqué en accélération, ou barre antiroulis avant plus souple",
+   "en": "less diff power lock, or softer front anti-roll bar",
+   "ou": "behavior.py:76",
+   "texte": "menos bloqueio do diferencial na aceleração, ou barra dianteira mais macia"
+  },
+  {
+   "fr": "barre antiroulis arrière plus souple, ou un cran d'aileron arrière",
+   "en": "softer rear anti-roll bar, or a click of rear wing",
+   "ou": "behavior.py:76",
+   "texte": "barra traseira mais macia, ou um clique de asa traseira"
+  },
+  {
+   "fr": "barre antiroulis arrière plus souple",
+   "en": "softer rear anti-roll bar",
+   "ou": "behavior.py:76",
+   "texte": "barra traseira mais macia"
+  },
+  {
+   "fr": "plus de blocage du différentiel au lever de pied",
+   "en": "more diff coast lock",
+   "ou": "behavior.py:76",
+   "texte": "mais bloqueio do diferencial na desaceleração"
+  },
+  {
+   "fr": "entrée",
+   "en": "entry",
+   "ou": "behavior.py:86",
+   "texte": "entrada"
+  },
+  {
+   "fr": "milieu",
+   "en": "mid-corner",
+   "ou": "behavior.py:86",
+   "texte": "meio de curva"
+  },
+  {
+   "fr": "sortie",
+   "en": "exit",
+   "ou": "behavior.py:86",
+   "texte": "saída"
+  },
+  {
+   "fr": "tours",
+   "en": "laps",
+   "ou": "debrief.py:109",
+   "texte": "voltas"
+  },
+  {
+   "fr": "Pas encore de session enregistrée. Fais quelques tours avec Apex Radio ouvert.",
+   "en": "No session recorded yet. Do a few laps with Apex Radio running.",
+   "ou": "debrief.py:110",
+   "texte": "Nenhuma sessão gravada ainda. Dê algumas voltas com o Apex Radio rodando."
+  },
+  {
+   "fr": "Débriefs",
+   "en": "Debriefs",
+   "ou": "debrief.py:112",
+   "texte": "Debriefings"
+  },
+  {
+   "fr": "{0} valides",
+   "en": "{0} valid",
+   "ou": "debrief.py:132",
+   "texte": "{0} válidas"
+  },
+  {
+   "fr": "Meilleur tour",
+   "en": "Best lap",
+   "ou": "debrief.py:133",
+   "texte": "Melhor volta"
+  },
+  {
+   "fr": "record circuit {0}",
+   "en": "track record {0}",
+   "ou": "debrief.py:133",
+   "texte": "recorde da pista {0}"
+  },
+  {
+   "fr": "Moyenne (tours propres)",
+   "en": "Average (clean laps)",
+   "ou": "debrief.py:134",
+   "texte": "Média (voltas limpas)"
+  },
+  {
+   "fr": "régularité ± {0} s",
+   "en": "consistency ± {0} s",
+   "ou": "debrief.py:134",
+   "texte": "consistência ± {0} s"
+  },
+  {
+   "fr": "Essence / tour",
+   "en": "Fuel / lap",
+   "ou": "debrief.py:135",
+   "texte": "Combustível / volta"
+  },
+  {
+   "fr": "{0} passage(s) au stand",
+   "en": "{0} pit visit(s)",
+   "ou": "debrief.py:135",
+   "texte": "{0} passagem(ns) pelos boxes"
+  },
+  {
+   "fr": "même place",
+   "en": "same place",
+   "ou": "debrief.py:137",
+   "texte": "mesma posição"
+  },
+  {
+   "fr": "place(s)",
+   "en": "place(s)",
+   "ou": "debrief.py:137",
+   "texte": "posição(ões)"
+  },
+  {
+   "fr": "Temps au tour",
+   "en": "Lap times",
+   "ou": "debrief.py:152",
+   "texte": "Tempos de volta"
+  },
+  {
+   "fr": "Jaune : meilleur tour · tirets roses : passage au stand · tours invalides non affichés.",
+   "en": "Yellow: best lap · pink dashes: pit visit · invalid laps not shown.",
+   "ou": "debrief.py:156",
+   "texte": "Amarelo: melhor volta · traços rosa: passagem pelos boxes · voltas inválidas não exibidas."
+  },
+  {
+   "fr": "stand",
+   "en": "pit",
+   "ou": "debrief.py:162",
+   "texte": "box"
+  },
+  {
+   "fr": "invalide",
+   "en": "invalid",
+   "ou": "debrief.py:162",
+   "texte": "inválida"
+  },
+  {
+   "fr": "très régulier",
+   "en": "very consistent",
+   "ou": "debrief.py:175",
+   "texte": "muito consistente"
+  },
+  {
+   "fr": "irrégulier",
+   "en": "inconsistent",
+   "ou": "debrief.py:175",
+   "texte": "inconsistente"
+  },
+  {
+   "fr": "correct",
+   "en": "ok",
+   "ou": "debrief.py:175",
+   "texte": "ok"
+  },
+  {
+   "fr": "<h2>Rythme par tranche de 5 tours</h2><table><tr><th>Tours</th><th>Rythme médian</th><th>Évolution</th><th>Régularité</th><th></th></tr>",
+   "en": "<h2>Pace per 5-lap block</h2><table><tr><th>Laps</th><th>Median pace</th><th>Trend</th><th>Consistency</th><th></th></tr>",
+   "ou": "debrief.py:179",
+   "texte": "<h2>Ritmo por bloco de 5 voltas</h2><table><tr><th>Voltas</th><th>Ritmo mediano</th><th>Tendência</th><th>Consistência</th><th></th></tr>"
+  },
+  {
+   "fr": "Évolution rose = plus lent que la tranche d'avant (usure, essence, trafic).",
+   "en": "Pink trend = slower than the previous block (wear, fuel, traffic).",
+   "ou": "debrief.py:182",
+   "texte": "Tendência rosa = mais lento que o bloco anterior (desgaste, combustível, tráfego)."
+  },
+  {
+   "fr": "tous les débriefs",
+   "en": "all debriefs",
+   "ou": "debrief.py:187",
+   "texte": "todos os debriefings"
+  },
+  {
+   "fr": "DÉBRIEF",
+   "en": "DEBRIEF",
+   "ou": "debrief.py:188",
+   "texte": "DEBRIEFING"
+  },
+  {
+   "fr": "Comportement de la voiture",
+   "en": "Car behaviour",
+   "ou": "debrief.py:193",
+   "texte": "Comportamento do carro"
+  },
+  {
+   "fr": "Rien de répétitif signalé.",
+   "en": "Nothing recurring reported.",
+   "ou": "debrief.py:193",
+   "texte": "Nada recorrente relatado."
+  },
+  {
+   "fr": "Tours",
+   "en": "Laps",
+   "ou": "debrief.py:194",
+   "texte": "Voltas"
+  },
+  {
+   "fr": "Tour",
+   "en": "Lap",
+   "ou": "debrief.py:194",
+   "texte": "Volta"
+  },
+  {
+   "fr": "Temps",
+   "en": "Time",
+   "ou": "debrief.py:194",
+   "texte": "Tempo"
+  },
+  {
+   "fr": "Essence",
+   "en": "Fuel",
+   "ou": "debrief.py:194",
+   "texte": "Combustível"
+  },
+  {
+   "fr": "Débrief {0}",
+   "en": "Debrief {0}",
+   "ou": "debrief.py:196",
+   "texte": "Debriefing {0}"
+  },
+  {
+   "fr": "TABLEAU DE BORD",
+   "en": "DASHBOARD",
+   "ou": "debrief.py:224",
+   "texte": "PAINEL"
+  },
+  {
+   "fr": "DÉBRIEFS",
+   "en": "DEBRIEFS",
+   "ou": "debrief.py:224",
+   "texte": "DEBRIEFINGS"
+  },
+  {
+   "fr": "pas de carte",
+   "en": "no map",
+   "ou": "debrief.py:235",
+   "texte": "sem mapa"
+  },
+  {
+   "fr": "Tracé de",
+   "en": "Layout of",
+   "ou": "debrief.py:242",
+   "texte": "Traçado de"
+  },
+  {
+   "fr": "Progression : il faut au moins 2 sessions.",
+   "en": "Progress: needs at least 2 sessions.",
+   "ou": "debrief.py:249",
+   "texte": "Progresso: são necessárias pelo menos 2 sessões."
+  },
+  {
+   "fr": "{0} s gagnées depuis le {1}",
+   "en": "{0} s gained since {1}",
+   "ou": "debrief.py:261",
+   "texte": "{0} s ganhos desde {1}"
+  },
+  {
+   "fr": "{0} s de plus que le {1}",
+   "en": "{0} s slower than on {1}",
+   "ou": "debrief.py:262",
+   "texte": "{0} s mais lento que em {1}"
+  },
+  {
+   "fr": "stable",
+   "en": "steady",
+   "ou": "debrief.py:263",
+   "texte": "estável"
+  },
+  {
+   "fr": "Progression des meilleurs tours",
+   "en": "Best lap progress",
+   "ou": "debrief.py:264",
+   "texte": "Progresso das melhores voltas"
+  },
+  {
+   "fr": "Progression",
+   "en": "Progress",
+   "ou": "debrief.py:266",
+   "texte": "Progresso"
+  },
+  {
+   "fr": "Tour idéal",
+   "en": "Ideal lap",
+   "ou": "debrief.py:292",
+   "texte": "Volta ideal"
+  },
+  {
+   "fr": "tour idéal",
+   "en": "ideal lap",
+   "ou": "debrief.py:299",
+   "texte": "volta ideal"
+  },
+  {
+   "fr": "Partager sur Discord",
+   "en": "Share on Discord",
+   "ou": "debrief.py:300",
+   "texte": "Compartilhar no Discord"
+  },
+  {
+   "fr": "Copié ! Colle-le dans #chronos-laptimes",
+   "en": "Copied! Paste it in #chronos-laptimes",
+   "ou": "debrief.py:316",
+   "texte": "Copiado! Cole em #chronos-laptimes"
+  },
+  {
+   "fr": "<h1>MEILLEURS TOURS</h1><p class='muted'>Ton record sur chaque circuit, par catégorie (tours valides uniquement).</p>",
+   "en": "<h1>BEST LAPS</h1><p class='muted'>Your record on each track, by class (valid laps only).</p>",
+   "ou": "debrief.py:319",
+   "texte": "<h1>MELHORES VOLTAS</h1><p class='muted'>Seu recorde em cada pista, por classe (só voltas válidas).</p>"
+  },
+  {
+   "fr": "Pas encore de record : fais quelques tours valides avec Apex Radio ouvert.",
+   "en": "No record yet: do a few valid laps with Apex Radio running.",
+   "ou": "debrief.py:321",
+   "texte": "Nenhum recorde ainda: dê algumas voltas válidas com o Apex Radio rodando."
+  },
+  {
+   "fr": "Meilleurs tours",
+   "en": "Best laps",
+   "ou": "debrief.py:323",
+   "texte": "Melhores voltas"
+  },
+  {
+   "fr": "Ouvrir le tableau de bord",
+   "en": "Open the dashboard",
+   "ou": "desktop.py:206",
+   "texte": "Abrir o painel"
+  },
+  {
+   "fr": "Vue téléphone : ",
+   "en": "Phone view: ",
+   "ou": "desktop.py:207",
+   "texte": "Visão no celular: "
+  },
+  {
+   "fr": "Silence (urgent seulement)",
+   "en": "Quiet (urgent only)",
+   "ou": "desktop.py:210",
+   "texte": "Silencioso (só urgente)"
+  },
+  {
+   "fr": "Ouvrir le journal (dépannage)",
+   "en": "Open the log (troubleshooting)",
+   "ou": "desktop.py:213",
+   "texte": "Abrir o registro (diagnóstico)"
+  },
+  {
+   "fr": "Quitter Apex Radio",
+   "en": "Quit Apex Radio",
+   "ou": "desktop.py:215",
+   "texte": "Sair do Apex Radio"
+  },
+  {
+   "fr": "Apex Radio continue ici. Clique sur cette icône pour rouvrir le tableau de bord, clic droit pour quitter.",
+   "en": "Apex Radio keeps running here. Click this icon to reopen the dashboard, right-click to quit.",
+   "ou": "desktop.py:231",
+   "texte": "O Apex Radio continua rodando aqui. Clique neste ícone para reabrir o painel, clique com o botão direito para sair."
+  },
+  {
+   "fr": "fr",
+   "en": "en",
+   "ou": "i18n.py:150",
+   "texte": ""
+  },
+  {
+   "fr": "avant le virage {0}",
+   "en": "before turn {0}",
+   "ou": "incidents.py:39",
+   "texte": "antes da curva {0}"
+  },
+  {
+   "fr": "au virage {0}",
+   "en": "at turn {0}",
+   "ou": "incidents.py:40",
+   "texte": "na curva {0}"
+  },
+  {
+   "fr": "sur la piste",
+   "en": "on track",
+   "ou": "incidents.py:40",
+   "texte": "na pista"
+  },
+  {
+   "fr": "Attention, voiture arrêtée {0} !",
+   "en": "Caution, car stopped {0}!",
+   "ou": "incidents.py:91",
+   "texte": "Atenção, carro parado {0}!"
+  },
+  {
+   "fr": "Voiture hors piste {0}, attention.",
+   "en": "Car off {0}, caution.",
+   "ou": "incidents.py:93",
+   "texte": "Carro fora da pista {0}, cuidado."
+  },
+  {
+   "fr": "Nouveau record perso ici ! {0}, tu gagnes {1}.",
+   "en": "New personal best here! {0}, {1} quicker.",
+   "ou": "laptimes.py:208",
+   "texte": "Novo recorde pessoal aqui! {0}, {1} mais rápido."
+  },
+  {
+   "fr": "Premier chrono de référence sur ce circuit : {0}.",
+   "en": "First reference lap on this track: {0}.",
+   "ou": "laptimes.py:212",
+   "texte": "Primeira volta de referência nesta pista: {0}."
+  },
+  {
+   "fr": "Tour invalidé, attention aux limites de piste.",
+   "en": "Lap invalidated, watch the track limits.",
+   "ou": "laptimes.py:228",
+   "texte": "Volta invalidada, cuidado com os limites de pista."
+  },
+  {
+   "fr": "qualif",
+   "en": "essais",
+   "ou": "laptimes.py:229",
+   "texte": ""
+  },
+  {
+   "fr": "{0}, à {1} du record.",
+   "en": "{0}, {1} off your best.",
+   "ou": "laptimes.py:231",
+   "texte": "{0}, {1} atrás da sua melhor volta."
+  },
+  {
+   "fr": "{0} gagné{1} au secteur {2}",
+   "en": "{0} gained in sector {2}",
+   "ou": "laptimes.py:249",
+   "texte": "{0} ganho no setor {2}"
+  },
+  {
+   "fr": "{0} perdu{1} au secteur {2}",
+   "en": "{0} lost in sector {2}",
+   "ou": "laptimes.py:250",
+   "texte": "{0} perdido no setor {2}"
+  },
+  {
+   "fr": "tu perds {0} dans le secteur {1}",
+   "en": "you lose {0} in sector {1}",
+   "ou": "laptimes.py:261",
+   "texte": "você perde {0} no setor {1}"
+  },
+  {
+   "fr": "tu reprends {0} dans le {1}",
+   "en": "you gain {0} in sector {1}",
+   "ou": "laptimes.py:264",
+   "texte": "você ganha {0} no setor {1}"
+  },
+  {
+   "fr": "Même rythme que {0}.",
+   "en": "Same pace as {0}.",
+   "ou": "laptimes.py:267",
+   "texte": "Mesmo ritmo que {0}."
+  },
+  {
+   "fr": "Au total tu gagnes {0} au tour.",
+   "en": "Overall you gain {0} a lap.",
+   "ou": "laptimes.py:268",
+   "texte": "No total você ganha {0} por volta."
+  },
+  {
+   "fr": "Au total tu perds {0} au tour.",
+   "en": "Overall you lose {0} a lap.",
+   "ou": "laptimes.py:269",
+   "texte": "No total você perde {0} por volta."
+  },
+  {
+   "fr": "Sur {0}, ",
+   "en": "Against {0}, ",
+   "ou": "laptimes.py:270",
+   "texte": "Em relação a {0}, "
+  },
+  {
+   "fr": " et ",
+   "en": " and ",
+   "ou": "laptimes.py:270",
+   "texte": " e "
+  },
+  {
+   "fr": "both",
+   "en": "ahead",
+   "ou": "laptimes.py:277",
+   "texte": ""
+  },
+  {
+   "fr": "la voiture devant",
+   "en": "the car ahead",
+   "ou": "laptimes.py:278",
+   "texte": "o carro da frente"
+  },
+  {
+   "fr": "la voiture derrière",
+   "en": "the car behind",
+   "ou": "laptimes.py:282",
+   "texte": "o carro de trás"
+  },
+  {
+   "fr": "Pas encore de record sur ce circuit dans cette catégorie.",
+   "en": "No record on this track in this class yet.",
+   "ou": "laptimes.py:290",
+   "texte": "Nenhum recorde ainda nesta pista nesta classe."
+  },
+  {
+   "fr": "Ton record ici, c'est {0}, le {1}.",
+   "en": "Your record here is {0}, set on {1}.",
+   "ou": "laptimes.py:291",
+   "texte": "Seu recorde aqui é {0}, feito em {1}."
+  },
+  {
+   "fr": " Tu es dessus aujourd'hui.",
+   "en": " You matched it today.",
+   "ou": "laptimes.py:295",
+   "texte": " Hoje você igualou."
+  },
+  {
+   "fr": " Aujourd'hui tu es à {0}.",
+   "en": " Today you're {0} off.",
+   "ou": "laptimes.py:296",
+   "texte": " Hoje você está a {0}."
+  },
+  {
+   "fr": " Avec tes meilleurs secteurs, le tour idéal serait {0}.",
+   "en": " With your best sectors, the ideal lap would be {0}.",
+   "ou": "laptimes.py:299",
+   "texte": " Com seus melhores setores, a volta ideal seria {0}."
+  },
+  {
+   "fr": "{0} secondes",
+   "en": "{0} seconds",
+   "ou": "laptimes.py:38",
+   "texte": "{0} segundos"
+  },
+  {
+   "fr": "moins d'un dixième",
+   "en": "less than a tenth",
+   "ou": "laptimes.py:59",
+   "texte": "menos de um décimo"
+  },
+  {
+   "fr": "Info radio.",
+   "en": "Radio check.",
+   "ou": "phrases.py:45",
+   "texte": "Informação de rádio."
+  },
+  {
+   "fr": "Écoute bien.",
+   "en": "Listen up.",
+   "ou": "phrases.py:45",
+   "texte": "Escuta."
+  },
+  {
+   "fr": "OK, info.",
+   "en": "OK, info.",
+   "ou": "phrases.py:45",
+   "texte": "OK, informação."
+  },
+  {
+   "fr": "Du stand.",
+   "en": "From the pit wall.",
+   "ou": "phrases.py:46",
+   "texte": "Do muro dos boxes."
+  },
+  {
+   "fr": "Petite info.",
+   "en": "Quick one.",
+   "ou": "phrases.py:46",
+   "texte": "Rapidinho."
+  },
+  {
+   "fr": "Pour info.",
+   "en": "Heads up.",
+   "ou": "phrases.py:46",
+   "texte": "Atenção."
+  },
+  {
+   "fr": "Reçu.",
+   "en": "Copy.",
+   "ou": "phrases.py:47",
+   "texte": "Entendido."
+  },
+  {
+   "fr": "Bien reçu.",
+   "en": "Copy that.",
+   "ou": "phrases.py:47",
+   "texte": "Certo."
+  },
+  {
+   "fr": "OK, je regarde.",
+   "en": "OK, checking.",
+   "ou": "phrases.py:47",
+   "texte": "OK, verificando."
+  },
+  {
+   "fr": "Copie.",
+   "en": "Copied.",
+   "ou": "phrases.py:48",
+   "texte": "Copiado."
+  },
+  {
+   "fr": "Je vérifie.",
+   "en": "Stand by.",
+   "ou": "phrases.py:48",
+   "texte": "Um momento, vou verificar."
+  },
+  {
+   "fr": "Reçu, cinq sur cinq.",
+   "en": "Loud and clear.",
+   "ou": "phrases.py:48",
+   "texte": "Alto e claro."
+  },
+  {
+   "fr": "Alors.",
+   "en": "Right then.",
+   "ou": "phrases.py:51",
+   "texte": "Então."
+  },
+  {
+   "fr": "Hé, petite info.",
+   "en": "Hey, quick one.",
+   "ou": "phrases.py:51",
+   "texte": "Ei, rapidinho."
+  },
+  {
+   "fr": "Dis donc.",
+   "en": "Hey.",
+   "ou": "phrases.py:51",
+   "texte": "Ei."
+  },
+  {
+   "fr": "Bon.",
+   "en": "So.",
+   "ou": "phrases.py:52",
+   "texte": "Bom."
+  },
+  {
+   "fr": "Tiens, au fait.",
+   "en": "Oh, by the way.",
+   "ou": "phrases.py:52",
+   "texte": "Ah, aliás."
+  },
+  {
+   "fr": "Alors, voyons.",
+   "en": "Let's see.",
+   "ou": "phrases.py:53",
+   "texte": "Vamos ver."
+  },
+  {
+   "fr": "Ah, bonne question.",
+   "en": "Good question.",
+   "ou": "phrases.py:53",
+   "texte": "Boa pergunta."
+  },
+  {
+   "fr": "Attends, je regarde.",
+   "en": "Hang on, checking.",
+   "ou": "phrases.py:54",
+   "texte": "Espera, vou ver."
+  },
+  {
+   "fr": "Pas de souci.",
+   "en": "No worries.",
+   "ou": "phrases.py:54",
+   "texte": "Sem problema."
+  },
+  {
+   "fr": "À toi.",
+   "en": "Over.",
+   "ou": "phrases.py:58",
+   "texte": "Câmbio."
+  },
+  {
+   "fr": "On reste concentrés.",
+   "en": "Stay focused.",
+   "ou": "phrases.py:58",
+   "texte": "Fique concentrado."
+  },
+  {
+   "fr": "Bien reçu ?",
+   "en": "Copy?",
+   "ou": "phrases.py:58",
+   "texte": "Entendido?"
+  },
+  {
+   "fr": "On continue comme ça.",
+   "en": "Keep it going.",
+   "ou": "phrases.py:59",
+   "texte": "Continue assim."
+  },
+  {
+   "fr": "Je surveille.",
+   "en": "I'm watching it.",
+   "ou": "phrases.py:59",
+   "texte": "Estou de olho."
+  },
+  {
+   "fr": "Tranquille.",
+   "en": "Easy.",
+   "ou": "phrases.py:60",
+   "texte": "Calma."
+  },
+  {
+   "fr": "On gère.",
+   "en": "We've got this.",
+   "ou": "phrases.py:60",
+   "texte": "Está tudo sob controle."
+  },
+  {
+   "fr": "Pas de stress.",
+   "en": "No stress.",
+   "ou": "phrases.py:60",
+   "texte": "Sem estresse."
+  },
+  {
+   "fr": "Tu assures.",
+   "en": "You're doing great.",
+   "ou": "phrases.py:61",
+   "texte": "Você está indo muito bem."
+  },
+  {
+   "fr": "on répare tout",
+   "en": "full repairs",
+   "ou": "pitmenu.py:118",
+   "texte": "reparar tudo"
+  },
+  {
+   "fr": "réparation de la carrosserie",
+   "en": "bodywork repairs",
+   "ou": "pitmenu.py:118",
+   "texte": "reparar a carroceria"
+  },
+  {
+   "fr": "pas de réparation",
+   "en": "no repairs",
+   "ou": "pitmenu.py:123",
+   "texte": "sem reparos"
+  },
+  {
+   "fr": "pas de choix pneu par pneu sur cette voiture, je change les quatre",
+   "en": "no tyre-by-tyre choice on this car, changing all four",
+   "ou": "pitmenu.py:142",
+   "texte": "neste carro não dá para escolher pneu por pneu, troco os quatro"
+  },
+  {
+   "fr": "4 pneus neufs",
+   "en": "four new tyres",
+   "ou": "pitmenu.py:158",
+   "texte": "quatro pneus novos"
+  },
+  {
+   "fr": "pneus neufs : {0}",
+   "en": "new tyres: {0}",
+   "ou": "pitmenu.py:159",
+   "texte": "pneus novos: {0}"
+  },
+  {
+   "fr": "pneus neufs",
+   "en": "new tyres",
+   "ou": "pitmenu.py:226",
+   "texte": "pneus novos"
+  },
+  {
+   "fr": "pneus pluie",
+   "en": "wet tyres",
+   "ou": "pitmenu.py:227",
+   "texte": "pneus de chuva"
+  },
+  {
+   "fr": "pneus slicks",
+   "en": "slick tyres",
+   "ou": "pitmenu.py:227",
+   "texte": "slicks"
+  },
+  {
+   "fr": "✓ Réglé (démo) : {0}",
+   "en": "✓ Set (demo): {0}",
+   "ou": "pitmenu.py:230",
+   "texte": "✓ Ajustado (demo): {0}"
+  },
+  {
+   "fr": "Stand réglé : {0}.",
+   "en": "Pit menu set: {0}.",
+   "ou": "pitmenu.py:231",
+   "texte": "Menu de boxes ajustado: {0}."
+  },
+  {
+   "fr": "⚠ Menu non pris en compte : ",
+   "en": "⚠ Menu not applied: ",
+   "ou": "pitmenu.py:244",
+   "texte": "⚠ Menu não aplicado: "
+  },
+  {
+   "fr": "Attention, je n'ai pas réussi à régler tout le menu des stands, vérifie-le.",
+   "en": "Careful, I couldn't set the whole pit menu, check it.",
+   "ou": "pitmenu.py:245",
+   "texte": "Cuidado, não consegui ajustar todo o menu de boxes, confira."
+  },
+  {
+   "fr": "✓ Réglé : ",
+   "en": "✓ Set: ",
+   "ou": "pitmenu.py:249",
+   "texte": "✓ Ajustado: "
+  },
+  {
+   "fr": "Stand réglé : ",
+   "en": "Pit menu set: ",
+   "ou": "pitmenu.py:250",
+   "texte": "Menu de boxes ajustado: "
+  },
+  {
+   "fr": "⚠ Impossible de régler le menu ({0})",
+   "en": "⚠ Couldn't set the menu ({0})",
+   "ou": "pitmenu.py:253",
+   "texte": "⚠ Não consegui ajustar o menu ({0})"
+  },
+  {
+   "fr": "Je n'arrive pas à régler le menu des stands, fais-le à la main cette fois.",
+   "en": "I can't set the pit menu, do it manually this time.",
+   "ou": "pitmenu.py:255",
+   "texte": "Não consigo ajustar o menu de boxes, faça na mão desta vez."
+  },
+  {
+   "fr": "pas d'essence",
+   "en": "no fuel",
+   "ou": "pitmenu.py:64",
+   "texte": "sem combustível"
+  },
+  {
+   "fr": "essence à {0} litres",
+   "en": "fuel to {0} litres",
+   "ou": "pitmenu.py:74",
+   "texte": "combustível para {0} litros"
+  },
+  {
+   "fr": "same",
+   "en": "dry",
+   "ou": "pitmenu.py:81",
+   "texte": ""
+  },
+  {
+   "fr": "on garde les pneus",
+   "en": "keep the tyres",
+   "ou": "pitmenu.py:98",
+   "texte": "mantemos os pneus"
+  },
+  {
+   "fr": "pneus pluie neufs",
+   "en": "new wet tyres",
+   "ou": "pitmenu.py:98",
+   "texte": "pneus de chuva novos"
+  },
+  {
+   "fr": "pneus neufs {0}",
+   "en": "new {0} tyres",
+   "ou": "pitmenu.py:99",
+   "texte": "pneus {0} novos"
+  },
+  {
+   "fr": "On n'est pas en course, pas de stratégie d'arrêt pour l'instant.",
+   "en": "We're not racing, no pit strategy for now.",
+   "ou": "questions.py:102",
+   "texte": "Não estamos em corrida, sem estratégia de boxes por enquanto."
+  },
+  {
+   "fr": "Je calcule encore, donne-moi un ou deux tours propres.",
+   "en": "Still calculating, give me one or two clean laps.",
+   "ou": "questions.py:104",
+   "texte": "Ainda calculando, me dê uma ou duas voltas limpas."
+  },
+  {
+   "fr": "Pas besoin de rentrer, tu as de quoi finir.",
+   "en": "No need to pit, you can make the finish.",
+   "ou": "questions.py:106",
+   "texte": "Não precisa parar, você chega até o fim."
+  },
+  {
+   "fr": "Aucun arrêt prévu, on va au bout comme ça.",
+   "en": "No stop planned, we go to the end like this.",
+   "ou": "questions.py:107",
+   "texte": "Nenhuma parada prevista, vamos assim até o fim."
+  },
+  {
+   "fr": "On ne s'arrête plus, tu as tout ce qu'il faut.",
+   "en": "No more stops, you've got everything you need.",
+   "ou": "questions.py:108",
+   "texte": "Sem mais paradas, você tem tudo o que precisa."
+  },
+  {
+   "fr": "Box ce tour.",
+   "en": "Box this lap.",
+   "ou": "questions.py:110",
+   "texte": "Box nesta volta."
+  },
+  {
+   "fr": "Tu rentres à la fin du tour {0}, dans {1} tours.",
+   "en": "You pit at the end of lap {0}, in {1} laps.",
+   "ou": "questions.py:113",
+   "texte": "Você para no fim da volta {0}, em {1} voltas."
+  },
+  {
+   "fr": "Box dans {0} tours, à la fin du tour {1}.",
+   "en": "Box in {0} laps, end of lap {1}.",
+   "ou": "questions.py:114",
+   "texte": "Box em {0} voltas, no fim da volta {1}."
+  },
+  {
+   "fr": "On t'attend au stand dans {0} tours, tour {1}.",
+   "en": "We'll see you in the pits in {0} laps, lap {1}.",
+   "ou": "questions.py:115",
+   "texte": "Te esperamos nos boxes em {0} voltas, volta {1}."
+  },
+  {
+   "fr": "{0} litres",
+   "en": "{0} litres of fuel",
+   "ou": "questions.py:118",
+   "texte": "{0} litros de combustível"
+  },
+  {
+   "fr": "énergie à {0} %",
+   "en": "energy to {0} %",
+   "ou": "questions.py:120",
+   "texte": "energia em {0} %"
+  },
+  {
+   "fr": "retour en slicks",
+   "en": "back to slicks",
+   "ou": "questions.py:124",
+   "texte": "voltamos para slicks"
+  },
+  {
+   "fr": " Il faudra {0} arrêts au total.",
+   "en": " {0} stops in total.",
+   "ou": "questions.py:129",
+   "texte": " {0} paradas no total."
+  },
+  {
+   "fr": "{0} On met {1}.",
+   "en": "{0} {1}.",
+   "ou": "questions.py:130",
+   "texte": "{0} Vamos colocar {1}."
+  },
+  {
+   "fr": "Crevaison {0} ! Rentre au stand doucement.",
+   "en": "Puncture {0}! Bring it in slowly.",
+   "ou": "questions.py:140",
+   "texte": "Pneu furado {0}! Venha devagar."
+  },
+  {
+   "fr": "Ils sont comme neufs",
+   "en": "They're like new",
+   "ou": "questions.py:145",
+   "texte": "Estão como novos"
+  },
+  {
+   "fr": "Ils sont en bon état",
+   "en": "They're in good shape",
+   "ou": "questions.py:146",
+   "texte": "Estão em bom estado"
+  },
+  {
+   "fr": "Ils commencent à s'user",
+   "en": "They're starting to wear",
+   "ou": "questions.py:147",
+   "texte": "Estão começando a desgastar"
+  },
+  {
+   "fr": "Ils sont bien usés",
+   "en": "They're well worn",
+   "ou": "questions.py:148",
+   "texte": "Estão bem gastos"
+  },
+  {
+   "fr": "Ils sont très usés, pense à les changer",
+   "en": "They're very worn, think about changing them",
+   "ou": "questions.py:149",
+   "texte": "Estão muito gastos, pense em trocar"
+  },
+  {
+   "fr": "{0} : il reste {1} % de gomme en moyenne, le plus usé c'est l'{2} à {3} %.",
+   "en": "{0}: {1} % of rubber left on average, the most worn is the {2} at {3} %.",
+   "ou": "questions.py:150",
+   "texte": "{0}: em média restam {1} % de borracha, o mais gasto é o {2}, com {3} %."
+  },
+  {
+   "fr": "Encore environ {0} tours avant qu'ils soient vraiment usés.",
+   "en": "About {0} more laps before they're really worn.",
+   "ou": "questions.py:153",
+   "texte": "Mais umas {0} voltas antes de ficarem realmente gastos."
+  },
+  {
+   "fr": "Ils sont encore froids : {0} degrés.",
+   "en": "They're still cold: {0} degrees.",
+   "ou": "questions.py:163",
+   "texte": "Ainda estão frios: {0} graus."
+  },
+  {
+   "fr": "Ils sont trop chauds : {0} degrés, l'idéal est vers {1}. Ménage-les un peu.",
+   "en": "They're too hot: {0} degrees, ideal is around {1}. Look after them a bit.",
+   "ou": "questions.py:165",
+   "texte": "Estão quentes demais: {0} graus, o ideal é por volta de {1}. Poupe um pouco."
+  },
+  {
+   "fr": "Bonne température, {0} degrés.",
+   "en": "Good temperature, {0} degrees.",
+   "ou": "questions.py:168",
+   "texte": "Boa temperatura, {0} graus."
+  },
+  {
+   "fr": "Températures autour de {0} degrés.",
+   "en": "Temperatures around {0} degrees.",
+   "ou": "questions.py:170",
+   "texte": "Temperaturas por volta de {0} graus."
+  },
+  {
+   "fr": "l'avant",
+   "en": "the fronts",
+   "ou": "questions.py:173",
+   "texte": "os dianteiros"
+  },
+  {
+   "fr": "l'arrière",
+   "en": "the rears",
+   "ou": "questions.py:173",
+   "texte": "os traseiros"
+  },
+  {
+   "fr": "{0} chauffe plus, de {1} degrés.",
+   "en": "{0} {2} running {1} degrees hotter.",
+   "ou": "questions.py:174",
+   "texte": "{0} esquentam mais, {1} graus."
+  },
+  {
+   "fr": "Je n'arrive pas à lire tes pneus pour l'instant.",
+   "en": "I can't read your tyres right now.",
+   "ou": "questions.py:177",
+   "texte": "Não consigo ler seus pneus agora."
+  },
+  {
+   "fr": "Oui, {0} revient de {1} par tour. Il est à {2}, sur toi dans {3} tour{4} à ce rythme.",
+   "en": "Yes, {0} is closing by {1} a lap. He's {2} back, on you in {3} lap{4} at this pace.",
+   "ou": "questions.py:208",
+   "texte": "Sim, {0} está se aproximando {1} por volta. Ele está a {2}, chega em você em {3} {4?voltas:volta} nesse ritmo."
+  },
+  {
+   "fr": "Non, tu creuses : tu prends {0} par tour à {1}, il est à {2}.",
+   "en": "No, you're pulling away: {0} a lap on {1}, he's {2} back.",
+   "ou": "questions.py:211",
+   "texte": "Não, você está abrindo: {0} por volta sobre {1}, ele está a {2}."
+  },
+  {
+   "fr": "Oui, tu reprends {0} par tour à {1}. Il est à {2}, dans ses roues dans {3} tour{4}.",
+   "en": "Yes, you're gaining {0} a lap on {1}. He's {2} ahead, on his gearbox in {3} lap{4}.",
+   "ou": "questions.py:216",
+   "texte": "Sim, você tira {0} por volta do {1}. Ele está {2} à frente, colado nele em {3} {4?voltas:volta}."
+  },
+  {
+   "fr": "Non, {0} s'éloigne de {1} par tour, il est à {2}.",
+   "en": "No, {0} is pulling away by {1} a lap, {2} ahead.",
+   "ou": "questions.py:219",
+   "texte": "Não, {0} está abrindo {1} por volta, {2} à frente."
+  },
+  {
+   "fr": "L'écart est stable avec {0}, à {1}.",
+   "en": "The gap to {0} is stable, {1}.",
+   "ou": "questions.py:221",
+   "texte": "A diferença para {0} está estável, {1}."
+  },
+  {
+   "fr": "La voiture devant est à {0}.",
+   "en": "The car ahead is {0} up the road.",
+   "ou": "questions.py:224",
+   "texte": "O carro da frente está a {0}."
+  },
+  {
+   "fr": "Tu es en tête, il n'y a personne devant toi.",
+   "en": "You're leading, there's nobody ahead.",
+   "ou": "questions.py:226",
+   "texte": "Você está liderando, não tem ninguém à frente."
+  },
+  {
+   "fr": "Je n'arrive pas à lire l'écart avec la voiture devant pour l'instant.",
+   "en": "I can't read the gap to the car ahead right now.",
+   "ou": "questions.py:227",
+   "texte": "Não consigo ler a diferença para o carro da frente agora."
+  },
+  {
+   "fr": "La voiture derrière est à {0}.",
+   "en": "The car behind is {0} back.",
+   "ou": "questions.py:230",
+   "texte": "O carro de trás está a {0}."
+  },
+  {
+   "fr": "Personne derrière toi pour l'instant.",
+   "en": "Nobody behind you right now.",
+   "ou": "questions.py:231",
+   "texte": "Não tem ninguém atrás de você agora."
+  },
+  {
+   "fr": "{0} devant",
+   "en": "{0} ahead",
+   "ou": "questions.py:234",
+   "texte": "{0} à frente"
+  },
+  {
+   "fr": "tu es en tête",
+   "en": "you're leading",
+   "ou": "questions.py:236",
+   "texte": "você está liderando"
+  },
+  {
+   "fr": "{0} derrière",
+   "en": "{0} behind",
+   "ou": "questions.py:238",
+   "texte": "{0} atrás"
+  },
+  {
+   "fr": "Personne de proche autour de toi.",
+   "en": "Nobody close around you.",
+   "ou": "questions.py:240",
+   "texte": "Ninguém perto de você."
+  },
+  {
+   "fr": "Écart : ",
+   "en": "Gaps: ",
+   "ou": "questions.py:241",
+   "texte": "Diferenças: "
+  },
+  {
+   "fr": "Tu m'as demandé de ne pas réparer : au prochain arrêt, on ne touche pas à la voiture.",
+   "en": "You asked for no repairs: we won't touch the car at the next stop.",
+   "ou": "questions.py:246",
+   "texte": "Você pediu sem reparos: não vamos mexer no carro na próxima parada."
+  },
+  {
+   "fr": "Oui, la voiture est abîmée : je prévois les réparations au prochain arrêt. Dis « pas de réparation » si tu n'en veux pas.",
+   "en": "Yes, the car is damaged: I'm planning repairs at the next stop. Say \"no repairs\" if you don't want them.",
+   "ou": "questions.py:249",
+   "texte": "Sim, o carro está danificado: estou planejando reparos na próxima parada. Diga \"sem reparos\" se não quiser."
+  },
+  {
+   "fr": "Pas de dégâts importants, pas besoin de réparer.",
+   "en": "No significant damage, no need for repairs.",
+   "ou": "questions.py:251",
+   "texte": "Sem danos importantes, não precisa reparar."
+  },
+  {
+   "fr": "La voiture va bien, rien à réparer.",
+   "en": "The car looks fine, nothing to fix.",
+   "ou": "questions.py:252",
+   "texte": "O carro parece bem, nada para consertar."
+  },
+  {
+   "fr": "Je ne vois pas de dégâts sérieux, on ne répare pas.",
+   "en": "No serious damage on my side, no repairs needed.",
+   "ou": "questions.py:253",
+   "texte": "Não vejo danos sérios, não vamos reparar."
+  },
+  {
+   "fr": "Tu es P{0}",
+   "en": "You're P{0}",
+   "ou": "questions.py:257",
+   "texte": "Você está em P{0}"
+  },
+  {
+   "fr": "Tu roules P{0}",
+   "en": "You're running P{0}",
+   "ou": "questions.py:257",
+   "texte": "Você está andando em P{0}"
+  },
+  {
+   "fr": "Position : P{0}",
+   "en": "Position: P{0}",
+   "ou": "questions.py:258",
+   "texte": "Posição: P{0}"
+  },
+  {
+   "fr": ", P{0} dans ta catégorie",
+   "en": ", P{0} in class",
+   "ou": "questions.py:260",
+   "texte": ", P{0} na sua classe"
+  },
+  {
+   "fr": "{0} : pas de pluie prévue.",
+   "en": "{0}: no rain expected.",
+   "ou": "questions.py:275",
+   "texte": "{0}: sem previsão de chuva."
+  },
+  {
+   "fr": " maintenant",
+   "en": " now",
+   "ou": "questions.py:281",
+   "texte": " agora"
+  },
+  {
+   "fr": " dans environ {0} minutes",
+   "en": " in about {0} minutes",
+   "ou": "questions.py:281",
+   "texte": " em cerca de {0} minutos"
+  },
+  {
+   "fr": "{0} : risque de pluie {1} %{2}{3}.",
+   "en": "{0}: {1} % chance of rain{2}{3}.",
+   "ou": "questions.py:285",
+   "texte": "{0}: {1} % de chance de chuva{2}{3}."
+  },
+  {
+   "fr": "Pour cette séance",
+   "en": "This session",
+   "ou": "questions.py:302",
+   "texte": "Para esta sessão"
+  },
+  {
+   "fr": "Pour les qualifs",
+   "en": "Qualifying",
+   "ou": "questions.py:304",
+   "texte": "Para a classificação"
+  },
+  {
+   "fr": "Pour la course",
+   "en": "The race",
+   "ou": "questions.py:306",
+   "texte": "Para a corrida"
+  },
+  {
+   "fr": "{0}. Air {1} degrés, piste {2}.",
+   "en": "{0}. Air {1} degrees, track {2}.",
+   "ou": "questions.py:311",
+   "texte": "{0}. Ar {1} graus, pista {2}."
+  },
+  {
+   "fr": " Je te conseille les pneus pluie au prochain arrêt.",
+   "en": " I'd go to wets at the next stop.",
+   "ou": "questions.py:318",
+   "texte": " Eu colocaria pneus de chuva na próxima parada."
+  },
+  {
+   "fr": "pas encore de temps",
+   "en": "no time yet",
+   "ou": "questions.py:32",
+   "texte": "ainda sem tempo"
+  },
+  {
+   "fr": " On peut repasser en slicks.",
+   "en": " We can go back to slicks.",
+   "ou": "questions.py:320",
+   "texte": " Podemos voltar para slicks."
+  },
+  {
+   "fr": "Dernier tour en {0}, meilleur en {1}.",
+   "en": "Last lap {0}, best {1}.",
+   "ou": "questions.py:325",
+   "texte": "Última volta {0}, melhor {1}."
+  },
+  {
+   "fr": "{0} minute {1}",
+   "en": "{0} minute {1}",
+   "ou": "questions.py:34",
+   "texte": "{0} minuto {1}"
+  },
+  {
+   "fr": "Je ne peux pas régler le stand pour l'instant.",
+   "en": "I can't set the pit menu right now.",
+   "ou": "questions.py:358",
+   "texte": "Não consigo ajustar o menu de boxes agora."
+  },
+  {
+   "fr": "Je règle le menu des stands.",
+   "en": "Setting up the pit menu.",
+   "ou": "questions.py:360",
+   "texte": "Ajustando o menu de boxes."
+  },
+  {
+   "fr": "Analyse du comportement indisponible.",
+   "en": "Handling analysis unavailable.",
+   "ou": "questions.py:364",
+   "texte": "Análise do comportamento indisponível."
+  },
+  {
+   "fr": "Pas de chronos enregistrés.",
+   "en": "No lap times recorded.",
+   "ou": "questions.py:368",
+   "texte": "Nenhum tempo de volta gravado."
+  },
+  {
+   "fr": "Il me faut un tour complet et valide pour comparer les secteurs.",
+   "en": "I need a full valid lap to compare sectors.",
+   "ou": "questions.py:373",
+   "texte": "Preciso de uma volta completa válida para comparar os setores."
+  },
+  {
+   "fr": "Pas de voiture à comparer autour de toi pour l'instant.",
+   "en": "No car to compare with around you yet.",
+   "ou": "questions.py:375",
+   "texte": "Ainda não há carro por perto para comparar."
+  },
+  {
+   "fr": "Pas de comparaison possible avec la voiture devant pour l'instant.",
+   "en": "Can't compare with the car ahead yet.",
+   "ou": "questions.py:380",
+   "texte": "Ainda não dá para comparar com o carro da frente."
+  },
+  {
+   "fr": "Pas de comparaison possible avec la voiture derrière pour l'instant.",
+   "en": "Can't compare with the car behind yet.",
+   "ou": "questions.py:385",
+   "texte": "Ainda não dá para comparar com o carro de trás."
+  },
+  {
+   "fr": "Aucune pénalité en cours.",
+   "en": "No penalty pending.",
+   "ou": "questions.py:390",
+   "texte": "Nenhuma punição pendente."
+  },
+  {
+   "fr": "Tu as {0} pénalité{1} à purger aux stands. Regarde l'écran pour le type.",
+   "en": "You have {0} penalt{1} to serve in the pits. Check the screen for the type.",
+   "ou": "questions.py:391",
+   "texte": "Você tem {0} {1?punições:punição} para cumprir nos boxes. Veja na tela qual é o tipo."
+  },
+  {
+   "fr": "Je n'ai pas la température des freins.",
+   "en": "No brake temperature data.",
+   "ou": "questions.py:414",
+   "texte": "Não tenho dados de temperatura dos freios."
+  },
+  {
+   "fr": "Hypercar",
+   "en": "LMP2",
+   "ou": "questions.py:415",
+   "texte": ""
+  },
+  {
+   "fr": "Freins à {0} degrés devant et {1} derrière.",
+   "en": "Brakes at {0} degrees front and {1} rear.",
+   "ou": "questions.py:418",
+   "texte": "Freios a {0} graus na frente e {1} atrás."
+  },
+  {
+   "fr": "L'{0} chauffe beaucoup, ménage les gros freinages ou ouvre les écopes.",
+   "en": "The {0} is very hot, ease the big stops or open the ducts.",
+   "ou": "questions.py:423",
+   "texte": "{0} está esquentando muito, poupe as freadas fortes ou abra os dutos."
+  },
+  {
+   "fr": "Ils sont froids, appuie fort sur les premiers freinages.",
+   "en": "They're cold, brake hard to warm them.",
+   "ou": "questions.py:426",
+   "texte": "Estão frios, freie forte para aquecer."
+  },
+  {
+   "fr": "C'est dans la bonne fenêtre.",
+   "en": "That's in the window.",
+   "ou": "questions.py:428",
+   "texte": "Está na janela ideal."
+  },
+  {
+   "fr": "Limites de piste : {0} avertissement{1} sur {2}.",
+   "en": "Track limits: {0} warning{1} of {2}.",
+   "ou": "questions.py:438",
+   "texte": "Limites de pista: {0} {1?advertências:advertência} de {2}."
+  },
+  {
+   "fr": "Encore un et c'est la pénalité, reste bien dans les lignes.",
+   "en": "One more and it's a penalty, stay inside the lines.",
+   "ou": "questions.py:441",
+   "texte": "Mais uma e é punição, fique dentro das linhas."
+  },
+  {
+   "fr": "Ce tour est invalidé, il ne comptera pas.",
+   "en": "This lap is invalidated, it won't count.",
+   "ou": "questions.py:447",
+   "texte": "Esta volta foi invalidada, não vai contar."
+  },
+  {
+   "fr": "Pour l'instant ton tour est valide.",
+   "en": "Your lap is valid so far.",
+   "ou": "questions.py:448",
+   "texte": "Sua volta está válida até agora."
+  },
+  {
+   "fr": "Il te reste {0} litres.",
+   "en": "You have {0} litres left.",
+   "ou": "questions.py:45",
+   "texte": "Você tem {0} litros restantes."
+  },
+  {
+   "fr": " {0} est à {1}.",
+   "en": " {0} is {1} back.",
+   "ou": "questions.py:455",
+   "texte": " {0} está {1} atrás."
+  },
+  {
+   "fr": "C'est toi qui mènes ta catégorie !",
+   "en": "You're leading your class!",
+   "ou": "questions.py:457",
+   "texte": "Você está liderando sua classe!"
+  },
+  {
+   "fr": "{0} litres dans le réservoir.",
+   "en": "{0} litres in the tank.",
+   "ou": "questions.py:46",
+   "texte": "{0} litros no tanque."
+  },
+  {
+   "fr": "Je ne vois pas encore le leader de ta catégorie.",
+   "en": "I can't see your class leader yet.",
+   "ou": "questions.py:460",
+   "texte": "Ainda não vejo o líder da sua classe."
+  },
+  {
+   "fr": "le leader",
+   "en": "the leader",
+   "ou": "questions.py:461",
+   "texte": "o líder"
+  },
+  {
+   "fr": "Le leader, {0}, est aux stands. Tu es P{1}.",
+   "en": "The leader, {0}, is in the pits. You're P{1}.",
+   "ou": "questions.py:464",
+   "texte": "O líder, {0}, está nos boxes. Você está em P{1}."
+  },
+  {
+   "fr": "Le leader de ta catégorie, c'est {0}, il a au moins un tour d'avance. Tu es P{1}.",
+   "en": "Your class leader is {0}, at least a lap ahead. You're P{1}.",
+   "ou": "questions.py:466",
+   "texte": "O líder da sua classe é {0}, pelo menos uma volta à frente. Você está em P{1}."
+  },
+  {
+   "fr": "Le leader de ta catégorie, c'est {0}, {1} devant toi. Tu es P{2}.",
+   "en": "Your class leader is {0}, {1} ahead. You're P{2}.",
+   "ou": "questions.py:468",
+   "texte": "O líder da sua classe é {0}, {1} à frente. Você está em P{2}."
+  },
+  {
+   "fr": "Côté essence, tu as {0} litres.",
+   "en": "Fuel-wise, you've got {0} litres.",
+   "ou": "questions.py:47",
+   "texte": "De combustível, você tem {0} litros."
+  },
+  {
+   "fr": "Personne devant toi dans ta catégorie, tu es en tête !",
+   "en": "Nobody ahead in your class, you're leading!",
+   "ou": "questions.py:474",
+   "texte": "Ninguém à frente na sua classe, você está liderando!"
+  },
+  {
+   "fr": "Personne derrière toi dans ta catégorie.",
+   "en": "Nobody behind you in your class.",
+   "ou": "questions.py:475",
+   "texte": "Ninguém atrás de você na sua classe."
+  },
+  {
+   "fr": "un pilote",
+   "en": "a driver",
+   "ou": "questions.py:476",
+   "texte": "um piloto"
+  },
+  {
+   "fr": "devant",
+   "en": "ahead",
+   "ou": "questions.py:477",
+   "texte": "à frente"
+  },
+  {
+   "fr": "derrière",
+   "en": "behind",
+   "ou": "questions.py:477",
+   "texte": "atrás"
+  },
+  {
+   "fr": "{0}, c'est {1}",
+   "en": "{0} is {1}",
+   "ou": "questions.py:478",
+   "texte": "{0} está {1}"
+  },
+  {
+   "fr": ", en {0}",
+   "en": ", in the {0}",
+   "ou": "questions.py:480",
+   "texte": ", no {0}"
+  },
+  {
+   "fr": ", il est aux stands.",
+   "en": ", he's in the pits.",
+   "ou": "questions.py:482",
+   "texte": ", ele está nos boxes."
+  },
+  {
+   "fr": ", à {0}",
+   "en": ", {0} away",
+   "ou": "questions.py:484",
+   "texte": ", a {0}"
+  },
+  {
+   "fr": "Tu n'as pas encore fait d'arrêt.",
+   "en": "You haven't pitted yet.",
+   "ou": "questions.py:499",
+   "texte": "Você ainda não parou nos boxes."
+  },
+  {
+   "fr": "Tu consommes {0} par tour, ça fait {1} tours d'essence.",
+   "en": "You're using {0} a lap, that's {1} laps of fuel.",
+   "ou": "questions.py:50",
+   "texte": "Você gasta {0} por volta, isso dá {1} voltas de combustível."
+  },
+  {
+   "fr": "Tu as fait {0} arrêt{1}.",
+   "en": "You've made {0} stop{1}.",
+   "ou": "questions.py:500",
+   "texte": "Você fez {0} {1?paradas:parada}."
+  },
+  {
+   "fr": "Neutralisation en cours, safety car ou full course yellow. Pas de dépassement, respecte la vitesse.",
+   "en": "Neutralisation, safety car or full course yellow. No overtaking, watch your speed.",
+   "ou": "questions.py:505",
+   "texte": "Neutralização, safety car ou full course yellow. Sem ultrapassagens, controle a velocidade."
+  },
+  {
+   "fr": "La course est arrêtée, drapeau rouge.",
+   "en": "The race is stopped, red flag.",
+   "ou": "questions.py:508",
+   "texte": "A corrida foi interrompida, bandeira vermelha."
+  },
+  {
+   "fr": "Drapeau à damier, c'est le dernier tour pour toi.",
+   "en": "Chequered flag is out, last lap for you.",
+   "ou": "questions.py:510",
+   "texte": "A bandeira quadriculada foi mostrada, última volta para você."
+  },
+  {
+   "fr": "Drapeau jaune sur la piste, prudence et pas de dépassement dans la zone.",
+   "en": "Yellow flag on track, careful and no overtaking in the zone.",
+   "ou": "questions.py:512",
+   "texte": "Bandeira amarela na pista, cuidado e sem ultrapassar no trecho."
+  },
+  {
+   "fr": "Piste libre, drapeau vert.",
+   "en": "Track is clear, green flag.",
+   "ou": "questions.py:514",
+   "texte": "Pista liberada, bandeira verde."
+  },
+  {
+   "fr": "À {0} litres par tour, tu tiens {1} tours.",
+   "en": "At {0} litres a lap, you can do {1} laps.",
+   "ou": "questions.py:52",
+   "texte": "Com {0} litros por volta, você consegue fazer {1} voltas."
+  },
+  {
+   "fr": "{0} voitures dans ta catégorie, {1} en tout.",
+   "en": "{0} cars in your class, {1} overall.",
+   "ou": "questions.py:520",
+   "texte": "{0} carros na sua classe, {1} no total."
+  },
+  {
+   "fr": "{0} voitures en piste.",
+   "en": "{0} cars on track.",
+   "ou": "questions.py:522",
+   "texte": "{0} carros na pista."
+  },
+  {
+   "fr": "Je ne vois pas encore les autres voitures.",
+   "en": "I can't see the other cars yet.",
+   "ou": "questions.py:523",
+   "texte": "Ainda não vejo os outros carros."
+  },
+  {
+   "fr": "Ça te laisse {0} tours, avec une conso de {1} par tour.",
+   "en": "That gives you {0} laps, using {1} a lap.",
+   "ou": "questions.py:53",
+   "texte": "Isso dá {0} voltas, gastando {1} por volta."
+  },
+  {
+   "fr": "Il me faut un tour chrono de toi et des autres pour comparer.",
+   "en": "I need lap times from you and the others to compare.",
+   "ou": "questions.py:530",
+   "texte": "Preciso de tempos seus e dos outros para comparar."
+  },
+  {
+   "fr": "Tu as le meilleur tour de ta catégorie, {0}. Le plus proche est à {1} seconde.",
+   "en": "You have the fastest lap in your class, {0}. Next best is {1} s slower.",
+   "ou": "questions.py:535",
+   "texte": "Você tem a volta mais rápida da sua classe, {0}. O próximo é {1} s mais lento."
+  },
+  {
+   "fr": "Ton meilleur tour est le {0}e sur {1} de ta catégorie. Le plus rapide, c'est {2} en {3}, {4} seconde devant toi.",
+   "en": "Your best lap ranks {0} of {1} in class. Fastest is {2} with {3}, {4} s quicker.",
+   "ou": "questions.py:537",
+   "texte": "Sua melhor volta é a {0} de {1} na sua classe. A mais rápida é de {2} com {3}, {4} s mais rápido."
+  },
+  {
+   "fr": " J'ai besoin d'encore un ou deux tours propres pour calculer la conso.",
+   "en": " I need one or two more clean laps to work out consumption.",
+   "ou": "questions.py:55",
+   "texte": " Preciso de mais uma ou duas voltas limpas para calcular o consumo."
+  },
+  {
+   "fr": "\\bsilence\\b|tais toi|taise|chut\\b|moins de message|arrete de parler|mode calme|plus que l urgent|be quiet|shut up|quiet mode|less talk|only urgent",
+   "en": "quiet",
+   "ou": "questions.py:561",
+   "texte": ""
+  },
+  {
+   "fr": "reparle|repale|reparler|parle a nouveau|tu peux parler|fin du silence|toutes les infos|remets? (la radio|les annonces)|talk again|you can talk|all info|unmute|resume radio",
+   "en": "talk",
+   "ou": "questions.py:562",
+   "texte": ""
+  },
+  {
+   "fr": "repete|repeter|redis|redire|j ai pas (compris|entendu)|pardon\\b|t as dit quoi|qu est ce que tu as dit|repeat|say again|come again|what did you say",
+   "en": "repeat",
+   "ou": "questions.py:563",
+   "texte": ""
+  },
+  {
+   "fr": "Bien reçu, je ne te dis plus que l'urgent. Dis « reparle » pour tout réentendre.",
+   "en": "Copy, urgent calls only from now on. Say \"talk again\" to hear everything.",
+   "ou": "questions.py:575",
+   "texte": "Entendido, a partir de agora só avisos urgentes. Diga \"volta a falar\" para ouvir tudo."
+  },
+  {
+   "fr": "C'est noté, je te redonne toutes les infos.",
+   "en": "Copy, back to full info.",
+   "ou": "questions.py:579",
+   "texte": "Entendido, de volta com todas as informações."
+  },
+  {
+   "fr": "C'est bon pour aller au bout.",
+   "en": "That's enough to the finish.",
+   "ou": "questions.py:58",
+   "texte": "Isso dá até o fim."
+  },
+  {
+   "fr": "Je répète : {0}",
+   "en": "I repeat: {0}",
+   "ou": "questions.py:582",
+   "texte": "Repito: {0}"
+  },
+  {
+   "fr": "Je n'ai encore rien dit.",
+   "en": "I haven't said anything yet.",
+   "ou": "questions.py:582",
+   "texte": "Ainda não falei nada."
+  },
+  {
+   "fr": "Oui, je t'entends, cinq sur cinq.",
+   "en": "Yes, I hear you loud and clear.",
+   "ou": "questions.py:589",
+   "texte": "Sim, te ouço alto e claro."
+  },
+  {
+   "fr": "Largement de quoi finir.",
+   "en": "Plenty to make the finish.",
+   "ou": "questions.py:59",
+   "texte": "Mais do que suficiente para chegar ao fim."
+  },
+  {
+   "fr": "Cinq sur cinq, je te reçois parfaitement.",
+   "en": "Five by five, reading you perfectly.",
+   "ou": "questions.py:590",
+   "texte": "Cinco por cinco, te ouço perfeitamente."
+  },
+  {
+   "fr": "Reçu fort et clair.",
+   "en": "Loud and clear.",
+   "ou": "questions.py:591",
+   "texte": "Alto e claro."
+  },
+  {
+   "fr": "Je suis là, je t'écoute.",
+   "en": "I'm here, go ahead.",
+   "ou": "questions.py:595",
+   "texte": "Estou aqui, pode falar."
+  },
+  {
+   "fr": "Toujours là, vas-y.",
+   "en": "Still here, go ahead.",
+   "ou": "questions.py:595",
+   "texte": "Continuo aqui, pode falar."
+  },
+  {
+   "fr": "Présent, je t'écoute.",
+   "en": "Here, listening.",
+   "ou": "questions.py:596",
+   "texte": "Aqui, estou ouvindo."
+  },
+  {
+   "fr": "Tu es tranquille jusqu'à l'arrivée.",
+   "en": "You're fine all the way to the flag.",
+   "ou": "questions.py:60",
+   "texte": "Você chega tranquilo até a bandeira."
+  },
+  {
+   "fr": "Salut ! Je suis là, {0} quand tu veux.",
+   "en": "Hi! I'm here, ready when you are.",
+   "ou": "questions.py:601",
+   "texte": "Oi! Estou aqui, pronto quando você quiser."
+  },
+  {
+   "fr": "Avec plaisir.",
+   "en": "You're welcome.",
+   "ou": "questions.py:605",
+   "texte": "De nada."
+  },
+  {
+   "fr": "De rien, c'est mon boulot.",
+   "en": "No problem, that's my job.",
+   "ou": "questions.py:605",
+   "texte": "Sem problema, é o meu trabalho."
+  },
+  {
+   "fr": "Pas de quoi, on fait équipe.",
+   "en": "Anytime, we're a team.",
+   "ou": "questions.py:606",
+   "texte": "Sempre que precisar, somos um time."
+  },
+  {
+   "fr": "Je suis {0}, ton {1} de course.",
+   "en": "I'm {0}, your race engineer.",
+   "ou": "questions.py:612",
+   "texte": "Sou {0}, seu engenheiro de corrida."
+  },
+  {
+   "fr": "Demande-moi l'essence, l'énergie, les pneus, le stand, les écarts, ta position, la météo, tes chronos, tes secteurs ou le comportement de la voiture. Je peux aussi régler le menu des stands.",
+   "en": "Ask me about fuel, energy, tyres, pit stop, gaps, position, weather, lap times, sectors or car handling. I can also set up the pit menu.",
+   "ou": "questions.py:617",
+   "texte": "Pergunte sobre combustível, energia, pneus, pit stop, diferenças, posição, clima, tempos de volta, setores ou comportamento do carro. Também posso ajustar o menu de boxes."
+  },
+  {
+   "fr": " Si tu économises {0} litre par tour, on évite l'arrêt.",
+   "en": " Save {0} litres a lap and we skip the stop.",
+   "ou": "questions.py:62",
+   "texte": " Economize {0} litros por volta e pulamos a parada."
+  },
+  {
+   "fr": "Ça va très bien, merci ! {0} pour la course.",
+   "en": "All good, thanks! Ready for the race.",
+   "ou": "questions.py:634",
+   "texte": "Tudo ótimo, obrigado! Pronto para a corrida."
+  },
+  {
+   "fr": "Les blagues, c'est après le drapeau à damier. Reste concentré !",
+   "en": "Jokes are for after the chequered flag. Stay focused!",
+   "ou": "questions.py:643",
+   "texte": "Piada só depois da bandeira quadriculada. Fique concentrado!"
+  },
+  {
+   "fr": "Pas d'énergie virtuelle sur cette voiture, c'est l'essence qui compte.",
+   "en": "No virtual energy on this car, fuel is what counts.",
+   "ou": "questions.py:69",
+   "texte": "Este carro não tem energia virtual, o que conta é o combustível."
+  },
+  {
+   "fr": "Je ne peux pas changer les réparations pour l'instant.",
+   "en": "I can't change the repairs right now.",
+   "ou": "questions.py:699",
+   "texte": "Não consigo mudar os reparos agora."
+  },
+  {
+   "fr": "C'est noté, on ne répare pas au prochain arrêt.",
+   "en": "Copy, no repairs at the next stop.",
+   "ou": "questions.py:703",
+   "texte": "Entendido, sem reparos na próxima parada."
+  },
+  {
+   "fr": "C'est noté, on répare seulement la carrosserie au prochain arrêt.",
+   "en": "Copy, bodywork only at the next stop.",
+   "ou": "questions.py:705",
+   "texte": "Entendido, só a carroceria na próxima parada."
+  },
+  {
+   "fr": "C'est noté, on répare tout au prochain arrêt.",
+   "en": "Copy, full repairs at the next stop.",
+   "ou": "questions.py:707",
+   "texte": "Entendido, reparo completo na próxima parada."
+  },
+  {
+   "fr": " Je corrige le menu des stands.",
+   "en": " Updating the pit menu.",
+   "ou": "questions.py:709",
+   "texte": " Atualizando o menu de boxes."
+  },
+  {
+   "fr": "Énergie à {0} %.",
+   "en": "Energy at {0} %.",
+   "ou": "questions.py:71",
+   "texte": "Energia em {0} %."
+  },
+  {
+   "fr": "Je ne peux pas changer l'essence pour l'instant.",
+   "en": "I can't change the fuel right now.",
+   "ou": "questions.py:724",
+   "texte": "Não consigo mudar o combustível agora."
+  },
+  {
+   "fr": "C'est noté, pas d'essence au prochain arrêt.",
+   "en": "Copy, no fuel at the next stop.",
+   "ou": "questions.py:726",
+   "texte": "Entendido, sem combustível na próxima parada."
+  },
+  {
+   "fr": " {0} % par tour, soit {1} tours.",
+   "en": " {0} % a lap, so {1} laps.",
+   "ou": "questions.py:73",
+   "texte": " {0} % por volta, ou seja, {1} voltas."
+  },
+  {
+   "fr": "les quatre pneus",
+   "en": "all four tyres",
+   "ou": "questions.py:738",
+   "texte": "os quatro pneus"
+  },
+  {
+   "fr": "les deux pneus avant",
+   "en": "the two fronts",
+   "ou": "questions.py:739",
+   "texte": "os dois dianteiros"
+  },
+  {
+   "fr": "les deux pneus arrière",
+   "en": "the two rears",
+   "ou": "questions.py:739",
+   "texte": "os dois traseiros"
+  },
+  {
+   "fr": "les deux pneus gauches",
+   "en": "the two left tyres",
+   "ou": "questions.py:740",
+   "texte": "os dois pneus da esquerda"
+  },
+  {
+   "fr": "les deux pneus droits",
+   "en": "the two right tyres",
+   "ou": "questions.py:740",
+   "texte": "os dois pneus da direita"
+  },
+  {
+   "fr": "le pneu {0}",
+   "en": "the {0} tyre",
+   "ou": "questions.py:744",
+   "texte": "o pneu {0}"
+  },
+  {
+   "fr": "les pneus ",
+   "en": "the ",
+   "ou": "questions.py:746",
+   "texte": "os pneus "
+  },
+  {
+   "fr": "Je ne peux pas changer les pneus pour l'instant.",
+   "en": "I can't change the tyres right now.",
+   "ou": "questions.py:787",
+   "texte": "Não consigo mudar os pneus agora."
+  },
+  {
+   "fr": "C'est noté, on garde les pneus au prochain arrêt.",
+   "en": "Copy, we keep the tyres at the next stop.",
+   "ou": "questions.py:790",
+   "texte": "Entendido, mantemos os pneus na próxima parada."
+  },
+  {
+   "fr": "C'est noté, on change {0} au prochain arrêt.",
+   "en": "Copy, we change {0} at the next stop.",
+   "ou": "questions.py:793",
+   "texte": "Entendido, trocamos {0} na próxima parada."
+  },
+  {
+   "fr": "un",
+   "en": "premier",
+   "ou": "questions.py:809",
+   "texte": ""
+  },
+  {
+   "fr": "Il reste {0} tours.",
+   "en": "{0} laps to go.",
+   "ou": "questions.py:82",
+   "texte": "Faltam {0} voltas."
+  },
+  {
+   "fr": "Encore {0} tours.",
+   "en": "{0} more laps.",
+   "ou": "questions.py:82",
+   "texte": "Mais {0} voltas."
+  },
+  {
+   "fr": "P{0}, c'est toi !",
+   "en": "P{0}, that's you!",
+   "ou": "questions.py:826",
+   "texte": "P{0}, é você!"
+  },
+  {
+   "fr": "Plus que {0} tours avant l'arrivée.",
+   "en": "Just {0} laps to the finish.",
+   "ou": "questions.py:83",
+   "texte": "Só {0} voltas até o fim."
+  },
+  {
+   "fr": "Je ne vois pas de P{0} dans ta catégorie.",
+   "en": "I can't see a P{0} in your class.",
+   "ou": "questions.py:830",
+   "texte": "Não vejo nenhum P{0} na sua classe."
+  },
+  {
+   "fr": "ce pilote",
+   "en": "that driver",
+   "ou": "questions.py:831",
+   "texte": "esse piloto"
+  },
+  {
+   "fr": "{0} est aux stands.",
+   "en": "{0} is in the pits.",
+   "ou": "questions.py:836",
+   "texte": "{0} está nos boxes."
+  },
+  {
+   "fr": "{0} est {1} {2} toi.",
+   "en": "{0} is {1} {2} you.",
+   "ou": "questions.py:838",
+   "texte": "{0} está {1} {2}."
+  },
+  {
+   "fr": "{0} n'est pas dans le même tour que toi.",
+   "en": "{0} isn't on the same lap as you.",
+   "ou": "questions.py:841",
+   "texte": "{0} não está na mesma volta que você."
+  },
+  {
+   "fr": "Vous tournez dans le même rythme.",
+   "en": "You're lapping at the same pace.",
+   "ou": "questions.py:846",
+   "texte": "Vocês estão no mesmo ritmo."
+  },
+  {
+   "fr": "Il tourne {0} {1} plus vite que toi au dernier tour.",
+   "en": "He was {0} s quicker than you last lap.",
+   "ou": "questions.py:850",
+   "texte": "Ele foi {0} s mais rápido que você na última volta."
+  },
+  {
+   "fr": "Il tourne {0} {1} moins vite que toi au dernier tour.",
+   "en": "He was {0} s slower than you last lap.",
+   "ou": "questions.py:853",
+   "texte": "Ele foi {0} s mais lento que você na última volta."
+  },
+  {
+   "fr": "Il te prend le plus de temps dans le secteur {0}, {1} seconde.",
+   "en": "He's quickest against you in sector {0}, {1} s.",
+   "ou": "questions.py:861",
+   "texte": "Onde ele mais ganha de você é no setor {0}, {1} s."
+  },
+  {
+   "fr": "Tu es plus rapide que lui dans les trois secteurs.",
+   "en": "You're quicker than him in all three sectors.",
+   "ou": "questions.py:864",
+   "texte": "Você é mais rápido que ele nos três setores."
+  },
+  {
+   "fr": "Je n'ai rien entendu, répète.",
+   "en": "I didn't hear anything, say again.",
+   "ou": "questions.py:876",
+   "texte": "Não ouvi nada, repete."
+  },
+  {
+   "fr": "C'est le dernier tour, donne tout !",
+   "en": "This is the last lap, give it everything!",
+   "ou": "questions.py:88",
+   "texte": "É a última volta, dá tudo!"
+  },
+  {
+   "fr": "C'est noté, ",
+   "en": "Copy, ",
+   "ou": "questions.py:888",
+   "texte": "Entendido, "
+  },
+  {
+   "fr": "Et ",
+   "en": "And ",
+   "ou": "questions.py:888",
+   "texte": "E "
+  },
+  {
+   "fr": " au prochain arrêt",
+   "en": " at the next stop",
+   "ou": "questions.py:890",
+   "texte": " na próxima parada"
+  },
+  {
+   "fr": "Je n'ai pas encore de données, monte dans la voiture.",
+   "en": "No data yet, get in the car.",
+   "ou": "questions.py:899",
+   "texte": "Ainda sem dados, entre no carro."
+  },
+  {
+   "fr": "Moins d'une minute, encore environ {0} tours.",
+   "en": "Under a minute, about {0} laps to go.",
+   "ou": "questions.py:90",
+   "texte": "Menos de um minuto, faltam cerca de {0} voltas."
+  },
+  {
+   "fr": "Je t'entends, mais je n'ai pas compris. Une fois en piste, demande-moi l'essence, les pneus, le stand, les écarts, la position ou la météo.",
+   "en": "I hear you, but I didn't get that. Once you're on track, ask me about fuel, tyres, pit stop, gaps, position or weather.",
+   "ou": "questions.py:902",
+   "texte": "Estou te ouvindo, mas não entendi. Quando estiver na pista, pergunte sobre combustível, pneus, pit stop, diferenças, posição ou clima."
+  },
+  {
+   "fr": "Moins d'une minute.",
+   "en": "Under a minute to go.",
+   "ou": "questions.py:91",
+   "texte": "Falta menos de um minuto."
+  },
+  {
+   "fr": "Il reste {0} minute{1}",
+   "en": "{0} minute{1} to go",
+   "ou": "questions.py:93",
+   "texte": "Faltam {0} {1?minutos:minuto}"
+  },
+  {
+   "fr": "Je n'ai pas compris ta question. Pose-la-moi en une phrase courte.",
+   "en": "I didn't get your question. Ask me in one short sentence.",
+   "ou": "questions.py:935",
+   "texte": "Não entendi sua pergunta. Faça em uma frase curta."
+  },
+  {
+   "fr": "Pas sûr d'avoir compris, voilà le point. ",
+   "en": "Not sure I got that, here's the update. ",
+   "ou": "questions.py:938",
+   "texte": "Não tenho certeza se entendi, aqui vai o resumo. "
+  },
+  {
+   "fr": ", environ {0} tours.",
+   "en": ", about {0} laps.",
+   "ou": "questions.py:94",
+   "texte": ", cerca de {0} voltas."
+  },
+  {
+   "fr": "Tu as bouclé {0} tours.",
+   "en": "You've done {0} laps.",
+   "ou": "questions.py:96",
+   "texte": "Você fez {0} voltas."
+  },
+  {
+   "fr": "aucun",
+   "en": "none",
+   "ou": "radio.py:128",
+   "texte": "nenhum"
+  },
+  {
+   "fr": "clavier · {0}",
+   "en": "keyboard · {0}",
+   "ou": "radio.py:130",
+   "texte": "teclado · {0}"
+  },
+  {
+   "fr": "{0} · bouton {1}",
+   "en": "{0} · button {1}",
+   "ou": "radio.py:131",
+   "texte": "{0} · botão {1}"
+  },
+  {
+   "fr": "Reconnaissance vocale indisponible : {0}",
+   "en": "Speech recognition unavailable: {0}",
+   "ou": "radio.py:191",
+   "texte": "Reconhecimento de voz indisponível: {0}"
+  },
+  {
+   "fr": "Aucun micro trouvé. Branche ton micro ou ton casque, puis choisis-le dans la liste.",
+   "en": "No microphone found. Plug in your mic or headset, then pick it in the list.",
+   "ou": "radio.py:263",
+   "texte": "Nenhum microfone encontrado. Conecte seu microfone ou headset e escolha na lista."
+  },
+  {
+   "fr": "Le micro n'enregistre que du silence. Choisis ton micro dans la liste ci-dessous, et vérifie Paramètres Windows > Confidentialité > Microphone (« Autoriser les applications de bureau »).",
+   "en": "The mic is only recording silence. Pick your mic in the list below, and check Windows Settings > Privacy > Microphone (\"Let desktop apps access your microphone\").",
+   "ou": "radio.py:290",
+   "texte": "O microfone só está gravando silêncio. Escolha seu microfone na lista abaixo e verifique Configurações do Windows > Privacidade > Microfone (\"Permitir que aplicativos da área de trabalho acessem o microfone\")."
+  },
+  {
+   "fr": "La reconnaissance vocale se charge encore…",
+   "en": "Speech recognition is still loading…",
+   "ou": "radio.py:300",
+   "texte": "O reconhecimento de voz ainda está carregando…"
+  },
+  {
+   "fr": "Ce bouton sert déjà à la radio : choisis-en un autre.",
+   "en": "That button is already your radio button: pick another one.",
+   "ou": "radio.py:416",
+   "texte": "Esse botão já é o seu botão de rádio: escolha outro."
+  },
+  {
+   "fr": "prêt",
+   "en": "erreur",
+   "ou": "radio.py:493",
+   "texte": ""
+  },
+  {
+   "fr": "Micro indisponible : {0}. Choisis ton micro dans la liste ci-dessous, et vérifie Paramètres Windows > Son > Entrée (micro par défaut) et Confidentialité > Microphone.",
+   "en": "Microphone unavailable: {0}. Pick your mic in the list below, and check Windows Settings > Sound > Input (default mic) and Privacy > Microphone.",
+   "ou": "radio.py:506",
+   "texte": "Microfone indisponível: {0}. Escolha seu microfone na lista abaixo e verifique Configurações do Windows > Som > Entrada (microfone padrão) e Privacidade > Microfone."
+  },
+  {
+   "fr": "Tu roules avec le setup d'usine : il n'existe pas en fichier, donc Apex ne peut pas le modifier. Dans le garage de LMU, clique sur Enregistrer et donne-lui un nom (par exemple « Base »). Apex le détectera tout seul et pourra créer le setup modifié.",
+   "en": "You're driving the default setup: it isn't saved as a file, so Apex can't change it. In the LMU garage, click Save and give it a name (for example \"Base\"). Apex will pick it up automatically and can then create the modified setup.",
+   "ou": "setups.py:143",
+   "texte": "Você está com o setup padrão: ele não existe como arquivo, então o Apex não pode alterá-lo. Na garagem do LMU, clique em Salvar e dê um nome (por exemplo \"Base\"). O Apex vai detectar automaticamente e poderá criar o setup modificado."
+  },
+  {
+   "fr": "Qualif",
+   "en": "Course",
+   "ou": "setups.py:303",
+   "texte": ""
+  },
+  {
+   "fr": "réglage fait en piste",
+   "en": "set on track",
+   "ou": "setups.py:470",
+   "texte": "ajustado na pista"
+  },
+  {
+   "fr": "{0} ({1} % à l'avant)",
+   "en": "{0} ({1} % front)",
+   "ou": "setups.py:491",
+   "texte": "{0} ({1} % na dianteira)"
+  },
+  {
+   "fr": "abs",
+   "en": "AntilockBrakeSystemMapSetting",
+   "ou": "setups.py:492",
+   "texte": ""
+  },
+  {
+   "fr": "{0} (sur {1})",
+   "en": "{0} ({1})",
+   "ou": "setups.py:500",
+   "texte": "{0} (em {1})"
+  },
+  {
+   "fr": "Essence au départ",
+   "en": "Starting fuel",
+   "ou": "setups.py:526",
+   "texte": "Combustível de largada"
+  },
+  {
+   "fr": "essence pour la course : ",
+   "en": "fuel for the race: ",
+   "ou": "setups.py:528",
+   "texte": "combustível para a corrida: "
+  },
+  {
+   "fr": "Choisis d'abord le setup que tu utilises.",
+   "en": "First choose the setup you're using.",
+   "ou": "setups.py:537",
+   "texte": "Primeiro escolha o setup que você usa."
+  },
+  {
+   "fr": "Fichier introuvable.",
+   "en": "File not found.",
+   "ou": "setups.py:540",
+   "texte": "Arquivo não encontrado."
+  },
+  {
+   "fr": "GENERAL",
+   "en": "FuelSetting",
+   "ou": "setups.py:550",
+   "texte": ""
+  },
+  {
+   "fr": "températures du pneu {0}",
+   "en": "{0} tyre temperatures",
+   "ou": "setups.py:606",
+   "texte": "Temperaturas dos pneus {0}"
+  },
+  {
+   "fr": "fond plat qui touche",
+   "en": "floor bottoming",
+   "ou": "setups.py:606",
+   "texte": "o assoalho está batendo no chão"
+  },
+  {
+   "fr": "camber_less",
+   "en": "camber_more",
+   "ou": "setups.py:607",
+   "texte": ""
+  },
+  {
+   "fr": "pressure_down",
+   "en": "pressure_up",
+   "ou": "setups.py:611",
+   "texte": ""
+  },
+  {
+   "fr": "Rien à créer.",
+   "en": "Nothing to create.",
+   "ou": "setups.py:627",
+   "texte": "Nada para criar."
+  },
+  {
+   "fr": "Un fichier « {0} » existe déjà et n'a pas été créé par Apex Radio : je n'y touche pas.",
+   "en": "A file \"{0}\" already exists and wasn't created by Apex Radio: I won't touch it.",
+   "ou": "setups.py:633",
+   "texte": "Já existe um arquivo \"{0}\" que não foi criado pelo Apex Radio: não vou mexer nele."
+  },
+  {
+   "fr": "Windows refuse l'écriture dans le dossier des setups. Lance Apex Radio en administrateur, ou déplace LMU hors de Program Files.",
+   "en": "Windows won't allow writing to the setups folder. Run Apex Radio as administrator, or move LMU out of Program Files.",
+   "ou": "setups.py:656",
+   "texte": "O Windows não permite gravar na pasta de setups. Execute o Apex Radio como administrador ou mova o LMU para fora de Arquivos de Programas."
+  },
+  {
+   "fr": "Version introuvable.",
+   "en": "Version not found.",
+   "ou": "setups.py:676",
+   "texte": "Versão não encontrada."
+  },
+  {
+   "fr": "« {0} » n'a pas été créé par Apex Radio : je n'y touche pas.",
+   "en": "\"{0}\" wasn't created by Apex Radio: I won't touch it.",
+   "ou": "setups.py:680",
+   "texte": "\"{0}\" não foi criado pelo Apex Radio: não vou mexer nele."
+  },
+  {
+   "fr": "Windows refuse l'écriture dans le dossier des setups.",
+   "en": "Windows won't allow writing to the setups folder.",
+   "ou": "setups.py:686",
+   "texte": "O Windows não permite gravar na pasta de setups."
+  },
+  {
+   "fr": "Aileron avant",
+   "en": "Front wing",
+   "ou": "setups.py:69",
+   "texte": "Asa dianteira"
+  },
+  {
+   "fr": "Aileron arrière",
+   "en": "Rear wing",
+   "ou": "setups.py:69",
+   "texte": "Asa traseira"
+  },
+  {
+   "fr": "Différentiel (accélération)",
+   "en": "Diff (power)",
+   "ou": "setups.py:69",
+   "texte": "Diferencial (aceleração)"
+  },
+  {
+   "fr": "Différentiel (lever de pied)",
+   "en": "Diff (coast)",
+   "ou": "setups.py:69",
+   "texte": "Diferencial (desaceleração)"
+  },
+  {
+   "fr": "Carrossage",
+   "en": "Camber",
+   "ou": "setups.py:69",
+   "texte": "Cambagem"
+  },
+  {
+   "fr": "Pression",
+   "en": "Pressure",
+   "ou": "setups.py:69",
+   "texte": "Pressão"
+  },
+  {
+   "fr": "Hauteur de caisse",
+   "en": "Ride height",
+   "ou": "setups.py:69",
+   "texte": "Altura do carro"
+  },
+  {
+   "fr": "AVG",
+   "en": "FL",
+   "ou": "setups.py:76",
+   "texte": "DE"
+  },
+  {
+   "fr": "AVD",
+   "en": "FR",
+   "ou": "setups.py:76",
+   "texte": "DD"
+  },
+  {
+   "fr": "ARG",
+   "en": "RL",
+   "ou": "setups.py:76",
+   "texte": "TE"
+  },
+  {
+   "fr": "ARD",
+   "en": "RR",
+   "ou": "setups.py:76",
+   "texte": "TD"
+  },
+  {
+   "fr": "C'est juste en essence, mais on ne s'arrête pas. Économise environ {0} litre par tour.",
+   "en": "Fuel is tight, but we're not stopping. Save about {0} litres a lap.",
+   "ou": "strategy.py:223",
+   "texte": "O combustível está apertado, mas não vamos parar. Economize cerca de {0} litros por volta."
+  },
+  {
+   "fr": "On va au bout sans s'arrêter, mais il faut gratter {0} litre par tour. Lève un peu plus tôt avant les freinages.",
+   "en": "We go to the end without stopping, but find {0} litres a lap. Lift a bit earlier before braking.",
+   "ou": "strategy.py:225",
+   "texte": "Vamos até o fim sem parar, mas economize {0} litros por volta. Tire o pé um pouco antes de frear."
+  },
+  {
+   "fr": "Pas d'arrêt : un passage au stand coûterait trop cher. Gagne juste {0} litre par tour.",
+   "en": "No stop: pitting would cost too much. Just save {0} litres a lap.",
+   "ou": "strategy.py:227",
+   "texte": "Sem parada: parar custaria demais. Só economize {0} litros por volta."
+  },
+  {
+   "fr": "Tu as ce qu'il faut pour aller au bout, pas besoin de rentrer.",
+   "en": "You've got enough to make the finish, no need to pit.",
+   "ou": "strategy.py:233",
+   "texte": "Você tem o suficiente para chegar ao fim, não precisa parar."
+  },
+  {
+   "fr": "Bonne nouvelle : l'essence suffit jusqu'à l'arrivée, on ne s'arrête plus.",
+   "en": "Good news: fuel's fine to the end, no more stops.",
+   "ou": "strategy.py:234",
+   "texte": "Boa notícia: o combustível dá até o fim, sem mais paradas."
+  },
+  {
+   "fr": "C'est bon pour l'essence, on va au bout sans rentrer.",
+   "en": "Fuel is good, we go to the end without pitting.",
+   "ou": "strategy.py:235",
+   "texte": "O combustível está bom, vamos até o fim sem parar."
+  },
+  {
+   "fr": "Plus d'arrêt prévu, tu as assez pour finir. Concentre-toi sur le pilotage.",
+   "en": "No more stops, you've got enough to finish. Just drive.",
+   "ou": "strategy.py:236",
+   "texte": "Sem mais paradas, você tem o suficiente para terminar. Só pilote."
+  },
+  {
+   "fr": "Il manque un peu d'essence pour finir. Si tu économises {0} litre par tour, on évite l'arrêt.",
+   "en": "We're a little short on fuel. Save {0} litres a lap and we can skip the stop.",
+   "ou": "strategy.py:246",
+   "texte": "Estamos um pouco curtos de combustível. Economize {0} litros por volta e pulamos a parada."
+  },
+  {
+   "fr": "On est juste en essence. Gagne {0} litre par tour et on va au bout sans s'arrêter.",
+   "en": "Fuel is tight. Find {0} litres a lap and we go to the end without stopping.",
+   "ou": "strategy.py:248",
+   "texte": "O combustível está apertado. Economize {0} litros por volta e vamos até o fim sem parar."
+  },
+  {
+   "fr": "Mode économie : {0} litre par tour à gagner, lève un peu plus tôt avant les freinages, et l'arrêt saute.",
+   "en": "Fuel save mode: {0} litres a lap, lift a bit earlier before braking, and we skip the stop.",
+   "ou": "strategy.py:250",
+   "texte": "Modo economia: {0} litros por volta, tire o pé um pouco antes de frear e pulamos a parada."
+  },
+  {
+   "fr": "Si tu veux éviter l'arrêt, il faut {0} litre de moins par tour. Lift and coast, c'est jouable.",
+   "en": "To skip the stop we need {0} litres less a lap. Lift and coast, it's doable.",
+   "ou": "strategy.py:252",
+   "texte": "Para pular a parada precisamos de {0} litros a menos por volta. Lift and coast, dá para fazer."
+  },
+  {
+   "fr": "{0} litre{1}",
+   "en": "{0} litre{1} of fuel",
+   "ou": "strategy.py:292",
+   "texte": "{0} {1?litros:litro} de combustível"
+  },
+  {
+   "fr": "et on répare tout",
+   "en": "and full repairs",
+   "ou": "strategy.py:308",
+   "texte": "e reparo completo"
+  },
+  {
+   "fr": "et on répare la carrosserie",
+   "en": "and we fix the bodywork",
+   "ou": "strategy.py:308",
+   "texte": "e reparamos a carroceria"
+  },
+  {
+   "fr": "et on ne répare pas",
+   "en": "and no repairs",
+   "ou": "strategy.py:310",
+   "texte": "e sem reparos"
+  },
+  {
+   "fr": "Box, box ce tour ! On met {0}.",
+   "en": "Box, box this lap! {0}.",
+   "ou": "strategy.py:320",
+   "texte": "Box, box nesta volta! Vamos colocar {0}."
+  },
+  {
+   "fr": "Tu rentres à la fin de ce tour, box box ! On met {0}.",
+   "en": "Pit at the end of this lap, box box! {0}.",
+   "ou": "strategy.py:321",
+   "texte": "Entre no fim desta volta, box box! Vamos colocar {0}."
+  },
+  {
+   "fr": "Box box box ! L'équipe est prête : {0}.",
+   "en": "Box box box! The crew is ready: {0}.",
+   "ou": "strategy.py:322",
+   "texte": "Box box box! A equipe está pronta: {0}."
+  },
+  {
+   "fr": "Ce tour, c'est le bon : box, box ! Au programme, {0}.",
+   "en": "This is the lap: box, box! On the list, {0}.",
+   "ou": "strategy.py:323",
+   "texte": "É esta a volta: box, box! No programa, {0}."
+  },
+  {
+   "fr": "Box cette fois ! Attention à la limite de vitesse dans la voie des stands. On met {0}.",
+   "en": "Box this time! Watch the pit speed limit. {0}.",
+   "ou": "strategy.py:324",
+   "texte": "Box desta vez! Atenção ao limite de velocidade no pit lane. Vamos colocar {0}."
+  },
+  {
+   "fr": "Arrêt dans {0} tours. Prévu : {1}.",
+   "en": "Pit stop in {0} laps. Plan: {1}.",
+   "ou": "strategy.py:329",
+   "texte": "Pit stop em {0} voltas. Plano: {1}."
+  },
+  {
+   "fr": "On s'arrête dans {0} tours. L'équipe prépare {1}.",
+   "en": "We stop in {0} laps. The crew is getting {1} ready.",
+   "ou": "strategy.py:330",
+   "texte": "Paramos em {0} voltas. A equipe está preparando {1}."
+  },
+  {
+   "fr": "Encore {0} tours et on rentre. Au menu : {1}.",
+   "en": "{0} more laps and we pit. On the menu: {1}.",
+   "ou": "strategy.py:331",
+   "texte": "Mais {0} voltas e paramos. No cardápio: {1}."
+  },
+  {
+   "fr": "Prépare-toi, box dans {0} tours. On met {1}.",
+   "en": "Get ready, box in {0} laps. {1}.",
+   "ou": "strategy.py:332",
+   "texte": "Prepare-se, box em {0} voltas. Vamos colocar {1}."
+  },
+  {
+   "fr": "l'énergie",
+   "en": "energy",
+   "ou": "strategy.py:334",
+   "texte": "a energia"
+  },
+  {
+   "fr": "l'essence",
+   "en": "fuel",
+   "ou": "strategy.py:334",
+   "texte": "o combustível"
+  },
+  {
+   "fr": "{0} arrêt{1}",
+   "en": "{0} stop{1}",
+   "ou": "strategy.py:336",
+   "texte": "{0} {1?paradas:parada}"
+  },
+  {
+   "fr": "Conso {0} litres par tour. Autonomie {1} tours, c'est {2} qui limite. Il faudra {3}.",
+   "en": "Using {0} litres a lap. Range {1} laps, {2} is the limit. We need {3}.",
+   "ou": "strategy.py:338",
+   "texte": "Consumo de {0} litros por volta. Autonomia de {1} voltas, quem limita é {2}. Vamos precisar de {3}."
+  },
+  {
+   "fr": "Point stratégie : tu consommes {0} litres au tour, ça fait {1} tours d'autonomie. On part sur {2}, c'est {3} qui décide.",
+   "en": "Strategy update: {0} litres a lap, that's {1} laps of range. We're on {2}, {3} decides.",
+   "ou": "strategy.py:340",
+   "texte": "Atualização de estratégia: {0} litros por volta, isso dá {1} voltas de autonomia. Estamos com {2}, quem decide é {3}."
+  },
+  {
+   "fr": "Le plan : {0}. Tu tiens {1} tours avec ce que tu as, à {2} litres par tour. C'est {3} qui limite.",
+   "en": "The plan: {0}. You can do {1} laps on what you've got, at {2} litres a lap. {3} is the limit.",
+   "ou": "strategy.py:342",
+   "texte": "O plano: {0}. Você consegue fazer {1} voltas com o que tem, a {2} litros por volta. Quem limita é {3}."
+  },
+  {
+   "fr": "Il commence à pleuvoir, attention à l'adhérence.",
+   "en": "It's starting to rain, watch the grip.",
+   "ou": "strategy.py:352",
+   "texte": "Está começando a chover, cuidado com a aderência."
+  },
+  {
+   "fr": "Quelques gouttes sur le circuit, sois doux sur les gaz.",
+   "en": "Some drops on track, be gentle on the throttle.",
+   "ou": "strategy.py:353",
+   "texte": "Algumas gotas na pista, suave no acelerador."
+  },
+  {
+   "fr": "La pluie arrive. Freine un peu plus tôt et méfie-toi des vibreurs.",
+   "en": "Rain's coming. Brake a bit earlier and watch the kerbs.",
+   "ou": "strategy.py:354",
+   "texte": "A chuva está chegando. Freie um pouco antes e cuidado com as zebras."
+  },
+  {
+   "fr": "Ça commence à mouiller, garde de la marge.",
+   "en": "It's getting wet out there, keep some margin.",
+   "ou": "strategy.py:355",
+   "texte": "Está ficando molhado lá fora, mantenha uma margem."
+  },
+  {
+   "fr": "Pluie {0} %",
+   "en": "Rain {0} %",
+   "ou": "strategy.py:361",
+   "texte": "Chuva {0} %"
+  },
+  {
+   "fr": "Sec",
+   "en": "Dry",
+   "ou": "strategy.py:361",
+   "texte": "Seco"
+  },
+  {
+   "fr": "Piste mouillée — pneus pluie conseillés",
+   "en": "Wet track — wets recommended",
+   "ou": "strategy.py:365",
+   "texte": "Pista molhada — pneus de chuva recomendados"
+  },
+  {
+   "fr": "La piste est bien mouillée, on passe en pneus pluie au prochain arrêt.",
+   "en": "Track's properly wet, we go to wets at the next stop.",
+   "ou": "strategy.py:367",
+   "texte": "A pista está bem molhada, vamos de pneus de chuva na próxima parada."
+  },
+  {
+   "fr": "Ça devient trop mouillé pour les slicks. Pneus pluie au prochain arrêt.",
+   "en": "Too wet for slicks now. Wets at the next stop.",
+   "ou": "strategy.py:368",
+   "texte": "Molhado demais para slicks. Pneus de chuva na próxima parada."
+  },
+  {
+   "fr": "On change de plan : pneus pluie au prochain passage au stand.",
+   "en": "Change of plan: wets at the next stop.",
+   "ou": "strategy.py:369",
+   "texte": "Mudança de plano: pneus de chuva na próxima parada."
+  },
+  {
+   "fr": "Piste sèche — repasser en slicks",
+   "en": "Drying track — back to slicks",
+   "ou": "strategy.py:372",
+   "texte": "A pista está secando — de volta aos slicks"
+  },
+  {
+   "fr": "La piste sèche, on repasse en slicks au prochain arrêt.",
+   "en": "Track is drying, back to slicks at the next stop.",
+   "ou": "strategy.py:374",
+   "texte": "A pista está secando, de volta aos slicks na próxima parada."
+  },
+  {
+   "fr": "Une trajectoire sèche apparaît. Slicks au prochain arrêt.",
+   "en": "A dry line is coming. Slicks at the next stop.",
+   "ou": "strategy.py:375",
+   "texte": "Uma linha seca está se formando. Slicks na próxima parada."
+  },
+  {
+   "fr": "Ça sèche bien. On remet les slicks au prochain passage.",
+   "en": "It's drying nicely. Slicks back on at the next stop.",
+   "ou": "strategy.py:376",
+   "texte": "Está secando bem. Slicks de volta na próxima parada."
+  },
+  {
+   "fr": "Pluie {0} %, piste humide à {1} %",
+   "en": "Rain {0} %, track {1} % wet",
+   "ou": "strategy.py:378",
+   "texte": "Chuva {0} %, pista {1} % molhada"
+  },
+  {
+   "fr": "Drapeau jaune ! Ralentis.",
+   "en": "Full course yellow! Slow down.",
+   "ou": "strategy.py:386",
+   "texte": "Full course yellow! Reduza."
+  },
+  {
+   "fr": "Drapeau jaune sur tout le circuit, on ralentit !",
+   "en": "Full course yellow, slow it down!",
+   "ou": "strategy.py:387",
+   "texte": "Full course yellow, tira o pé!"
+  },
+  {
+   "fr": "Drapeau jaune ! Pas de dépassement, on lève le pied.",
+   "en": "Full course yellow! No overtaking, ease off.",
+   "ou": "strategy.py:388",
+   "texte": "Full course yellow! Sem ultrapassar, alivia."
+  },
+  {
+   "fr": "Fin du drapeau jaune, la course reprend.",
+   "en": "Yellow's over, we're racing again.",
+   "ou": "strategy.py:391",
+   "texte": "Acabou a amarela, voltamos a correr."
+  },
+  {
+   "fr": "Vert, vert, vert ! On repart à l'attaque.",
+   "en": "Green, green, green! Back to racing.",
+   "ou": "strategy.py:392",
+   "texte": "Verde, verde, verde! De volta à corrida."
+  },
+  {
+   "fr": "C'est reparti, la piste est libre. Remets les pneus en température.",
+   "en": "We're back on, track is clear. Get the heat back in the tyres.",
+   "ou": "strategy.py:393",
+   "texte": "Seguimos, pista livre. Esquente os pneus de novo."
+  },
+  {
+   "fr": "Drapeau à damier ! Bien joué.",
+   "en": "Chequered flag! Well done.",
+   "ou": "strategy.py:397",
+   "texte": "Bandeira quadriculada! Muito bem."
+  },
+  {
+   "fr": "Et c'est le drapeau à damier ! Superbe course, merci pour le boulot.",
+   "en": "And that's the chequered flag! Great race, thanks for the work.",
+   "ou": "strategy.py:398",
+   "texte": "E é a bandeira quadriculada! Ótima corrida, obrigado pelo trabalho."
+  },
+  {
+   "fr": "Damier ! Course terminée, bravo. Tour de décélération tranquille.",
+   "en": "Chequered flag! Race done, well driven. Easy on the cool-down lap.",
+   "ou": "strategy.py:399",
+   "texte": "Bandeira quadriculada! Corrida encerrada, bem pilotado. Calma na volta de desaceleração."
+  },
+  {
+   "fr": "C'est fini ! Beau travail, toute l'équipe est contente.",
+   "en": "That's it! Great job, the whole team is happy.",
+   "ou": "strategy.py:400",
+   "texte": "É isso! Ótimo trabalho, a equipe toda está feliz."
+  },
+  {
+   "fr": "ahead",
+   "en": "behind",
+   "ou": "tactics.py:111",
+   "texte": ""
+  },
+  {
+   "fr": "Tu es à {0} seconde de {1}. Si tu rentres un tour avant lui avec des pneus neufs, tu peux le passer à l'undercut. Demande-moi de préparer le stand si tu veux y aller.",
+   "en": "You're {0} seconds behind {1}. Pit a lap before him on new tyres and you can undercut him. Ask me to prepare the pit stop if you want to go for it.",
+   "ou": "tactics.py:129",
+   "texte": "Você está {0} segundos atrás de {1}. Pare uma volta antes dele com pneus novos e você pode fazer o undercut. Peça para eu preparar o pit stop se quiser tentar."
+  },
+  {
+   "fr": "{0} rentre au stand. Toi tu vas au bout sans t'arrêter : tu prends sa place.",
+   "en": "{0} is pitting. You go to the end without stopping: you take his place.",
+   "ou": "tactics.py:140",
+   "texte": "{0} está parando. Você vai até o fim sem parar: fica com a posição dele."
+  },
+  {
+   "fr": "{0} rentre au stand. Pousse à fond les {1} prochains tours pendant qu'il ressort avec des pneus froids : tu peux le passer à l'overcut.",
+   "en": "{0} is pitting. Push hard for the next {1} laps while he's on cold tyres: you can overcut him.",
+   "ou": "tactics.py:144",
+   "texte": "{0} está parando. Acelere forte nas próximas {1} voltas enquanto ele está com pneus frios: você pode fazer o overcut."
+  },
+  {
+   "fr": "{0} rentre au stand en même temps que toi. Arrêt propre et sortie des stands nickel, tu peux ressortir devant.",
+   "en": "{0} is pitting at the same time. Clean stop and a tidy pit exit, you can come out ahead.",
+   "ou": "tactics.py:149",
+   "texte": "{0} está parando ao mesmo tempo. Parada limpa e saída dos boxes caprichada, você pode sair na frente."
+  },
+  {
+   "fr": "La voiture derrière rentre au stand, elle était à {0} seconde. Rentre au prochain tour pour couvrir l'undercut, ou pousse fort ce tour-ci.",
+   "en": "The car behind is pitting, it was {0} seconds back. Box next lap to cover the undercut, or push hard this lap.",
+   "ou": "tactics.py:158",
+   "texte": "O carro de trás está parando, estava {0} segundos atrás. Pare na próxima volta para cobrir o undercut, ou acelere forte nesta volta."
+  },
+  {
+   "fr": "Rythme moyen {0} sur tes 5 derniers tours",
+   "en": "Average pace {0} over your last 5 laps",
+   "ou": "tactics.py:190",
+   "texte": "Ritmo médio de {0} nas suas últimas 5 voltas"
+  },
+  {
+   "fr": "tu perds {0} par tour par rapport aux 5 d'avant",
+   "en": "you're losing {0} a lap versus the 5 before",
+   "ou": "tactics.py:195",
+   "texte": "você está perdendo {0} por volta em relação às 5 anteriores"
+  },
+  {
+   "fr": ", les pneus sont à {0} %",
+   "en": ", tyres at {0} %",
+   "ou": "tactics.py:196",
+   "texte": ", pneus em {0} %"
+  },
+  {
+   "fr": "tu as gagné {0} par tour, continue",
+   "en": "you've gained {0} a lap, keep it up",
+   "ou": "tactics.py:198",
+   "texte": "você ganhou {0} por volta, continue assim"
+  },
+  {
+   "fr": "rythme stable",
+   "en": "steady pace",
+   "ou": "tactics.py:200",
+   "texte": "ritmo estável"
+  },
+  {
+   "fr": "un peu irrégulier, vise la régularité",
+   "en": "a bit inconsistent, aim for consistency",
+   "ou": "tactics.py:204",
+   "texte": "um pouco inconsistente, busque consistência"
+  },
+  {
+   "fr": "Fais au moins 3 tours propres sur ce circuit pour que je mesure ta conso.",
+   "en": "Do at least 3 clean laps on this track so I can measure your consumption.",
+   "ou": "tactics.py:263",
+   "texte": "Faça pelo menos 3 voltas limpas nesta pista para eu medir seu consumo."
+  },
+  {
+   "fr": "Indique la durée de la course pour calculer l'essence de départ.",
+   "en": "Enter the race length to work out the starting fuel.",
+   "ou": "tactics.py:271",
+   "texte": "Informe a duração da corrida para calcular o combustível de largada."
+  },
+  {
+   "fr": "{0} tours × {1} L + 1 tour de marge",
+   "en": "{0} laps × {1} L + 1 lap margin",
+   "ou": "tactics.py:280",
+   "texte": "{0} voltas × {1} L + 1 volta de margem"
+  },
+  {
+   "fr": " — plus que le réservoir : plein, et un arrêt sera nécessaire",
+   "en": " — more than the tank: full tank, and a stop will be needed",
+   "ou": "tactics.py:281",
+   "texte": " — mais que o tanque: tanque cheio, e vai precisar de uma parada"
+  },
+  {
+   "fr": "Pénalité ! Il faut la purger aux stands, regarde l'écran pour savoir si c'est un drive-through ou un stop and go. Normalement tu as {0} tours.",
+   "en": "Penalty! You need to serve it in the pits, check the screen for drive-through or stop and go. You normally have {0} laps.",
+   "ou": "tactics.py:58",
+   "texte": "Punição! Você precisa cumprir nos boxes, veja na tela se é drive-through ou stop and go. Normalmente você tem {0} voltas."
+  },
+  {
+   "fr": "Pénalité purgée, c'est bon.",
+   "en": "Penalty served, all good.",
+   "ou": "tactics.py:65",
+   "texte": "Punição cumprida, tudo certo."
+  },
+  {
+   "fr": "C'est bon, pénalité effacée. On repart.",
+   "en": "Done, penalty cleared. Let's go.",
+   "ou": "tactics.py:66",
+   "texte": "Feito, punição cumprida. Vamos."
+  },
+  {
+   "fr": "Pénalité purgée, on n'en parle plus. Remets du rythme.",
+   "en": "Penalty served, forget it. Build the pace back up.",
+   "ou": "tactics.py:67",
+   "texte": "Punição cumprida, esquece. Recupere o ritmo."
+  },
+  {
+   "fr": "Une pénalité purgée, il en reste {0}.",
+   "en": "One penalty served, {0} left.",
+   "ou": "tactics.py:69",
+   "texte": "Uma punição cumprida, faltam {0}."
+  },
+  {
+   "fr": "Dernier tour pour purger la pénalité, rentre au stand à la fin de ce tour !",
+   "en": "Last lap to serve the penalty, box at the end of this lap!",
+   "ou": "tactics.py:74",
+   "texte": "Última volta para cumprir a punição, box no fim desta volta!"
+  },
+  {
+   "fr": "Pénalité toujours à purger, plus que {0} tours.",
+   "en": "Penalty still to serve, {0} laps left.",
+   "ou": "tactics.py:77",
+   "texte": "Punição pendente, faltam {0} voltas."
+  },
+  {
+   "fr": "N'oublie pas la pénalité : il te reste {0} tours pour la faire.",
+   "en": "Don't forget the penalty: {0} laps left to serve it.",
+   "ou": "tactics.py:78",
+   "texte": "Não esqueça a punição: faltam {0} voltas para cumprir."
+  },
+  {
+   "fr": "Rappel, pénalité à purger dans les {0} prochains tours.",
+   "en": "Reminder, penalty to serve within {0} laps.",
+   "ou": "tactics.py:79",
+   "texte": "Lembrete, punição para cumprir nas próximas {0} voltas."
+  },
+  {
+   "fr": "Ici {0}, je prends la radio.",
+   "en": "{0} here, I've got the radio.",
+   "ou": "voice.py:76",
+   "texte": "Aqui é {0}, assumo o rádio."
+  },
+  {
+   "fr": "Version d'Apex Radio installée",
+   "en": "Installed Apex Radio version",
+   "ou": "ui/index.html:203",
+   "texte": "Versão do Apex Radio instalada"
+  },
+  {
+   "fr": "Démarre Le Mans Ultimate par Steam",
+   "en": "Starts Le Mans Ultimate through Steam",
+   "ou": "ui/index.html:207",
+   "texte": "Inicia o Le Mans Ultimate pela Steam"
+  },
+  {
+   "fr": "Radio : l'ingénieur parle ou se tait",
+   "en": "Radio: the engineer talks or stays silent",
+   "ou": "ui/index.html:209",
+   "texte": "Rádio: o engenheiro fala ou fica quieto"
+  },
+  {
+   "fr": "Silence",
+   "en": "Quiet",
+   "ou": "ui/index.html:210",
+   "texte": "Silencioso"
+  },
+  {
+   "fr": "Mode silence : l'ingénieur ne dit plus que l'urgent (box, drapeau jaune, spotter, réponses). Tu peux aussi dire « silence » ou « reparle » à la radio.",
+   "en": "Quiet mode: urgent calls only (box, yellow flag, spotter, answers). You can also say \"be quiet\" or \"talk again\" on the radio.",
+   "ou": "ui/index.html:210",
+   "texte": "Modo silencioso: só o urgente (box, bandeira amarela, spotter, respostas). Você também pode dizer \"silêncio\" ou \"volta a falar\" no rádio."
+  },
+  {
+   "fr": "Spotter gauche / droite",
+   "en": "Left / right spotter",
+   "ou": "ui/index.html:211",
+   "texte": "Spotter esquerda / direita"
+  },
+  {
+   "fr": "ATELIER SETUP",
+   "en": "SETUP WORKSHOP",
+   "ou": "ui/index.html:213",
+   "texte": "OFICINA DE SETUP"
+  },
+  {
+   "fr": "Réglages",
+   "en": "Settings",
+   "ou": "ui/index.html:216",
+   "texte": "Configurações"
+  },
+  {
+   "fr": "Affichage téléphone",
+   "en": "Phone view",
+   "ou": "ui/index.html:217",
+   "texte": "Visão no celular"
+  },
+  {
+   "fr": "Fermer Apex Radio",
+   "en": "Close Apex Radio",
+   "ou": "ui/index.html:218",
+   "texte": "Fechar o Apex Radio"
+  },
+  {
+   "fr": "Premiers pas",
+   "en": "Getting started",
+   "ou": "ui/index.html:227",
+   "texte": "Primeiros passos"
+  },
+  {
+   "fr": "Masquer",
+   "en": "Hide",
+   "ou": "ui/index.html:227",
+   "texte": "Ocultar"
+  },
+  {
+   "fr": "Consigne",
+   "en": "Call",
+   "ou": "ui/index.html:231",
+   "texte": "Aviso"
+  },
+  {
+   "fr": "Poser une question au clavier…",
+   "en": "Type a question…",
+   "ou": "ui/index.html:245",
+   "texte": "Digite uma pergunta…"
+  },
+  {
+   "fr": "Lance Le Mans Ultimate et monte dans ta voiture : le tableau de bord s'affichera tout seul.",
+   "en": "Start Le Mans Ultimate and get in your car: the dashboard will show up by itself.",
+   "ou": "ui/index.html:251",
+   "texte": "Inicie o Le Mans Ultimate e entre no seu carro: o painel aparece sozinho."
+  },
+  {
+   "fr": "Carburant",
+   "en": "Fuel",
+   "ou": "ui/index.html:267",
+   "texte": "Combustível"
+  },
+  {
+   "fr": "Stand :",
+   "en": "Pit:",
+   "ou": "ui/index.html:279",
+   "texte": "Boxes:"
+  },
+  {
+   "fr": "À LA DEMANDE",
+   "en": "ON REQUEST",
+   "ou": "ui/index.html:280",
+   "texte": "SOB DEMANDA"
+  },
+  {
+   "fr": "RÉGLER",
+   "en": "SET",
+   "ou": "ui/index.html:281",
+   "texte": "AJUSTAR"
+  },
+  {
+   "fr": "Régler le menu des stands maintenant",
+   "en": "Set the pit menu now",
+   "ou": "ui/index.html:281",
+   "texte": "Ajustar o menu de boxes agora"
+  },
+  {
+   "fr": "Pneus",
+   "en": "Tyres",
+   "ou": "ui/index.html:289",
+   "texte": "Pneus"
+  },
+  {
+   "fr": "Avant usure critique",
+   "en": "Before critical wear",
+   "ou": "ui/index.html:291",
+   "texte": "Antes do desgaste crítico"
+  },
+  {
+   "fr": "Météo",
+   "en": "Weather",
+   "ou": "ui/index.html:294",
+   "texte": "Clima"
+  },
+  {
+   "fr": "Air / piste",
+   "en": "Air / track",
+   "ou": "ui/index.html:296",
+   "texte": "Ar / pista"
+  },
+  {
+   "fr": "Piste mouillée",
+   "en": "Track wetness",
+   "ou": "ui/index.html:297",
+   "texte": "Umidade da pista"
+  },
+  {
+   "fr": "Circuit",
+   "en": "Track",
+   "ou": "ui/index.html:302",
+   "texte": "Pista"
+  },
+  {
+   "fr": "Carte du circuit avec les voitures en direct",
+   "en": "Live track map with all cars",
+   "ou": "ui/index.html:303",
+   "texte": "Mapa da pista ao vivo com todos os carros"
+  },
+  {
+   "fr": "Chronos · secteurs",
+   "en": "Lap times · sectors",
+   "ou": "ui/index.html:310",
+   "texte": "Tempos · setores"
+  },
+  {
+   "fr": "Dernier / meilleur",
+   "en": "Last / best",
+   "ou": "ui/index.html:310",
+   "texte": "Última / melhor"
+  },
+  {
+   "fr": "idéal",
+   "en": "ideal",
+   "ou": "ui/index.html:310",
+   "texte": "ideal"
+  },
+  {
+   "fr": "RÉGLAGES",
+   "en": "SETTINGS",
+   "ou": "ui/index.html:327",
+   "texte": "CONFIGURAÇÕES"
+  },
+  {
+   "fr": "Voix",
+   "en": "Voice",
+   "ou": "ui/index.html:328",
+   "texte": "Voz"
+  },
+  {
+   "fr": "Voix de l'ingénieur",
+   "en": "Engineer's voice",
+   "ou": "ui/index.html:329",
+   "texte": "Voz do engenheiro"
+  },
+  {
+   "fr": "Volume",
+   "en": "Volume",
+   "ou": "ui/index.html:330",
+   "texte": "Volume"
+  },
+  {
+   "fr": "Tester",
+   "en": "Test",
+   "ou": "ui/index.html:331",
+   "texte": "Testar"
+  },
+  {
+   "fr": "Test voix",
+   "en": "Voice test",
+   "ou": "ui/index.html:331",
+   "texte": "Teste de voz"
+  },
+  {
+   "fr": "Tester la voix",
+   "en": "Test the voice",
+   "ou": "ui/index.html:331",
+   "texte": "Testar a voz"
+  },
+  {
+   "fr": "Ingénieur",
+   "en": "Engineer",
+   "ou": "ui/index.html:333",
+   "texte": "Engenheiro"
+  },
+  {
+   "fr": "Encouragements",
+   "en": "Encouragement",
+   "ou": "ui/index.html:334",
+   "texte": "Incentivo"
+  },
+  {
+   "fr": "Ton de la radio",
+   "en": "Radio tone",
+   "ou": "ui/index.html:335",
+   "texte": "Tom do rádio"
+  },
+  {
+   "fr": "Radio et volant",
+   "en": "Radio & wheel",
+   "ou": "ui/index.html:337",
+   "texte": "Rádio e volante"
+  },
+  {
+   "fr": "Micro",
+   "en": "Mic",
+   "ou": "ui/index.html:338",
+   "texte": "Microfone"
+  },
+  {
+   "fr": "Bouton radio",
+   "en": "Radio button",
+   "ou": "ui/index.html:339",
+   "texte": "Botão do rádio"
+  },
+  {
+   "fr": "CHOISIR LE BOUTON RADIO",
+   "en": "CHOOSE THE RADIO BUTTON",
+   "ou": "ui/index.html:340",
+   "texte": "ESCOLHA O BOTÃO DO RÁDIO"
+  },
+  {
+   "fr": "Reconnaissance vocale",
+   "en": "Voice recognition",
+   "ou": "ui/index.html:341",
+   "texte": "Reconhecimento de voz"
+  },
+  {
+   "fr": "Précise : te comprend mieux, mais répond environ 2 fois moins vite (1,5 Go à télécharger la première fois).",
+   "en": "Precise: understands you better, but answers ~2× slower (1.5 GB download the first time).",
+   "ou": "ui/index.html:342",
+   "texte": "Preciso: entende você melhor, mas responde ~2× mais devagar (download de 1,5 GB na primeira vez)."
+  },
+  {
+   "fr": "Utilisation du bouton",
+   "en": "Button use",
+   "ou": "ui/index.html:343",
+   "texte": "Uso do botão"
+  },
+  {
+   "fr": "Raccourcis (volant / clavier)",
+   "en": "Shortcuts (wheel / keyboard)",
+   "ou": "ui/index.html:345",
+   "texte": "Atalhos (volante / teclado)"
+  },
+  {
+   "fr": "Jeu",
+   "en": "Game",
+   "ou": "ui/index.html:349",
+   "texte": "Jogo"
+  },
+  {
+   "fr": "Lancer Le Mans Ultimate à l'ouverture d'Apex",
+   "en": "Launch Le Mans Ultimate when Apex opens",
+   "ou": "ui/index.html:350",
+   "texte": "Iniciar o Le Mans Ultimate ao abrir o Apex"
+  },
+  {
+   "fr": "Mode de lancement",
+   "en": "Launch mode",
+   "ou": "ui/index.html:351",
+   "texte": "Modo de inicialização"
+  },
+  {
+   "fr": "▶ LANCER LE MANS ULTIMATE",
+   "en": "▶ LAUNCH LE MANS ULTIMATE",
+   "ou": "ui/index.html:352",
+   "texte": "▶ INICIAR LE MANS ULTIMATE"
+  },
+  {
+   "fr": "Apparence",
+   "en": "Look",
+   "ou": "ui/index.html:354",
+   "texte": "Aparência"
+  },
+  {
+   "fr": "Couleur",
+   "en": "Colour",
+   "ou": "ui/index.html:355",
+   "texte": "Cor"
+  },
+  {
+   "fr": "Langue",
+   "en": "Language",
+   "ou": "ui/index.html:356",
+   "texte": "Idioma"
+  },
+  {
+   "fr": "Version",
+   "en": "Version",
+   "ou": "ui/index.html:358",
+   "texte": "Versão"
+  },
+  {
+   "fr": "Version installée",
+   "en": "Installed version",
+   "ou": "ui/index.html:359",
+   "texte": "Versão instalada"
+  },
+  {
+   "fr": "Un problème depuis la dernière mise à jour ? Télécharge la version précédente et installe-la par-dessus : tes réglages, records et setups sont gardés.",
+   "en": "A problem since the last update? Download the previous version and install it over this one: your settings, records and setups are kept.",
+   "ou": "ui/index.html:360",
+   "texte": "Um problema desde a última atualização? Baixe a versão anterior e instale por cima: suas configurações, recordes e setups são mantidos."
+  },
+  {
+   "fr": "Toutes les versions",
+   "en": "All versions",
+   "ou": "ui/index.html:363",
+   "texte": "Todas as versões"
+  },
+  {
+   "fr": "Soutenir Apex Radio",
+   "en": "Support Apex Radio",
+   "ou": "ui/index.html:366",
+   "texte": "Apoiar o Apex Radio"
+  },
+  {
+   "fr": "Apex Radio est gratuit et le restera. S'il t'aide, tu peux m'offrir un café ou le soutenir chaque mois.",
+   "en": "Apex Radio is free and will stay free. If it helps you, you can buy me a coffee or support it every month.",
+   "ou": "ui/index.html:367",
+   "texte": "O Apex Radio é gratuito e vai continuar sendo. Se ele te ajuda, você pode me pagar um café ou apoiar todo mês."
+  },
+  {
+   "fr": "☕ M'offrir un café (Ko-fi)",
+   "en": "☕ Buy me a coffee (Ko-fi)",
+   "ou": "ui/index.html:369",
+   "texte": "☕ Me pague um café (Ko-fi)"
+  },
+  {
+   "fr": "Fichier travaillé",
+   "en": "Working file",
+   "ou": "ui/index.html:379",
+   "texte": "Arquivo de trabalho"
+  },
+  {
+   "fr": "QUALIF",
+   "en": "QUALI",
+   "ou": "ui/index.html:380",
+   "texte": "CLASSIF."
+  },
+  {
+   "fr": "COURSE",
+   "en": "RACE",
+   "ou": "ui/index.html:380",
+   "texte": "CORRIDA"
+  },
+  {
+   "fr": "📁 Choisir le dossier de LMU",
+   "en": "📁 Choose the LMU folder",
+   "ou": "ui/index.html:383",
+   "texte": "📁 Escolher a pasta do LMU"
+  },
+  {
+   "fr": "LMU est installé ailleurs ? Choisis le dossier du jeu (Le Mans Ultimate), Apex trouve les setups dedans.",
+   "en": "LMU is installed elsewhere? Pick the game folder (Le Mans Ultimate), Apex finds the setups inside.",
+   "ou": "ui/index.html:386",
+   "texte": "O LMU está instalado em outro lugar? Escolha a pasta do jogo (Le Mans Ultimate), o Apex encontra os setups lá dentro."
+  },
+  {
+   "fr": "1 · Le setup que tu utilises",
+   "en": "1 · The setup you're using",
+   "ou": "ui/index.html:389",
+   "texte": "1 · O setup que você usa"
+  },
+  {
+   "fr": "C'EST CE SETUP QUI EST CHARGÉ DANS LE JEU",
+   "en": "THIS IS THE SETUP LOADED IN THE GAME",
+   "ou": "ui/index.html:392",
+   "texte": "ESTE É O SETUP CARREGADO NO JOGO"
+  },
+  {
+   "fr": "2 · Réglages proposés",
+   "en": "2 · Suggested changes",
+   "ou": "ui/index.html:396",
+   "texte": "2 · Mudanças sugeridas"
+  },
+  {
+   "fr": "APPLIQUER DANS LE FICHIER APEX",
+   "en": "APPLY TO THE APEX FILE",
+   "ou": "ui/index.html:400",
+   "texte": "APLICAR AO ARQUIVO APEX"
+  },
+  {
+   "fr": "3 · Historique sur ce circuit",
+   "en": "3 · History on this track",
+   "ou": "ui/index.html:404",
+   "texte": "3 · Histórico nesta pista"
+  },
+  {
+   "fr": "EN ATTENTE",
+   "en": "WAITING",
+   "ou": "ui/index.html:491",
+   "texte": "AGUARDANDO"
+  },
+  {
+   "fr": "Jeu détecté, monte dans ta voiture.",
+   "en": "Game detected, get in your car.",
+   "ou": "ui/index.html:491",
+   "texte": "Jogo detectado, entre no seu carro."
+  },
+  {
+   "fr": "Lance Le Mans Ultimate et monte dans ta voiture.",
+   "en": "Start Le Mans Ultimate and get in your car.",
+   "ou": "ui/index.html:491",
+   "texte": "Inicie o Le Mans Ultimate e entre no seu carro."
+  },
+  {
+   "fr": "DRAPEAU JAUNE",
+   "en": "FULL COURSE YELLOW",
+   "ou": "ui/index.html:492",
+   "texte": "FULL COURSE YELLOW"
+  },
+  {
+   "fr": "Drapeau jaune, ralentis.",
+   "en": "Yellow flag, slow down.",
+   "ou": "ui/index.html:492",
+   "texte": "Bandeira amarela, reduza."
+  },
+  {
+   "fr": "Rentre ce tour.",
+   "en": "Pit this lap.",
+   "ou": "ui/index.html:493",
+   "texte": "Box nesta volta."
+  },
+  {
+   "fr": "BOX DANS {0}",
+   "en": "BOX IN {0}",
+   "ou": "ui/index.html:494",
+   "texte": "BOX EM {0}"
+  },
+  {
+   "fr": "Arrêt à la fin du tour {0}.",
+   "en": "Stop at the end of lap {0}.",
+   "ou": "ui/index.html:494",
+   "texte": "Parada no fim da volta {0}."
+  },
+  {
+   "fr": "DAMIER",
+   "en": "CHEQUERED",
+   "ou": "ui/index.html:495",
+   "texte": "BANDEIRA QUADRICULADA"
+  },
+  {
+   "fr": "Course terminée.",
+   "en": "Race over.",
+   "ou": "ui/index.html:495",
+   "texte": "Corrida encerrada."
+  },
+  {
+   "fr": "EN PISTE",
+   "en": "ON TRACK",
+   "ou": "ui/index.html:496",
+   "texte": "NA PISTA"
+  },
+  {
+   "fr": "RAS, on roule.",
+   "en": "All good, keep going.",
+   "ou": "ui/index.html:496",
+   "texte": "Tudo certo, continue."
+  },
+  {
+   "fr": "DÉMO",
+   "en": "DEMO",
+   "ou": "ui/index.html:503",
+   "texte": "DEMO"
+  },
+  {
+   "fr": "Lancer LMU",
+   "en": "Launch LMU",
+   "ou": "ui/index.html:507",
+   "texte": "Iniciar o LMU"
+  },
+  {
+   "fr": "LMU connecté",
+   "en": "LMU connected",
+   "ou": "ui/index.html:509",
+   "texte": "LMU conectado"
+  },
+  {
+   "fr": "Jeu détecté",
+   "en": "Game detected",
+   "ou": "ui/index.html:509",
+   "texte": "Jogo detectado"
+  },
+  {
+   "fr": "En attente du jeu",
+   "en": "Waiting for the game",
+   "ou": "ui/index.html:509",
+   "texte": "Aguardando o jogo"
+  },
+  {
+   "fr": "femme",
+   "en": "female",
+   "ou": "ui/index.html:517",
+   "texte": "feminina"
+  },
+  {
+   "fr": "homme",
+   "en": "male",
+   "ou": "ui/index.html:517",
+   "texte": "masculina"
+  },
+  {
+   "fr": "Affichage téléphone : {0} (même Wi-Fi que le PC)",
+   "en": "Phone view: {0} (same Wi-Fi as the PC)",
+   "ou": "ui/index.html:524",
+   "texte": "Visão no celular: {0} (mesmo Wi-Fi do PC)"
+  },
+  {
+   "fr": "meilleur tour",
+   "en": "best lap",
+   "ou": "ui/index.html:529",
+   "texte": "melhor volta"
+  },
+  {
+   "fr": "↩ Revenir à la {0}",
+   "en": "↩ Go back to {0}",
+   "ou": "ui/index.html:536",
+   "texte": "↩ Voltar para {0}"
+  },
+  {
+   "fr": "Nouvelle version {0} disponible (tu as la {1})",
+   "en": "New version {0} available (you have {1})",
+   "ou": "ui/index.html:542",
+   "texte": "Nova versão {0} disponível (você tem a {1})"
+  },
+  {
+   "fr": "TÉLÉCHARGER",
+   "en": "DOWNLOAD",
+   "ou": "ui/index.html:543",
+   "texte": "BAIXAR"
+  },
+  {
+   "fr": "PÉNALITÉ À PURGER",
+   "en": "PENALTY TO SERVE",
+   "ou": "ui/index.html:548",
+   "texte": "PUNIÇÃO A CUMPRIR"
+  },
+  {
+   "fr": "TOUR",
+   "en": "LAP",
+   "ou": "ui/index.html:548",
+   "texte": "VOLTA"
+  },
+  {
+   "fr": "TOI",
+   "en": "YOU",
+   "ou": "ui/index.html:558",
+   "texte": "VOCÊ"
+  },
+  {
+   "fr": "JESSICA",
+   "en": "ENGINEER",
+   "ou": "ui/index.html:558",
+   "texte": "ENGENHEIRO"
+  },
+  {
+   "fr": "PRÊT",
+   "en": "READY",
+   "ou": "ui/index.html:563",
+   "texte": "PRONTO"
+  },
+  {
+   "fr": "● J'ÉCOUTE…",
+   "en": "● LISTENING…",
+   "ou": "ui/index.html:563",
+   "texte": "● OUVINDO…"
+  },
+  {
+   "fr": "JE RÉFLÉCHIS…",
+   "en": "THINKING…",
+   "ou": "ui/index.html:563",
+   "texte": "PENSANDO…"
+  },
+  {
+   "fr": "APPUIE SUR LE BOUTON VOULU…",
+   "en": "PRESS THE BUTTON YOU WANT…",
+   "ou": "ui/index.html:564",
+   "texte": "APERTE O BOTÃO QUE QUISER…"
+  },
+  {
+   "fr": "PROBLÈME",
+   "en": "PROBLEM",
+   "ou": "ui/index.html:564",
+   "texte": "PROBLEMA"
+  },
+  {
+   "fr": "DÉMARRAGE…",
+   "en": "STARTING…",
+   "ou": "ui/index.html:564",
+   "texte": "INICIANDO…"
+  },
+  {
+   "fr": "J'ÉCOUTE…",
+   "en": "LISTENING…",
+   "ou": "ui/index.html:569",
+   "texte": "OUVINDO…"
+  },
+  {
+   "fr": "appuie sur le bouton…",
+   "en": "press the button…",
+   "ou": "ui/index.html:571",
+   "texte": "aperte o botão…"
+  },
+  {
+   "fr": "Chargement de la reconnaissance vocale… (l'ancienne reste active en attendant)",
+   "en": "Loading speech recognition… (the previous one stays active meanwhile)",
+   "ou": "ui/index.html:578",
+   "texte": "Carregando o reconhecimento de voz… (o anterior continua ativo enquanto isso)"
+  },
+  {
+   "fr": "Reconnaissance vocale prête.",
+   "en": "Speech recognition ready.",
+   "ou": "ui/index.html:579",
+   "texte": "Reconhecimento de voz pronto."
+  },
+  {
+   "fr": "Reconnaissance vocale en cours de chargement…",
+   "en": "Speech recognition loading…",
+   "ou": "ui/index.html:584",
+   "texte": "Carregando o reconhecimento de voz…"
+  },
+  {
+   "fr": "<b>{0}</b> tour{1} restant{1}",
+   "en": "<b>{0}</b> lap{2} to go",
+   "ou": "ui/index.html:597",
+   "texte": "Falta{1?m:} <b>{0}</b> {1?voltas:volta}"
+  },
+  {
+   "fr": "P{0} au général · {1} voitures",
+   "en": "P{0} overall · {1} cars",
+   "ou": "ui/index.html:598",
+   "texte": "P{0} na geral · {1} carros"
+  },
+  {
+   "fr": "{0} voitures",
+   "en": "{0} cars",
+   "ou": "ui/index.html:598",
+   "texte": "{0} carros"
+  },
+  {
+   "fr": "calcul…",
+   "en": "calculating…",
+   "ou": "ui/index.html:603",
+   "texte": "calculando…"
+  },
+  {
+   "fr": "tour",
+   "en": "lap",
+   "ou": "ui/index.html:607",
+   "texte": "volta"
+  },
+  {
+   "fr": "Énergie",
+   "en": "Energy",
+   "ou": "ui/index.html:608",
+   "texte": "Energia"
+  },
+  {
+   "fr": "Stratégie en course uniquement",
+   "en": "Strategy in races only",
+   "ou": "ui/index.html:611",
+   "texte": "Estratégia só na corrida"
+  },
+  {
+   "fr": "CALCUL…",
+   "en": "CALC…",
+   "ou": "ui/index.html:612",
+   "texte": "CALCULANDO…"
+  },
+  {
+   "fr": "Après 2 tours propres",
+   "en": "After 2 clean laps",
+   "ou": "ui/index.html:612",
+   "texte": "Depois de 2 voltas limpas"
+  },
+  {
+   "fr": "AU BOUT",
+   "en": "TO THE END",
+   "ou": "ui/index.html:613",
+   "texte": "ATÉ O FIM"
+  },
+  {
+   "fr": "Pas d'arrêt nécessaire",
+   "en": "No stop needed",
+   "ou": "ui/index.html:613",
+   "texte": "Sem parada necessária"
+  },
+  {
+   "fr": "CE TOUR",
+   "en": "THIS LAP",
+   "ou": "ui/index.html:615",
+   "texte": "ESTA VOLTA"
+  },
+  {
+   "fr": "4 pneus",
+   "en": "4 tyres",
+   "ou": "ui/index.html:616",
+   "texte": "4 pneus"
+  },
+  {
+   "fr": "én.",
+   "en": "en.",
+   "ou": "ui/index.html:617",
+   "texte": "en."
+  },
+  {
+   "fr": "Je règle le menu des stands au moment du box.",
+   "en": "I'll set the pit menu when you box.",
+   "ou": "ui/index.html:625",
+   "texte": "Vou ajustar o menu de boxes quando você parar."
+  },
+  {
+   "fr": "Écarts",
+   "en": "Gaps",
+   "ou": "ui/index.html:652",
+   "texte": "Diferenças"
+  },
+  {
+   "fr": "Mon rythme",
+   "en": "My pace",
+   "ou": "ui/index.html:652",
+   "texte": "Meu ritmo"
+  },
+  {
+   "fr": "Arrêt",
+   "en": "Pit stop",
+   "ou": "ui/index.html:653",
+   "texte": "Pit stop"
+  },
+  {
+   "fr": "Potentiel",
+   "en": "Potential",
+   "ou": "ui/index.html:653",
+   "texte": "Potencial"
+  },
+  {
+   "fr": "meilleur",
+   "en": "best",
+   "ou": "ui/index.html:657",
+   "texte": "melhor"
+  },
+  {
+   "fr": "pas encore de record ici",
+   "en": "no record here yet",
+   "ou": "ui/index.html:658",
+   "texte": "ainda sem recorde aqui"
+  },
+  {
+   "fr": "Tour idéal (tes meilleurs secteurs) : {0} s à gagner",
+   "en": "Ideal lap (your best sectors): {0} s to gain",
+   "ou": "ui/index.html:662",
+   "texte": "Volta ideal (seus melhores setores): {0} s a ganhar"
+  },
+  {
+   "fr": "Tour idéal : tes meilleurs secteurs mis bout à bout",
+   "en": "Ideal lap: your best sectors put together",
+   "ou": "ui/index.html:663",
+   "texte": "Volta ideal: seus melhores setores somados"
+  },
+  {
+   "fr": "Dernier tour",
+   "en": "Last lap",
+   "ou": "ui/index.html:669",
+   "texte": "Última volta"
+  },
+  {
+   "fr": "(invalide)",
+   "en": "(invalid)",
+   "ou": "ui/index.html:669",
+   "texte": "(inválida)"
+  },
+  {
+   "fr": "Derniers tours",
+   "en": "Last laps",
+   "ou": "ui/index.html:678",
+   "texte": "Últimas voltas"
+  },
+  {
+   "fr": "Après le premier tour complet…",
+   "en": "After the first full lap…",
+   "ou": "ui/index.html:680",
+   "texte": "Depois da primeira volta completa…"
+  },
+  {
+   "fr": "Tracé en cours d'apprentissage : {0} % — il sera enregistré pour la prochaine fois.",
+   "en": "Learning the track layout: {0} % — it will be saved for next time.",
+   "ou": "ui/index.html:695",
+   "texte": "Aprendendo o traçado: {0} % — ele será salvo para a próxima vez."
+  },
+  {
+   "fr": "V",
+   "en": "T",
+   "ou": "ui/index.html:748",
+   "texte": "C"
+  },
+  {
+   "fr": "PNEUS",
+   "en": "TYRES",
+   "ou": "ui/index.html:749",
+   "texte": "PNEUS"
+  },
+  {
+   "fr": "Voiture équilibrée, rien de répétitif.",
+   "en": "Car balanced, nothing recurring.",
+   "ou": "ui/index.html:750",
+   "texte": "Carro equilibrado, nada recorrente."
+  },
+  {
+   "fr": "toi",
+   "en": "you",
+   "ou": "ui/index.html:752",
+   "texte": "você"
+  },
+  {
+   "fr": "devant / derrière",
+   "en": "ahead / behind",
+   "ou": "ui/index.html:752",
+   "texte": "à frente / atrás"
+  },
+  {
+   "fr": "· secteurs : <span class=\"good\">vert</span> tu gagnes, <span class=\"bad\">rose</span> tu perds",
+   "en": "· sectors: <span class=\"good\">green</span> you gain, <span class=\"bad\">pink</span> you lose",
+   "ou": "ui/index.html:754",
+   "texte": "· setores: <span class=\"good\">verde</span> você ganha, <span class=\"bad\">rosa</span> você perde"
+  },
+  {
+   "fr": "Appli arrêtée",
+   "en": "App stopped",
+   "ou": "ui/index.html:759",
+   "texte": "App encerrado"
+  },
+  {
+   "fr": "Micro par défaut de Windows",
+   "en": "Windows default mic",
+   "ou": "ui/index.html:765",
+   "texte": "Microfone padrão do Windows"
+  },
+  {
+   "fr": "(défaut)",
+   "en": "(default)",
+   "ou": "ui/index.html:766",
+   "texte": "(padrão)"
+  },
+  {
+   "fr": "Discret",
+   "en": "Low-key",
+   "ou": "ui/index.html:795",
+   "texte": "Discreto"
+  },
+  {
+   "fr": "Normal",
+   "en": "Normal",
+   "ou": "ui/index.html:795",
+   "texte": "Normal"
+  },
+  {
+   "fr": "Motivant",
+   "en": "Hype",
+   "ou": "ui/index.html:795",
+   "texte": "Empolgado"
+  },
+  {
+   "fr": "Rester appuyé pour parler",
+   "en": "Hold to talk",
+   "ou": "ui/index.html:797",
+   "texte": "Segure para falar"
+  },
+  {
+   "fr": "Appuyer une fois (arrêt tout seul à la fin de la phrase)",
+   "en": "Press once (stops by itself when you finish)",
+   "ou": "ui/index.html:797",
+   "texte": "Aperte uma vez (para sozinho quando você termina)"
+  },
+  {
+   "fr": "Rapide",
+   "en": "Fast",
+   "ou": "ui/index.html:799",
+   "texte": "Rápido"
+  },
+  {
+   "fr": "Précise (plus lente)",
+   "en": "Precise (slower)",
+   "ou": "ui/index.html:799",
+   "texte": "Preciso (mais lento)"
+  },
+  {
+   "fr": "Demander (fenêtre de Steam)",
+   "en": "Ask (Steam window)",
+   "ou": "ui/index.html:802",
+   "texte": "Perguntar (janela da Steam)"
+  },
+  {
+   "fr": "Normal (écran)",
+   "en": "Normal (screen)",
+   "ou": "ui/index.html:802",
+   "texte": "Normal (tela)"
+  },
+  {
+   "fr": "VR – SteamVR",
+   "en": "VR – SteamVR",
+   "ou": "ui/index.html:803",
+   "texte": "VR – SteamVR"
+  },
+  {
+   "fr": "VR – OpenXR",
+   "en": "VR – OpenXR",
+   "ou": "ui/index.html:803",
+   "texte": "VR – OpenXR"
+  },
+  {
+   "fr": "Sobre (juste l'info)",
+   "en": "Plain (just the info)",
+   "ou": "ui/index.html:807",
+   "texte": "Direto (só a informação)"
+  },
+  {
+   "fr": "Radio d'équipe",
+   "en": "Team radio",
+   "ou": "ui/index.html:807",
+   "texte": "Rádio da equipe"
+  },
+  {
+   "fr": "Détendu",
+   "en": "Laid-back",
+   "ou": "ui/index.html:808",
+   "texte": "Descontraído"
+  },
+  {
+   "fr": "Spotter on / off",
+   "en": "Spotter on / off",
+   "ou": "ui/index.html:813",
+   "texte": "Spotter liga / desliga"
+  },
+  {
+   "fr": "Radio on / off",
+   "en": "Radio on / off",
+   "ou": "ui/index.html:813",
+   "texte": "Rádio liga / desliga"
+  },
+  {
+   "fr": "Mode silence",
+   "en": "Quiet mode",
+   "ou": "ui/index.html:814",
+   "texte": "Modo silencioso"
+  },
+  {
+   "fr": "Choisir",
+   "en": "Set",
+   "ou": "ui/index.html:820",
+   "texte": "Escolher"
+  },
+  {
+   "fr": "Retirer",
+   "en": "Remove",
+   "ou": "ui/index.html:821",
+   "texte": "Remover"
+  },
+  {
+   "fr": "Apex Radio est fermé. Tu peux fermer cet onglet.",
+   "en": "Apex Radio is closed. You can close this tab.",
+   "ou": "ui/index.html:832",
+   "texte": "O Apex Radio está fechado. Você pode fechar esta aba."
+  },
+  {
+   "fr": "Fermer ?",
+   "en": "Close?",
+   "ou": "ui/index.html:833",
+   "texte": "Fechar?"
+  },
+  {
+   "fr": "Recherche…",
+   "en": "Searching…",
+   "ou": "ui/index.html:842",
+   "texte": "Procurando…"
+  },
+  {
+   "fr": "Dossier trouvé : {0}",
+   "en": "Folder found: {0}",
+   "ou": "ui/index.html:844",
+   "texte": "Pasta encontrada: {0}"
+  },
+  {
+   "fr": "Aucun dossier choisi.",
+   "en": "No folder chosen.",
+   "ou": "ui/index.html:845",
+   "texte": "Nenhuma pasta escolhida."
+  },
+  {
+   "fr": "Circuit détecté : {0}",
+   "en": "Track detected: {0}",
+   "ou": "ui/index.html:854",
+   "texte": "Pista detectada: {0}"
+  },
+  {
+   "fr": "Aucun circuit détecté pour l'instant (lance le jeu, ou choisis le dossier).",
+   "en": "No track detected yet (start the game, or choose the folder).",
+   "ou": "ui/index.html:854",
+   "texte": "Nenhuma pista detectada ainda (inicie o jogo ou escolha a pasta)."
+  },
+  {
+   "fr": "Dossier des setups LMU introuvable : {0}",
+   "en": "LMU setups folder not found: {0}",
+   "ou": "ui/index.html:855",
+   "texte": "Pasta de setups do LMU não encontrada: {0}"
+  },
+  {
+   "fr": "Setup en cours : setup d'usine (pas encore enregistré)",
+   "en": "Current setup: default setup (not saved yet)",
+   "ou": "ui/index.html:864",
+   "texte": "Setup atual: setup padrão (ainda não salvo)"
+  },
+  {
+   "fr": "Setup en cours : {0}",
+   "en": "Current setup: {0}",
+   "ou": "ui/index.html:864",
+   "texte": "Setup atual: {0}"
+  },
+  {
+   "fr": "Aucun setup choisi pour ce circuit.",
+   "en": "No setup chosen for this track.",
+   "ou": "ui/index.html:864",
+   "texte": "Nenhum setup escolhido para esta pista."
+  },
+  {
+   "fr": "Ce setup a été fait pour la {0}, mais tu es en {1}.",
+   "en": "This setup was made for the {0}, but you're in the {1}.",
+   "ou": "ui/index.html:867",
+   "texte": "Este setup foi feito para o {0}, mas você está no {1}."
+  },
+  {
+   "fr": "Même voiture : la copie APEX sera convertie pour ta version.",
+   "en": "Same car: the APEX copy will be converted for your version.",
+   "ou": "ui/index.html:868",
+   "texte": "Mesmo carro: a cópia APEX será convertida para a sua versão."
+  },
+  {
+   "fr": "Choisis d'abord le setup chargé dans le jeu (étape 1).",
+   "en": "First choose the setup loaded in the game (step 1).",
+   "ou": "ui/index.html:872",
+   "texte": "Primeiro escolha o setup carregado no jogo (passo 1)."
+  },
+  {
+   "fr": "Fais quelques tours propres : l'analyse en a {0}, il en faut au moins 3.",
+   "en": "Do a few clean laps: the analysis has {0}, it needs at least 3.",
+   "ou": "ui/index.html:875",
+   "texte": "Dê algumas voltas limpas: a análise tem {0}, precisa de pelo menos 3."
+  },
+  {
+   "fr": "Coche les réglages à appliquer :",
+   "en": "Tick the changes to apply:",
+   "ou": "ui/index.html:876",
+   "texte": "Marque as mudanças a aplicar:"
+  },
+  {
+   "fr": "Rien à changer pour l'instant : la voiture est équilibrée.",
+   "en": "Nothing to change for now: the car is balanced.",
+   "ou": "ui/index.html:876",
+   "texte": "Nada para mudar por enquanto: o carro está equilibrado."
+  },
+  {
+   "fr": "Réglage",
+   "en": "Setting",
+   "ou": "ui/index.html:877",
+   "texte": "Ajuste"
+  },
+  {
+   "fr": "Actuel",
+   "en": "Current",
+   "ou": "ui/index.html:877",
+   "texte": "Atual"
+  },
+  {
+   "fr": "Proposé",
+   "en": "Suggested",
+   "ou": "ui/index.html:877",
+   "texte": "Sugerido"
+  },
+  {
+   "fr": "FAIT EN PISTE",
+   "en": "SET ON TRACK",
+   "ou": "ui/index.html:879",
+   "texte": "AJUSTADO NA PISTA"
+  },
+  {
+   "fr": "ESSENCE",
+   "en": "FUEL",
+   "ou": "ui/index.html:879",
+   "texte": "COMBUSTÍVEL"
+  },
+  {
+   "fr": "v1 · ton setup de départ ({0})",
+   "en": "v1 · your starting setup ({0})",
+   "ou": "ui/index.html:890",
+   "texte": "v1 · seu setup inicial ({0})"
+  },
+  {
+   "fr": "depuis",
+   "en": "from",
+   "ou": "ui/index.html:890",
+   "texte": "a partir de"
+  },
+  {
+   "fr": "la plus rapide",
+   "en": "fastest",
+   "ou": "ui/index.html:891",
+   "texte": "a mais rápida"
+  },
+  {
+   "fr": "dans le fichier APEX",
+   "en": "in the APEX file",
+   "ou": "ui/index.html:892",
+   "texte": "no arquivo APEX"
+  },
+  {
+   "fr": "Remettre cette version",
+   "en": "Restore this version",
+   "ou": "ui/index.html:895",
+   "texte": "Restaurar esta versão"
+  },
+  {
+   "fr": "setup de départ",
+   "en": "starting setup",
+   "ou": "ui/index.html:897",
+   "texte": "setup inicial"
+  },
+  {
+   "fr": "Fichier dans LMU : <b>{0}</b> (un seul fichier {1}, mis à jour à chaque version)",
+   "en": "File in LMU: <b>{0}</b> (one {1} file, updated with each version)",
+   "ou": "ui/index.html:898",
+   "texte": "Arquivo no LMU: <b>{0}</b> (um único arquivo {1}, atualizado a cada versão)"
+  },
+  {
+   "fr": "<br>Pas encore de version créée par Apex Radio sur ce circuit.",
+   "en": "<br>No version created by Apex Radio on this track yet.",
+   "ou": "ui/index.html:900",
+   "texte": "<br>O Apex Radio ainda não criou nenhuma versão nesta pista."
+  },
+  {
+   "fr": "<span class=\"good\">{0} remis en {1}</span> — recharge-le au garage dans LMU.",
+   "en": "<span class=\"good\">{0} restored to {1}</span> — reload it in the LMU garage.",
+   "ou": "ui/index.html:903",
+   "texte": "<span class=\"good\">{0} restaurado para {1}</span> — recarregue na garagem do LMU."
+  },
+  {
+   "fr": "conso mesurée {0} L/tour",
+   "en": "measured consumption {0} L/lap",
+   "ou": "ui/index.html:921",
+   "texte": "consumo medido {0} L/volta"
+  },
+  {
+   "fr": "conso pas encore mesurée",
+   "en": "consumption not measured yet",
+   "ou": "ui/index.html:921",
+   "texte": "consumo ainda não medido"
+  },
+  {
+   "fr": "au départ",
+   "en": "at the start",
+   "ou": "ui/index.html:922",
+   "texte": "na largada"
+  },
+  {
+   "fr": "Durée de la course",
+   "en": "Race length",
+   "ou": "ui/index.html:923",
+   "texte": "Duração da corrida"
+  },
+  {
+   "fr": "Durée de la course en minutes",
+   "en": "Race length in minutes",
+   "ou": "ui/index.html:923",
+   "texte": "Duração da corrida em minutos"
+  },
+  {
+   "fr": "ou",
+   "en": "or",
+   "ou": "ui/index.html:924",
+   "texte": "ou"
+  },
+  {
+   "fr": "Nombre de tours",
+   "en": "Number of laps",
+   "ou": "ui/index.html:924",
+   "texte": "Número de voltas"
+  },
+  {
+   "fr": "Choisis ton bouton radio (volant ou clavier)",
+   "en": "Pick your radio button (wheel or keyboard)",
+   "ou": "ui/index.html:944",
+   "texte": "Escolha seu botão de rádio (volante ou teclado)"
+  },
+  {
+   "fr": "Teste la voix de l'ingénieur",
+   "en": "Test the engineer's voice",
+   "ou": "ui/index.html:945",
+   "texte": "Teste a voz do engenheiro"
+  },
+  {
+   "fr": "Appuie sur ton bouton radio et dis « tu m'entends ? »",
+   "en": "Hold your radio button and say \"can you hear me?\"",
+   "ou": "ui/index.html:946",
+   "texte": "Segure seu botão de rádio e diga \"está me ouvindo?\""
+  },
+  {
+   "fr": "Lance Le Mans Ultimate",
+   "en": "Start Le Mans Ultimate",
+   "ou": "ui/index.html:947",
+   "texte": "Inicie o Le Mans Ultimate"
+  },
+  {
+   "fr": "▶ Lancer",
+   "en": "▶ Launch",
+   "ou": "ui/index.html:953",
+   "texte": "▶ Iniciar"
+  },
+  {
+   "fr": "Régler",
+   "en": "Set up",
+   "ou": "ui/index.html:953",
+   "texte": "Configurar"
+  },
+  {
+   "fr": "⏳ Lancement…",
+   "en": "⏳ Launching…",
+   "ou": "ui/index.html:960",
+   "texte": "⏳ Iniciando…"
+  },
+  {
+   "fr": "<span class=\"good\">{0} mis à jour ({1})</span> — recharge-le au garage dans LMU, puis roule quelques tours pour comparer.",
+   "en": "<span class=\"good\">{0} updated ({1})</span> — reload it in the LMU garage, then do a few laps to compare.",
+   "ou": "ui/index.html:976",
+   "texte": "<span class=\"good\">{0} atualizado ({1})</span> — recarregue na garagem do LMU e dê algumas voltas para comparar."
+  },
+  {
+   "fr": "Ton setup de départ était {0} : j'ai converti la copie APEX pour la LMP2 {1} (même voiture, Oreca 07). Vérifie les réglages dans le garage avant de rouler.",
+   "en": "Your base setup was {0}: I converted the APEX copy for the LMP2 {1} (same car, Oreca 07). Check the settings in the garage before driving.",
+   "ou": "ui/index.html:977",
+   "texte": "Seu setup base era {0}: converti a cópia APEX para o LMP2 {1} (mesmo carro, Oreca 07). Confira os ajustes na garagem antes de pilotar."
+  },
+  {
+   "fr": "Mise à jour {0} disponible : télécharge-la sur le PC",
+   "en": "Update {0} available: download it on the PC",
+   "ou": "ui/tel.html:123",
+   "texte": "Atualização {0} disponível: baixe no PC"
+  },
+  {
+   "fr": "jeu détecté",
+   "en": "game detected",
+   "ou": "ui/tel.html:125",
+   "texte": "jogo detectado"
+  },
+  {
+   "fr": "en attente du jeu",
+   "en": "waiting for the game",
+   "ou": "ui/tel.html:125",
+   "texte": "aguardando o jogo"
+  },
+  {
+   "fr": "Rentre ce tour",
+   "en": "Pit this lap",
+   "ou": "ui/tel.html:130",
+   "texte": "Box nesta volta"
+  },
+  {
+   "fr": "fin du tour {0}",
+   "en": "end of lap {0}",
+   "ou": "ui/tel.html:131",
+   "texte": "fim da volta {0}"
+  },
+  {
+   "fr": "reste",
+   "en": "left",
+   "ou": "ui/tel.html:138",
+   "texte": "restante"
+  },
+  {
+   "fr": "pas de référence",
+   "en": "no reference",
+   "ou": "ui/tel.html:142",
+   "texte": "sem referência"
+  },
+  {
+   "fr": "PC injoignable",
+   "en": "PC unreachable",
+   "ou": "ui/tel.html:152",
+   "texte": "PC inacessível"
+  },
+  {
+   "fr": "En attente du jeu…",
+   "en": "Waiting for the game…",
+   "ou": "ui/tel.html:46",
+   "texte": "Aguardando o jogo…"
+  },
+  {
+   "fr": "COMPLET · ATELIER",
+   "en": "FULL · WORKSHOP",
+   "ou": "ui/tel.html:59",
+   "texte": "COMPLETO · OFICINA"
+  }
+ ],
+ "_aide_questions": "Pour chaque question, écris dans « tournures » comment un pilote le dit dans ta langue. Des mots simples, dans l'ordre (d'autres mots peuvent s'intercaler) ; « | » sépare plusieurs façons de dire ; « * » = n'importe quel mot ; {n} = un nombre. Ex. : [\"wie viel sprit|benzin\"].",
+ "questions": [
+  {
+   "id": "essence",
+   "groupe": "Course",
+   "fr": "combien d'essence",
+   "en": "how much fuel",
+   "tournures": [
+    "quanto combustivel|quanta gasolina|nivel de combustivel|nivel de gasolina|combustivel restante|da o combustivel|tanque"
+   ]
+  },
+  {
+   "id": "conso",
+   "groupe": "Course",
+   "fr": "quelle est ma conso",
+   "en": "what's my consumption",
+   "tournures": [
+    "consumo|quanto estou gastando|quanto eu gasto"
+   ]
+  },
+  {
+   "id": "energie",
+   "groupe": "Course",
+   "fr": "combien d'énergie virtuelle",
+   "en": "how much virtual energy",
+   "tournures": [
+    "energia|energia virtual|bateria"
+   ]
+  },
+  {
+   "id": "pneus",
+   "groupe": "Course",
+   "fr": "comment sont mes pneus",
+   "en": "how are my tyres",
+   "tournures": [
+    "pneus|como estao os pneus|desgaste dos pneus|temperatura dos pneus|pressao dos pneus|borracha"
+   ]
+  },
+  {
+   "id": "freins",
+   "groupe": "Course",
+   "fr": "comment vont mes freins",
+   "en": "how are my brakes",
+   "tournures": [
+    "freios|temperatura dos freios|como estao os freios"
+   ]
+  },
+  {
+   "id": "degats",
+   "groupe": "Course",
+   "fr": "y a des dégâts",
+   "en": "any damage",
+   "tournures": [
+    "danos|dano|danificado|carro quebrado|precisa reparar"
+   ]
+  },
+  {
+   "id": "ecarts",
+   "groupe": "Course",
+   "fr": "les écarts devant et derrière",
+   "en": "gaps ahead and behind",
+   "tournures": [
+    "diferencas|como estao as diferencas|gaps"
+   ]
+  },
+  {
+   "id": "ecart_devant",
+   "groupe": "Course",
+   "fr": "l'écart devant",
+   "en": "gap ahead",
+   "tournures": [
+    "diferenca para o da frente|distancia para o da frente|a quanto esta o da frente|gap na frente"
+   ]
+  },
+  {
+   "id": "ecart_derriere",
+   "groupe": "Course",
+   "fr": "l'écart derrière",
+   "en": "gap behind",
+   "tournures": [
+    "diferenca para o de tras|distancia para o de tras|a quanto esta o de tras|gap atras"
+   ]
+  },
+  {
+   "id": "il_revient",
+   "groupe": "Course",
+   "fr": "il revient derrière",
+   "en": "is he catching me",
+   "tournures": [
+    "ele esta chegando|esta se aproximando|esta me alcancando|o de tras esta vindo"
+   ]
+  },
+  {
+   "id": "qui_devant",
+   "groupe": "Course",
+   "fr": "c'est qui devant",
+   "en": "who's ahead",
+   "tournures": [
+    "quem esta na frente|quem esta a minha frente|quem vai na frente"
+   ]
+  },
+  {
+   "id": "qui_derriere",
+   "groupe": "Course",
+   "fr": "c'est qui derrière",
+   "en": "who's behind",
+   "tournures": [
+    "quem esta atras|quem esta atras de mim|quem vem atras"
+   ]
+  },
+  {
+   "id": "leader",
+   "groupe": "Course",
+   "fr": "qui est le leader",
+   "en": "who's leading",
+   "tournures": [
+    "quem esta liderando|quem e o lider|quem esta em primeiro|diferenca para o lider"
+   ]
+  },
+  {
+   "id": "position",
+   "groupe": "Course",
+   "fr": "quelle position",
+   "en": "what position",
+   "tournures": [
+    "que posicao|em que posicao|minha posicao|qual posicao|em que lugar estou"
+   ]
+  },
+  {
+   "id": "nb_voitures",
+   "groupe": "Course",
+   "fr": "combien de voitures",
+   "en": "how many cars",
+   "tournures": [
+    "quantos carros|quantos pilotos|quantos adversarios"
+   ]
+  },
+  {
+   "id": "voiture_p",
+   "groupe": "Course",
+   "fr": "où est p{n}",
+   "en": "where is P{n}",
+   "tournures": [
+    "onde esta p{n}|onde esta o p{n}|onde esta a posicao {n}"
+   ]
+  },
+  {
+   "id": "secteurs_p",
+   "groupe": "Course",
+   "fr": "dans quel secteur p{n} est plus rapide",
+   "en": "where is P{n} faster",
+   "tournures": [
+    "onde p{n} e mais rapido|onde o p{n} e mais rapido|em que setor p{n} e mais rapido"
+   ]
+  },
+  {
+   "id": "tours_restants",
+   "groupe": "Course",
+   "fr": "combien de tours restants",
+   "en": "how many laps left",
+   "tournures": [
+    "quantas voltas|voltas restantes|quantas voltas faltam|voltas que faltam"
+   ]
+  },
+  {
+   "id": "temps_restant",
+   "groupe": "Course",
+   "fr": "combien de temps reste",
+   "en": "how much time left",
+   "tournures": [
+    "quanto tempo|tempo restante|quanto falta|tempo que falta"
+   ]
+  },
+  {
+   "id": "chrono",
+   "groupe": "Course",
+   "fr": "mon dernier tour",
+   "en": "my last lap",
+   "tournures": [
+    "ultima volta|tempo de volta"
+   ]
+  },
+  {
+   "id": "meilleur_tour",
+   "groupe": "Course",
+   "fr": "mon meilleur tour",
+   "en": "my best lap",
+   "tournures": [
+    "melhor volta|volta mais rapida|meu melhor tempo"
+   ]
+  },
+  {
+   "id": "rythme",
+   "groupe": "Course",
+   "fr": "est-ce que je suis rapide",
+   "en": "am I fast",
+   "tournures": [
+    "estou rapido|estou lento|como esta meu ritmo|meu ritmo"
+   ]
+  },
+  {
+   "id": "record",
+   "groupe": "Course",
+   "fr": "mon record ici",
+   "en": "my personal best here",
+   "tournures": [
+    "meu recorde|recorde pessoal|volta ideal|recorde aqui"
+   ]
+  },
+  {
+   "id": "secteurs",
+   "groupe": "Course",
+   "fr": "où je perds du temps",
+   "en": "where am I losing time",
+   "tournures": [
+    "onde estou perdendo tempo|onde perco tempo|em que setor perco|setores"
+   ]
+  },
+  {
+   "id": "secteurs_devant",
+   "groupe": "Course",
+   "fr": "où je perds sur celui de devant",
+   "en": "where am I losing to the car ahead",
+   "tournures": [
+    "onde perco para o da frente|onde o da frente e mais rapido"
+   ]
+  },
+  {
+   "id": "tour_valide",
+   "groupe": "Course",
+   "fr": "mon tour est valide",
+   "en": "is my lap valid",
+   "tournures": [
+    "volta valida|a volta e valida|a volta conta|minha volta e valida"
+   ]
+  },
+  {
+   "id": "limites",
+   "groupe": "Course",
+   "fr": "limites de piste",
+   "en": "track limits",
+   "tournures": [
+    "limites de pista|track limits|advertencias"
+   ]
+  },
+  {
+   "id": "penalite",
+   "groupe": "Course",
+   "fr": "j'ai une pénalité",
+   "en": "do I have a penalty",
+   "tournures": [
+    "punicao|penalidade|tenho alguma punicao|drive through|stop and go"
+   ]
+  },
+  {
+   "id": "drapeaux",
+   "groupe": "Course",
+   "fr": "il y a un drapeau",
+   "en": "any flags",
+   "tournures": [
+    "bandeira|tem bandeira|qual bandeira|bandeira amarela"
+   ]
+  },
+  {
+   "id": "safety_car",
+   "groupe": "Course",
+   "fr": "c'est la safety car",
+   "en": "is it a safety car",
+   "tournures": [
+    "safety car|carro de seguranca|full course yellow|neutralizacao"
+   ]
+  },
+  {
+   "id": "meteo",
+   "groupe": "Course",
+   "fr": "quelle météo",
+   "en": "what's the weather",
+   "tournures": [
+    "clima|tempo la fora|previsao do tempo|temperatura da pista|temperatura do ar"
+   ]
+  },
+  {
+   "id": "pluie",
+   "groupe": "Course",
+   "fr": "il va pleuvoir",
+   "en": "will it rain",
+   "tournures": [
+    "vai chover|esta chovendo|chuva|vem chuva"
+   ]
+  },
+  {
+   "id": "point",
+   "groupe": "Course",
+   "fr": "fais-moi le point",
+   "en": "give me an update",
+   "tournures": [
+    "resumo|situacao|como estamos|atualizacao|me atualiza"
+   ]
+  },
+  {
+   "id": "comportement",
+   "groupe": "Course",
+   "fr": "comment se comporte la voiture",
+   "en": "how is the car behaving",
+   "tournures": [
+    "comportamento|como esta o carro|subesterco|sobre esterco|equilibrio"
+   ]
+  },
+  {
+   "id": "conseil_setup",
+   "groupe": "Course",
+   "fr": "un conseil de réglage",
+   "en": "any setup advice",
+   "tournures": [
+    "dica de setup|setup|o que mudo no setup|acerto"
+   ]
+  },
+  {
+   "id": "arret_quand",
+   "groupe": "Stand",
+   "fr": "quand est-ce que je rentre au stand",
+   "en": "when do I pit",
+   "tournures": [
+    "quando eu paro|quando eu entro|quando e o pit stop|pit stop|quando box"
+   ]
+  },
+  {
+   "id": "nb_arrets",
+   "groupe": "Stand",
+   "fr": "combien d'arrêts j'ai fait",
+   "en": "how many stops have I made",
+   "tournures": [
+    "quantas paradas|quantas vezes eu parei|numero de paradas"
+   ]
+  },
+  {
+   "id": "prepare_arret",
+   "groupe": "Stand",
+   "fr": "prépare-moi l'arrêt",
+   "en": "prepare the pit stop",
+   "ordre": true,
+   "tournures": [
+    "prepara o pit stop|preparar a parada|ajusta o menu de boxes|prepara a parada"
+   ]
+  },
+  {
+   "id": "repare_tout",
+   "groupe": "Stand",
+   "fr": "répare tout",
+   "en": "repair everything",
+   "ordre": true,
+   "tournures": [
+    "repara tudo|reparar tudo|reparo completo"
+   ]
+  },
+  {
+   "id": "repare_carrosserie",
+   "groupe": "Stand",
+   "fr": "répare la carrosserie",
+   "en": "repair the bodywork",
+   "ordre": true,
+   "tournures": [
+    "repara a carroceria|reparar a carroceria|so a carroceria"
+   ]
+  },
+  {
+   "id": "pas_reparation",
+   "groupe": "Stand",
+   "fr": "pas de réparation",
+   "en": "no repairs",
+   "ordre": true,
+   "tournures": [
+    "sem reparos|sem reparo|nao repara|nao reparar"
+   ]
+  },
+  {
+   "id": "pas_essence",
+   "groupe": "Stand",
+   "fr": "pas d'essence",
+   "en": "no fuel",
+   "ordre": true,
+   "tournures": [
+    "sem combustivel|sem gasolina|nao abastece|nao abastecer"
+   ]
+  },
+  {
+   "id": "pneus_tous",
+   "groupe": "Stand",
+   "fr": "change les quatre pneus",
+   "en": "change all four tyres",
+   "ordre": true,
+   "tournures": [
+    "troca os quatro|quatro pneus novos|troca todos os pneus|trocar os quatro"
+   ]
+  },
+  {
+   "id": "pneus_garde",
+   "groupe": "Stand",
+   "fr": "garde les pneus",
+   "en": "keep the tyres",
+   "ordre": true,
+   "tournures": [
+    "manter os pneus|nao troca os pneus|sem pneus novos|mantem os pneus"
+   ]
+  },
+  {
+   "id": "pneus_avant",
+   "groupe": "Stand",
+   "fr": "change les deux avant",
+   "en": "change the two fronts",
+   "ordre": true,
+   "tournures": [
+    "troca os dianteiros|troca os dois dianteiros|pneus dianteiros novos|so os dianteiros"
+   ]
+  },
+  {
+   "id": "pneus_arriere",
+   "groupe": "Stand",
+   "fr": "change les deux arrière",
+   "en": "change the two rears",
+   "ordre": true,
+   "tournures": [
+    "troca os traseiros|troca os dois traseiros|pneus traseiros novos|so os traseiros"
+   ]
+  },
+  {
+   "id": "pneus_gauche",
+   "groupe": "Stand",
+   "fr": "change les pneus gauches",
+   "en": "change the left tyres",
+   "ordre": true,
+   "tournures": [
+    "troca os da esquerda|pneus da esquerda|os dois da esquerda"
+   ]
+  },
+  {
+   "id": "pneus_droit",
+   "groupe": "Stand",
+   "fr": "change les pneus droits",
+   "en": "change the right tyres",
+   "ordre": true,
+   "tournures": [
+    "troca os da direita|pneus da direita|os dois da direita"
+   ]
+  },
+  {
+   "id": "pneu_avg",
+   "groupe": "Stand",
+   "fr": "change seulement l'avant gauche",
+   "en": "only the front left",
+   "ordre": true,
+   "tournures": [
+    "so o dianteiro esquerdo|troca o dianteiro esquerdo|dianteiro esquerdo"
+   ]
+  },
+  {
+   "id": "pneu_avd",
+   "groupe": "Stand",
+   "fr": "change seulement l'avant droit",
+   "en": "only the front right",
+   "ordre": true,
+   "tournures": [
+    "so o dianteiro direito|troca o dianteiro direito|dianteiro direito"
+   ]
+  },
+  {
+   "id": "pneu_arg",
+   "groupe": "Stand",
+   "fr": "change seulement l'arrière gauche",
+   "en": "only the rear left",
+   "ordre": true,
+   "tournures": [
+    "so o traseiro esquerdo|troca o traseiro esquerdo|traseiro esquerdo"
+   ]
+  },
+  {
+   "id": "pneu_ard",
+   "groupe": "Stand",
+   "fr": "change seulement l'arrière droit",
+   "en": "only the rear right",
+   "ordre": true,
+   "tournures": [
+    "so o traseiro direito|troca o traseiro direito|traseiro direito"
+   ]
+  },
+  {
+   "id": "silence",
+   "groupe": "Radio",
+   "fr": "silence",
+   "en": "be quiet",
+   "tournures": [
+    "silencio|fica quieto|modo silencioso|fala menos|so o urgente"
+   ]
+  },
+  {
+   "id": "reparle",
+   "groupe": "Radio",
+   "fr": "reparle",
+   "en": "talk again",
+   "tournures": [
+    "volta a falar|pode falar de novo|todas as informacoes"
+   ]
+  },
+  {
+   "id": "repete",
+   "groupe": "Radio",
+   "fr": "répète",
+   "en": "say again",
+   "tournures": [
+    "repete|repita|de novo por favor|o que voce disse|como e que e"
+   ]
+  },
+  {
+   "id": "radio_check",
+   "groupe": "Radio",
+   "fr": "tu m'entends",
+   "en": "can you hear me",
+   "tournures": [
+    "esta me ouvindo|me ouve|teste de radio|radio check|na escuta"
+   ]
+  },
+  {
+   "id": "merci",
+   "groupe": "Radio",
+   "fr": "merci",
+   "en": "thanks",
+   "tournures": [
+    "obrigado|obrigada|valeu|muito obrigado"
+   ]
+  },
+  {
+   "id": "bonjour",
+   "groupe": "Radio",
+   "fr": "salut",
+   "en": "hello",
+   "tournures": [
+    "oi|ola|bom dia|e ai"
+   ]
+  }
+ ]
+}

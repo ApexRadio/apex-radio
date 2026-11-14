@@ -22,7 +22,7 @@ import time
 import unicodedata
 from pathlib import Path
 
-from i18n import L
+from i18n import L, dec
 
 HERE = Path(__file__).parent
 from paths import DATA, LOCAL  # noqa: E402
@@ -488,7 +488,7 @@ class Workshop:
                         from_disp = known.get(idx, disp)
                         out.append({"section": "CONTROLS", "key": "RearBrakeSetting", "label": label("CONTROLS", "RearBrakeSetting"),
                                     "from": idx, "to": new, "from_disp": from_disp, "to_disp": to_disp, "live": True,
-                                    "why": L(f"{why} ({bf:.1f} % à l'avant)".replace(".", ","), f"{why} ({bf:.1f} % front)")})
+                                    "why": L(f"{why} ({dec(f'{bf:.1f}')} % à l'avant)", f"{why} ({bf:.1f} % front)")})
         for k, key in (("tc", "TractionControlMapSetting"), ("abs", "AntilockBrakeSystemMapSetting")):
             v, cur = live.get(k), s.get("CONTROLS", key)
             if not v or not cur:

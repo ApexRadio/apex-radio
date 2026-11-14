@@ -13,6 +13,13 @@ Voices (Piper models, chosen in the dashboard; downloaded only when selected):
   Northern (English)                 CC BY-SA 4.0     en_GB-northern_english_male-medium · OpenSLR 83 (http://www.openslr.org/83/)
   Kerstin (German)                   CC0 + CC BY 4.0  de_DE-kerstin-medium · OHF-Voice voice-datasets (CC0), fine-tuned from Hi-Fi TTS 92 (CC BY 4.0, https://www.openslr.org/109/)
   Thorsten (German)                  CC0              de_DE-thorsten-medium · Thorsten-Voice (https://github.com/thorstenMueller/Thorsten-Voice)
+  Sharvard (Spanish)                 CC BY 3.0 + 4.0  es_ES-sharvard-medium · Sharvard corpus, University of Edinburgh (CC BY 3.0, https://datashare.ed.ac.uk/handle/10283/574), fine-tuned from Hi-Fi TTS 92 (CC BY 4.0, https://www.openslr.org/109/)
+  Davefx (Spanish)                   CC0              es_ES-davefx-medium · OHF-Voice voice-datasets (CC0), fine-tuned from the rdh base model (CC0)
+  Paola (Italian)                    CC0 + CC BY 4.0  it_IT-paola-medium · OHF-Voice voice-datasets (CC0), fine-tuned from Hi-Fi TTS 92 (CC BY 4.0, https://www.openslr.org/109/)
+  Faber (Portuguese, Brazil)         CC0 + CC BY 4.0  pt_BR-faber-medium · OHF-Voice voice-datasets (CC0), fine-tuned from Hi-Fi TTS 92 (CC BY 4.0, https://www.openslr.org/109/)
+  Cadu (Portuguese, Brazil)          CC0              pt_BR-cadu-medium · OHF-Voice voice-datasets (CC0), fine-tuned from the rdh base model (CC0)
+  Nathalie (Dutch)                   CC0 + CC BY 4.0  nl_BE-nathalie-medium · OHF-Voice voice-datasets (CC0), fine-tuned from Hi-Fi TTS 92 (CC BY 4.0, https://www.openslr.org/109/)
+  Pim (Dutch)                        CC0              nl_NL-pim-medium · OHF-Voice voice-datasets (CC0), fine-tuned from the rdh base model (CC0)
   Voice models: rhasspy/piper-voices (https://huggingface.co/rhasspy/piper-voices)
 faster-whisper                     MIT                  https://github.com/SYSTRAN/faster-whisper
 CTranslate2                        MIT                  https://github.com/OpenNMT/CTranslate2

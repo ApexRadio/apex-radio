@@ -46,6 +46,30 @@
    "texte": "{0} kommt von hinten, {1} {2?Sekunden:Sekunde}, {3}."
   },
   {
+   "fr": ", tu la rattrapes au virage {0}",
+   "en": ", you'll catch it at turn {0}",
+   "ou": "alerts.py:225",
+   "texte": ", du holst ihn in Kurve {0} ein"
+  },
+  {
+   "fr": "moins d'une seconde",
+   "en": "less than a second",
+   "ou": "alerts.py:227",
+   "texte": "weniger als eine Sekunde"
+  },
+  {
+   "fr": "{0} {1} plus lentes devant, à {2}{3}.",
+   "en": "{0} {1} cars ahead, {2}{3}.",
+   "ou": "alerts.py:232",
+   "texte": "{0} langsamere {1} vor dir, {2}{3}."
+  },
+  {
+   "fr": "{0} plus lente devant, à {1}{2}.",
+   "en": "Slower {0} ahead, {1}{2}.",
+   "ou": "alerts.py:234",
+   "texte": "Langsamerer {0} vor dir, {1}{2}."
+  },
+  {
    "fr": "la voiture",
    "en": "the car",
    "ou": "alerts.py:284",
@@ -466,105 +490,123 @@
    "texte": "Jetzt greifen wir an!"
   },
   {
+   "fr": "Super tour, {0} seconde de mieux que le précédent !",
+   "en": "Great lap, {0} seconds quicker than the last one!",
+   "ou": "alerts.py:546",
+   "texte": "Super Runde, {0} Sekunden schneller als die letzte!"
+  },
+  {
+   "fr": "Gros tour ! {0} seconde de mieux.",
+   "en": "Big lap! {0} seconds quicker.",
+   "ou": "alerts.py:548",
+   "texte": "Starke Runde! {0} Sekunden schneller."
+  },
+  {
+   "fr": "Excellent, tu as gagné {0} seconde sur ce tour.",
+   "en": "Excellent, you found {0} seconds on that lap.",
+   "ou": "alerts.py:549",
+   "texte": "Hervorragend, du hast in dieser Runde {0} Sekunden gefunden."
+  },
+  {
    "fr": "Belle régularité, continue sur ce rythme.",
    "en": "Nice and consistent, keep this pace.",
-   "ou": "alerts.py:551",
+   "ou": "alerts.py:552",
    "texte": "Schön konstant, halte dieses Tempo."
   },
   {
    "fr": "Très régulier, c'est parfait.",
    "en": "Very consistent, that's perfect.",
-   "ou": "alerts.py:552",
+   "ou": "alerts.py:553",
    "texte": "Sehr konstant, das ist perfekt."
   },
   {
    "fr": "Même chrono que le tour d'avant, super régularité.",
    "en": "Same time as last lap, great consistency.",
-   "ou": "alerts.py:553",
+   "ou": "alerts.py:554",
    "texte": "Gleiche Zeit wie in der letzten Runde, starke Konstanz."
   },
   {
    "fr": "On a eu un coup dur, mais tu remontes. Continue comme ça !",
    "en": "We had a tough moment, but you're coming back. Keep it up!",
-   "ou": "alerts.py:556",
+   "ou": "alerts.py:557",
    "texte": "Wir hatten einen Rückschlag, aber du kommst zurück. Weiter so!"
   },
   {
    "fr": "Oublie l'incident, regarde devant, tu vas plus vite qu'eux.",
    "en": "Forget the incident, look ahead, you're quicker than them.",
-   "ou": "alerts.py:557",
+   "ou": "alerts.py:558",
    "texte": "Vergiss den Zwischenfall, schau nach vorne, du bist schneller als sie."
   },
   {
    "fr": "Belle réaction après le pépin, je sens que tu vas remonter.",
    "en": "Great reaction after the trouble, I can feel you climbing back.",
-   "ou": "alerts.py:558",
+   "ou": "alerts.py:559",
    "texte": "Starke Reaktion nach dem Problem, ich spüre, dass du dich nach vorne arbeitest."
   },
   {
    "fr": "P{0}, tu es sur le podium, garde la tête froide !",
    "en": "P{0}, you're on the podium, stay cool!",
-   "ou": "alerts.py:560",
+   "ou": "alerts.py:561",
    "texte": "P{0}, du bist auf dem Podium, bleib cool!"
   },
   {
    "fr": "Tu fais du bon boulot, reste concentré.",
    "en": "You're doing a good job, stay focused.",
-   "ou": "alerts.py:562",
+   "ou": "alerts.py:563",
    "texte": "Du machst einen guten Job, bleib konzentriert."
   },
   {
    "fr": "Chaque tour compte, on continue à pousser.",
    "en": "Every lap counts, keep pushing.",
-   "ou": "alerts.py:563",
+   "ou": "alerts.py:564",
    "texte": "Jede Runde zählt, weiter pushen."
   },
   {
    "fr": "La course est longue, tout peut encore arriver.",
    "en": "It's a long race, anything can still happen.",
-   "ou": "alerts.py:564",
+   "ou": "alerts.py:565",
    "texte": "Das Rennen ist lang, es kann noch alles passieren."
   },
   {
    "fr": "Bien, propre et régulier, c'est comme ça qu'on gagne des places.",
    "en": "Good, clean and consistent, that's how we gain places.",
-   "ou": "alerts.py:565",
+   "ou": "alerts.py:566",
    "texte": "Gut, sauber und konstant, so gewinnen wir Plätze."
   },
   {
    "fr": " au virage {0}",
    "en": " at turn {0}",
-   "ou": "alerts.py:591",
+   "ou": "alerts.py:592",
    "texte": " in Kurve {0}"
   },
   {
    "fr": "Limites de piste{0}, avertissement {1} sur {2}.",
    "en": "Track limits{0}, warning {1} of {2}.",
-   "ou": "alerts.py:595",
+   "ou": "alerts.py:596",
    "texte": "Track Limits{0}, Verwarnung {1} von {2}."
   },
   {
    "fr": "la prochaine, c'est la pénalité !",
    "en": "next one is a penalty!",
-   "ou": "alerts.py:598",
+   "ou": "alerts.py:599",
    "texte": "die nächste gibt eine Strafe!"
   },
   {
    "fr": "encore {0} avant la pénalité.",
    "en": "{0} more before a penalty.",
-   "ou": "alerts.py:599",
+   "ou": "alerts.py:600",
    "texte": "noch {0} bis zur Strafe."
   },
   {
    "fr": "Limites de piste{0}, avertissement {1} sur {2}, {3}",
    "en": "Track limits{0}, warning {1} of {2}, {3}",
-   "ou": "alerts.py:600",
+   "ou": "alerts.py:601",
    "texte": "Track Limits{0}, Verwarnung {1} von {2}, {3}"
   },
   {
    "fr": "Limites de piste{0}, avertissement numéro {1}.",
    "en": "Track limits{0}, warning number {1}.",
-   "ou": "alerts.py:603",
+   "ou": "alerts.py:604",
    "texte": "Track Limits{0}, Verwarnung Nummer {1}."
   },
   {
@@ -582,133 +624,133 @@
   {
    "fr": "Attention, pneus froids et freins froids. Doucement au premier freinage.",
    "en": "Careful, cold tyres and cold brakes. Easy on the first braking zone.",
-   "ou": "alerts.py:665",
+   "ou": "alerts.py:666",
    "texte": "Vorsicht, kalte Reifen und kalte Bremsen. Sachte beim ersten Bremspunkt."
   },
   {
    "fr": "Attention, pneus froids. Fais-les monter en température avant d'attaquer.",
    "en": "Careful, cold tyres. Bring them up to temperature before you push.",
-   "ou": "alerts.py:668",
+   "ou": "alerts.py:669",
    "texte": "Vorsicht, kalte Reifen. Bring sie auf Temperatur, bevor du pushst."
   },
   {
    "fr": "Attention, freins froids. Freine plus tôt les premiers virages.",
    "en": "Careful, cold brakes. Brake earlier for the first few corners.",
-   "ou": "alerts.py:671",
+   "ou": "alerts.py:672",
    "texte": "Vorsicht, kalte Bremsen. Bremse in den ersten Kurven früher."
   },
   {
    "fr": "Pneus et freins en température. Vas-y, tu peux attaquer !",
    "en": "Tyres and brakes are up to temperature. Go on, you can push now!",
-   "ou": "alerts.py:678",
+   "ou": "alerts.py:679",
    "texte": "Reifen und Bremsen sind auf Temperatur. Los, jetzt kannst du pushen!"
   },
   {
    "fr": "Tout est chaud, pneus et freins. À toi de jouer !",
    "en": "Everything's warm, tyres and brakes. Over to you!",
-   "ou": "alerts.py:680",
+   "ou": "alerts.py:681",
    "texte": "Alles warm, Reifen und Bremsen. Jetzt bist du dran!"
   },
   {
    "fr": "C'est bon, pneus et freins sont prêts. Tu peux pousser !",
    "en": "All good, tyres and brakes are ready. You can push!",
-   "ou": "alerts.py:681",
+   "ou": "alerts.py:682",
    "texte": "Alles gut, Reifen und Bremsen sind bereit. Du kannst pushen!"
   },
   {
    "fr": "{0}, version {1}",
    "en": "{0}, {1} version",
-   "ou": "alerts.py:690",
+   "ou": "alerts.py:691",
    "texte": "{0}, Version {1}"
   },
   {
    "fr": "Je ne vois pas encore ta voiture. Va au garage ou monte dans la voiture.",
    "en": "I can't see your car yet. Go to the garage or get in the car.",
-   "ou": "alerts.py:695",
+   "ou": "alerts.py:696",
    "texte": "Ich sehe dein Auto noch nicht. Geh in die Box oder steig ins Auto."
   },
   {
    "fr": "Tu es en {0}.",
    "en": "You're in the {0}.",
-   "ou": "alerts.py:698",
+   "ou": "alerts.py:699",
    "texte": "Du fährst den {0}."
   },
   {
    "fr": " Charge bien un setup fait pour la {0} {1}.",
    "en": " Make sure you load a setup made for the {1} {0}.",
-   "ou": "alerts.py:701",
+   "ou": "alerts.py:702",
    "texte": " Lade ein Setup, das für den {1} {0} gemacht ist."
   },
   {
    "fr": "Contact ! ",
    "en": "Contact! ",
-   "ou": "alerts.py:759",
+   "ou": "alerts.py:760",
    "texte": "Kontakt! "
   },
   {
    "fr": "Gros dégâts à la carrosserie.",
    "en": "Heavy body damage.",
-   "ou": "alerts.py:760",
+   "ou": "alerts.py:761",
    "texte": "Schwerer Karosserieschaden."
   },
   {
    "fr": "Dégâts légers à la carrosserie.",
    "en": "Light body damage.",
-   "ou": "alerts.py:760",
+   "ou": "alerts.py:761",
    "texte": "Leichter Karosserieschaden."
   },
   {
    "fr": " Je regarde l'aéro et les suspensions.",
    "en": " Checking aero and suspension.",
-   "ou": "alerts.py:761",
+   "ou": "alerts.py:762",
    "texte": " Ich prüfe Aero und Aufhängung."
   },
   {
    "fr": "Crevaison {0} ! Rentre au stand, doucement.",
    "en": "Puncture {0}! Box, take it easy.",
-   "ou": "alerts.py:769",
+   "ou": "alerts.py:770",
    "texte": "Reifenschaden {0}! Box, fahr vorsichtig."
   },
   {
    "fr": "Roue {0} perdue ! Rentre au stand.",
    "en": "Lost the {0} wheel! Box now.",
-   "ou": "alerts.py:772",
+   "ou": "alerts.py:773",
    "texte": "Rad {0} verloren! Sofort an die Box."
   },
   {
    "fr": "Une pièce s'est détachée de la voiture.",
    "en": "A part has come off the car.",
-   "ou": "alerts.py:776",
+   "ou": "alerts.py:777",
    "texte": "Ein Teil hat sich vom Auto gelöst."
   },
   {
    "fr": "Aéro endommagé à {0} %.",
    "en": "Aero damaged {0} %.",
-   "ou": "alerts.py:815",
+   "ou": "alerts.py:816",
    "texte": "Aero beschädigt, {0} %."
   },
   {
    "fr": " On répare au prochain arrêt.",
    "en": " We'll fix it at the next stop.",
-   "ou": "alerts.py:816",
+   "ou": "alerts.py:817",
    "texte": " Wir reparieren beim nächsten Stopp."
   },
   {
    "fr": "Suspension {0} touchée à {1} %. Attention au comportement.",
    "en": "{0} suspension damaged {1} %. Watch the handling.",
-   "ou": "alerts.py:822",
+   "ou": "alerts.py:823",
    "texte": "Aufhängung {0} beschädigt, {1} %. Achte auf das Fahrverhalten."
   },
   {
    "fr": "Météo : pluie probable dans environ {0} minutes, {1} % de risque.",
    "en": "Weather: rain likely in about {0} minutes, {1} % chance.",
-   "ou": "alerts.py:939",
+   "ou": "alerts.py:940",
    "texte": "Wetter: Regen wahrscheinlich in etwa {0} Minuten, {1} % Wahrscheinlichkeit."
   },
   {
    "fr": "Météo : éclaircie prévue dans environ {0} minutes.",
    "en": "Weather: drying up in about {0} minutes.",
-   "ou": "alerts.py:943",
+   "ou": "alerts.py:944",
    "texte": "Wetter: Es trocknet in etwa {0} Minuten ab."
   },
   {
@@ -3240,61 +3282,61 @@
   {
    "fr": "aucun",
    "en": "none",
-   "ou": "radio.py:112",
+   "ou": "radio.py:128",
    "texte": "keine"
   },
   {
    "fr": "clavier · {0}",
    "en": "keyboard · {0}",
-   "ou": "radio.py:114",
+   "ou": "radio.py:130",
    "texte": "Tastatur · {0}"
   },
   {
    "fr": "{0} · bouton {1}",
    "en": "{0} · button {1}",
-   "ou": "radio.py:115",
+   "ou": "radio.py:131",
    "texte": "{0} · Taste {1}"
   },
   {
    "fr": "Reconnaissance vocale indisponible : {0}",
    "en": "Speech recognition unavailable: {0}",
-   "ou": "radio.py:175",
+   "ou": "radio.py:191",
    "texte": "Spracherkennung nicht verfügbar: {0}"
   },
   {
    "fr": "Aucun micro trouvé. Branche ton micro ou ton casque, puis choisis-le dans la liste.",
    "en": "No microphone found. Plug in your mic or headset, then pick it in the list.",
-   "ou": "radio.py:247",
+   "ou": "radio.py:263",
    "texte": "Kein Mikrofon gefunden. Schließ dein Mikrofon oder Headset an und wähle es in der Liste aus."
   },
   {
    "fr": "Le micro n'enregistre que du silence. Choisis ton micro dans la liste ci-dessous, et vérifie Paramètres Windows > Confidentialité > Microphone (« Autoriser les applications de bureau »).",
    "en": "The mic is only recording silence. Pick your mic in the list below, and check Windows Settings > Privacy > Microphone (\"Let desktop apps access your microphone\").",
-   "ou": "radio.py:274",
+   "ou": "radio.py:290",
    "texte": "Das Mikrofon nimmt nur Stille auf. Wähle dein Mikrofon in der Liste unten und prüfe Windows-Einstellungen > Datenschutz > Mikrofon („Desktop-Apps Zugriff auf das Mikrofon erlauben“)."
   },
   {
    "fr": "La reconnaissance vocale se charge encore…",
    "en": "Speech recognition is still loading…",
-   "ou": "radio.py:284",
+   "ou": "radio.py:300",
    "texte": "Die Spracherkennung lädt noch…"
   },
   {
    "fr": "Ce bouton sert déjà à la radio : choisis-en un autre.",
    "en": "That button is already your radio button: pick another one.",
-   "ou": "radio.py:400",
+   "ou": "radio.py:416",
    "texte": "Diese Taste ist schon deine Funktaste: wähle eine andere."
   },
   {
    "fr": "prêt",
    "en": "erreur",
-   "ou": "radio.py:477",
+   "ou": "radio.py:493",
    "texte": ""
   },
   {
    "fr": "Micro indisponible : {0}. Choisis ton micro dans la liste ci-dessous, et vérifie Paramètres Windows > Son > Entrée (micro par défaut) et Confidentialité > Microphone.",
    "en": "Microphone unavailable: {0}. Pick your mic in the list below, and check Windows Settings > Sound > Input (default mic) and Privacy > Microphone.",
-   "ou": "radio.py:490",
+   "ou": "radio.py:506",
    "texte": "Mikrofon nicht verfügbar: {0}. Wähle dein Mikrofon in der Liste unten und prüfe Windows-Einstellungen > Sound > Eingabe (Standardmikrofon) und Datenschutz > Mikrofon."
   },
   {
@@ -3314,6 +3356,12 @@
    "en": "set on track",
    "ou": "setups.py:470",
    "texte": "auf der Strecke eingestellt"
+  },
+  {
+   "fr": "{0} ({1} % à l'avant)",
+   "en": "{0} ({1} % front)",
+   "ou": "setups.py:491",
+   "texte": "{0} ({1} % vorne)"
   },
   {
    "fr": "abs",
@@ -3966,7 +4014,7 @@
   {
    "fr": "Ici {0}, je prends la radio.",
    "en": "{0} here, I've got the radio.",
-   "ou": "voice.py:65",
+   "ou": "voice.py:76",
    "texte": "Hier ist {0}, ich übernehme den Funk."
   },
   {
@@ -4567,7 +4615,7 @@
    "fr": "JESSICA",
    "en": "ENGINEER",
    "ou": "ui/index.html:558",
-   "texte": ""
+   "texte": "INGENIEUR"
   },
   {
    "fr": "PRÊT",
@@ -5376,7 +5424,7 @@
    "fr": "les écarts devant et derrière",
    "en": "gaps ahead and behind",
    "tournures": [
-    "abstände|abstand vorne und hinten|wie sind die abstände"
+    "abstände|wie sind die abstände"
    ]
   },
   {
@@ -5466,7 +5514,7 @@
    "fr": "dans quel secteur p{n} est plus rapide",
    "en": "where is P{n} faster",
    "tournures": [
-    "wo ist p{n} schneller|in welchem sektor ist p{n} schneller"
+    "in welchem sektor ist p{n} schneller"
    ]
   },
   {
@@ -5529,7 +5577,7 @@
    "fr": "où je perds du temps",
    "en": "where am I losing time",
    "tournures": [
-    "wo verliere ich zeit|welcher sektor|sektoren|wo verliere ich"
+    "wo verliere ich zeit|welcher sektor|sektoren"
    ]
   },
   {
@@ -5746,7 +5794,7 @@
    "en": "change the left tyres",
    "ordre": true,
    "tournures": [
-    "linke reifen wechseln|reifen links wechseln|wechsel * linken reifen|wechsle * linken reifen|neue linke reifen"
+    "linke reifen wechseln|wechsel * linken reifen|wechsle * linken reifen|neue linke reifen|beide linken reifen"
    ]
   },
   {
@@ -5756,7 +5804,7 @@
    "en": "change the right tyres",
    "ordre": true,
    "tournures": [
-    "rechte reifen wechseln|reifen rechts wechseln|wechsel * rechten reifen|wechsle * rechten reifen|neue rechte reifen"
+    "rechte reifen wechseln|wechsel * rechten reifen|wechsle * rechten reifen|neue rechte reifen|beide rechten reifen"
    ]
   },
   {
@@ -5814,7 +5862,7 @@
    "fr": "reparle",
    "en": "talk again",
    "tournures": [
-    "sprich wieder|du kannst wieder reden|alle infos|ruhemodus aus"
+    "sprich wieder|du kannst wieder reden|alle infos"
    ]
   },
   {

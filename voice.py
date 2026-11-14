@@ -42,10 +42,21 @@ VOICES = {
     # allemand (Piper 1.5 ou plus) : données CC0 ; Kerstin affinée depuis Hi-Fi TTS 92 (CC BY 4.0), Thorsten depuis rdh (CC0)
     "kerstin":  ("de", "de_DE-kerstin-medium", "de/de_DE/kerstin/medium/", 0, "Kerstin", True, 63),
     "thorsten": ("de", "de_DE-thorsten-medium", "de/de_DE/thorsten/medium/", 0, "Thorsten", False, 63),
+    # espagnol, italien, portugais (Brésil), néerlandais (Piper 1.5 ou plus) : données CC0 (OHF-Voice voice-datasets),
+    # sauf Sharvard (CC BY 3.0, Univ. Édimbourg) ; bases d'entraînement Hi-Fi TTS 92 (CC BY 4.0) ou rdh (CC0)
+    "sharvard": ("es", "es_ES-sharvard-medium", "es/es_ES/sharvard/medium/", 1, "Sharvard", True, 77),
+    "davefx":   ("es", "es_ES-davefx-medium", "es/es_ES/davefx/medium/", 0, "Davefx", False, 63),
+    "paola":    ("it", "it_IT-paola-medium", "it/it_IT/paola/medium/", 0, "Paola", True, 63),
+    "faber":    ("pt", "pt_BR-faber-medium", "pt/pt_BR/faber/medium/", 0, "Faber", False, 63),
+    "cadu":     ("pt", "pt_BR-cadu-medium", "pt/pt_BR/cadu/medium/", 0, "Cadu", False, 63),
+    "nathalie": ("nl", "nl_BE-nathalie-medium", "nl/nl_BE/nathalie/medium/", 0, "Nathalie", True, 63),
+    "pim":      ("nl", "nl_NL-pim-medium", "nl/nl_NL/pim/medium/", 0, "Pim", False, 63),
 }
-DEFAULT = {"fr": "jessica", "en": "lj", "de": "kerstin"}
+DEFAULT = {"fr": "jessica", "en": "lj", "de": "kerstin", "es": "sharvard", "it": "paola", "pt": "faber", "nl": "nathalie"}
 # prononciation des symboles, et virgule décimale (3,6) ou point (3.6), par langue de voix
-SPOKEN = {"fr": (" pour cent", " degrés", True), "en": (" percent", " degrees", False), "de": (" Prozent", " Grad", True)}
+SPOKEN = {"fr": (" pour cent", " degrés", True), "en": (" percent", " degrees", False), "de": (" Prozent", " Grad", True),
+          "es": (" por ciento", " grados", True), "it": (" per cento", " gradi", True),
+          "pt": (" por cento", " graus", True), "nl": (" procent", " graden", True)}
 CHOICE = dict(DEFAULT)   # langue -> id de voix choisie (rempli depuis config.json au démarrage)
 
 

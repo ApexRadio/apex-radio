@@ -332,7 +332,7 @@ class Engineer:
                 (f"Prépare-toi, box dans {n} tours. On met {sv}.", f"Get ready, box in {n} laps. {sv}.")]), elapsed=et)
         if not ("stint:plan" in self._said):
             lim = L("l'énergie", "energy") if p.limited_by == "énergie" else L("l'essence", "fuel")
-            c, r, k = f"{p.fuel_per_lap:.1f}", f"{p.range_laps:.1f}", p.stops_needed
+            c, r, k = dec(f"{p.fuel_per_lap:.1f}"), dec(f"{p.range_laps:.1f}"), p.stops_needed
             st_fr, st_en = f"{k} arrêt{'s' if k > 1 else ''}", f"{k} stop{'s' if k > 1 else ''}"
             self.say("stint:plan", pick("plan", [
                 (f"Conso {c} litres par tour. Autonomie {r} tours, c'est {lim} qui limite. Il faudra {st_fr}.",

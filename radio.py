@@ -38,6 +38,22 @@ PROMPTS = {  # autres langues : vocabulaire de course pour aider la reconnaissan
            "Wird es regnen? Kommt er näher? Wo ist P6? Wo verliere ich Zeit? Wie sind die Reifen? Wann komme ich in die Box? "
            "Bereite den Stopp vor. Karosserie reparieren. Abstand, Position, Runden übrig, Rundenzeit, beste Runde, Strafe, "
            "Setup, Untersteuern, Übersteuern, Bremsen, wiederhol, Ruhe. ELMS, WEC, LMP2, Hypercar, GT3."),
+    "es": ("Radio del ingeniero de carrera, Le Mans Ultimate. Preguntas del piloto: ¿Cuánta gasolina me queda? ¿Qué tiempo hace? "
+           "¿Va a llover? ¿Se acerca? ¿Dónde está P6? ¿Dónde pierdo tiempo? ¿Cómo están los neumáticos? ¿Cuándo paro en boxes? "
+           "Prepara la parada. Repara la carrocería. Diferencias, posición, vueltas restantes, última vuelta, mejor vuelta, sanción, "
+           "setup, subviraje, sobreviraje, frenos, repite, silencio. ELMS, WEC, LMP2, Hypercar, GT3."),
+    "it": ("Radio dell'ingegnere di pista, Le Mans Ultimate. Domande del pilota: Quanto carburante ho? Che tempo fa? "
+           "Pioverà? Si avvicina? Dove sta P6? Dove perdo tempo? Come sono le gomme? Quando rientro ai box? "
+           "Prepara la sosta. Ripara la carrozzeria. Distacchi, posizione, giri rimanenti, ultimo giro, giro migliore, penalità, "
+           "setup, sottosterzo, sovrasterzo, freni, ripeti, silenzio. ELMS, WEC, LMP2, Hypercar, GT3."),
+    "pt": ("Rádio do engenheiro de corrida, Le Mans Ultimate. Perguntas do piloto: Quanto combustível eu tenho? Como está o clima? "
+           "Vai chover? Ele está chegando? Onde está o P6? Onde estou perdendo tempo? Como estão os pneus? Quando eu paro nos boxes? "
+           "Prepara o pit stop. Repara a carroceria. Diferenças, posição, voltas restantes, última volta, melhor volta, punição, "
+           "setup, subesterço, sobre-esterço, freios, repete, silêncio. ELMS, WEC, LMP2, Hypercar, GT3."),
+    "nl": ("Radio van de race-engineer, Le Mans Ultimate. Vragen van de rijder: Hoeveel brandstof heb ik nog? Hoe is het weer? "
+           "Gaat het regenen? Komt hij dichterbij? Waar zit P6? Waar verlies ik tijd? Hoe zijn de banden? Wanneer kom ik binnen? "
+           "Bereid de stop voor. Carrosserie repareren. Gaten, positie, ronden te gaan, rondetijd, beste ronde, straf, "
+           "setup, onderstuur, overstuur, remmen, herhaal, stil. ELMS, WEC, LMP2, Hypercar, GT3."),
 }
 
 

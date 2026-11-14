@@ -229,7 +229,7 @@ class Traffic:
                 sec = L_(f"{gap:.0f} seconde{'s' if round(gap) > 1 else ''}", f"{gap:.0f} second{'s' if round(gap) != 1 else ''}")
             if len(group) > 1:
                 where = where.replace("la rattrapes", "les rattrapes").replace("catch it", "catch them")
-                say(None, L_(f"{len(group)} {name} devant, à {sec}{where}.", f"{len(group)} {name} cars ahead, {sec}{where}."))
+                say(None, L_(f"{len(group)} {name} plus lentes devant, à {sec}{where}.", f"{len(group)} {name} cars ahead, {sec}{where}."))
             else:
                 say(None, L_(f"{name} plus lente devant, à {sec}{where}.", f"Slower {name} ahead, {sec}{where}."))
             return
@@ -542,10 +542,11 @@ class Morale:
         lines = []
         if prev and last < prev - 0.3:
             d = prev - last
-            lines.append(var("lap", [(f"Super tour, {d:.1f} seconde de mieux que le précédent !".replace(".", ","),
+            ds = dec(f"{d:.1f}")
+            lines.append(var("lap", [(f"Super tour, {ds} seconde de mieux que le précédent !",
                                       f"Great lap, {d:.1f} seconds quicker than the last one!"),
-                                     (f"Gros tour ! {d:.1f} seconde de mieux.".replace(".", ","), f"Big lap! {d:.1f} seconds quicker."),
-                                     (f"Excellent, tu as gagné {d:.1f} seconde sur ce tour.".replace(".", ","),
+                                     (f"Gros tour ! {ds} seconde de mieux.", f"Big lap! {d:.1f} seconds quicker."),
+                                     (f"Excellent, tu as gagné {ds} seconde sur ce tour.",
                                       f"Excellent, you found {d:.1f} seconds on that lap.")]))
         elif prev and abs(last - prev) < 0.4:
             lines.append(var("reg", [("Belle régularité, continue sur ce rythme.", "Nice and consistent, keep this pace."),

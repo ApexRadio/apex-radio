@@ -1,0 +1,5905 @@
+{
+ "_langue": "Nederlands",
+ "_virgule_decimale": true,
+ "_aide": "Remplis « texte » pour chaque phrase (aide : « en »). Garde les {0}, {1}… : ce sont des valeurs.",
+ "textes": [
+  {
+   "fr": "Des deux côtés !",
+   "en": "Three wide!",
+   "ou": "alerts.py:129",
+   "texte": "Drie naast elkaar!"
+  },
+  {
+   "fr": "À gauche !",
+   "en": "Car left!",
+   "ou": "alerts.py:129",
+   "texte": "Auto links!"
+  },
+  {
+   "fr": "À droite !",
+   "en": "Car right!",
+   "ou": "alerts.py:130",
+   "texte": "Auto rechts!"
+  },
+  {
+   "fr": "Dégagé.",
+   "en": "Clear.",
+   "ou": "alerts.py:130",
+   "texte": "Vrij."
+  },
+  {
+   "fr": "elle sera sur toi dans ce tour",
+   "en": "it'll be on you this lap",
+   "ou": "alerts.py:184",
+   "texte": "het is aan jou deze ronde"
+  },
+  {
+   "fr": "elle sera sur toi dans {0} tours",
+   "en": "it'll be on you in {0} laps",
+   "ou": "alerts.py:185",
+   "texte": "het is aan jou over {0} ronden"
+  },
+  {
+   "fr": "{0} qui arrive derrière, {1} seconde{2}, {3}.",
+   "en": "{0} coming up behind, {1} second{2}, {3}.",
+   "ou": "alerts.py:186",
+   "texte": "{0} komt van achteren, {1} {2?seconden:seconde}, {3}."
+  },
+  {
+   "fr": ", tu la rattrapes au virage {0}",
+   "en": ", you'll catch it at turn {0}",
+   "ou": "alerts.py:225",
+   "texte": ", je haalt hem in bij bocht {0}"
+  },
+  {
+   "fr": "moins d'une seconde",
+   "en": "less than a second",
+   "ou": "alerts.py:227",
+   "texte": "minder dan een seconde"
+  },
+  {
+   "fr": "{0} {1} plus lentes devant, à {2}{3}.",
+   "en": "{0} {1} cars ahead, {2}{3}.",
+   "ou": "alerts.py:232",
+   "texte": "{0} langzamere {1}'s voor je, op {2}{3}."
+  },
+  {
+   "fr": "{0} plus lente devant, à {1}{2}.",
+   "en": "Slower {0} ahead, {1}{2}.",
+   "ou": "alerts.py:234",
+   "texte": "Langzamere {0} voor je, op {1}{2}."
+  },
+  {
+   "fr": "la voiture",
+   "en": "the car",
+   "ou": "alerts.py:284",
+   "texte": "de auto"
+  },
+  {
+   "fr": "P{0} à {1} devant",
+   "en": "P{0} {1} ahead",
+   "ou": "alerts.py:307",
+   "texte": "P{0} {1} voor je"
+  },
+  {
+   "fr": "P{0} à {1} derrière",
+   "en": "P{0} {1} behind",
+   "ou": "alerts.py:309",
+   "texte": "P{0} {1} achter je"
+  },
+  {
+   "fr": "Point écarts :",
+   "en": "Gaps:",
+   "ou": "alerts.py:312",
+   "texte": "Gaten:"
+  },
+  {
+   "fr": "Les écarts :",
+   "en": "Gap check:",
+   "ou": "alerts.py:312",
+   "texte": "Gatencheck:"
+  },
+  {
+   "fr": "Côté écarts,",
+   "en": "On the gaps,",
+   "ou": "alerts.py:312",
+   "texte": "Over de gaten:"
+  },
+  {
+   "fr": "Tu es dans les roues de P{0}, attaque !",
+   "en": "You're on P{0}'s gearbox, attack!",
+   "ou": "alerts.py:332",
+   "texte": "Je zit op de versnellingsbak van P{0}, val aan!"
+  },
+  {
+   "fr": "Tu es collé à P{0}, c'est le moment d'attaquer !",
+   "en": "You're glued to P{0}, time to attack!",
+   "ou": "alerts.py:333",
+   "texte": "Je zit vlak achter P{0}, tijd om aan te vallen!"
+  },
+  {
+   "fr": "P{0} est juste devant, à moins d'une seconde. Attaque !",
+   "en": "P{0} is just ahead, under a second. Attack!",
+   "ou": "alerts.py:334",
+   "texte": "P{0} zit net voor je, binnen een seconde. Val aan!"
+  },
+  {
+   "fr": "Mets-lui la pression, montre-toi dans ses rétros.",
+   "en": "Put him under pressure, show yourself in his mirrors.",
+   "ou": "alerts.py:334",
+   "texte": "Zet hem onder druk, laat je zien in zijn spiegels."
+  },
+  {
+   "fr": "Il est à portée, cherche l'ouverture au freinage.",
+   "en": "He's in range, look for a gap under braking.",
+   "ou": "alerts.py:334",
+   "texte": "Hij is binnen bereik, zoek een gat bij het remmen."
+  },
+  {
+   "fr": "Il commence à craquer, reste collé et attends sa faute.",
+   "en": "He's starting to crack, stay close and wait for his mistake.",
+   "ou": "alerts.py:334",
+   "texte": "Hij begint te wankelen, blijf dichtbij en wacht op zijn fout."
+  },
+  {
+   "fr": "Tu reprends {0} par tour sur P{1}, dans ses roues dans {2} tour{3}.",
+   "en": "You're gaining {0} a lap on P{1}, on his gearbox in {2} lap{3}.",
+   "ou": "alerts.py:340",
+   "texte": "Je wint {0} per ronde op P{1}, over {2} {3?ronden:ronde} zit je erop."
+  },
+  {
+   "fr": "Tu reviens sur P{0}, {1} par tour. Tu seras sur lui dans {2} tour{3}.",
+   "en": "You're closing on P{0}, {1} a lap. You'll be on him in {2} lap{3}.",
+   "ou": "alerts.py:342",
+   "texte": "Je komt dichter bij P{0}, {1} per ronde. Over {2} {3?ronden:ronde} zit je op hem."
+  },
+  {
+   "fr": "P{0} est à portée : tu lui prends {1} par tour.",
+   "en": "P{0} is in range: you're taking {1} a lap off him.",
+   "ou": "alerts.py:344",
+   "texte": "P{0} is binnen bereik: je pakt {1} per ronde op hem."
+  },
+  {
+   "fr": "Pousse, il perd du temps !",
+   "en": "Push, he's losing time!",
+   "ou": "alerts.py:345",
+   "texte": "Push, hij verliest tijd!"
+  },
+  {
+   "fr": "Super rythme, va le chercher !",
+   "en": "Great pace, go get him!",
+   "ou": "alerts.py:345",
+   "texte": "Sterk tempo, ga hem halen!"
+  },
+  {
+   "fr": "Il est en difficulté, mets-lui la pression !",
+   "en": "He's struggling, put the pressure on!",
+   "ou": "alerts.py:345",
+   "texte": "Hij heeft het moeilijk, zet de druk erop!"
+  },
+  {
+   "fr": "Tu grappilles sur P{0}, petit à petit.",
+   "en": "You're chipping away at P{0}, bit by bit.",
+   "ou": "alerts.py:350",
+   "texte": "Je knabbelt beetje bij beetje aan P{0}."
+  },
+  {
+   "fr": "Continue comme ça.",
+   "en": "Keep it going.",
+   "ou": "alerts.py:350",
+   "texte": "Ga zo door."
+  },
+  {
+   "fr": "Reste régulier, ça va payer.",
+   "en": "Stay consistent, it'll pay off.",
+   "ou": "alerts.py:350",
+   "texte": "Blijf constant, dat betaalt zich uit."
+  },
+  {
+   "fr": "P{0} s'échappe de {1} par tour.",
+   "en": "P{0} is pulling away by {1} a lap.",
+   "ou": "alerts.py:353",
+   "texte": "P{0} loopt weg, {1} per ronde."
+  },
+  {
+   "fr": "P{0} prend le large, {1} par tour.",
+   "en": "P{0} is getting away, {1} a lap.",
+   "ou": "alerts.py:354",
+   "texte": "P{0} rijdt weg, {1} per ronde."
+  },
+  {
+   "fr": "Accroche-toi, ne le laisse pas filer.",
+   "en": "Hang on, don't let him go.",
+   "ou": "alerts.py:354",
+   "texte": "Volhouden, laat hem niet gaan."
+  },
+  {
+   "fr": "Reste concentré, fais ta course.",
+   "en": "Stay focused, run your own race.",
+   "ou": "alerts.py:354",
+   "texte": "Blijf gefocust, rij je eigen race."
+  },
+  {
+   "fr": "Pas de panique, la course est longue.",
+   "en": "No panic, it's a long race.",
+   "ou": "alerts.py:354",
+   "texte": "Geen paniek, het is een lange race."
+  },
+  {
+   "fr": "P{0} est dans tes roues, défends !",
+   "en": "P{0} is right behind you, defend!",
+   "ou": "alerts.py:365",
+   "texte": "P{0} zit vlak achter je, verdedig!"
+  },
+  {
+   "fr": "Attention, P{0} est collé derrière toi. Défends ta place !",
+   "en": "Careful, P{0} is glued to you. Defend your place!",
+   "ou": "alerts.py:366",
+   "texte": "Let op, P{0} zit aan je vast. Verdedig je plek!"
+  },
+  {
+   "fr": "P{0} est juste derrière, à moins d'une seconde !",
+   "en": "P{0} is right behind, under a second!",
+   "ou": "alerts.py:367",
+   "texte": "P{0} zit vlak achter je, binnen een seconde!"
+  },
+  {
+   "fr": "Ferme l'intérieur aux freinages.",
+   "en": "Cover the inside into the braking zones.",
+   "ou": "alerts.py:367",
+   "texte": "Dek de binnenkant af bij het remmen."
+  },
+  {
+   "fr": "Pas d'erreur, soigne tes sorties de virage.",
+   "en": "No mistakes, nail your corner exits.",
+   "ou": "alerts.py:367",
+   "texte": "Geen fouten, zorg voor strakke bochtuitgangen."
+  },
+  {
+   "fr": "Ne lui laisse aucune ouverture.",
+   "en": "Don't give him any gap.",
+   "ou": "alerts.py:367",
+   "texte": "Geef hem geen enkele opening."
+  },
+  {
+   "fr": "P{0} revient de {1} par tour, il sera sur toi dans {2} tour{3}.",
+   "en": "P{0} is closing by {1} a lap, he'll be on you in {2} lap{3}.",
+   "ou": "alerts.py:371",
+   "texte": "P{0} komt {1} per ronde dichterbij, over {2} {3?ronden:ronde} zit hij op je."
+  },
+  {
+   "fr": "Attention derrière : P{0} te reprend {1} par tour.",
+   "en": "Watch your mirrors: P{0} is taking {1} a lap off you.",
+   "ou": "alerts.py:373",
+   "texte": "Let op je spiegels: P{0} pakt {1} per ronde op je."
+  },
+  {
+   "fr": "Il est plus rapide, pousse un peu plus.",
+   "en": "He's quicker, push a bit harder.",
+   "ou": "alerts.py:374",
+   "texte": "Hij is sneller, push iets harder."
+  },
+  {
+   "fr": "Ne lâche rien, garde ton rythme.",
+   "en": "Don't give up, keep your pace.",
+   "ou": "alerts.py:374",
+   "texte": "Niet opgeven, hou je tempo vast."
+  },
+  {
+   "fr": "Reste propre, fais tes trajectoires et il ne passera pas.",
+   "en": "Stay clean, hit your lines and he won't get by.",
+   "ou": "alerts.py:374",
+   "texte": "Blijf netjes, raak je lijnen en hij komt er niet langs."
+  },
+  {
+   "fr": "avant gauche|avant droite|arrière gauche|arrière droite",
+   "en": "front left|front right|rear left|rear right",
+   "ou": "alerts.py:38",
+   "texte": "linksvoor|rechtsvoor|linksachter|rechtsachter"
+  },
+  {
+   "fr": "Tu creuses l'écart sur P{0}, {1} par tour.",
+   "en": "You're pulling away from P{0}, {1} a lap.",
+   "ou": "alerts.py:380",
+   "texte": "Je loopt weg van P{0}, {1} per ronde."
+  },
+  {
+   "fr": "Tu prends le large sur P{0}, {1} par tour.",
+   "en": "You're getting away from P{0}, {1} a lap.",
+   "ou": "alerts.py:381",
+   "texte": "Je rijdt weg van P{0}, {1} per ronde."
+  },
+  {
+   "fr": "Super boulot, continue comme ça !",
+   "en": "Great job, keep it up!",
+   "ou": "alerts.py:381",
+   "texte": "Goed werk, ga zo door!"
+  },
+  {
+   "fr": "Tu le décroches, garde ce rythme.",
+   "en": "You're dropping him, keep this pace.",
+   "ou": "alerts.py:381",
+   "texte": "Je rijdt bij hem weg, hou dit tempo vast."
+  },
+  {
+   "fr": "Parfait, il ne peut pas suivre.",
+   "en": "Perfect, he can't keep up.",
+   "ou": "alerts.py:381",
+   "texte": "Perfect, hij kan je niet bijhouden."
+  },
+  {
+   "fr": "HYPER",
+   "en": "Hypercar",
+   "ou": "alerts.py:43",
+   "texte": ""
+  },
+  {
+   "fr": "LMH",
+   "en": "Hypercar",
+   "ou": "alerts.py:43",
+   "texte": ""
+  },
+  {
+   "fr": "LMDH",
+   "en": "Hypercar",
+   "ou": "alerts.py:43",
+   "texte": ""
+  },
+  {
+   "fr": "LMP2",
+   "en": "LMP2",
+   "ou": "alerts.py:44",
+   "texte": ""
+  },
+  {
+   "fr": "LMP3",
+   "en": "LMP3",
+   "ou": "alerts.py:44",
+   "texte": ""
+  },
+  {
+   "fr": "{0} places de plus",
+   "en": "{0} places gained",
+   "ou": "alerts.py:466",
+   "texte": "{0} plaatsen gewonnen"
+  },
+  {
+   "fr": "Une place de plus",
+   "en": "One place up",
+   "ou": "alerts.py:467",
+   "texte": "Eén plek omhoog"
+  },
+  {
+   "fr": "Et une place de gagnée",
+   "en": "And that's a place gained",
+   "ou": "alerts.py:467",
+   "texte": "En dat is een plek gewonnen"
+  },
+  {
+   "fr": "Tu gagnes une place",
+   "en": "You gain a place",
+   "ou": "alerts.py:468",
+   "texte": "Je wint een plek"
+  },
+  {
+   "fr": "Bien joué !",
+   "en": "Nice one!",
+   "ou": "alerts.py:469",
+   "texte": "Mooi zo!"
+  },
+  {
+   "fr": "Superbe dépassement !",
+   "en": "Great move!",
+   "ou": "alerts.py:469",
+   "texte": "Mooie inhaalactie!"
+  },
+  {
+   "fr": "Continue !",
+   "en": "Keep going!",
+   "ou": "alerts.py:469",
+   "texte": "Ga zo door!"
+  },
+  {
+   "fr": "voiture",
+   "en": "car",
+   "ou": "alerts.py:47",
+   "texte": "auto"
+  },
+  {
+   "fr": "{0}, tu es P{1}. ",
+   "en": "{0}, you're P{1}. ",
+   "ou": "alerts.py:472",
+   "texte": "{0}, je ligt P{1}."
+  },
+  {
+   "fr": "Tu perds {0} place{1}, P{2}. ",
+   "en": "You lose {0} place{1}, P{2}. ",
+   "ou": "alerts.py:475",
+   "texte": "Je verliest {0} {1?plaatsen:plaats}, P{2}."
+  },
+  {
+   "fr": "Accroche-toi, on va la reprendre.",
+   "en": "Hang on, we'll get it back.",
+   "ou": "alerts.py:476",
+   "texte": "Volhouden, die halen we terug."
+  },
+  {
+   "fr": "Pas grave, reste concentré.",
+   "en": "No worries, stay focused.",
+   "ou": "alerts.py:477",
+   "texte": "Geen zorgen, blijf gefocust."
+  },
+  {
+   "fr": "Respire, la course est longue.",
+   "en": "Breathe, it's a long race.",
+   "ou": "alerts.py:478",
+   "texte": "Adem in, het is een lange race."
+  },
+  {
+   "fr": "Bon départ, tu as gagné {0} place{1}, tu es P{2}.",
+   "en": "Good start, you gained {0} place{1}, you're P{2}.",
+   "ou": "alerts.py:484",
+   "texte": "Goede start, je hebt {0} {1?plaatsen:plaats} gewonnen, je ligt P{2}."
+  },
+  {
+   "fr": "Superbe !",
+   "en": "Superb!",
+   "ou": "alerts.py:487",
+   "texte": "Super!"
+  },
+  {
+   "fr": "Continue comme ça !",
+   "en": "Keep it up!",
+   "ou": "alerts.py:487",
+   "texte": "Ga zo door!"
+  },
+  {
+   "fr": "Excellent premier tour !",
+   "en": "Excellent first lap!",
+   "ou": "alerts.py:488",
+   "texte": "Uitstekende eerste ronde!"
+  },
+  {
+   "fr": "Premier tour difficile, tu as perdu {0} place{1}, tu es P{2}.",
+   "en": "Tough first lap, you lost {0} place{1}, you're P{2}.",
+   "ou": "alerts.py:490",
+   "texte": "Lastige eerste ronde, je hebt {0} {1?plaatsen:plaats} verloren, je ligt P{2}."
+  },
+  {
+   "fr": "Pas grave, on va les reprendre.",
+   "en": "No worries, we'll get them back.",
+   "ou": "alerts.py:493",
+   "texte": "Geen zorgen, die halen we terug."
+  },
+  {
+   "fr": "La course est longue, reste calme.",
+   "en": "It's a long race, stay calm.",
+   "ou": "alerts.py:494",
+   "texte": "Het is een lange race, blijf rustig."
+  },
+  {
+   "fr": "Premier tour propre, tu gardes ta place, P{0}.",
+   "en": "Clean first lap, you hold your place, P{0}.",
+   "ou": "alerts.py:496",
+   "texte": "Nette eerste ronde, je houdt je plek, P{0}."
+  },
+  {
+   "fr": "Maintenant, on attaque !",
+   "en": "Now let's attack!",
+   "ou": "alerts.py:498",
+   "texte": "Nu gaan we aanvallen!"
+  },
+  {
+   "fr": "Super tour, {0} seconde de mieux que le précédent !",
+   "en": "Great lap, {0} seconds quicker than the last one!",
+   "ou": "alerts.py:546",
+   "texte": "Super ronde, {0} seconden sneller dan de vorige!"
+  },
+  {
+   "fr": "Gros tour ! {0} seconde de mieux.",
+   "en": "Big lap! {0} seconds quicker.",
+   "ou": "alerts.py:548",
+   "texte": "Dikke ronde! {0} seconden sneller."
+  },
+  {
+   "fr": "Excellent, tu as gagné {0} seconde sur ce tour.",
+   "en": "Excellent, you found {0} seconds on that lap.",
+   "ou": "alerts.py:549",
+   "texte": "Uitstekend, je hebt {0} seconden gevonden deze ronde."
+  },
+  {
+   "fr": "Belle régularité, continue sur ce rythme.",
+   "en": "Nice and consistent, keep this pace.",
+   "ou": "alerts.py:552",
+   "texte": "Mooi constant, hou dit tempo vast."
+  },
+  {
+   "fr": "Très régulier, c'est parfait.",
+   "en": "Very consistent, that's perfect.",
+   "ou": "alerts.py:553",
+   "texte": "Heel constant, perfect."
+  },
+  {
+   "fr": "Même chrono que le tour d'avant, super régularité.",
+   "en": "Same time as last lap, great consistency.",
+   "ou": "alerts.py:554",
+   "texte": "Zelfde tijd als vorige ronde, sterke constantheid."
+  },
+  {
+   "fr": "On a eu un coup dur, mais tu remontes. Continue comme ça !",
+   "en": "We had a tough moment, but you're coming back. Keep it up!",
+   "ou": "alerts.py:557",
+   "texte": "We hadden een lastig moment, maar je komt terug. Ga zo door!"
+  },
+  {
+   "fr": "Oublie l'incident, regarde devant, tu vas plus vite qu'eux.",
+   "en": "Forget the incident, look ahead, you're quicker than them.",
+   "ou": "alerts.py:558",
+   "texte": "Vergeet het incident, kijk vooruit, je bent sneller dan zij."
+  },
+  {
+   "fr": "Belle réaction après le pépin, je sens que tu vas remonter.",
+   "en": "Great reaction after the trouble, I can feel you climbing back.",
+   "ou": "alerts.py:559",
+   "texte": "Sterke reactie na het probleem, ik voel dat je terugkomt."
+  },
+  {
+   "fr": "P{0}, tu es sur le podium, garde la tête froide !",
+   "en": "P{0}, you're on the podium, stay cool!",
+   "ou": "alerts.py:561",
+   "texte": "P{0}, je staat op het podium, blijf koel!"
+  },
+  {
+   "fr": "Tu fais du bon boulot, reste concentré.",
+   "en": "You're doing a good job, stay focused.",
+   "ou": "alerts.py:563",
+   "texte": "Je doet het goed, blijf gefocust."
+  },
+  {
+   "fr": "Chaque tour compte, on continue à pousser.",
+   "en": "Every lap counts, keep pushing.",
+   "ou": "alerts.py:564",
+   "texte": "Elke ronde telt, blijf pushen."
+  },
+  {
+   "fr": "La course est longue, tout peut encore arriver.",
+   "en": "It's a long race, anything can still happen.",
+   "ou": "alerts.py:565",
+   "texte": "Het is een lange race, er kan nog van alles gebeuren."
+  },
+  {
+   "fr": "Bien, propre et régulier, c'est comme ça qu'on gagne des places.",
+   "en": "Good, clean and consistent, that's how we gain places.",
+   "ou": "alerts.py:566",
+   "texte": "Goed, netjes en constant, zo winnen we plaatsen."
+  },
+  {
+   "fr": " au virage {0}",
+   "en": " at turn {0}",
+   "ou": "alerts.py:592",
+   "texte": " in bocht {0}"
+  },
+  {
+   "fr": "Limites de piste{0}, avertissement {1} sur {2}.",
+   "en": "Track limits{0}, warning {1} of {2}.",
+   "ou": "alerts.py:596",
+   "texte": "Track limits{0}, waarschuwing {1} van {2}."
+  },
+  {
+   "fr": "la prochaine, c'est la pénalité !",
+   "en": "next one is a penalty!",
+   "ou": "alerts.py:599",
+   "texte": "de volgende is een straf!"
+  },
+  {
+   "fr": "encore {0} avant la pénalité.",
+   "en": "{0} more before a penalty.",
+   "ou": "alerts.py:600",
+   "texte": "nog {0} voor een straf."
+  },
+  {
+   "fr": "Limites de piste{0}, avertissement {1} sur {2}, {3}",
+   "en": "Track limits{0}, warning {1} of {2}, {3}",
+   "ou": "alerts.py:601",
+   "texte": "Track limits{0}, waarschuwing {1} van {2}, {3}"
+  },
+  {
+   "fr": "Limites de piste{0}, avertissement numéro {1}.",
+   "en": "Track limits{0}, warning number {1}.",
+   "ou": "alerts.py:604",
+   "texte": "Track limits{0}, waarschuwing nummer {1}."
+  },
+  {
+   "fr": "{0} seconde{1}",
+   "en": "{0} seconds",
+   "ou": "alerts.py:61",
+   "texte": "{0} {1?seconden:seconde}"
+  },
+  {
+   "fr": "{0} dixième{1}",
+   "en": "{0} tenth{1}",
+   "ou": "alerts.py:62",
+   "texte": "{0} {1?tienden:tiende}"
+  },
+  {
+   "fr": "Attention, pneus froids et freins froids. Doucement au premier freinage.",
+   "en": "Careful, cold tyres and cold brakes. Easy on the first braking zone.",
+   "ou": "alerts.py:666",
+   "texte": "Let op, koude banden en koude remmen. Rustig bij het eerste rempunt."
+  },
+  {
+   "fr": "Attention, pneus froids. Fais-les monter en température avant d'attaquer.",
+   "en": "Careful, cold tyres. Bring them up to temperature before you push.",
+   "ou": "alerts.py:669",
+   "texte": "Let op, koude banden. Breng ze op temperatuur voor je pusht."
+  },
+  {
+   "fr": "Attention, freins froids. Freine plus tôt les premiers virages.",
+   "en": "Careful, cold brakes. Brake earlier for the first few corners.",
+   "ou": "alerts.py:672",
+   "texte": "Let op, koude remmen. Rem eerder in de eerste bochten."
+  },
+  {
+   "fr": "Pneus et freins en température. Vas-y, tu peux attaquer !",
+   "en": "Tyres and brakes are up to temperature. Go on, you can push now!",
+   "ou": "alerts.py:679",
+   "texte": "Banden en remmen zijn op temperatuur. Kom op, nu kun je pushen!"
+  },
+  {
+   "fr": "Tout est chaud, pneus et freins. À toi de jouer !",
+   "en": "Everything's warm, tyres and brakes. Over to you!",
+   "ou": "alerts.py:681",
+   "texte": "Alles warm, banden en remmen. Aan jou!"
+  },
+  {
+   "fr": "C'est bon, pneus et freins sont prêts. Tu peux pousser !",
+   "en": "All good, tyres and brakes are ready. You can push!",
+   "ou": "alerts.py:682",
+   "texte": "Alles goed, banden en remmen zijn klaar. Je kunt pushen!"
+  },
+  {
+   "fr": "{0}, version {1}",
+   "en": "{0}, {1} version",
+   "ou": "alerts.py:691",
+   "texte": "{0}, versie {1}"
+  },
+  {
+   "fr": "Je ne vois pas encore ta voiture. Va au garage ou monte dans la voiture.",
+   "en": "I can't see your car yet. Go to the garage or get in the car.",
+   "ou": "alerts.py:696",
+   "texte": "Ik zie je auto nog niet. Ga naar de garage of stap in de auto."
+  },
+  {
+   "fr": "Tu es en {0}.",
+   "en": "You're in the {0}.",
+   "ou": "alerts.py:699",
+   "texte": "Je rijdt in de {0}."
+  },
+  {
+   "fr": " Charge bien un setup fait pour la {0} {1}.",
+   "en": " Make sure you load a setup made for the {1} {0}.",
+   "ou": "alerts.py:702",
+   "texte": " Laad een setup die gemaakt is voor de {1} {0}."
+  },
+  {
+   "fr": "Contact ! ",
+   "en": "Contact! ",
+   "ou": "alerts.py:760",
+   "texte": "Contact!"
+  },
+  {
+   "fr": "Gros dégâts à la carrosserie.",
+   "en": "Heavy body damage.",
+   "ou": "alerts.py:761",
+   "texte": "Zware carrosserieschade."
+  },
+  {
+   "fr": "Dégâts légers à la carrosserie.",
+   "en": "Light body damage.",
+   "ou": "alerts.py:761",
+   "texte": "Lichte carrosserieschade."
+  },
+  {
+   "fr": " Je regarde l'aéro et les suspensions.",
+   "en": " Checking aero and suspension.",
+   "ou": "alerts.py:762",
+   "texte": " Ik controleer aero en ophanging."
+  },
+  {
+   "fr": "Crevaison {0} ! Rentre au stand, doucement.",
+   "en": "Puncture {0}! Box, take it easy.",
+   "ou": "alerts.py:770",
+   "texte": "Lekke band {0}! Box, rustig aan."
+  },
+  {
+   "fr": "Roue {0} perdue ! Rentre au stand.",
+   "en": "Lost the {0} wheel! Box now.",
+   "ou": "alerts.py:773",
+   "texte": "Wiel {0} verloren! Nu naar binnen."
+  },
+  {
+   "fr": "Une pièce s'est détachée de la voiture.",
+   "en": "A part has come off the car.",
+   "ou": "alerts.py:777",
+   "texte": "Er is een onderdeel van de auto losgekomen."
+  },
+  {
+   "fr": "Aéro endommagé à {0} %.",
+   "en": "Aero damaged {0} %.",
+   "ou": "alerts.py:816",
+   "texte": "Aero beschadigd, {0} %."
+  },
+  {
+   "fr": " On répare au prochain arrêt.",
+   "en": " We'll fix it at the next stop.",
+   "ou": "alerts.py:817",
+   "texte": " We repareren het bij de volgende stop."
+  },
+  {
+   "fr": "Suspension {0} touchée à {1} %. Attention au comportement.",
+   "en": "{0} suspension damaged {1} %. Watch the handling.",
+   "ou": "alerts.py:823",
+   "texte": "Ophanging {0} beschadigd, {1} %. Let op het rijgedrag."
+  },
+  {
+   "fr": "Météo : pluie probable dans environ {0} minutes, {1} % de risque.",
+   "en": "Weather: rain likely in about {0} minutes, {1} % chance.",
+   "ou": "alerts.py:940",
+   "texte": "Weer: regen waarschijnlijk over ongeveer {0} minuten, {1} % kans."
+  },
+  {
+   "fr": "Météo : éclaircie prévue dans environ {0} minutes.",
+   "en": "Weather: drying up in about {0} minutes.",
+   "ou": "alerts.py:944",
+   "texte": "Weer: het droogt op over ongeveer {0} minuten."
+  },
+  {
+   "fr": "Mode silence : je ne te dis plus que l'urgent.",
+   "en": "Quiet mode: urgent calls only.",
+   "ou": "app.py:101",
+   "texte": "Stille modus: alleen nog dringende meldingen."
+  },
+  {
+   "fr": "Fin du silence, je te redonne toutes les infos.",
+   "en": "Quiet mode off, back to full info.",
+   "ou": "app.py:102",
+   "texte": "Stille modus uit, weer alle info."
+  },
+  {
+   "fr": "Spotter activé.",
+   "en": "Spotter on.",
+   "ou": "app.py:111",
+   "texte": "Spotter aan."
+  },
+  {
+   "fr": "Spotter coupé.",
+   "en": "Spotter off.",
+   "ou": "app.py:111",
+   "texte": "Spotter uit."
+  },
+  {
+   "fr": "Ton setup {0} est fait pour la {1}, et tu es en {2}. Pas de souci : c'est la même voiture, je convertirai la copie APEX pour ta version.",
+   "en": "Your setup {0} is made for the {1}, and you're in the {2}. No problem: it's the same car, I'll convert the APEX copy for your version.",
+   "ou": "app.py:230",
+   "texte": "Je setup {0} is gemaakt voor de {1}, en je rijdt in de {2}. Geen probleem: het is dezelfde auto, ik zet de APEX-kopie om voor jouw versie."
+  },
+  {
+   "fr": "Attention, ton setup {0} a été fait pour la {1}, mais tu es en {2}. Charge plutôt un setup fait pour cette voiture.",
+   "en": "Careful, your setup {0} was made for the {1}, but you're in the {2}. Better load a setup made for this car.",
+   "ou": "app.py:236",
+   "texte": "Let op, je setup {0} is gemaakt voor de {1}, maar je rijdt in de {2}. Laad liever een setup voor deze auto."
+  },
+  {
+   "fr": "/tel",
+   "en": "/phone",
+   "ou": "app.py:484",
+   "texte": ""
+  },
+  {
+   "fr": "/api/ptt/down",
+   "en": "/api/ptt/up",
+   "ou": "app.py:503",
+   "texte": ""
+  },
+  {
+   "fr": "Rien à répéter pour l'instant.",
+   "en": "Nothing to repeat yet.",
+   "ou": "app.py:507",
+   "texte": "Nog niets om te herhalen."
+  },
+  {
+   "fr": "Radio en français.",
+   "en": "Radio in English.",
+   "ou": "app.py:515",
+   "texte": "Radio in het Nederlands."
+  },
+  {
+   "fr": "Radio check, niveau du son.",
+   "en": "Radio check, volume level.",
+   "ou": "app.py:550",
+   "texte": "Radiocheck, volumeniveau."
+  },
+  {
+   "fr": "/api/setup/dir",
+   "en": "/api/setup/pickdir",
+   "ou": "app.py:588",
+   "texte": ""
+  },
+  {
+   "fr": "Setup remis en version {0}. Recharge-le au garage.",
+   "en": "Setup restored to version {0}. Reload it in the garage.",
+   "ou": "app.py:619",
+   "texte": "Setup teruggezet naar versie {0}. Laad het opnieuw in de garage."
+  },
+  {
+   "fr": "Setup {0} mis à jour, version {1}. Recharge-le au garage, je refais l'analyse.",
+   "en": "{0} setup updated, version {1}. Reload it in the garage, I'll redo the analysis.",
+   "ou": "app.py:639",
+   "texte": "Setup {0} bijgewerkt, versie {1}. Laad het opnieuw in de garage, ik analyseer opnieuw."
+  },
+  {
+   "fr": "Je télécharge la voix de {0}, {1} prend la radio dans une minute.",
+   "en": "Downloading {0}'s voice, it'll take over the radio in a minute.",
+   "ou": "app.py:668",
+   "texte": "Ik download de stem van {0}, {1} neemt de radio over binnen een minuut."
+  },
+  {
+   "fr": "Radio check. Tu m'entends bien ? On est prêts pour la course.",
+   "en": "Radio check. Do you copy? We're ready to race.",
+   "ou": "app.py:671",
+   "texte": "Radiocheck. Hoor je me? We zijn klaar om te racen."
+  },
+  {
+   "fr": "Ce dossier ne contient pas les setups de LMU.",
+   "en": "This folder doesn't contain LMU setups.",
+   "ou": "app.py:833",
+   "texte": "Deze map bevat geen LMU-setups."
+  },
+  {
+   "fr": "Radio active.",
+   "en": "Radio on.",
+   "ou": "app.py:95",
+   "texte": "Radio aan."
+  },
+  {
+   "fr": "Répartition de freinage",
+   "en": "Brake bias",
+   "ou": "behavior.py:114",
+   "texte": "Rembalans"
+  },
+  {
+   "fr": "Contrôle de traction",
+   "en": "Traction control",
+   "ou": "behavior.py:114",
+   "texte": "Tractiecontrole"
+  },
+  {
+   "fr": "Barre antiroulis avant",
+   "en": "Front anti-roll bar",
+   "ou": "behavior.py:114",
+   "texte": "Stabilisatorstang voor"
+  },
+  {
+   "fr": "Barre antiroulis arrière",
+   "en": "Rear anti-roll bar",
+   "ou": "behavior.py:114",
+   "texte": "Stabilisatorstang achter"
+  },
+  {
+   "fr": "tc",
+   "en": "abs",
+   "ou": "behavior.py:152",
+   "texte": ""
+  },
+  {
+   "fr": "à {0} % à l'avant",
+   "en": "{0} % front",
+   "ou": "behavior.py:285",
+   "texte": "op {0} % voor"
+  },
+  {
+   "fr": "sur {0}",
+   "en": "{0}",
+   "ou": "behavior.py:287",
+   "texte": "op {0}"
+  },
+  {
+   "fr": "{0} {1} {2}, je réévalue.",
+   "en": "{3} now {2}, re-evaluating.",
+   "ou": "behavior.py:288",
+   "texte": "{0}: {2}, ik evalueer opnieuw."
+  },
+  {
+   "fr": "sous-virage",
+   "en": "entrée",
+   "ou": "behavior.py:35",
+   "texte": "onderstuur"
+  },
+  {
+   "fr": "{0}. Conseil : {1}.",
+   "en": "{0}. Tip: {1}.",
+   "ou": "behavior.py:373",
+   "texte": "{0}. Tip: {1}."
+  },
+  {
+   "fr": "survirage",
+   "en": "entrée",
+   "ou": "behavior.py:38",
+   "texte": "overstuur"
+  },
+  {
+   "fr": "{0}. Ça se corrige au garage, je te le rappelle après la course.",
+   "en": "{0}. That's a garage fix, I'll remind you after the race.",
+   "ou": "behavior.py:380",
+   "texte": "{0}. Dat lossen we op in de garage, ik herinner je eraan na de race."
+  },
+  {
+   "fr": " et {0}",
+   "en": " and {0}",
+   "ou": "behavior.py:390",
+   "texte": " en {0}"
+  },
+  {
+   "fr": "blocage {0} au freinage des virages {1}",
+   "en": "{0} lock-up braking into turns {1}",
+   "ou": "behavior.py:392",
+   "texte": "blokkeren {0} bij het aanremmen van bochten {1}"
+  },
+  {
+   "fr": "patinage en sortie des virages {0}",
+   "en": "wheelspin on exit of turns {0}",
+   "ou": "behavior.py:394",
+   "texte": "wielspin bij het uitkomen van bochten {0}"
+  },
+  {
+   "fr": "trop d'angle de volant aux virages {0}, l'avant glisse",
+   "en": "too much steering at turns {0}, the front is sliding",
+   "ou": "behavior.py:396",
+   "texte": "te veel stuurhoek in bochten {0}, de voorkant glijdt"
+  },
+  {
+   "fr": "{0} au milieu des virages {1}",
+   "en": "mid-corner {0} at turns {1}",
+   "ou": "behavior.py:398",
+   "texte": "{0} midden in bochten {1}"
+  },
+  {
+   "fr": "{0} en {1} des virages {2}",
+   "en": "{0} on {1} at turns {2}",
+   "ou": "behavior.py:399",
+   "texte": "{0} bij {1} van bochten {2}"
+  },
+  {
+   "fr": "blocage",
+   "en": "avant",
+   "ou": "behavior.py:41",
+   "texte": "blokkeren"
+  },
+  {
+   "fr": "plus chaud{s} à l'intérieur{d} : un peu moins de carrossage",
+   "en": "hotter on the inside{d}: a bit less camber",
+   "ou": "behavior.py:421",
+   "texte": "binnenkant warmer{d}: iets minder camber"
+  },
+  {
+   "fr": "plus chaud{s} à l'extérieur : un peu plus de carrossage",
+   "en": "hotter on the outside: a bit more camber",
+   "ou": "behavior.py:422",
+   "texte": "buitenkant warmer: iets meer camber"
+  },
+  {
+   "fr": "chaud{s} au centre : pression un peu trop haute",
+   "en": "hot in the middle: pressure a bit too high",
+   "ou": "behavior.py:423",
+   "texte": "warm in het midden: druk iets te hoog"
+  },
+  {
+   "fr": "froid{s} au centre : pression un peu trop basse",
+   "en": "cold in the middle: pressure a bit too low",
+   "ou": "behavior.py:424",
+   "texte": "koud in het midden: druk iets te laag"
+  },
+  {
+   "fr": "avant gauche|avant droit|arrière gauche|arrière droit",
+   "en": "front left|front right|rear left|rear right",
+   "ou": "behavior.py:426",
+   "texte": "linksvoor|rechtsvoor|linksachter|rechtsachter"
+  },
+  {
+   "fr": "patinage",
+   "en": "",
+   "ou": "behavior.py:43",
+   "texte": "wielspin"
+  },
+  {
+   "fr": "avant",
+   "en": "front",
+   "ou": "behavior.py:430",
+   "texte": "voor"
+  },
+  {
+   "fr": "arrière",
+   "en": "rear",
+   "ou": "behavior.py:430",
+   "texte": "achter"
+  },
+  {
+   "fr": "pneus {0} ",
+   "en": "{0} tyres ",
+   "ou": "behavior.py:434",
+   "texte": "banden {0}"
+  },
+  {
+   "fr": "surbraquage",
+   "en": "",
+   "ou": "behavior.py:44",
+   "texte": "te veel stuurhoek"
+  },
+  {
+   "fr": "pneu {0} ",
+   "en": "{0} tyre ",
+   "ou": "behavior.py:441",
+   "texte": "band {0}"
+  },
+  {
+   "fr": "Côté pneus : ",
+   "en": "Tyres: ",
+   "ou": "behavior.py:448",
+   "texte": "Banden:"
+  },
+  {
+   "fr": ". C'est pour le garage, je te le rappelle après la course.",
+   "en": ". That's for the garage, I'll remind you after the race.",
+   "ou": "behavior.py:449",
+   "texte": ". Dat is voor de garage, ik herinner je eraan na de race."
+  },
+  {
+   "fr": "la voiture est globalement sous-vireuse",
+   "en": "the car is understeering overall",
+   "ou": "behavior.py:456",
+   "texte": "de auto heeft over het algemeen onderstuur"
+  },
+  {
+   "fr": "la voiture est globalement survireuse",
+   "en": "the car is oversteering overall",
+   "ou": "behavior.py:457",
+   "texte": "de auto heeft over het algemeen overstuur"
+  },
+  {
+   "fr": "blocage {0} au freinage du virage {1}",
+   "en": "{0} lock-up braking into turn {1}",
+   "ou": "behavior.py:459",
+   "texte": "blokkeren {0} bij het aanremmen van bocht {1}"
+  },
+  {
+   "fr": "patinage en sortie du virage {0}",
+   "en": "wheelspin on exit of turn {0}",
+   "ou": "behavior.py:461",
+   "texte": "wielspin bij het uitkomen van bocht {0}"
+  },
+  {
+   "fr": "trop d'angle de volant au virage {0}, l'avant glisse",
+   "en": "too much steering at turn {0}, the front is sliding",
+   "ou": "behavior.py:463",
+   "texte": "te veel stuurhoek in bocht {0}, de voorkant glijdt"
+  },
+  {
+   "fr": "{0} au milieu du virage {1}",
+   "en": "mid-corner {0} at turn {1}",
+   "ou": "behavior.py:465",
+   "texte": "{0} midden in bocht {1}"
+  },
+  {
+   "fr": "{0} en {1} du virage {2}",
+   "en": "{0} on {1} of turn {2}",
+   "ou": "behavior.py:466",
+   "texte": "{0} bij {1} van bocht {2}"
+  },
+  {
+   "fr": "freine un peu moins fort à l'attaque du virage {0}, la répartition a déjà assez bougé",
+   "en": "brake a little less hard into turn {0}, the bias has moved enough already",
+   "ou": "behavior.py:475",
+   "texte": "rem iets minder hard aan voor bocht {0}, de balans is al genoeg verschoven"
+  },
+  {
+   "fr": "passe la répartition de freinage de {0} à {1} % à l'avant",
+   "en": "move the brake bias from {0} to {1} % front",
+   "ou": "behavior.py:479",
+   "texte": "zet de rembalans van {0} naar {1} % voor"
+  },
+  {
+   "fr": "recule la répartition de freinage de {0} à {1} % à l'avant",
+   "en": "move the brake bias back from {0} to {1} % front",
+   "ou": "behavior.py:485",
+   "texte": "zet de rembalans terug van {0} naar {1} % voor"
+  },
+  {
+   "fr": "recule un peu la répartition de freinage",
+   "en": "move the brake bias back a little",
+   "ou": "behavior.py:487",
+   "texte": "zet de rembalans iets naar achteren"
+  },
+  {
+   "fr": "avance la répartition de freinage de {0} à {1} % à l'avant",
+   "en": "move the brake bias forward from {0} to {1} % front",
+   "ou": "behavior.py:489",
+   "texte": "zet de rembalans naar voren van {0} naar {1} % voor"
+  },
+  {
+   "fr": "avance un peu la répartition de freinage",
+   "en": "move the brake bias forward a little",
+   "ou": "behavior.py:491",
+   "texte": "zet de rembalans iets naar voren"
+  },
+  {
+   "fr": "monte le contrôle de traction d'un cran, et dose l'accélération en sortie",
+   "en": "one more click of traction control, and be smoother on exit",
+   "ou": "behavior.py:493",
+   "texte": "één klik meer tractiecontrole, en soepeler op het gas bij het uitkomen"
+  },
+  {
+   "fr": "Pour le setup, voici ce que je changerais : ",
+   "en": "For the setup, here's what I'd change: ",
+   "ou": "behavior.py:510",
+   "texte": "Voor de setup zou ik dit veranderen:"
+  },
+  {
+   "fr": ". J'ouvre l'atelier setup avec mes propositions.",
+   "en": ". I'm opening the setup workshop with my suggestions.",
+   "ou": "behavior.py:511",
+   "texte": ". Ik open de setup-werkplaats met mijn voorstellen."
+  },
+  {
+   "fr": "J'ai besoin d'un tour complet pour connaître le circuit avant d'analyser la voiture.",
+   "en": "I need a full lap to learn the track before analysing the car.",
+   "ou": "behavior.py:516",
+   "texte": "Ik heb een volledige ronde nodig om het circuit te leren voor ik de auto analyseer."
+  },
+  {
+   "fr": "J'analyse encore, il me faut deux ou trois tours propres.",
+   "en": "Still analysing, I need two or three clean laps.",
+   "ou": "behavior.py:519",
+   "texte": "Ik analyseer nog, ik heb twee of drie nette ronden nodig."
+  },
+  {
+   "fr": "La voiture est plutôt équilibrée, rien de répétitif à signaler.",
+   "en": "The car is fairly balanced, nothing recurring to report.",
+   "ou": "behavior.py:524",
+   "texte": "De auto is redelijk in balans, niets terugkerends te melden."
+  },
+  {
+   "fr": "Pneus : ",
+   "en": "Tyres: ",
+   "ou": "behavior.py:526",
+   "texte": "Banden:"
+  },
+  {
+   "fr": "recule un peu la répartition de freinage, ou assouplis la barre antiroulis avant",
+   "en": "move the brake bias back a little, or soften the front anti-roll bar",
+   "ou": "behavior.py:64",
+   "texte": "zet de rembalans iets naar achteren, of maak de stabilisator voor zachter"
+  },
+  {
+   "fr": "assouplis la barre antiroulis avant, ou ajoute un cran d'aileron avant",
+   "en": "soften the front anti-roll bar, or add a click of front wing",
+   "ou": "behavior.py:64",
+   "texte": "maak de stabilisator voor zachter, of één klik meer voorvleugel"
+  },
+  {
+   "fr": "réduis le blocage du différentiel en accélération, ou assouplis l'avant",
+   "en": "reduce the diff power lock, or soften the front",
+   "ou": "behavior.py:64",
+   "texte": "minder sper op het differentieel onder gas, of maak de voorkant zachter"
+  },
+  {
+   "fr": "avance un peu la répartition de freinage, ou réduis le frein moteur",
+   "en": "move the brake bias forward a little, or reduce engine braking",
+   "ou": "behavior.py:64",
+   "texte": "zet de rembalans iets naar voren, of minder motorrem"
+  },
+  {
+   "fr": "assouplis la barre antiroulis arrière, ou ajoute un cran d'aileron arrière",
+   "en": "soften the rear anti-roll bar, or add a click of rear wing",
+   "ou": "behavior.py:64",
+   "texte": "maak de stabilisator achter zachter, of één klik meer achtervleugel"
+  },
+  {
+   "fr": "monte le contrôle de traction d'un cran, ou assouplis la barre antiroulis arrière",
+   "en": "one more click of traction control, or soften the rear anti-roll bar",
+   "ou": "behavior.py:64",
+   "texte": "één klik meer tractiecontrole, of maak de stabilisator achter zachter"
+  },
+  {
+   "fr": "recule la répartition de freinage d'un demi-point",
+   "en": "move the brake bias back half a point",
+   "ou": "behavior.py:64",
+   "texte": "zet de rembalans een half punt naar achteren"
+  },
+  {
+   "fr": "avance la répartition de freinage d'un demi-point",
+   "en": "move the brake bias forward half a point",
+   "ou": "behavior.py:64",
+   "texte": "zet de rembalans een half punt naar voren"
+  },
+  {
+   "fr": "monte le contrôle de traction d'un cran, ou sois plus progressif à l'accélération",
+   "en": "one more click of traction control, or be smoother on the throttle",
+   "ou": "behavior.py:64",
+   "texte": "één klik meer tractiecontrole, of gevoeliger met het gas"
+  },
+  {
+   "fr": "tu tournes trop le volant, l'avant décroche et la voiture freine : moins d'angle, l'avant accrochera mieux",
+   "en": "too much steering lock, the front lets go and scrubs speed: less angle and the front will grip better",
+   "ou": "behavior.py:64",
+   "texte": "te veel stuurhoek, de voorkant laat los en remt de auto af: minder hoek en de voorkant grijpt beter"
+  },
+  {
+   "fr": "barre antiroulis avant plus souple",
+   "en": "softer front anti-roll bar",
+   "ou": "behavior.py:76",
+   "texte": "zachtere stabilisator voor"
+  },
+  {
+   "fr": "différentiel moins bloqué en accélération, ou barre antiroulis avant plus souple",
+   "en": "less diff power lock, or softer front anti-roll bar",
+   "ou": "behavior.py:76",
+   "texte": "minder sper onder gas, of zachtere stabilisator voor"
+  },
+  {
+   "fr": "barre antiroulis arrière plus souple, ou un cran d'aileron arrière",
+   "en": "softer rear anti-roll bar, or a click of rear wing",
+   "ou": "behavior.py:76",
+   "texte": "zachtere stabilisator achter, of één klik meer achtervleugel"
+  },
+  {
+   "fr": "barre antiroulis arrière plus souple",
+   "en": "softer rear anti-roll bar",
+   "ou": "behavior.py:76",
+   "texte": "zachtere stabilisator achter"
+  },
+  {
+   "fr": "plus de blocage du différentiel au lever de pied",
+   "en": "more diff coast lock",
+   "ou": "behavior.py:76",
+   "texte": "meer sper op het differentieel bij gas los"
+  },
+  {
+   "fr": "entrée",
+   "en": "entry",
+   "ou": "behavior.py:86",
+   "texte": "bochtingang"
+  },
+  {
+   "fr": "milieu",
+   "en": "mid-corner",
+   "ou": "behavior.py:86",
+   "texte": "midden van de bocht"
+  },
+  {
+   "fr": "sortie",
+   "en": "exit",
+   "ou": "behavior.py:86",
+   "texte": "bochtuitgang"
+  },
+  {
+   "fr": "tours",
+   "en": "laps",
+   "ou": "debrief.py:109",
+   "texte": "ronden"
+  },
+  {
+   "fr": "Pas encore de session enregistrée. Fais quelques tours avec Apex Radio ouvert.",
+   "en": "No session recorded yet. Do a few laps with Apex Radio running.",
+   "ou": "debrief.py:110",
+   "texte": "Nog geen sessie opgenomen. Rij een paar ronden terwijl Apex Radio draait."
+  },
+  {
+   "fr": "Débriefs",
+   "en": "Debriefs",
+   "ou": "debrief.py:112",
+   "texte": "Debriefings"
+  },
+  {
+   "fr": "{0} valides",
+   "en": "{0} valid",
+   "ou": "debrief.py:132",
+   "texte": "{0} geldig"
+  },
+  {
+   "fr": "Meilleur tour",
+   "en": "Best lap",
+   "ou": "debrief.py:133",
+   "texte": "Beste ronde"
+  },
+  {
+   "fr": "record circuit {0}",
+   "en": "track record {0}",
+   "ou": "debrief.py:133",
+   "texte": "circuitrecord {0}"
+  },
+  {
+   "fr": "Moyenne (tours propres)",
+   "en": "Average (clean laps)",
+   "ou": "debrief.py:134",
+   "texte": "Gemiddelde (nette ronden)"
+  },
+  {
+   "fr": "régularité ± {0} s",
+   "en": "consistency ± {0} s",
+   "ou": "debrief.py:134",
+   "texte": "constantheid ± {0} s"
+  },
+  {
+   "fr": "Essence / tour",
+   "en": "Fuel / lap",
+   "ou": "debrief.py:135",
+   "texte": "Brandstof / ronde"
+  },
+  {
+   "fr": "{0} passage(s) au stand",
+   "en": "{0} pit visit(s)",
+   "ou": "debrief.py:135",
+   "texte": "{0} pitstop(s)"
+  },
+  {
+   "fr": "même place",
+   "en": "same place",
+   "ou": "debrief.py:137",
+   "texte": "zelfde plaats"
+  },
+  {
+   "fr": "place(s)",
+   "en": "place(s)",
+   "ou": "debrief.py:137",
+   "texte": "plaats(en)"
+  },
+  {
+   "fr": "Temps au tour",
+   "en": "Lap times",
+   "ou": "debrief.py:152",
+   "texte": "Rondetijden"
+  },
+  {
+   "fr": "Jaune : meilleur tour · tirets roses : passage au stand · tours invalides non affichés.",
+   "en": "Yellow: best lap · pink dashes: pit visit · invalid laps not shown.",
+   "ou": "debrief.py:156",
+   "texte": "Geel: beste ronde · roze streepjes: pitstop · ongeldige ronden niet getoond."
+  },
+  {
+   "fr": "stand",
+   "en": "pit",
+   "ou": "debrief.py:162",
+   "texte": "pit"
+  },
+  {
+   "fr": "invalide",
+   "en": "invalid",
+   "ou": "debrief.py:162",
+   "texte": "ongeldig"
+  },
+  {
+   "fr": "très régulier",
+   "en": "very consistent",
+   "ou": "debrief.py:175",
+   "texte": "zeer constant"
+  },
+  {
+   "fr": "irrégulier",
+   "en": "inconsistent",
+   "ou": "debrief.py:175",
+   "texte": "wisselvallig"
+  },
+  {
+   "fr": "correct",
+   "en": "ok",
+   "ou": "debrief.py:175",
+   "texte": "oké"
+  },
+  {
+   "fr": "<h2>Rythme par tranche de 5 tours</h2><table><tr><th>Tours</th><th>Rythme médian</th><th>Évolution</th><th>Régularité</th><th></th></tr>",
+   "en": "<h2>Pace per 5-lap block</h2><table><tr><th>Laps</th><th>Median pace</th><th>Trend</th><th>Consistency</th><th></th></tr>",
+   "ou": "debrief.py:179",
+   "texte": "<h2>Tempo per blok van 5 ronden</h2><table><tr><th>Ronden</th><th>Mediaan tempo</th><th>Trend</th><th>Constantheid</th><th></th></tr>"
+  },
+  {
+   "fr": "Évolution rose = plus lent que la tranche d'avant (usure, essence, trafic).",
+   "en": "Pink trend = slower than the previous block (wear, fuel, traffic).",
+   "ou": "debrief.py:182",
+   "texte": "Roze trend = langzamer dan het vorige blok (slijtage, brandstof, verkeer)."
+  },
+  {
+   "fr": "tous les débriefs",
+   "en": "all debriefs",
+   "ou": "debrief.py:187",
+   "texte": "alle debriefings"
+  },
+  {
+   "fr": "DÉBRIEF",
+   "en": "DEBRIEF",
+   "ou": "debrief.py:188",
+   "texte": "DEBRIEFING"
+  },
+  {
+   "fr": "Comportement de la voiture",
+   "en": "Car behaviour",
+   "ou": "debrief.py:193",
+   "texte": "Rijgedrag"
+  },
+  {
+   "fr": "Rien de répétitif signalé.",
+   "en": "Nothing recurring reported.",
+   "ou": "debrief.py:193",
+   "texte": "Niets terugkerends gemeld."
+  },
+  {
+   "fr": "Tours",
+   "en": "Laps",
+   "ou": "debrief.py:194",
+   "texte": "Ronden"
+  },
+  {
+   "fr": "Tour",
+   "en": "Lap",
+   "ou": "debrief.py:194",
+   "texte": "Ronde"
+  },
+  {
+   "fr": "Temps",
+   "en": "Time",
+   "ou": "debrief.py:194",
+   "texte": "Tijd"
+  },
+  {
+   "fr": "Essence",
+   "en": "Fuel",
+   "ou": "debrief.py:194",
+   "texte": "Brandstof"
+  },
+  {
+   "fr": "Débrief {0}",
+   "en": "Debrief {0}",
+   "ou": "debrief.py:196",
+   "texte": "Debriefing {0}"
+  },
+  {
+   "fr": "TABLEAU DE BORD",
+   "en": "DASHBOARD",
+   "ou": "debrief.py:224",
+   "texte": "DASHBOARD"
+  },
+  {
+   "fr": "DÉBRIEFS",
+   "en": "DEBRIEFS",
+   "ou": "debrief.py:224",
+   "texte": "DEBRIEFINGS"
+  },
+  {
+   "fr": "pas de carte",
+   "en": "no map",
+   "ou": "debrief.py:235",
+   "texte": "geen kaart"
+  },
+  {
+   "fr": "Tracé de",
+   "en": "Layout of",
+   "ou": "debrief.py:242",
+   "texte": "Layout van"
+  },
+  {
+   "fr": "Progression : il faut au moins 2 sessions.",
+   "en": "Progress: needs at least 2 sessions.",
+   "ou": "debrief.py:249",
+   "texte": "Voortgang: minstens 2 sessies nodig."
+  },
+  {
+   "fr": "{0} s gagnées depuis le {1}",
+   "en": "{0} s gained since {1}",
+   "ou": "debrief.py:261",
+   "texte": "{0} s gewonnen sinds {1}"
+  },
+  {
+   "fr": "{0} s de plus que le {1}",
+   "en": "{0} s slower than on {1}",
+   "ou": "debrief.py:262",
+   "texte": "{0} s langzamer dan op {1}"
+  },
+  {
+   "fr": "stable",
+   "en": "steady",
+   "ou": "debrief.py:263",
+   "texte": "stabiel"
+  },
+  {
+   "fr": "Progression des meilleurs tours",
+   "en": "Best lap progress",
+   "ou": "debrief.py:264",
+   "texte": "Voortgang van de beste ronden"
+  },
+  {
+   "fr": "Progression",
+   "en": "Progress",
+   "ou": "debrief.py:266",
+   "texte": "Voortgang"
+  },
+  {
+   "fr": "Tour idéal",
+   "en": "Ideal lap",
+   "ou": "debrief.py:292",
+   "texte": "Ideale ronde"
+  },
+  {
+   "fr": "tour idéal",
+   "en": "ideal lap",
+   "ou": "debrief.py:299",
+   "texte": "ideale ronde"
+  },
+  {
+   "fr": "Partager sur Discord",
+   "en": "Share on Discord",
+   "ou": "debrief.py:300",
+   "texte": "Delen op Discord"
+  },
+  {
+   "fr": "Copié ! Colle-le dans #chronos-laptimes",
+   "en": "Copied! Paste it in #chronos-laptimes",
+   "ou": "debrief.py:316",
+   "texte": "Gekopieerd! Plak het in #chronos-laptimes"
+  },
+  {
+   "fr": "<h1>MEILLEURS TOURS</h1><p class='muted'>Ton record sur chaque circuit, par catégorie (tours valides uniquement).</p>",
+   "en": "<h1>BEST LAPS</h1><p class='muted'>Your record on each track, by class (valid laps only).</p>",
+   "ou": "debrief.py:319",
+   "texte": "<h1>BESTE RONDEN</h1><p class='muted'>Je record op elk circuit, per klasse (alleen geldige ronden).</p>"
+  },
+  {
+   "fr": "Pas encore de record : fais quelques tours valides avec Apex Radio ouvert.",
+   "en": "No record yet: do a few valid laps with Apex Radio running.",
+   "ou": "debrief.py:321",
+   "texte": "Nog geen record: rij een paar geldige ronden terwijl Apex Radio draait."
+  },
+  {
+   "fr": "Meilleurs tours",
+   "en": "Best laps",
+   "ou": "debrief.py:323",
+   "texte": "Beste ronden"
+  },
+  {
+   "fr": "Ouvrir le tableau de bord",
+   "en": "Open the dashboard",
+   "ou": "desktop.py:206",
+   "texte": "Dashboard openen"
+  },
+  {
+   "fr": "Vue téléphone : ",
+   "en": "Phone view: ",
+   "ou": "desktop.py:207",
+   "texte": "Telefoonweergave:"
+  },
+  {
+   "fr": "Silence (urgent seulement)",
+   "en": "Quiet (urgent only)",
+   "ou": "desktop.py:210",
+   "texte": "Stil (alleen dringend)"
+  },
+  {
+   "fr": "Ouvrir le journal (dépannage)",
+   "en": "Open the log (troubleshooting)",
+   "ou": "desktop.py:213",
+   "texte": "Logboek openen (probleemoplossing)"
+  },
+  {
+   "fr": "Quitter Apex Radio",
+   "en": "Quit Apex Radio",
+   "ou": "desktop.py:215",
+   "texte": "Apex Radio afsluiten"
+  },
+  {
+   "fr": "Apex Radio continue ici. Clique sur cette icône pour rouvrir le tableau de bord, clic droit pour quitter.",
+   "en": "Apex Radio keeps running here. Click this icon to reopen the dashboard, right-click to quit.",
+   "ou": "desktop.py:231",
+   "texte": "Apex Radio blijft hier draaien. Klik op dit pictogram om het dashboard weer te openen, rechtsklik om af te sluiten."
+  },
+  {
+   "fr": "fr",
+   "en": "en",
+   "ou": "i18n.py:150",
+   "texte": ""
+  },
+  {
+   "fr": "avant le virage {0}",
+   "en": "before turn {0}",
+   "ou": "incidents.py:39",
+   "texte": "voor bocht {0}"
+  },
+  {
+   "fr": "au virage {0}",
+   "en": "at turn {0}",
+   "ou": "incidents.py:40",
+   "texte": "in bocht {0}"
+  },
+  {
+   "fr": "sur la piste",
+   "en": "on track",
+   "ou": "incidents.py:40",
+   "texte": "op de baan"
+  },
+  {
+   "fr": "Attention, voiture arrêtée {0} !",
+   "en": "Caution, car stopped {0}!",
+   "ou": "incidents.py:91",
+   "texte": "Let op, stilstaande auto {0}!"
+  },
+  {
+   "fr": "Voiture hors piste {0}, attention.",
+   "en": "Car off {0}, caution.",
+   "ou": "incidents.py:93",
+   "texte": "Auto van de baan {0}, voorzichtig."
+  },
+  {
+   "fr": "Nouveau record perso ici ! {0}, tu gagnes {1}.",
+   "en": "New personal best here! {0}, {1} quicker.",
+   "ou": "laptimes.py:208",
+   "texte": "Nieuw persoonlijk record hier! {0}, {1} sneller."
+  },
+  {
+   "fr": "Premier chrono de référence sur ce circuit : {0}.",
+   "en": "First reference lap on this track: {0}.",
+   "ou": "laptimes.py:212",
+   "texte": "Eerste referentieronde op dit circuit: {0}."
+  },
+  {
+   "fr": "Tour invalidé, attention aux limites de piste.",
+   "en": "Lap invalidated, watch the track limits.",
+   "ou": "laptimes.py:228",
+   "texte": "Ronde ongeldig, let op de track limits."
+  },
+  {
+   "fr": "qualif",
+   "en": "essais",
+   "ou": "laptimes.py:229",
+   "texte": ""
+  },
+  {
+   "fr": "{0}, à {1} du record.",
+   "en": "{0}, {1} off your best.",
+   "ou": "laptimes.py:231",
+   "texte": "{0}, {1} achter je beste ronde."
+  },
+  {
+   "fr": "{0} gagné{1} au secteur {2}",
+   "en": "{0} gained in sector {2}",
+   "ou": "laptimes.py:249",
+   "texte": "{0} gewonnen in sector {2}"
+  },
+  {
+   "fr": "{0} perdu{1} au secteur {2}",
+   "en": "{0} lost in sector {2}",
+   "ou": "laptimes.py:250",
+   "texte": "{0} verloren in sector {2}"
+  },
+  {
+   "fr": "tu perds {0} dans le secteur {1}",
+   "en": "you lose {0} in sector {1}",
+   "ou": "laptimes.py:261",
+   "texte": "je verliest {0} in sector {1}"
+  },
+  {
+   "fr": "tu reprends {0} dans le {1}",
+   "en": "you gain {0} in sector {1}",
+   "ou": "laptimes.py:264",
+   "texte": "je wint {0} in sector {1}"
+  },
+  {
+   "fr": "Même rythme que {0}.",
+   "en": "Same pace as {0}.",
+   "ou": "laptimes.py:267",
+   "texte": "Zelfde tempo als {0}."
+  },
+  {
+   "fr": "Au total tu gagnes {0} au tour.",
+   "en": "Overall you gain {0} a lap.",
+   "ou": "laptimes.py:268",
+   "texte": "In totaal win je {0} per ronde."
+  },
+  {
+   "fr": "Au total tu perds {0} au tour.",
+   "en": "Overall you lose {0} a lap.",
+   "ou": "laptimes.py:269",
+   "texte": "In totaal verlies je {0} per ronde."
+  },
+  {
+   "fr": "Sur {0}, ",
+   "en": "Against {0}, ",
+   "ou": "laptimes.py:270",
+   "texte": "Tegenover {0}:"
+  },
+  {
+   "fr": " et ",
+   "en": " and ",
+   "ou": "laptimes.py:270",
+   "texte": " en"
+  },
+  {
+   "fr": "both",
+   "en": "ahead",
+   "ou": "laptimes.py:277",
+   "texte": ""
+  },
+  {
+   "fr": "la voiture devant",
+   "en": "the car ahead",
+   "ou": "laptimes.py:278",
+   "texte": "de auto voor je"
+  },
+  {
+   "fr": "la voiture derrière",
+   "en": "the car behind",
+   "ou": "laptimes.py:282",
+   "texte": "de auto achter je"
+  },
+  {
+   "fr": "Pas encore de record sur ce circuit dans cette catégorie.",
+   "en": "No record on this track in this class yet.",
+   "ou": "laptimes.py:290",
+   "texte": "Nog geen record op dit circuit in deze klasse."
+  },
+  {
+   "fr": "Ton record ici, c'est {0}, le {1}.",
+   "en": "Your record here is {0}, set on {1}.",
+   "ou": "laptimes.py:291",
+   "texte": "Je record hier is {0}, gereden op {1}."
+  },
+  {
+   "fr": " Tu es dessus aujourd'hui.",
+   "en": " You matched it today.",
+   "ou": "laptimes.py:295",
+   "texte": " Vandaag heb je het geëvenaard."
+  },
+  {
+   "fr": " Aujourd'hui tu es à {0}.",
+   "en": " Today you're {0} off.",
+   "ou": "laptimes.py:296",
+   "texte": " Vandaag kom je {0} tekort."
+  },
+  {
+   "fr": " Avec tes meilleurs secteurs, le tour idéal serait {0}.",
+   "en": " With your best sectors, the ideal lap would be {0}.",
+   "ou": "laptimes.py:299",
+   "texte": " Met je beste sectoren zou de ideale ronde {0} zijn."
+  },
+  {
+   "fr": "{0} secondes",
+   "en": "{0} seconds",
+   "ou": "laptimes.py:38",
+   "texte": "{0} seconden"
+  },
+  {
+   "fr": "moins d'un dixième",
+   "en": "less than a tenth",
+   "ou": "laptimes.py:59",
+   "texte": "minder dan een tiende"
+  },
+  {
+   "fr": "Info radio.",
+   "en": "Radio check.",
+   "ou": "phrases.py:45",
+   "texte": "Radio-info."
+  },
+  {
+   "fr": "Écoute bien.",
+   "en": "Listen up.",
+   "ou": "phrases.py:45",
+   "texte": "Luister."
+  },
+  {
+   "fr": "OK, info.",
+   "en": "OK, info.",
+   "ou": "phrases.py:45",
+   "texte": "Oké, info."
+  },
+  {
+   "fr": "Du stand.",
+   "en": "From the pit wall.",
+   "ou": "phrases.py:46",
+   "texte": "Vanaf de pitmuur."
+  },
+  {
+   "fr": "Petite info.",
+   "en": "Quick one.",
+   "ou": "phrases.py:46",
+   "texte": "Even snel."
+  },
+  {
+   "fr": "Pour info.",
+   "en": "Heads up.",
+   "ou": "phrases.py:46",
+   "texte": "Even ter info."
+  },
+  {
+   "fr": "Reçu.",
+   "en": "Copy.",
+   "ou": "phrases.py:47",
+   "texte": "Begrepen."
+  },
+  {
+   "fr": "Bien reçu.",
+   "en": "Copy that.",
+   "ou": "phrases.py:47",
+   "texte": "Helder."
+  },
+  {
+   "fr": "OK, je regarde.",
+   "en": "OK, checking.",
+   "ou": "phrases.py:47",
+   "texte": "Oké, ik kijk even."
+  },
+  {
+   "fr": "Copie.",
+   "en": "Copied.",
+   "ou": "phrases.py:48",
+   "texte": "Ontvangen."
+  },
+  {
+   "fr": "Je vérifie.",
+   "en": "Stand by.",
+   "ou": "phrases.py:48",
+   "texte": "Moment, ik check het."
+  },
+  {
+   "fr": "Reçu, cinq sur cinq.",
+   "en": "Loud and clear.",
+   "ou": "phrases.py:48",
+   "texte": "Luid en duidelijk."
+  },
+  {
+   "fr": "Alors.",
+   "en": "Right then.",
+   "ou": "phrases.py:51",
+   "texte": "Nou."
+  },
+  {
+   "fr": "Hé, petite info.",
+   "en": "Hey, quick one.",
+   "ou": "phrases.py:51",
+   "texte": "Hé, even snel."
+  },
+  {
+   "fr": "Dis donc.",
+   "en": "Hey.",
+   "ou": "phrases.py:51",
+   "texte": "Hé."
+  },
+  {
+   "fr": "Bon.",
+   "en": "So.",
+   "ou": "phrases.py:52",
+   "texte": "Goed."
+  },
+  {
+   "fr": "Tiens, au fait.",
+   "en": "Oh, by the way.",
+   "ou": "phrases.py:52",
+   "texte": "O ja, trouwens."
+  },
+  {
+   "fr": "Alors, voyons.",
+   "en": "Let's see.",
+   "ou": "phrases.py:53",
+   "texte": "Even kijken."
+  },
+  {
+   "fr": "Ah, bonne question.",
+   "en": "Good question.",
+   "ou": "phrases.py:53",
+   "texte": "Goede vraag."
+  },
+  {
+   "fr": "Attends, je regarde.",
+   "en": "Hang on, checking.",
+   "ou": "phrases.py:54",
+   "texte": "Wacht, ik kijk even."
+  },
+  {
+   "fr": "Pas de souci.",
+   "en": "No worries.",
+   "ou": "phrases.py:54",
+   "texte": "Geen probleem."
+  },
+  {
+   "fr": "À toi.",
+   "en": "Over.",
+   "ou": "phrases.py:58",
+   "texte": "Over."
+  },
+  {
+   "fr": "On reste concentrés.",
+   "en": "Stay focused.",
+   "ou": "phrases.py:58",
+   "texte": "Blijf gefocust."
+  },
+  {
+   "fr": "Bien reçu ?",
+   "en": "Copy?",
+   "ou": "phrases.py:58",
+   "texte": "Begrepen?"
+  },
+  {
+   "fr": "On continue comme ça.",
+   "en": "Keep it going.",
+   "ou": "phrases.py:59",
+   "texte": "Ga zo door."
+  },
+  {
+   "fr": "Je surveille.",
+   "en": "I'm watching it.",
+   "ou": "phrases.py:59",
+   "texte": "Ik hou het in de gaten."
+  },
+  {
+   "fr": "Tranquille.",
+   "en": "Easy.",
+   "ou": "phrases.py:60",
+   "texte": "Rustig aan."
+  },
+  {
+   "fr": "On gère.",
+   "en": "We've got this.",
+   "ou": "phrases.py:60",
+   "texte": "We hebben het onder controle."
+  },
+  {
+   "fr": "Pas de stress.",
+   "en": "No stress.",
+   "ou": "phrases.py:60",
+   "texte": "Geen stress."
+  },
+  {
+   "fr": "Tu assures.",
+   "en": "You're doing great.",
+   "ou": "phrases.py:61",
+   "texte": "Je doet het super."
+  },
+  {
+   "fr": "on répare tout",
+   "en": "full repairs",
+   "ou": "pitmenu.py:118",
+   "texte": "alles repareren"
+  },
+  {
+   "fr": "réparation de la carrosserie",
+   "en": "bodywork repairs",
+   "ou": "pitmenu.py:118",
+   "texte": "carrosserie repareren"
+  },
+  {
+   "fr": "pas de réparation",
+   "en": "no repairs",
+   "ou": "pitmenu.py:123",
+   "texte": "geen reparatie"
+  },
+  {
+   "fr": "pas de choix pneu par pneu sur cette voiture, je change les quatre",
+   "en": "no tyre-by-tyre choice on this car, changing all four",
+   "ou": "pitmenu.py:142",
+   "texte": "bij deze auto geen keuze per band, ik wissel alle vier"
+  },
+  {
+   "fr": "4 pneus neufs",
+   "en": "four new tyres",
+   "ou": "pitmenu.py:158",
+   "texte": "vier nieuwe banden"
+  },
+  {
+   "fr": "pneus neufs : {0}",
+   "en": "new tyres: {0}",
+   "ou": "pitmenu.py:159",
+   "texte": "nieuwe banden: {0}"
+  },
+  {
+   "fr": "pneus neufs",
+   "en": "new tyres",
+   "ou": "pitmenu.py:226",
+   "texte": "nieuwe banden"
+  },
+  {
+   "fr": "pneus pluie",
+   "en": "wet tyres",
+   "ou": "pitmenu.py:227",
+   "texte": "regenbanden"
+  },
+  {
+   "fr": "pneus slicks",
+   "en": "slick tyres",
+   "ou": "pitmenu.py:227",
+   "texte": "slicks"
+  },
+  {
+   "fr": "✓ Réglé (démo) : {0}",
+   "en": "✓ Set (demo): {0}",
+   "ou": "pitmenu.py:230",
+   "texte": "✓ Ingesteld (demo): {0}"
+  },
+  {
+   "fr": "Stand réglé : {0}.",
+   "en": "Pit menu set: {0}.",
+   "ou": "pitmenu.py:231",
+   "texte": "Pitmenu ingesteld: {0}."
+  },
+  {
+   "fr": "⚠ Menu non pris en compte : ",
+   "en": "⚠ Menu not applied: ",
+   "ou": "pitmenu.py:244",
+   "texte": "⚠ Menu niet toegepast:"
+  },
+  {
+   "fr": "Attention, je n'ai pas réussi à régler tout le menu des stands, vérifie-le.",
+   "en": "Careful, I couldn't set the whole pit menu, check it.",
+   "ou": "pitmenu.py:245",
+   "texte": "Let op, ik kon niet het hele pitmenu instellen, controleer het."
+  },
+  {
+   "fr": "✓ Réglé : ",
+   "en": "✓ Set: ",
+   "ou": "pitmenu.py:249",
+   "texte": "✓ Ingesteld:"
+  },
+  {
+   "fr": "Stand réglé : ",
+   "en": "Pit menu set: ",
+   "ou": "pitmenu.py:250",
+   "texte": "Pitmenu ingesteld:"
+  },
+  {
+   "fr": "⚠ Impossible de régler le menu ({0})",
+   "en": "⚠ Couldn't set the menu ({0})",
+   "ou": "pitmenu.py:253",
+   "texte": "⚠ Kon het menu niet instellen ({0})"
+  },
+  {
+   "fr": "Je n'arrive pas à régler le menu des stands, fais-le à la main cette fois.",
+   "en": "I can't set the pit menu, do it manually this time.",
+   "ou": "pitmenu.py:255",
+   "texte": "Ik kan het pitmenu niet instellen, doe het deze keer zelf."
+  },
+  {
+   "fr": "pas d'essence",
+   "en": "no fuel",
+   "ou": "pitmenu.py:64",
+   "texte": "geen brandstof"
+  },
+  {
+   "fr": "essence à {0} litres",
+   "en": "fuel to {0} litres",
+   "ou": "pitmenu.py:74",
+   "texte": "brandstof naar {0} liter"
+  },
+  {
+   "fr": "same",
+   "en": "dry",
+   "ou": "pitmenu.py:81",
+   "texte": ""
+  },
+  {
+   "fr": "on garde les pneus",
+   "en": "keep the tyres",
+   "ou": "pitmenu.py:98",
+   "texte": "banden blijven erop"
+  },
+  {
+   "fr": "pneus pluie neufs",
+   "en": "new wet tyres",
+   "ou": "pitmenu.py:98",
+   "texte": "nieuwe regenbanden"
+  },
+  {
+   "fr": "pneus neufs {0}",
+   "en": "new {0} tyres",
+   "ou": "pitmenu.py:99",
+   "texte": "nieuwe banden {0}"
+  },
+  {
+   "fr": "On n'est pas en course, pas de stratégie d'arrêt pour l'instant.",
+   "en": "We're not racing, no pit strategy for now.",
+   "ou": "questions.py:102",
+   "texte": "We zijn niet aan het racen, nog geen pitstrategie."
+  },
+  {
+   "fr": "Je calcule encore, donne-moi un ou deux tours propres.",
+   "en": "Still calculating, give me one or two clean laps.",
+   "ou": "questions.py:104",
+   "texte": "Ik reken nog, geef me een of twee nette ronden."
+  },
+  {
+   "fr": "Pas besoin de rentrer, tu as de quoi finir.",
+   "en": "No need to pit, you can make the finish.",
+   "ou": "questions.py:106",
+   "texte": "Geen stop nodig, je haalt de finish."
+  },
+  {
+   "fr": "Aucun arrêt prévu, on va au bout comme ça.",
+   "en": "No stop planned, we go to the end like this.",
+   "ou": "questions.py:107",
+   "texte": "Geen stop gepland, we gaan zo door tot het einde."
+  },
+  {
+   "fr": "On ne s'arrête plus, tu as tout ce qu'il faut.",
+   "en": "No more stops, you've got everything you need.",
+   "ou": "questions.py:108",
+   "texte": "Geen stops meer, je hebt alles wat je nodig hebt."
+  },
+  {
+   "fr": "Box ce tour.",
+   "en": "Box this lap.",
+   "ou": "questions.py:110",
+   "texte": "Box deze ronde."
+  },
+  {
+   "fr": "Tu rentres à la fin du tour {0}, dans {1} tours.",
+   "en": "You pit at the end of lap {0}, in {1} laps.",
+   "ou": "questions.py:113",
+   "texte": "Je komt binnen aan het einde van ronde {0}, over {1} ronden."
+  },
+  {
+   "fr": "Box dans {0} tours, à la fin du tour {1}.",
+   "en": "Box in {0} laps, end of lap {1}.",
+   "ou": "questions.py:114",
+   "texte": "Box over {0} ronden, aan het einde van ronde {1}."
+  },
+  {
+   "fr": "On t'attend au stand dans {0} tours, tour {1}.",
+   "en": "We'll see you in the pits in {0} laps, lap {1}.",
+   "ou": "questions.py:115",
+   "texte": "We verwachten je in de pits over {0} ronden, ronde {1}."
+  },
+  {
+   "fr": "{0} litres",
+   "en": "{0} litres of fuel",
+   "ou": "questions.py:118",
+   "texte": "{0} liter brandstof"
+  },
+  {
+   "fr": "énergie à {0} %",
+   "en": "energy to {0} %",
+   "ou": "questions.py:120",
+   "texte": "energie naar {0} %"
+  },
+  {
+   "fr": "retour en slicks",
+   "en": "back to slicks",
+   "ou": "questions.py:124",
+   "texte": "terug naar slicks"
+  },
+  {
+   "fr": " Il faudra {0} arrêts au total.",
+   "en": " {0} stops in total.",
+   "ou": "questions.py:129",
+   "texte": " In totaal {0} stops."
+  },
+  {
+   "fr": "{0} On met {1}.",
+   "en": "{0} {1}.",
+   "ou": "questions.py:130",
+   "texte": "{0} We gaan voor {1}."
+  },
+  {
+   "fr": "Crevaison {0} ! Rentre au stand doucement.",
+   "en": "Puncture {0}! Bring it in slowly.",
+   "ou": "questions.py:140",
+   "texte": "Lekke band {0}! Kom rustig binnen."
+  },
+  {
+   "fr": "Ils sont comme neufs",
+   "en": "They're like new",
+   "ou": "questions.py:145",
+   "texte": "Ze zijn zo goed als nieuw"
+  },
+  {
+   "fr": "Ils sont en bon état",
+   "en": "They're in good shape",
+   "ou": "questions.py:146",
+   "texte": "Ze zijn in goede staat"
+  },
+  {
+   "fr": "Ils commencent à s'user",
+   "en": "They're starting to wear",
+   "ou": "questions.py:147",
+   "texte": "Ze beginnen te slijten"
+  },
+  {
+   "fr": "Ils sont bien usés",
+   "en": "They're well worn",
+   "ou": "questions.py:148",
+   "texte": "Ze zijn behoorlijk versleten"
+  },
+  {
+   "fr": "Ils sont très usés, pense à les changer",
+   "en": "They're very worn, think about changing them",
+   "ou": "questions.py:149",
+   "texte": "Ze zijn erg versleten, denk aan wisselen"
+  },
+  {
+   "fr": "{0} : il reste {1} % de gomme en moyenne, le plus usé c'est l'{2} à {3} %.",
+   "en": "{0}: {1} % of rubber left on average, the most worn is the {2} at {3} %.",
+   "ou": "questions.py:150",
+   "texte": "{0}: gemiddeld nog {1} % rubber, het meest versleten is {2} met {3} %."
+  },
+  {
+   "fr": "Encore environ {0} tours avant qu'ils soient vraiment usés.",
+   "en": "About {0} more laps before they're really worn.",
+   "ou": "questions.py:153",
+   "texte": "Nog ongeveer {0} ronden voor ze echt versleten zijn."
+  },
+  {
+   "fr": "Ils sont encore froids : {0} degrés.",
+   "en": "They're still cold: {0} degrees.",
+   "ou": "questions.py:163",
+   "texte": "Ze zijn nog koud: {0} graden."
+  },
+  {
+   "fr": "Ils sont trop chauds : {0} degrés, l'idéal est vers {1}. Ménage-les un peu.",
+   "en": "They're too hot: {0} degrees, ideal is around {1}. Look after them a bit.",
+   "ou": "questions.py:165",
+   "texte": "Ze zijn te warm: {0} graden, ideaal is rond de {1}. Spaar ze een beetje."
+  },
+  {
+   "fr": "Bonne température, {0} degrés.",
+   "en": "Good temperature, {0} degrees.",
+   "ou": "questions.py:168",
+   "texte": "Goede temperatuur, {0} graden."
+  },
+  {
+   "fr": "Températures autour de {0} degrés.",
+   "en": "Temperatures around {0} degrees.",
+   "ou": "questions.py:170",
+   "texte": "Temperaturen rond de {0} graden."
+  },
+  {
+   "fr": "l'avant",
+   "en": "the fronts",
+   "ou": "questions.py:173",
+   "texte": "de voorbanden"
+  },
+  {
+   "fr": "l'arrière",
+   "en": "the rears",
+   "ou": "questions.py:173",
+   "texte": "de achterbanden"
+  },
+  {
+   "fr": "{0} chauffe plus, de {1} degrés.",
+   "en": "{0} {2} running {1} degrees hotter.",
+   "ou": "questions.py:174",
+   "texte": "{0} worden warmer, {1} graden."
+  },
+  {
+   "fr": "Je n'arrive pas à lire tes pneus pour l'instant.",
+   "en": "I can't read your tyres right now.",
+   "ou": "questions.py:177",
+   "texte": "Ik kan je banden nu niet uitlezen."
+  },
+  {
+   "fr": "Oui, {0} revient de {1} par tour. Il est à {2}, sur toi dans {3} tour{4} à ce rythme.",
+   "en": "Yes, {0} is closing by {1} a lap. He's {2} back, on you in {3} lap{4} at this pace.",
+   "ou": "questions.py:208",
+   "texte": "Ja, {0} komt {1} per ronde dichterbij. Hij zit op {2}, bij dit tempo over {3} {4?ronden:ronde} op je."
+  },
+  {
+   "fr": "Non, tu creuses : tu prends {0} par tour à {1}, il est à {2}.",
+   "en": "No, you're pulling away: {0} a lap on {1}, he's {2} back.",
+   "ou": "questions.py:211",
+   "texte": "Nee, je loopt weg: {0} per ronde op {1}, hij zit op {2}."
+  },
+  {
+   "fr": "Oui, tu reprends {0} par tour à {1}. Il est à {2}, dans ses roues dans {3} tour{4}.",
+   "en": "Yes, you're gaining {0} a lap on {1}. He's {2} ahead, on his gearbox in {3} lap{4}.",
+   "ou": "questions.py:216",
+   "texte": "Ja, je wint {0} per ronde op {1}. Hij zit {2} voor je, over {3} {4?ronden:ronde} zit je op zijn versnellingsbak."
+  },
+  {
+   "fr": "Non, {0} s'éloigne de {1} par tour, il est à {2}.",
+   "en": "No, {0} is pulling away by {1} a lap, {2} ahead.",
+   "ou": "questions.py:219",
+   "texte": "Nee, {0} loopt {1} per ronde weg, {2} voor je."
+  },
+  {
+   "fr": "L'écart est stable avec {0}, à {1}.",
+   "en": "The gap to {0} is stable, {1}.",
+   "ou": "questions.py:221",
+   "texte": "Het gat met {0} is stabiel, {1}."
+  },
+  {
+   "fr": "La voiture devant est à {0}.",
+   "en": "The car ahead is {0} up the road.",
+   "ou": "questions.py:224",
+   "texte": "De auto voor je zit op {0}."
+  },
+  {
+   "fr": "Tu es en tête, il n'y a personne devant toi.",
+   "en": "You're leading, there's nobody ahead.",
+   "ou": "questions.py:226",
+   "texte": "Je ligt aan de leiding, er zit niemand voor je."
+  },
+  {
+   "fr": "Je n'arrive pas à lire l'écart avec la voiture devant pour l'instant.",
+   "en": "I can't read the gap to the car ahead right now.",
+   "ou": "questions.py:227",
+   "texte": "Ik kan het gat met de auto voor je nu niet uitlezen."
+  },
+  {
+   "fr": "La voiture derrière est à {0}.",
+   "en": "The car behind is {0} back.",
+   "ou": "questions.py:230",
+   "texte": "De auto achter je zit op {0}."
+  },
+  {
+   "fr": "Personne derrière toi pour l'instant.",
+   "en": "Nobody behind you right now.",
+   "ou": "questions.py:231",
+   "texte": "Er zit nu niemand achter je."
+  },
+  {
+   "fr": "{0} devant",
+   "en": "{0} ahead",
+   "ou": "questions.py:234",
+   "texte": "{0} voor"
+  },
+  {
+   "fr": "tu es en tête",
+   "en": "you're leading",
+   "ou": "questions.py:236",
+   "texte": "je ligt aan de leiding"
+  },
+  {
+   "fr": "{0} derrière",
+   "en": "{0} behind",
+   "ou": "questions.py:238",
+   "texte": "{0} achter"
+  },
+  {
+   "fr": "Personne de proche autour de toi.",
+   "en": "Nobody close around you.",
+   "ou": "questions.py:240",
+   "texte": "Niemand in de buurt."
+  },
+  {
+   "fr": "Écart : ",
+   "en": "Gaps: ",
+   "ou": "questions.py:241",
+   "texte": "Gaten:"
+  },
+  {
+   "fr": "Tu m'as demandé de ne pas réparer : au prochain arrêt, on ne touche pas à la voiture.",
+   "en": "You asked for no repairs: we won't touch the car at the next stop.",
+   "ou": "questions.py:246",
+   "texte": "Je wilde geen reparatie: bij de volgende stop blijven we van de auto af."
+  },
+  {
+   "fr": "Oui, la voiture est abîmée : je prévois les réparations au prochain arrêt. Dis « pas de réparation » si tu n'en veux pas.",
+   "en": "Yes, the car is damaged: I'm planning repairs at the next stop. Say \"no repairs\" if you don't want them.",
+   "ou": "questions.py:249",
+   "texte": "Ja, de auto is beschadigd: ik plan reparaties bij de volgende stop. Zeg „geen reparatie\" als je dat niet wilt."
+  },
+  {
+   "fr": "Pas de dégâts importants, pas besoin de réparer.",
+   "en": "No significant damage, no need for repairs.",
+   "ou": "questions.py:251",
+   "texte": "Geen noemenswaardige schade, geen reparatie nodig."
+  },
+  {
+   "fr": "La voiture va bien, rien à réparer.",
+   "en": "The car looks fine, nothing to fix.",
+   "ou": "questions.py:252",
+   "texte": "De auto ziet er goed uit, niets te repareren."
+  },
+  {
+   "fr": "Je ne vois pas de dégâts sérieux, on ne répare pas.",
+   "en": "No serious damage on my side, no repairs needed.",
+   "ou": "questions.py:253",
+   "texte": "Ik zie geen ernstige schade, we repareren niet."
+  },
+  {
+   "fr": "Tu es P{0}",
+   "en": "You're P{0}",
+   "ou": "questions.py:257",
+   "texte": "Je ligt P{0}"
+  },
+  {
+   "fr": "Tu roules P{0}",
+   "en": "You're running P{0}",
+   "ou": "questions.py:257",
+   "texte": "Je rijdt op P{0}"
+  },
+  {
+   "fr": "Position : P{0}",
+   "en": "Position: P{0}",
+   "ou": "questions.py:258",
+   "texte": "Positie: P{0}"
+  },
+  {
+   "fr": ", P{0} dans ta catégorie",
+   "en": ", P{0} in class",
+   "ou": "questions.py:260",
+   "texte": ", P{0} in je klasse"
+  },
+  {
+   "fr": "{0} : pas de pluie prévue.",
+   "en": "{0}: no rain expected.",
+   "ou": "questions.py:275",
+   "texte": "{0}: geen regen verwacht."
+  },
+  {
+   "fr": " maintenant",
+   "en": " now",
+   "ou": "questions.py:281",
+   "texte": " nu"
+  },
+  {
+   "fr": " dans environ {0} minutes",
+   "en": " in about {0} minutes",
+   "ou": "questions.py:281",
+   "texte": " over ongeveer {0} minuten"
+  },
+  {
+   "fr": "{0} : risque de pluie {1} %{2}{3}.",
+   "en": "{0}: {1} % chance of rain{2}{3}.",
+   "ou": "questions.py:285",
+   "texte": "{0}: {1} % kans op regen{2}{3}."
+  },
+  {
+   "fr": "Pour cette séance",
+   "en": "This session",
+   "ou": "questions.py:302",
+   "texte": "Voor deze sessie"
+  },
+  {
+   "fr": "Pour les qualifs",
+   "en": "Qualifying",
+   "ou": "questions.py:304",
+   "texte": "Voor de kwalificatie"
+  },
+  {
+   "fr": "Pour la course",
+   "en": "The race",
+   "ou": "questions.py:306",
+   "texte": "Voor de race"
+  },
+  {
+   "fr": "{0}. Air {1} degrés, piste {2}.",
+   "en": "{0}. Air {1} degrees, track {2}.",
+   "ou": "questions.py:311",
+   "texte": "{0}. Lucht {1} graden, baan {2}."
+  },
+  {
+   "fr": " Je te conseille les pneus pluie au prochain arrêt.",
+   "en": " I'd go to wets at the next stop.",
+   "ou": "questions.py:318",
+   "texte": " Ik zou bij de volgende stop regenbanden nemen."
+  },
+  {
+   "fr": "pas encore de temps",
+   "en": "no time yet",
+   "ou": "questions.py:32",
+   "texte": "nog geen tijd"
+  },
+  {
+   "fr": " On peut repasser en slicks.",
+   "en": " We can go back to slicks.",
+   "ou": "questions.py:320",
+   "texte": " We kunnen terug naar slicks."
+  },
+  {
+   "fr": "Dernier tour en {0}, meilleur en {1}.",
+   "en": "Last lap {0}, best {1}.",
+   "ou": "questions.py:325",
+   "texte": "Laatste ronde {0}, beste {1}."
+  },
+  {
+   "fr": "{0} minute {1}",
+   "en": "{0} minute {1}",
+   "ou": "questions.py:34",
+   "texte": "{0} minuut {1}"
+  },
+  {
+   "fr": "Je ne peux pas régler le stand pour l'instant.",
+   "en": "I can't set the pit menu right now.",
+   "ou": "questions.py:358",
+   "texte": "Ik kan het pitmenu nu niet instellen."
+  },
+  {
+   "fr": "Je règle le menu des stands.",
+   "en": "Setting up the pit menu.",
+   "ou": "questions.py:360",
+   "texte": "Ik stel het pitmenu in."
+  },
+  {
+   "fr": "Analyse du comportement indisponible.",
+   "en": "Handling analysis unavailable.",
+   "ou": "questions.py:364",
+   "texte": "Analyse van het rijgedrag niet beschikbaar."
+  },
+  {
+   "fr": "Pas de chronos enregistrés.",
+   "en": "No lap times recorded.",
+   "ou": "questions.py:368",
+   "texte": "Geen rondetijden opgenomen."
+  },
+  {
+   "fr": "Il me faut un tour complet et valide pour comparer les secteurs.",
+   "en": "I need a full valid lap to compare sectors.",
+   "ou": "questions.py:373",
+   "texte": "Ik heb een volledige geldige ronde nodig om sectoren te vergelijken."
+  },
+  {
+   "fr": "Pas de voiture à comparer autour de toi pour l'instant.",
+   "en": "No car to compare with around you yet.",
+   "ou": "questions.py:375",
+   "texte": "Nog geen auto in de buurt om mee te vergelijken."
+  },
+  {
+   "fr": "Pas de comparaison possible avec la voiture devant pour l'instant.",
+   "en": "Can't compare with the car ahead yet.",
+   "ou": "questions.py:380",
+   "texte": "Nog geen vergelijking met de auto voor je mogelijk."
+  },
+  {
+   "fr": "Pas de comparaison possible avec la voiture derrière pour l'instant.",
+   "en": "Can't compare with the car behind yet.",
+   "ou": "questions.py:385",
+   "texte": "Nog geen vergelijking met de auto achter je mogelijk."
+  },
+  {
+   "fr": "Aucune pénalité en cours.",
+   "en": "No penalty pending.",
+   "ou": "questions.py:390",
+   "texte": "Geen openstaande straf."
+  },
+  {
+   "fr": "Tu as {0} pénalité{1} à purger aux stands. Regarde l'écran pour le type.",
+   "en": "You have {0} penalt{1} to serve in the pits. Check the screen for the type.",
+   "ou": "questions.py:391",
+   "texte": "Je hebt {0} {1?straffen:straf} uit te zitten in de pits. Kijk op het scherm voor het soort."
+  },
+  {
+   "fr": "Je n'ai pas la température des freins.",
+   "en": "No brake temperature data.",
+   "ou": "questions.py:414",
+   "texte": "Ik heb geen remtemperatuur."
+  },
+  {
+   "fr": "Hypercar",
+   "en": "LMP2",
+   "ou": "questions.py:415",
+   "texte": ""
+  },
+  {
+   "fr": "Freins à {0} degrés devant et {1} derrière.",
+   "en": "Brakes at {0} degrees front and {1} rear.",
+   "ou": "questions.py:418",
+   "texte": "Remmen op {0} graden voor en {1} achter."
+  },
+  {
+   "fr": "L'{0} chauffe beaucoup, ménage les gros freinages ou ouvre les écopes.",
+   "en": "The {0} is very hot, ease the big stops or open the ducts.",
+   "ou": "questions.py:423",
+   "texte": "{0} wordt erg heet, spaar de zware rempunten of zet de koeling open."
+  },
+  {
+   "fr": "Ils sont froids, appuie fort sur les premiers freinages.",
+   "en": "They're cold, brake hard to warm them.",
+   "ou": "questions.py:426",
+   "texte": "Ze zijn koud, rem stevig om ze op te warmen."
+  },
+  {
+   "fr": "C'est dans la bonne fenêtre.",
+   "en": "That's in the window.",
+   "ou": "questions.py:428",
+   "texte": "Dat zit in het juiste venster."
+  },
+  {
+   "fr": "Limites de piste : {0} avertissement{1} sur {2}.",
+   "en": "Track limits: {0} warning{1} of {2}.",
+   "ou": "questions.py:438",
+   "texte": "Track limits: {0} {1?waarschuwingen:waarschuwing} van {2}."
+  },
+  {
+   "fr": "Encore un et c'est la pénalité, reste bien dans les lignes.",
+   "en": "One more and it's a penalty, stay inside the lines.",
+   "ou": "questions.py:441",
+   "texte": "Nog één en het is een straf, blijf binnen de lijnen."
+  },
+  {
+   "fr": "Ce tour est invalidé, il ne comptera pas.",
+   "en": "This lap is invalidated, it won't count.",
+   "ou": "questions.py:447",
+   "texte": "Deze ronde is ongeldig, hij telt niet."
+  },
+  {
+   "fr": "Pour l'instant ton tour est valide.",
+   "en": "Your lap is valid so far.",
+   "ou": "questions.py:448",
+   "texte": "Je ronde is tot nu toe geldig."
+  },
+  {
+   "fr": "Il te reste {0} litres.",
+   "en": "You have {0} litres left.",
+   "ou": "questions.py:45",
+   "texte": "Je hebt nog {0} liter."
+  },
+  {
+   "fr": " {0} est à {1}.",
+   "en": " {0} is {1} back.",
+   "ou": "questions.py:455",
+   "texte": " {0} zit {1} achter je."
+  },
+  {
+   "fr": "C'est toi qui mènes ta catégorie !",
+   "en": "You're leading your class!",
+   "ou": "questions.py:457",
+   "texte": "Je leidt je klasse!"
+  },
+  {
+   "fr": "{0} litres dans le réservoir.",
+   "en": "{0} litres in the tank.",
+   "ou": "questions.py:46",
+   "texte": "{0} liter in de tank."
+  },
+  {
+   "fr": "Je ne vois pas encore le leader de ta catégorie.",
+   "en": "I can't see your class leader yet.",
+   "ou": "questions.py:460",
+   "texte": "Ik zie de leider van je klasse nog niet."
+  },
+  {
+   "fr": "le leader",
+   "en": "the leader",
+   "ou": "questions.py:461",
+   "texte": "de leider"
+  },
+  {
+   "fr": "Le leader, {0}, est aux stands. Tu es P{1}.",
+   "en": "The leader, {0}, is in the pits. You're P{1}.",
+   "ou": "questions.py:464",
+   "texte": "De leider, {0}, staat in de pits. Je ligt P{1}."
+  },
+  {
+   "fr": "Le leader de ta catégorie, c'est {0}, il a au moins un tour d'avance. Tu es P{1}.",
+   "en": "Your class leader is {0}, at least a lap ahead. You're P{1}.",
+   "ou": "questions.py:466",
+   "texte": "De leider van je klasse is {0}, minstens een ronde voor. Je ligt P{1}."
+  },
+  {
+   "fr": "Le leader de ta catégorie, c'est {0}, {1} devant toi. Tu es P{2}.",
+   "en": "Your class leader is {0}, {1} ahead. You're P{2}.",
+   "ou": "questions.py:468",
+   "texte": "De leider van je klasse is {0}, {1} voor je. Je ligt P{2}."
+  },
+  {
+   "fr": "Côté essence, tu as {0} litres.",
+   "en": "Fuel-wise, you've got {0} litres.",
+   "ou": "questions.py:47",
+   "texte": "Qua brandstof heb je {0} liter."
+  },
+  {
+   "fr": "Personne devant toi dans ta catégorie, tu es en tête !",
+   "en": "Nobody ahead in your class, you're leading!",
+   "ou": "questions.py:474",
+   "texte": "Niemand voor je in je klasse, je ligt aan de leiding!"
+  },
+  {
+   "fr": "Personne derrière toi dans ta catégorie.",
+   "en": "Nobody behind you in your class.",
+   "ou": "questions.py:475",
+   "texte": "Niemand achter je in je klasse."
+  },
+  {
+   "fr": "un pilote",
+   "en": "a driver",
+   "ou": "questions.py:476",
+   "texte": "een rijder"
+  },
+  {
+   "fr": "devant",
+   "en": "ahead",
+   "ou": "questions.py:477",
+   "texte": "voor je"
+  },
+  {
+   "fr": "derrière",
+   "en": "behind",
+   "ou": "questions.py:477",
+   "texte": "achter je"
+  },
+  {
+   "fr": "{0}, c'est {1}",
+   "en": "{0} is {1}",
+   "ou": "questions.py:478",
+   "texte": "{0} rijdt {1}"
+  },
+  {
+   "fr": ", en {0}",
+   "en": ", in the {0}",
+   "ou": "questions.py:480",
+   "texte": ", in de {0}"
+  },
+  {
+   "fr": ", il est aux stands.",
+   "en": ", he's in the pits.",
+   "ou": "questions.py:482",
+   "texte": ", hij staat in de pits."
+  },
+  {
+   "fr": ", à {0}",
+   "en": ", {0} away",
+   "ou": "questions.py:484",
+   "texte": ", op {0}"
+  },
+  {
+   "fr": "Tu n'as pas encore fait d'arrêt.",
+   "en": "You haven't pitted yet.",
+   "ou": "questions.py:499",
+   "texte": "Je bent nog niet in de pits geweest."
+  },
+  {
+   "fr": "Tu consommes {0} par tour, ça fait {1} tours d'essence.",
+   "en": "You're using {0} a lap, that's {1} laps of fuel.",
+   "ou": "questions.py:50",
+   "texte": "Je verbruikt {0} per ronde, dat is genoeg voor {1} ronden."
+  },
+  {
+   "fr": "Tu as fait {0} arrêt{1}.",
+   "en": "You've made {0} stop{1}.",
+   "ou": "questions.py:500",
+   "texte": "Je hebt {0} {1?stops:stop} gemaakt."
+  },
+  {
+   "fr": "Neutralisation en cours, safety car ou full course yellow. Pas de dépassement, respecte la vitesse.",
+   "en": "Neutralisation, safety car or full course yellow. No overtaking, watch your speed.",
+   "ou": "questions.py:505",
+   "texte": "Neutralisatie, safety car of full course yellow. Niet inhalen, let op je snelheid."
+  },
+  {
+   "fr": "La course est arrêtée, drapeau rouge.",
+   "en": "The race is stopped, red flag.",
+   "ou": "questions.py:508",
+   "texte": "De race is stilgelegd, rode vlag."
+  },
+  {
+   "fr": "Drapeau à damier, c'est le dernier tour pour toi.",
+   "en": "Chequered flag is out, last lap for you.",
+   "ou": "questions.py:510",
+   "texte": "De geblokte vlag is uit, laatste ronde voor jou."
+  },
+  {
+   "fr": "Drapeau jaune sur la piste, prudence et pas de dépassement dans la zone.",
+   "en": "Yellow flag on track, careful and no overtaking in the zone.",
+   "ou": "questions.py:512",
+   "texte": "Gele vlag op de baan, voorzichtig en niet inhalen in die zone."
+  },
+  {
+   "fr": "Piste libre, drapeau vert.",
+   "en": "Track is clear, green flag.",
+   "ou": "questions.py:514",
+   "texte": "Baan vrij, groene vlag."
+  },
+  {
+   "fr": "À {0} litres par tour, tu tiens {1} tours.",
+   "en": "At {0} litres a lap, you can do {1} laps.",
+   "ou": "questions.py:52",
+   "texte": "Bij {0} liter per ronde kun je {1} ronden rijden."
+  },
+  {
+   "fr": "{0} voitures dans ta catégorie, {1} en tout.",
+   "en": "{0} cars in your class, {1} overall.",
+   "ou": "questions.py:520",
+   "texte": "{0} auto's in je klasse, {1} in totaal."
+  },
+  {
+   "fr": "{0} voitures en piste.",
+   "en": "{0} cars on track.",
+   "ou": "questions.py:522",
+   "texte": "{0} auto's op de baan."
+  },
+  {
+   "fr": "Je ne vois pas encore les autres voitures.",
+   "en": "I can't see the other cars yet.",
+   "ou": "questions.py:523",
+   "texte": "Ik zie de andere auto's nog niet."
+  },
+  {
+   "fr": "Ça te laisse {0} tours, avec une conso de {1} par tour.",
+   "en": "That gives you {0} laps, using {1} a lap.",
+   "ou": "questions.py:53",
+   "texte": "Dat is genoeg voor {0} ronden, bij {1} per ronde."
+  },
+  {
+   "fr": "Il me faut un tour chrono de toi et des autres pour comparer.",
+   "en": "I need lap times from you and the others to compare.",
+   "ou": "questions.py:530",
+   "texte": "Ik heb rondetijden van jou en de anderen nodig om te vergelijken."
+  },
+  {
+   "fr": "Tu as le meilleur tour de ta catégorie, {0}. Le plus proche est à {1} seconde.",
+   "en": "You have the fastest lap in your class, {0}. Next best is {1} s slower.",
+   "ou": "questions.py:535",
+   "texte": "Je hebt de snelste ronde van je klasse, {0}. De volgende is {1} s langzamer."
+  },
+  {
+   "fr": "Ton meilleur tour est le {0}e sur {1} de ta catégorie. Le plus rapide, c'est {2} en {3}, {4} seconde devant toi.",
+   "en": "Your best lap ranks {0} of {1} in class. Fastest is {2} with {3}, {4} s quicker.",
+   "ou": "questions.py:537",
+   "texte": "Je beste ronde staat {0} van {1} in je klasse. De snelste is {2} met {3}, {4} s sneller."
+  },
+  {
+   "fr": " J'ai besoin d'encore un ou deux tours propres pour calculer la conso.",
+   "en": " I need one or two more clean laps to work out consumption.",
+   "ou": "questions.py:55",
+   "texte": " Ik heb nog een of twee nette ronden nodig om het verbruik te berekenen."
+  },
+  {
+   "fr": "\\bsilence\\b|tais toi|taise|chut\\b|moins de message|arrete de parler|mode calme|plus que l urgent|be quiet|shut up|quiet mode|less talk|only urgent",
+   "en": "quiet",
+   "ou": "questions.py:561",
+   "texte": ""
+  },
+  {
+   "fr": "reparle|repale|reparler|parle a nouveau|tu peux parler|fin du silence|toutes les infos|remets? (la radio|les annonces)|talk again|you can talk|all info|unmute|resume radio",
+   "en": "talk",
+   "ou": "questions.py:562",
+   "texte": ""
+  },
+  {
+   "fr": "repete|repeter|redis|redire|j ai pas (compris|entendu)|pardon\\b|t as dit quoi|qu est ce que tu as dit|repeat|say again|come again|what did you say",
+   "en": "repeat",
+   "ou": "questions.py:563",
+   "texte": ""
+  },
+  {
+   "fr": "Bien reçu, je ne te dis plus que l'urgent. Dis « reparle » pour tout réentendre.",
+   "en": "Copy, urgent calls only from now on. Say \"talk again\" to hear everything.",
+   "ou": "questions.py:575",
+   "texte": "Begrepen, vanaf nu alleen dringende meldingen. Zeg „praat weer\" om alles te horen."
+  },
+  {
+   "fr": "C'est noté, je te redonne toutes les infos.",
+   "en": "Copy, back to full info.",
+   "ou": "questions.py:579",
+   "texte": "Begrepen, weer alle info."
+  },
+  {
+   "fr": "C'est bon pour aller au bout.",
+   "en": "That's enough to the finish.",
+   "ou": "questions.py:58",
+   "texte": "Dat is genoeg tot de finish."
+  },
+  {
+   "fr": "Je répète : {0}",
+   "en": "I repeat: {0}",
+   "ou": "questions.py:582",
+   "texte": "Ik herhaal: {0}"
+  },
+  {
+   "fr": "Je n'ai encore rien dit.",
+   "en": "I haven't said anything yet.",
+   "ou": "questions.py:582",
+   "texte": "Ik heb nog niets gezegd."
+  },
+  {
+   "fr": "Oui, je t'entends, cinq sur cinq.",
+   "en": "Yes, I hear you loud and clear.",
+   "ou": "questions.py:589",
+   "texte": "Ja, ik hoor je luid en duidelijk."
+  },
+  {
+   "fr": "Largement de quoi finir.",
+   "en": "Plenty to make the finish.",
+   "ou": "questions.py:59",
+   "texte": "Ruim genoeg om de finish te halen."
+  },
+  {
+   "fr": "Cinq sur cinq, je te reçois parfaitement.",
+   "en": "Five by five, reading you perfectly.",
+   "ou": "questions.py:590",
+   "texte": "Vijf uit vijf, ik ontvang je perfect."
+  },
+  {
+   "fr": "Reçu fort et clair.",
+   "en": "Loud and clear.",
+   "ou": "questions.py:591",
+   "texte": "Luid en duidelijk."
+  },
+  {
+   "fr": "Je suis là, je t'écoute.",
+   "en": "I'm here, go ahead.",
+   "ou": "questions.py:595",
+   "texte": "Ik ben er, zeg het maar."
+  },
+  {
+   "fr": "Toujours là, vas-y.",
+   "en": "Still here, go ahead.",
+   "ou": "questions.py:595",
+   "texte": "Nog steeds hier, zeg het maar."
+  },
+  {
+   "fr": "Présent, je t'écoute.",
+   "en": "Here, listening.",
+   "ou": "questions.py:596",
+   "texte": "Hier, ik luister."
+  },
+  {
+   "fr": "Tu es tranquille jusqu'à l'arrivée.",
+   "en": "You're fine all the way to the flag.",
+   "ou": "questions.py:60",
+   "texte": "Je haalt de vlag zonder problemen."
+  },
+  {
+   "fr": "Salut ! Je suis là, {0} quand tu veux.",
+   "en": "Hi! I'm here, ready when you are.",
+   "ou": "questions.py:601",
+   "texte": "Hoi! Ik ben er, klaar wanneer jij dat bent."
+  },
+  {
+   "fr": "Avec plaisir.",
+   "en": "You're welcome.",
+   "ou": "questions.py:605",
+   "texte": "Graag gedaan."
+  },
+  {
+   "fr": "De rien, c'est mon boulot.",
+   "en": "No problem, that's my job.",
+   "ou": "questions.py:605",
+   "texte": "Geen probleem, dat is mijn werk."
+  },
+  {
+   "fr": "Pas de quoi, on fait équipe.",
+   "en": "Anytime, we're a team.",
+   "ou": "questions.py:606",
+   "texte": "Altijd, we zijn een team."
+  },
+  {
+   "fr": "Je suis {0}, ton {1} de course.",
+   "en": "I'm {0}, your race engineer.",
+   "ou": "questions.py:612",
+   "texte": "Ik ben {0}, je race-engineer."
+  },
+  {
+   "fr": "Demande-moi l'essence, l'énergie, les pneus, le stand, les écarts, ta position, la météo, tes chronos, tes secteurs ou le comportement de la voiture. Je peux aussi régler le menu des stands.",
+   "en": "Ask me about fuel, energy, tyres, pit stop, gaps, position, weather, lap times, sectors or car handling. I can also set up the pit menu.",
+   "ou": "questions.py:617",
+   "texte": "Vraag me naar brandstof, energie, banden, pitstop, gaten, positie, weer, rondetijden, sectoren of het rijgedrag. Ik kan ook het pitmenu instellen."
+  },
+  {
+   "fr": " Si tu économises {0} litre par tour, on évite l'arrêt.",
+   "en": " Save {0} litres a lap and we skip the stop.",
+   "ou": "questions.py:62",
+   "texte": " Spaar {0} liter per ronde en we slaan de stop over."
+  },
+  {
+   "fr": "Ça va très bien, merci ! {0} pour la course.",
+   "en": "All good, thanks! Ready for the race.",
+   "ou": "questions.py:634",
+   "texte": "Alles goed, bedankt! Klaar voor de race."
+  },
+  {
+   "fr": "Les blagues, c'est après le drapeau à damier. Reste concentré !",
+   "en": "Jokes are for after the chequered flag. Stay focused!",
+   "ou": "questions.py:643",
+   "texte": "Grapjes zijn voor na de geblokte vlag. Blijf gefocust!"
+  },
+  {
+   "fr": "Pas d'énergie virtuelle sur cette voiture, c'est l'essence qui compte.",
+   "en": "No virtual energy on this car, fuel is what counts.",
+   "ou": "questions.py:69",
+   "texte": "Geen virtuele energie op deze auto, brandstof is wat telt."
+  },
+  {
+   "fr": "Je ne peux pas changer les réparations pour l'instant.",
+   "en": "I can't change the repairs right now.",
+   "ou": "questions.py:699",
+   "texte": "Ik kan de reparaties nu niet aanpassen."
+  },
+  {
+   "fr": "C'est noté, on ne répare pas au prochain arrêt.",
+   "en": "Copy, no repairs at the next stop.",
+   "ou": "questions.py:703",
+   "texte": "Begrepen, geen reparatie bij de volgende stop."
+  },
+  {
+   "fr": "C'est noté, on répare seulement la carrosserie au prochain arrêt.",
+   "en": "Copy, bodywork only at the next stop.",
+   "ou": "questions.py:705",
+   "texte": "Begrepen, alleen de carrosserie bij de volgende stop."
+  },
+  {
+   "fr": "C'est noté, on répare tout au prochain arrêt.",
+   "en": "Copy, full repairs at the next stop.",
+   "ou": "questions.py:707",
+   "texte": "Begrepen, alles repareren bij de volgende stop."
+  },
+  {
+   "fr": " Je corrige le menu des stands.",
+   "en": " Updating the pit menu.",
+   "ou": "questions.py:709",
+   "texte": " Ik pas het pitmenu aan."
+  },
+  {
+   "fr": "Énergie à {0} %.",
+   "en": "Energy at {0} %.",
+   "ou": "questions.py:71",
+   "texte": "Energie op {0} %."
+  },
+  {
+   "fr": "Je ne peux pas changer l'essence pour l'instant.",
+   "en": "I can't change the fuel right now.",
+   "ou": "questions.py:724",
+   "texte": "Ik kan de brandstof nu niet aanpassen."
+  },
+  {
+   "fr": "C'est noté, pas d'essence au prochain arrêt.",
+   "en": "Copy, no fuel at the next stop.",
+   "ou": "questions.py:726",
+   "texte": "Begrepen, geen brandstof bij de volgende stop."
+  },
+  {
+   "fr": " {0} % par tour, soit {1} tours.",
+   "en": " {0} % a lap, so {1} laps.",
+   "ou": "questions.py:73",
+   "texte": " {0} % per ronde, dus {1} ronden."
+  },
+  {
+   "fr": "les quatre pneus",
+   "en": "all four tyres",
+   "ou": "questions.py:738",
+   "texte": "alle vier banden"
+  },
+  {
+   "fr": "les deux pneus avant",
+   "en": "the two fronts",
+   "ou": "questions.py:739",
+   "texte": "de twee voorbanden"
+  },
+  {
+   "fr": "les deux pneus arrière",
+   "en": "the two rears",
+   "ou": "questions.py:739",
+   "texte": "de twee achterbanden"
+  },
+  {
+   "fr": "les deux pneus gauches",
+   "en": "the two left tyres",
+   "ou": "questions.py:740",
+   "texte": "de twee linkerbanden"
+  },
+  {
+   "fr": "les deux pneus droits",
+   "en": "the two right tyres",
+   "ou": "questions.py:740",
+   "texte": "de twee rechterbanden"
+  },
+  {
+   "fr": "le pneu {0}",
+   "en": "the {0} tyre",
+   "ou": "questions.py:744",
+   "texte": "de band {0}"
+  },
+  {
+   "fr": "les pneus ",
+   "en": "the ",
+   "ou": "questions.py:746",
+   "texte": "de banden"
+  },
+  {
+   "fr": "Je ne peux pas changer les pneus pour l'instant.",
+   "en": "I can't change the tyres right now.",
+   "ou": "questions.py:787",
+   "texte": "Ik kan de banden nu niet aanpassen."
+  },
+  {
+   "fr": "C'est noté, on garde les pneus au prochain arrêt.",
+   "en": "Copy, we keep the tyres at the next stop.",
+   "ou": "questions.py:790",
+   "texte": "Begrepen, de banden blijven erop bij de volgende stop."
+  },
+  {
+   "fr": "C'est noté, on change {0} au prochain arrêt.",
+   "en": "Copy, we change {0} at the next stop.",
+   "ou": "questions.py:793",
+   "texte": "Begrepen, we wisselen {0} bij de volgende stop."
+  },
+  {
+   "fr": "un",
+   "en": "premier",
+   "ou": "questions.py:809",
+   "texte": ""
+  },
+  {
+   "fr": "Il reste {0} tours.",
+   "en": "{0} laps to go.",
+   "ou": "questions.py:82",
+   "texte": "Nog {0} ronden te gaan."
+  },
+  {
+   "fr": "Encore {0} tours.",
+   "en": "{0} more laps.",
+   "ou": "questions.py:82",
+   "texte": "Nog {0} ronden."
+  },
+  {
+   "fr": "P{0}, c'est toi !",
+   "en": "P{0}, that's you!",
+   "ou": "questions.py:826",
+   "texte": "P{0}, dat ben jij!"
+  },
+  {
+   "fr": "Plus que {0} tours avant l'arrivée.",
+   "en": "Just {0} laps to the finish.",
+   "ou": "questions.py:83",
+   "texte": "Nog maar {0} ronden tot de finish."
+  },
+  {
+   "fr": "Je ne vois pas de P{0} dans ta catégorie.",
+   "en": "I can't see a P{0} in your class.",
+   "ou": "questions.py:830",
+   "texte": "Ik zie geen P{0} in je klasse."
+  },
+  {
+   "fr": "ce pilote",
+   "en": "that driver",
+   "ou": "questions.py:831",
+   "texte": "die rijder"
+  },
+  {
+   "fr": "{0} est aux stands.",
+   "en": "{0} is in the pits.",
+   "ou": "questions.py:836",
+   "texte": "{0} staat in de pits."
+  },
+  {
+   "fr": "{0} est {1} {2} toi.",
+   "en": "{0} is {1} {2} you.",
+   "ou": "questions.py:838",
+   "texte": "{0} zit {1} {2}."
+  },
+  {
+   "fr": "{0} n'est pas dans le même tour que toi.",
+   "en": "{0} isn't on the same lap as you.",
+   "ou": "questions.py:841",
+   "texte": "{0} zit niet in dezelfde ronde als jij."
+  },
+  {
+   "fr": "Vous tournez dans le même rythme.",
+   "en": "You're lapping at the same pace.",
+   "ou": "questions.py:846",
+   "texte": "Jullie rijden hetzelfde tempo."
+  },
+  {
+   "fr": "Il tourne {0} {1} plus vite que toi au dernier tour.",
+   "en": "He was {0} s quicker than you last lap.",
+   "ou": "questions.py:850",
+   "texte": "Hij was vorige ronde {0} s sneller dan jij."
+  },
+  {
+   "fr": "Il tourne {0} {1} moins vite que toi au dernier tour.",
+   "en": "He was {0} s slower than you last lap.",
+   "ou": "questions.py:853",
+   "texte": "Hij was vorige ronde {0} s langzamer dan jij."
+  },
+  {
+   "fr": "Il te prend le plus de temps dans le secteur {0}, {1} seconde.",
+   "en": "He's quickest against you in sector {0}, {1} s.",
+   "ou": "questions.py:861",
+   "texte": "Hij pakt de meeste tijd op je in sector {0}, {1} s."
+  },
+  {
+   "fr": "Tu es plus rapide que lui dans les trois secteurs.",
+   "en": "You're quicker than him in all three sectors.",
+   "ou": "questions.py:864",
+   "texte": "Je bent sneller dan hij in alle drie de sectoren."
+  },
+  {
+   "fr": "Je n'ai rien entendu, répète.",
+   "en": "I didn't hear anything, say again.",
+   "ou": "questions.py:876",
+   "texte": "Ik heb niets gehoord, herhaal."
+  },
+  {
+   "fr": "C'est le dernier tour, donne tout !",
+   "en": "This is the last lap, give it everything!",
+   "ou": "questions.py:88",
+   "texte": "Dit is de laatste ronde, geef alles!"
+  },
+  {
+   "fr": "C'est noté, ",
+   "en": "Copy, ",
+   "ou": "questions.py:888",
+   "texte": "Begrepen,"
+  },
+  {
+   "fr": "Et ",
+   "en": "And ",
+   "ou": "questions.py:888",
+   "texte": "En"
+  },
+  {
+   "fr": " au prochain arrêt",
+   "en": " at the next stop",
+   "ou": "questions.py:890",
+   "texte": " bij de volgende stop"
+  },
+  {
+   "fr": "Je n'ai pas encore de données, monte dans la voiture.",
+   "en": "No data yet, get in the car.",
+   "ou": "questions.py:899",
+   "texte": "Nog geen gegevens, stap in de auto."
+  },
+  {
+   "fr": "Moins d'une minute, encore environ {0} tours.",
+   "en": "Under a minute, about {0} laps to go.",
+   "ou": "questions.py:90",
+   "texte": "Minder dan een minuut, nog ongeveer {0} ronden."
+  },
+  {
+   "fr": "Je t'entends, mais je n'ai pas compris. Une fois en piste, demande-moi l'essence, les pneus, le stand, les écarts, la position ou la météo.",
+   "en": "I hear you, but I didn't get that. Once you're on track, ask me about fuel, tyres, pit stop, gaps, position or weather.",
+   "ou": "questions.py:902",
+   "texte": "Ik hoor je, maar dat begreep ik niet. Zodra je op de baan bent, vraag me naar brandstof, banden, pitstop, gaten, positie of weer."
+  },
+  {
+   "fr": "Moins d'une minute.",
+   "en": "Under a minute to go.",
+   "ou": "questions.py:91",
+   "texte": "Minder dan een minuut te gaan."
+  },
+  {
+   "fr": "Il reste {0} minute{1}",
+   "en": "{0} minute{1} to go",
+   "ou": "questions.py:93",
+   "texte": "Nog {0} {1?minuten:minuut}"
+  },
+  {
+   "fr": "Je n'ai pas compris ta question. Pose-la-moi en une phrase courte.",
+   "en": "I didn't get your question. Ask me in one short sentence.",
+   "ou": "questions.py:935",
+   "texte": "Ik begreep je vraag niet. Stel hem in een korte zin."
+  },
+  {
+   "fr": "Pas sûr d'avoir compris, voilà le point. ",
+   "en": "Not sure I got that, here's the update. ",
+   "ou": "questions.py:938",
+   "texte": "Niet zeker of ik het begreep, hier is het overzicht."
+  },
+  {
+   "fr": ", environ {0} tours.",
+   "en": ", about {0} laps.",
+   "ou": "questions.py:94",
+   "texte": ", ongeveer {0} ronden."
+  },
+  {
+   "fr": "Tu as bouclé {0} tours.",
+   "en": "You've done {0} laps.",
+   "ou": "questions.py:96",
+   "texte": "Je hebt {0} ronden gereden."
+  },
+  {
+   "fr": "aucun",
+   "en": "none",
+   "ou": "radio.py:128",
+   "texte": "geen"
+  },
+  {
+   "fr": "clavier · {0}",
+   "en": "keyboard · {0}",
+   "ou": "radio.py:130",
+   "texte": "toetsenbord · {0}"
+  },
+  {
+   "fr": "{0} · bouton {1}",
+   "en": "{0} · button {1}",
+   "ou": "radio.py:131",
+   "texte": "{0} · knop {1}"
+  },
+  {
+   "fr": "Reconnaissance vocale indisponible : {0}",
+   "en": "Speech recognition unavailable: {0}",
+   "ou": "radio.py:191",
+   "texte": "Spraakherkenning niet beschikbaar: {0}"
+  },
+  {
+   "fr": "Aucun micro trouvé. Branche ton micro ou ton casque, puis choisis-le dans la liste.",
+   "en": "No microphone found. Plug in your mic or headset, then pick it in the list.",
+   "ou": "radio.py:263",
+   "texte": "Geen microfoon gevonden. Sluit je microfoon of headset aan en kies hem in de lijst."
+  },
+  {
+   "fr": "Le micro n'enregistre que du silence. Choisis ton micro dans la liste ci-dessous, et vérifie Paramètres Windows > Confidentialité > Microphone (« Autoriser les applications de bureau »).",
+   "en": "The mic is only recording silence. Pick your mic in the list below, and check Windows Settings > Privacy > Microphone (\"Let desktop apps access your microphone\").",
+   "ou": "radio.py:290",
+   "texte": "De microfoon neemt alleen stilte op. Kies je microfoon in de lijst hieronder en controleer Windows-instellingen > Privacy > Microfoon („Bureaublad-apps toegang geven tot je microfoon\")."
+  },
+  {
+   "fr": "La reconnaissance vocale se charge encore…",
+   "en": "Speech recognition is still loading…",
+   "ou": "radio.py:300",
+   "texte": "De spraakherkenning laadt nog…"
+  },
+  {
+   "fr": "Ce bouton sert déjà à la radio : choisis-en un autre.",
+   "en": "That button is already your radio button: pick another one.",
+   "ou": "radio.py:416",
+   "texte": "Die knop is al je radioknop: kies een andere."
+  },
+  {
+   "fr": "prêt",
+   "en": "erreur",
+   "ou": "radio.py:493",
+   "texte": ""
+  },
+  {
+   "fr": "Micro indisponible : {0}. Choisis ton micro dans la liste ci-dessous, et vérifie Paramètres Windows > Son > Entrée (micro par défaut) et Confidentialité > Microphone.",
+   "en": "Microphone unavailable: {0}. Pick your mic in the list below, and check Windows Settings > Sound > Input (default mic) and Privacy > Microphone.",
+   "ou": "radio.py:506",
+   "texte": "Microfoon niet beschikbaar: {0}. Kies je microfoon in de lijst hieronder en controleer Windows-instellingen > Geluid > Invoer (standaardmicrofoon) en Privacy > Microfoon."
+  },
+  {
+   "fr": "Tu roules avec le setup d'usine : il n'existe pas en fichier, donc Apex ne peut pas le modifier. Dans le garage de LMU, clique sur Enregistrer et donne-lui un nom (par exemple « Base »). Apex le détectera tout seul et pourra créer le setup modifié.",
+   "en": "You're driving the default setup: it isn't saved as a file, so Apex can't change it. In the LMU garage, click Save and give it a name (for example \"Base\"). Apex will pick it up automatically and can then create the modified setup.",
+   "ou": "setups.py:143",
+   "texte": "Je rijdt met de standaardsetup: die bestaat niet als bestand, dus Apex kan hem niet aanpassen. Klik in de LMU-garage op Opslaan en geef hem een naam (bijvoorbeeld „Base\"). Apex pikt hem dan automatisch op en kan de aangepaste setup maken."
+  },
+  {
+   "fr": "Qualif",
+   "en": "Course",
+   "ou": "setups.py:303",
+   "texte": ""
+  },
+  {
+   "fr": "réglage fait en piste",
+   "en": "set on track",
+   "ou": "setups.py:470",
+   "texte": "ingesteld op de baan"
+  },
+  {
+   "fr": "{0} ({1} % à l'avant)",
+   "en": "{0} ({1} % front)",
+   "ou": "setups.py:491",
+   "texte": "{0} ({1} % voor)"
+  },
+  {
+   "fr": "abs",
+   "en": "AntilockBrakeSystemMapSetting",
+   "ou": "setups.py:492",
+   "texte": ""
+  },
+  {
+   "fr": "{0} (sur {1})",
+   "en": "{0} ({1})",
+   "ou": "setups.py:500",
+   "texte": "{0} (op {1})"
+  },
+  {
+   "fr": "Essence au départ",
+   "en": "Starting fuel",
+   "ou": "setups.py:526",
+   "texte": "Startbrandstof"
+  },
+  {
+   "fr": "essence pour la course : ",
+   "en": "fuel for the race: ",
+   "ou": "setups.py:528",
+   "texte": "brandstof voor de race:"
+  },
+  {
+   "fr": "Choisis d'abord le setup que tu utilises.",
+   "en": "First choose the setup you're using.",
+   "ou": "setups.py:537",
+   "texte": "Kies eerst de setup die je gebruikt."
+  },
+  {
+   "fr": "Fichier introuvable.",
+   "en": "File not found.",
+   "ou": "setups.py:540",
+   "texte": "Bestand niet gevonden."
+  },
+  {
+   "fr": "GENERAL",
+   "en": "FuelSetting",
+   "ou": "setups.py:550",
+   "texte": ""
+  },
+  {
+   "fr": "températures du pneu {0}",
+   "en": "{0} tyre temperatures",
+   "ou": "setups.py:606",
+   "texte": "Bandentemperaturen {0}"
+  },
+  {
+   "fr": "fond plat qui touche",
+   "en": "floor bottoming",
+   "ou": "setups.py:606",
+   "texte": "de bodem raakt de grond"
+  },
+  {
+   "fr": "camber_less",
+   "en": "camber_more",
+   "ou": "setups.py:607",
+   "texte": ""
+  },
+  {
+   "fr": "pressure_down",
+   "en": "pressure_up",
+   "ou": "setups.py:611",
+   "texte": ""
+  },
+  {
+   "fr": "Rien à créer.",
+   "en": "Nothing to create.",
+   "ou": "setups.py:627",
+   "texte": "Niets om te maken."
+  },
+  {
+   "fr": "Un fichier « {0} » existe déjà et n'a pas été créé par Apex Radio : je n'y touche pas.",
+   "en": "A file \"{0}\" already exists and wasn't created by Apex Radio: I won't touch it.",
+   "ou": "setups.py:633",
+   "texte": "Er bestaat al een bestand „{0}\" dat niet door Apex Radio is gemaakt: daar blijf ik af."
+  },
+  {
+   "fr": "Windows refuse l'écriture dans le dossier des setups. Lance Apex Radio en administrateur, ou déplace LMU hors de Program Files.",
+   "en": "Windows won't allow writing to the setups folder. Run Apex Radio as administrator, or move LMU out of Program Files.",
+   "ou": "setups.py:656",
+   "texte": "Windows staat schrijven in de setupmap niet toe. Start Apex Radio als administrator of verplaats LMU uit Program Files."
+  },
+  {
+   "fr": "Version introuvable.",
+   "en": "Version not found.",
+   "ou": "setups.py:676",
+   "texte": "Versie niet gevonden."
+  },
+  {
+   "fr": "« {0} » n'a pas été créé par Apex Radio : je n'y touche pas.",
+   "en": "\"{0}\" wasn't created by Apex Radio: I won't touch it.",
+   "ou": "setups.py:680",
+   "texte": "„{0}\" is niet door Apex Radio gemaakt: daar blijf ik af."
+  },
+  {
+   "fr": "Windows refuse l'écriture dans le dossier des setups.",
+   "en": "Windows won't allow writing to the setups folder.",
+   "ou": "setups.py:686",
+   "texte": "Windows staat schrijven in de setupmap niet toe."
+  },
+  {
+   "fr": "Aileron avant",
+   "en": "Front wing",
+   "ou": "setups.py:69",
+   "texte": "Voorvleugel"
+  },
+  {
+   "fr": "Aileron arrière",
+   "en": "Rear wing",
+   "ou": "setups.py:69",
+   "texte": "Achtervleugel"
+  },
+  {
+   "fr": "Différentiel (accélération)",
+   "en": "Diff (power)",
+   "ou": "setups.py:69",
+   "texte": "Differentieel (gas)"
+  },
+  {
+   "fr": "Différentiel (lever de pied)",
+   "en": "Diff (coast)",
+   "ou": "setups.py:69",
+   "texte": "Differentieel (gas los)"
+  },
+  {
+   "fr": "Carrossage",
+   "en": "Camber",
+   "ou": "setups.py:69",
+   "texte": "Camber"
+  },
+  {
+   "fr": "Pression",
+   "en": "Pressure",
+   "ou": "setups.py:69",
+   "texte": "Druk"
+  },
+  {
+   "fr": "Hauteur de caisse",
+   "en": "Ride height",
+   "ou": "setups.py:69",
+   "texte": "Rijhoogte"
+  },
+  {
+   "fr": "AVG",
+   "en": "FL",
+   "ou": "setups.py:76",
+   "texte": "LV"
+  },
+  {
+   "fr": "AVD",
+   "en": "FR",
+   "ou": "setups.py:76",
+   "texte": "RV"
+  },
+  {
+   "fr": "ARG",
+   "en": "RL",
+   "ou": "setups.py:76",
+   "texte": "LA"
+  },
+  {
+   "fr": "ARD",
+   "en": "RR",
+   "ou": "setups.py:76",
+   "texte": "RA"
+  },
+  {
+   "fr": "C'est juste en essence, mais on ne s'arrête pas. Économise environ {0} litre par tour.",
+   "en": "Fuel is tight, but we're not stopping. Save about {0} litres a lap.",
+   "ou": "strategy.py:223",
+   "texte": "De brandstof is krap, maar we stoppen niet. Spaar ongeveer {0} liter per ronde."
+  },
+  {
+   "fr": "On va au bout sans s'arrêter, mais il faut gratter {0} litre par tour. Lève un peu plus tôt avant les freinages.",
+   "en": "We go to the end without stopping, but find {0} litres a lap. Lift a bit earlier before braking.",
+   "ou": "strategy.py:225",
+   "texte": "We gaan zonder stop tot het einde, maar je moet {0} liter per ronde sparen. Ga iets eerder van het gas voor het remmen."
+  },
+  {
+   "fr": "Pas d'arrêt : un passage au stand coûterait trop cher. Gagne juste {0} litre par tour.",
+   "en": "No stop: pitting would cost too much. Just save {0} litres a lap.",
+   "ou": "strategy.py:227",
+   "texte": "Geen stop: binnenkomen kost te veel. Spaar gewoon {0} liter per ronde."
+  },
+  {
+   "fr": "Tu as ce qu'il faut pour aller au bout, pas besoin de rentrer.",
+   "en": "You've got enough to make the finish, no need to pit.",
+   "ou": "strategy.py:233",
+   "texte": "Je hebt genoeg tot de finish, geen stop nodig."
+  },
+  {
+   "fr": "Bonne nouvelle : l'essence suffit jusqu'à l'arrivée, on ne s'arrête plus.",
+   "en": "Good news: fuel's fine to the end, no more stops.",
+   "ou": "strategy.py:234",
+   "texte": "Goed nieuws: de brandstof is genoeg tot het einde, geen stops meer."
+  },
+  {
+   "fr": "C'est bon pour l'essence, on va au bout sans rentrer.",
+   "en": "Fuel is good, we go to the end without pitting.",
+   "ou": "strategy.py:235",
+   "texte": "De brandstof is goed, we gaan zonder stop tot het einde."
+  },
+  {
+   "fr": "Plus d'arrêt prévu, tu as assez pour finir. Concentre-toi sur le pilotage.",
+   "en": "No more stops, you've got enough to finish. Just drive.",
+   "ou": "strategy.py:236",
+   "texte": "Geen stops meer, je hebt genoeg om te finishen. Gewoon rijden."
+  },
+  {
+   "fr": "Il manque un peu d'essence pour finir. Si tu économises {0} litre par tour, on évite l'arrêt.",
+   "en": "We're a little short on fuel. Save {0} litres a lap and we can skip the stop.",
+   "ou": "strategy.py:246",
+   "texte": "We komen een beetje brandstof tekort. Spaar {0} liter per ronde en we slaan de stop over."
+  },
+  {
+   "fr": "On est juste en essence. Gagne {0} litre par tour et on va au bout sans s'arrêter.",
+   "en": "Fuel is tight. Find {0} litres a lap and we go to the end without stopping.",
+   "ou": "strategy.py:248",
+   "texte": "De brandstof is krap. Spaar {0} liter per ronde en we rijden zonder stop door."
+  },
+  {
+   "fr": "Mode économie : {0} litre par tour à gagner, lève un peu plus tôt avant les freinages, et l'arrêt saute.",
+   "en": "Fuel save mode: {0} litres a lap, lift a bit earlier before braking, and we skip the stop.",
+   "ou": "strategy.py:250",
+   "texte": "Spaarmodus: {0} liter per ronde, iets eerder van het gas voor het remmen, en we slaan de stop over."
+  },
+  {
+   "fr": "Si tu veux éviter l'arrêt, il faut {0} litre de moins par tour. Lift and coast, c'est jouable.",
+   "en": "To skip the stop we need {0} litres less a lap. Lift and coast, it's doable.",
+   "ou": "strategy.py:252",
+   "texte": "Om de stop over te slaan hebben we {0} liter minder per ronde nodig. Lift and coast, dat is te doen."
+  },
+  {
+   "fr": "{0} litre{1}",
+   "en": "{0} litre{1} of fuel",
+   "ou": "strategy.py:292",
+   "texte": "{0} liter brandstof"
+  },
+  {
+   "fr": "et on répare tout",
+   "en": "and full repairs",
+   "ou": "strategy.py:308",
+   "texte": "en alles repareren"
+  },
+  {
+   "fr": "et on répare la carrosserie",
+   "en": "and we fix the bodywork",
+   "ou": "strategy.py:308",
+   "texte": "en de carrosserie repareren"
+  },
+  {
+   "fr": "et on ne répare pas",
+   "en": "and no repairs",
+   "ou": "strategy.py:310",
+   "texte": "en geen reparatie"
+  },
+  {
+   "fr": "Box, box ce tour ! On met {0}.",
+   "en": "Box, box this lap! {0}.",
+   "ou": "strategy.py:320",
+   "texte": "Box, box deze ronde! We gaan voor {0}."
+  },
+  {
+   "fr": "Tu rentres à la fin de ce tour, box box ! On met {0}.",
+   "en": "Pit at the end of this lap, box box! {0}.",
+   "ou": "strategy.py:321",
+   "texte": "Aan het einde van deze ronde naar binnen, box box! We gaan voor {0}."
+  },
+  {
+   "fr": "Box box box ! L'équipe est prête : {0}.",
+   "en": "Box box box! The crew is ready: {0}.",
+   "ou": "strategy.py:322",
+   "texte": "Box box box! De crew staat klaar: {0}."
+  },
+  {
+   "fr": "Ce tour, c'est le bon : box, box ! Au programme, {0}.",
+   "en": "This is the lap: box, box! On the list, {0}.",
+   "ou": "strategy.py:323",
+   "texte": "Dit is de ronde: box, box! Op het programma: {0}."
+  },
+  {
+   "fr": "Box cette fois ! Attention à la limite de vitesse dans la voie des stands. On met {0}.",
+   "en": "Box this time! Watch the pit speed limit. {0}.",
+   "ou": "strategy.py:324",
+   "texte": "Deze keer box! Let op de snelheidslimiet in de pitstraat. We gaan voor {0}."
+  },
+  {
+   "fr": "Arrêt dans {0} tours. Prévu : {1}.",
+   "en": "Pit stop in {0} laps. Plan: {1}.",
+   "ou": "strategy.py:329",
+   "texte": "Pitstop over {0} ronden. Plan: {1}."
+  },
+  {
+   "fr": "On s'arrête dans {0} tours. L'équipe prépare {1}.",
+   "en": "We stop in {0} laps. The crew is getting {1} ready.",
+   "ou": "strategy.py:330",
+   "texte": "We stoppen over {0} ronden. De crew maakt {1} klaar."
+  },
+  {
+   "fr": "Encore {0} tours et on rentre. Au menu : {1}.",
+   "en": "{0} more laps and we pit. On the menu: {1}.",
+   "ou": "strategy.py:331",
+   "texte": "Nog {0} ronden en we komen binnen. Op het menu: {1}."
+  },
+  {
+   "fr": "Prépare-toi, box dans {0} tours. On met {1}.",
+   "en": "Get ready, box in {0} laps. {1}.",
+   "ou": "strategy.py:332",
+   "texte": "Maak je klaar, box over {0} ronden. We gaan voor {1}."
+  },
+  {
+   "fr": "l'énergie",
+   "en": "energy",
+   "ou": "strategy.py:334",
+   "texte": "de energie"
+  },
+  {
+   "fr": "l'essence",
+   "en": "fuel",
+   "ou": "strategy.py:334",
+   "texte": "de brandstof"
+  },
+  {
+   "fr": "{0} arrêt{1}",
+   "en": "{0} stop{1}",
+   "ou": "strategy.py:336",
+   "texte": "{0} {1?stops:stop}"
+  },
+  {
+   "fr": "Conso {0} litres par tour. Autonomie {1} tours, c'est {2} qui limite. Il faudra {3}.",
+   "en": "Using {0} litres a lap. Range {1} laps, {2} is the limit. We need {3}.",
+   "ou": "strategy.py:338",
+   "texte": "Verbruik {0} liter per ronde. Bereik {1} ronden, {2} is de beperkende factor. We hebben {3} nodig."
+  },
+  {
+   "fr": "Point stratégie : tu consommes {0} litres au tour, ça fait {1} tours d'autonomie. On part sur {2}, c'est {3} qui décide.",
+   "en": "Strategy update: {0} litres a lap, that's {1} laps of range. We're on {2}, {3} decides.",
+   "ou": "strategy.py:340",
+   "texte": "Strategie-update: {0} liter per ronde, dat is {1} ronden bereik. We gaan voor {2}, {3} beslist."
+  },
+  {
+   "fr": "Le plan : {0}. Tu tiens {1} tours avec ce que tu as, à {2} litres par tour. C'est {3} qui limite.",
+   "en": "The plan: {0}. You can do {1} laps on what you've got, at {2} litres a lap. {3} is the limit.",
+   "ou": "strategy.py:342",
+   "texte": "Het plan: {0}. Met wat je hebt kun je {1} ronden rijden, bij {2} liter per ronde. {3} is de beperkende factor."
+  },
+  {
+   "fr": "Il commence à pleuvoir, attention à l'adhérence.",
+   "en": "It's starting to rain, watch the grip.",
+   "ou": "strategy.py:352",
+   "texte": "Het begint te regenen, let op de grip."
+  },
+  {
+   "fr": "Quelques gouttes sur le circuit, sois doux sur les gaz.",
+   "en": "Some drops on track, be gentle on the throttle.",
+   "ou": "strategy.py:353",
+   "texte": "Een paar druppels op de baan, rustig met het gas."
+  },
+  {
+   "fr": "La pluie arrive. Freine un peu plus tôt et méfie-toi des vibreurs.",
+   "en": "Rain's coming. Brake a bit earlier and watch the kerbs.",
+   "ou": "strategy.py:354",
+   "texte": "De regen komt eraan. Rem iets eerder en let op de kerbs."
+  },
+  {
+   "fr": "Ça commence à mouiller, garde de la marge.",
+   "en": "It's getting wet out there, keep some margin.",
+   "ou": "strategy.py:355",
+   "texte": "Het wordt nat daarbuiten, hou wat marge."
+  },
+  {
+   "fr": "Pluie {0} %",
+   "en": "Rain {0} %",
+   "ou": "strategy.py:361",
+   "texte": "Regen {0} %"
+  },
+  {
+   "fr": "Sec",
+   "en": "Dry",
+   "ou": "strategy.py:361",
+   "texte": "Droog"
+  },
+  {
+   "fr": "Piste mouillée — pneus pluie conseillés",
+   "en": "Wet track — wets recommended",
+   "ou": "strategy.py:365",
+   "texte": "Natte baan — regenbanden aanbevolen"
+  },
+  {
+   "fr": "La piste est bien mouillée, on passe en pneus pluie au prochain arrêt.",
+   "en": "Track's properly wet, we go to wets at the next stop.",
+   "ou": "strategy.py:367",
+   "texte": "De baan is echt nat, we gaan bij de volgende stop naar regenbanden."
+  },
+  {
+   "fr": "Ça devient trop mouillé pour les slicks. Pneus pluie au prochain arrêt.",
+   "en": "Too wet for slicks now. Wets at the next stop.",
+   "ou": "strategy.py:368",
+   "texte": "Te nat voor slicks. Regenbanden bij de volgende stop."
+  },
+  {
+   "fr": "On change de plan : pneus pluie au prochain passage au stand.",
+   "en": "Change of plan: wets at the next stop.",
+   "ou": "strategy.py:369",
+   "texte": "Plan gewijzigd: regenbanden bij de volgende stop."
+  },
+  {
+   "fr": "Piste sèche — repasser en slicks",
+   "en": "Drying track — back to slicks",
+   "ou": "strategy.py:372",
+   "texte": "De baan droogt op — terug naar slicks"
+  },
+  {
+   "fr": "La piste sèche, on repasse en slicks au prochain arrêt.",
+   "en": "Track is drying, back to slicks at the next stop.",
+   "ou": "strategy.py:374",
+   "texte": "De baan droogt op, bij de volgende stop terug naar slicks."
+  },
+  {
+   "fr": "Une trajectoire sèche apparaît. Slicks au prochain arrêt.",
+   "en": "A dry line is coming. Slicks at the next stop.",
+   "ou": "strategy.py:375",
+   "texte": "Er komt een droge lijn. Slicks bij de volgende stop."
+  },
+  {
+   "fr": "Ça sèche bien. On remet les slicks au prochain passage.",
+   "en": "It's drying nicely. Slicks back on at the next stop.",
+   "ou": "strategy.py:376",
+   "texte": "Het droogt mooi op. Bij de volgende stop weer slicks erop."
+  },
+  {
+   "fr": "Pluie {0} %, piste humide à {1} %",
+   "en": "Rain {0} %, track {1} % wet",
+   "ou": "strategy.py:378",
+   "texte": "Regen {0} %, baan {1} % nat"
+  },
+  {
+   "fr": "Drapeau jaune ! Ralentis.",
+   "en": "Full course yellow! Slow down.",
+   "ou": "strategy.py:386",
+   "texte": "Full course yellow! Rustig aan."
+  },
+  {
+   "fr": "Drapeau jaune sur tout le circuit, on ralentit !",
+   "en": "Full course yellow, slow it down!",
+   "ou": "strategy.py:387",
+   "texte": "Full course yellow, gas eraf!"
+  },
+  {
+   "fr": "Drapeau jaune ! Pas de dépassement, on lève le pied.",
+   "en": "Full course yellow! No overtaking, ease off.",
+   "ou": "strategy.py:388",
+   "texte": "Full course yellow! Niet inhalen, gas terug."
+  },
+  {
+   "fr": "Fin du drapeau jaune, la course reprend.",
+   "en": "Yellow's over, we're racing again.",
+   "ou": "strategy.py:391",
+   "texte": "Geel is voorbij, we racen weer."
+  },
+  {
+   "fr": "Vert, vert, vert ! On repart à l'attaque.",
+   "en": "Green, green, green! Back to racing.",
+   "ou": "strategy.py:392",
+   "texte": "Groen, groen, groen! We racen weer."
+  },
+  {
+   "fr": "C'est reparti, la piste est libre. Remets les pneus en température.",
+   "en": "We're back on, track is clear. Get the heat back in the tyres.",
+   "ou": "strategy.py:393",
+   "texte": "We gaan weer, baan vrij. Breng de banden weer op temperatuur."
+  },
+  {
+   "fr": "Drapeau à damier ! Bien joué.",
+   "en": "Chequered flag! Well done.",
+   "ou": "strategy.py:397",
+   "texte": "Geblokte vlag! Goed gedaan."
+  },
+  {
+   "fr": "Et c'est le drapeau à damier ! Superbe course, merci pour le boulot.",
+   "en": "And that's the chequered flag! Great race, thanks for the work.",
+   "ou": "strategy.py:398",
+   "texte": "En daar is de geblokte vlag! Sterke race, bedankt voor het werk."
+  },
+  {
+   "fr": "Damier ! Course terminée, bravo. Tour de décélération tranquille.",
+   "en": "Chequered flag! Race done, well driven. Easy on the cool-down lap.",
+   "ou": "strategy.py:399",
+   "texte": "Geblokte vlag! Race voorbij, goed gereden. Rustig aan in de uitloopronde."
+  },
+  {
+   "fr": "C'est fini ! Beau travail, toute l'équipe est contente.",
+   "en": "That's it! Great job, the whole team is happy.",
+   "ou": "strategy.py:400",
+   "texte": "Dat was het! Sterk werk, het hele team is blij."
+  },
+  {
+   "fr": "ahead",
+   "en": "behind",
+   "ou": "tactics.py:111",
+   "texte": ""
+  },
+  {
+   "fr": "Tu es à {0} seconde de {1}. Si tu rentres un tour avant lui avec des pneus neufs, tu peux le passer à l'undercut. Demande-moi de préparer le stand si tu veux y aller.",
+   "en": "You're {0} seconds behind {1}. Pit a lap before him on new tyres and you can undercut him. Ask me to prepare the pit stop if you want to go for it.",
+   "ou": "tactics.py:129",
+   "texte": "Je zit {0} seconden achter {1}. Kom een ronde eerder dan hij binnen op nieuwe banden en je kunt hem undercutten. Vraag me de stop voor te bereiden als je ervoor wilt gaan."
+  },
+  {
+   "fr": "{0} rentre au stand. Toi tu vas au bout sans t'arrêter : tu prends sa place.",
+   "en": "{0} is pitting. You go to the end without stopping: you take his place.",
+   "ou": "tactics.py:140",
+   "texte": "{0} komt naar binnen. Jij rijdt zonder stop door: je neemt zijn plek over."
+  },
+  {
+   "fr": "{0} rentre au stand. Pousse à fond les {1} prochains tours pendant qu'il ressort avec des pneus froids : tu peux le passer à l'overcut.",
+   "en": "{0} is pitting. Push hard for the next {1} laps while he's on cold tyres: you can overcut him.",
+   "ou": "tactics.py:144",
+   "texte": "{0} komt naar binnen. Push hard de komende {1} ronden terwijl hij op koude banden zit: je kunt hem overcutten."
+  },
+  {
+   "fr": "{0} rentre au stand en même temps que toi. Arrêt propre et sortie des stands nickel, tu peux ressortir devant.",
+   "en": "{0} is pitting at the same time. Clean stop and a tidy pit exit, you can come out ahead.",
+   "ou": "tactics.py:149",
+   "texte": "{0} komt tegelijk naar binnen. Nette stop en een strakke pituitgang, dan kun je ervoor uitkomen."
+  },
+  {
+   "fr": "La voiture derrière rentre au stand, elle était à {0} seconde. Rentre au prochain tour pour couvrir l'undercut, ou pousse fort ce tour-ci.",
+   "en": "The car behind is pitting, it was {0} seconds back. Box next lap to cover the undercut, or push hard this lap.",
+   "ou": "tactics.py:158",
+   "texte": "De auto achter je komt naar binnen, hij zat {0} seconden achter je. Kom volgende ronde binnen om de undercut af te dekken, of push hard deze ronde."
+  },
+  {
+   "fr": "Rythme moyen {0} sur tes 5 derniers tours",
+   "en": "Average pace {0} over your last 5 laps",
+   "ou": "tactics.py:190",
+   "texte": "Gemiddeld tempo {0} over je laatste 5 ronden"
+  },
+  {
+   "fr": "tu perds {0} par tour par rapport aux 5 d'avant",
+   "en": "you're losing {0} a lap versus the 5 before",
+   "ou": "tactics.py:195",
+   "texte": "je verliest {0} per ronde ten opzichte van de 5 ervoor"
+  },
+  {
+   "fr": ", les pneus sont à {0} %",
+   "en": ", tyres at {0} %",
+   "ou": "tactics.py:196",
+   "texte": ", banden op {0} %"
+  },
+  {
+   "fr": "tu as gagné {0} par tour, continue",
+   "en": "you've gained {0} a lap, keep it up",
+   "ou": "tactics.py:198",
+   "texte": "je hebt {0} per ronde gewonnen, ga zo door"
+  },
+  {
+   "fr": "rythme stable",
+   "en": "steady pace",
+   "ou": "tactics.py:200",
+   "texte": "stabiel tempo"
+  },
+  {
+   "fr": "un peu irrégulier, vise la régularité",
+   "en": "a bit inconsistent, aim for consistency",
+   "ou": "tactics.py:204",
+   "texte": "wat wisselvallig, ga voor constantheid"
+  },
+  {
+   "fr": "Fais au moins 3 tours propres sur ce circuit pour que je mesure ta conso.",
+   "en": "Do at least 3 clean laps on this track so I can measure your consumption.",
+   "ou": "tactics.py:263",
+   "texte": "Rij minstens 3 nette ronden op dit circuit zodat ik je verbruik kan meten."
+  },
+  {
+   "fr": "Indique la durée de la course pour calculer l'essence de départ.",
+   "en": "Enter the race length to work out the starting fuel.",
+   "ou": "tactics.py:271",
+   "texte": "Vul de raceduur in om de startbrandstof te berekenen."
+  },
+  {
+   "fr": "{0} tours × {1} L + 1 tour de marge",
+   "en": "{0} laps × {1} L + 1 lap margin",
+   "ou": "tactics.py:280",
+   "texte": "{0} ronden × {1} L + 1 ronde marge"
+  },
+  {
+   "fr": " — plus que le réservoir : plein, et un arrêt sera nécessaire",
+   "en": " — more than the tank: full tank, and a stop will be needed",
+   "ou": "tactics.py:281",
+   "texte": " — meer dan de tank: tank vol, en er is een stop nodig"
+  },
+  {
+   "fr": "Pénalité ! Il faut la purger aux stands, regarde l'écran pour savoir si c'est un drive-through ou un stop and go. Normalement tu as {0} tours.",
+   "en": "Penalty! You need to serve it in the pits, check the screen for drive-through or stop and go. You normally have {0} laps.",
+   "ou": "tactics.py:58",
+   "texte": "Straf! Je moet hem uitzitten in de pits, kijk op het scherm of het een drive-through of stop and go is. Normaal heb je {0} ronden."
+  },
+  {
+   "fr": "Pénalité purgée, c'est bon.",
+   "en": "Penalty served, all good.",
+   "ou": "tactics.py:65",
+   "texte": "Straf uitgezeten, alles goed."
+  },
+  {
+   "fr": "C'est bon, pénalité effacée. On repart.",
+   "en": "Done, penalty cleared. Let's go.",
+   "ou": "tactics.py:66",
+   "texte": "Klaar, straf afgehandeld. Gaan."
+  },
+  {
+   "fr": "Pénalité purgée, on n'en parle plus. Remets du rythme.",
+   "en": "Penalty served, forget it. Build the pace back up.",
+   "ou": "tactics.py:67",
+   "texte": "Straf uitgezeten, vergeet hem. Bouw het tempo weer op."
+  },
+  {
+   "fr": "Une pénalité purgée, il en reste {0}.",
+   "en": "One penalty served, {0} left.",
+   "ou": "tactics.py:69",
+   "texte": "Eén straf uitgezeten, nog {0} over."
+  },
+  {
+   "fr": "Dernier tour pour purger la pénalité, rentre au stand à la fin de ce tour !",
+   "en": "Last lap to serve the penalty, box at the end of this lap!",
+   "ou": "tactics.py:74",
+   "texte": "Laatste ronde om de straf uit te zitten, box aan het einde van deze ronde!"
+  },
+  {
+   "fr": "Pénalité toujours à purger, plus que {0} tours.",
+   "en": "Penalty still to serve, {0} laps left.",
+   "ou": "tactics.py:77",
+   "texte": "Straf nog open, nog {0} ronden."
+  },
+  {
+   "fr": "N'oublie pas la pénalité : il te reste {0} tours pour la faire.",
+   "en": "Don't forget the penalty: {0} laps left to serve it.",
+   "ou": "tactics.py:78",
+   "texte": "Vergeet de straf niet: je hebt nog {0} ronden om hem uit te zitten."
+  },
+  {
+   "fr": "Rappel, pénalité à purger dans les {0} prochains tours.",
+   "en": "Reminder, penalty to serve within {0} laps.",
+   "ou": "tactics.py:79",
+   "texte": "Herinnering: straf uitzitten binnen {0} ronden."
+  },
+  {
+   "fr": "Ici {0}, je prends la radio.",
+   "en": "{0} here, I've got the radio.",
+   "ou": "voice.py:76",
+   "texte": "Hier {0}, ik neem de radio over."
+  },
+  {
+   "fr": "Version d'Apex Radio installée",
+   "en": "Installed Apex Radio version",
+   "ou": "ui/index.html:203",
+   "texte": "Geïnstalleerde versie van Apex Radio"
+  },
+  {
+   "fr": "Démarre Le Mans Ultimate par Steam",
+   "en": "Starts Le Mans Ultimate through Steam",
+   "ou": "ui/index.html:207",
+   "texte": "Start Le Mans Ultimate via Steam"
+  },
+  {
+   "fr": "Radio : l'ingénieur parle ou se tait",
+   "en": "Radio: the engineer talks or stays silent",
+   "ou": "ui/index.html:209",
+   "texte": "Radio: de engineer praat of zwijgt"
+  },
+  {
+   "fr": "Silence",
+   "en": "Quiet",
+   "ou": "ui/index.html:210",
+   "texte": "Stil"
+  },
+  {
+   "fr": "Mode silence : l'ingénieur ne dit plus que l'urgent (box, drapeau jaune, spotter, réponses). Tu peux aussi dire « silence » ou « reparle » à la radio.",
+   "en": "Quiet mode: urgent calls only (box, yellow flag, spotter, answers). You can also say \"be quiet\" or \"talk again\" on the radio.",
+   "ou": "ui/index.html:210",
+   "texte": "Stille modus: alleen het dringende (box, gele vlag, spotter, antwoorden). Je kunt op de radio ook „stil\" of „praat weer\" zeggen."
+  },
+  {
+   "fr": "Spotter gauche / droite",
+   "en": "Left / right spotter",
+   "ou": "ui/index.html:211",
+   "texte": "Spotter links / rechts"
+  },
+  {
+   "fr": "ATELIER SETUP",
+   "en": "SETUP WORKSHOP",
+   "ou": "ui/index.html:213",
+   "texte": "SETUP-WERKPLAATS"
+  },
+  {
+   "fr": "Réglages",
+   "en": "Settings",
+   "ou": "ui/index.html:216",
+   "texte": "Instellingen"
+  },
+  {
+   "fr": "Affichage téléphone",
+   "en": "Phone view",
+   "ou": "ui/index.html:217",
+   "texte": "Telefoonweergave"
+  },
+  {
+   "fr": "Fermer Apex Radio",
+   "en": "Close Apex Radio",
+   "ou": "ui/index.html:218",
+   "texte": "Apex Radio sluiten"
+  },
+  {
+   "fr": "Premiers pas",
+   "en": "Getting started",
+   "ou": "ui/index.html:227",
+   "texte": "Aan de slag"
+  },
+  {
+   "fr": "Masquer",
+   "en": "Hide",
+   "ou": "ui/index.html:227",
+   "texte": "Verbergen"
+  },
+  {
+   "fr": "Consigne",
+   "en": "Call",
+   "ou": "ui/index.html:231",
+   "texte": "Melding"
+  },
+  {
+   "fr": "Poser une question au clavier…",
+   "en": "Type a question…",
+   "ou": "ui/index.html:245",
+   "texte": "Typ een vraag…"
+  },
+  {
+   "fr": "Lance Le Mans Ultimate et monte dans ta voiture : le tableau de bord s'affichera tout seul.",
+   "en": "Start Le Mans Ultimate and get in your car: the dashboard will show up by itself.",
+   "ou": "ui/index.html:251",
+   "texte": "Start Le Mans Ultimate en stap in je auto: het dashboard verschijnt vanzelf."
+  },
+  {
+   "fr": "Carburant",
+   "en": "Fuel",
+   "ou": "ui/index.html:267",
+   "texte": "Brandstof"
+  },
+  {
+   "fr": "Stand :",
+   "en": "Pit:",
+   "ou": "ui/index.html:279",
+   "texte": "Pit:"
+  },
+  {
+   "fr": "À LA DEMANDE",
+   "en": "ON REQUEST",
+   "ou": "ui/index.html:280",
+   "texte": "OP VERZOEK"
+  },
+  {
+   "fr": "RÉGLER",
+   "en": "SET",
+   "ou": "ui/index.html:281",
+   "texte": "INSTELLEN"
+  },
+  {
+   "fr": "Régler le menu des stands maintenant",
+   "en": "Set the pit menu now",
+   "ou": "ui/index.html:281",
+   "texte": "Pitmenu nu instellen"
+  },
+  {
+   "fr": "Pneus",
+   "en": "Tyres",
+   "ou": "ui/index.html:289",
+   "texte": "Banden"
+  },
+  {
+   "fr": "Avant usure critique",
+   "en": "Before critical wear",
+   "ou": "ui/index.html:291",
+   "texte": "Tot kritieke slijtage"
+  },
+  {
+   "fr": "Météo",
+   "en": "Weather",
+   "ou": "ui/index.html:294",
+   "texte": "Weer"
+  },
+  {
+   "fr": "Air / piste",
+   "en": "Air / track",
+   "ou": "ui/index.html:296",
+   "texte": "Lucht / baan"
+  },
+  {
+   "fr": "Piste mouillée",
+   "en": "Track wetness",
+   "ou": "ui/index.html:297",
+   "texte": "Natheid van de baan"
+  },
+  {
+   "fr": "Circuit",
+   "en": "Track",
+   "ou": "ui/index.html:302",
+   "texte": "Circuit"
+  },
+  {
+   "fr": "Carte du circuit avec les voitures en direct",
+   "en": "Live track map with all cars",
+   "ou": "ui/index.html:303",
+   "texte": "Live circuitkaart met alle auto's"
+  },
+  {
+   "fr": "Chronos · secteurs",
+   "en": "Lap times · sectors",
+   "ou": "ui/index.html:310",
+   "texte": "Rondetijden · sectoren"
+  },
+  {
+   "fr": "Dernier / meilleur",
+   "en": "Last / best",
+   "ou": "ui/index.html:310",
+   "texte": "Laatste / beste"
+  },
+  {
+   "fr": "idéal",
+   "en": "ideal",
+   "ou": "ui/index.html:310",
+   "texte": "ideaal"
+  },
+  {
+   "fr": "RÉGLAGES",
+   "en": "SETTINGS",
+   "ou": "ui/index.html:327",
+   "texte": "INSTELLINGEN"
+  },
+  {
+   "fr": "Voix",
+   "en": "Voice",
+   "ou": "ui/index.html:328",
+   "texte": "Stem"
+  },
+  {
+   "fr": "Voix de l'ingénieur",
+   "en": "Engineer's voice",
+   "ou": "ui/index.html:329",
+   "texte": "Stem van de engineer"
+  },
+  {
+   "fr": "Volume",
+   "en": "Volume",
+   "ou": "ui/index.html:330",
+   "texte": "Volume"
+  },
+  {
+   "fr": "Tester",
+   "en": "Test",
+   "ou": "ui/index.html:331",
+   "texte": "Testen"
+  },
+  {
+   "fr": "Test voix",
+   "en": "Voice test",
+   "ou": "ui/index.html:331",
+   "texte": "Stemtest"
+  },
+  {
+   "fr": "Tester la voix",
+   "en": "Test the voice",
+   "ou": "ui/index.html:331",
+   "texte": "Stem testen"
+  },
+  {
+   "fr": "Ingénieur",
+   "en": "Engineer",
+   "ou": "ui/index.html:333",
+   "texte": "Engineer"
+  },
+  {
+   "fr": "Encouragements",
+   "en": "Encouragement",
+   "ou": "ui/index.html:334",
+   "texte": "Aanmoediging"
+  },
+  {
+   "fr": "Ton de la radio",
+   "en": "Radio tone",
+   "ou": "ui/index.html:335",
+   "texte": "Toon van de radio"
+  },
+  {
+   "fr": "Radio et volant",
+   "en": "Radio & wheel",
+   "ou": "ui/index.html:337",
+   "texte": "Radio en stuur"
+  },
+  {
+   "fr": "Micro",
+   "en": "Mic",
+   "ou": "ui/index.html:338",
+   "texte": "Microfoon"
+  },
+  {
+   "fr": "Bouton radio",
+   "en": "Radio button",
+   "ou": "ui/index.html:339",
+   "texte": "Radioknop"
+  },
+  {
+   "fr": "CHOISIR LE BOUTON RADIO",
+   "en": "CHOOSE THE RADIO BUTTON",
+   "ou": "ui/index.html:340",
+   "texte": "KIES DE RADIOKNOP"
+  },
+  {
+   "fr": "Reconnaissance vocale",
+   "en": "Voice recognition",
+   "ou": "ui/index.html:341",
+   "texte": "Spraakherkenning"
+  },
+  {
+   "fr": "Précise : te comprend mieux, mais répond environ 2 fois moins vite (1,5 Go à télécharger la première fois).",
+   "en": "Precise: understands you better, but answers ~2× slower (1.5 GB download the first time).",
+   "ou": "ui/index.html:342",
+   "texte": "Nauwkeurig: begrijpt je beter, maar antwoordt ~2× trager (1,5 GB downloaden de eerste keer)."
+  },
+  {
+   "fr": "Utilisation du bouton",
+   "en": "Button use",
+   "ou": "ui/index.html:343",
+   "texte": "Knopgebruik"
+  },
+  {
+   "fr": "Raccourcis (volant / clavier)",
+   "en": "Shortcuts (wheel / keyboard)",
+   "ou": "ui/index.html:345",
+   "texte": "Sneltoetsen (stuur / toetsenbord)"
+  },
+  {
+   "fr": "Jeu",
+   "en": "Game",
+   "ou": "ui/index.html:349",
+   "texte": "Spel"
+  },
+  {
+   "fr": "Lancer Le Mans Ultimate à l'ouverture d'Apex",
+   "en": "Launch Le Mans Ultimate when Apex opens",
+   "ou": "ui/index.html:350",
+   "texte": "Le Mans Ultimate starten bij het openen van Apex"
+  },
+  {
+   "fr": "Mode de lancement",
+   "en": "Launch mode",
+   "ou": "ui/index.html:351",
+   "texte": "Startmodus"
+  },
+  {
+   "fr": "▶ LANCER LE MANS ULTIMATE",
+   "en": "▶ LAUNCH LE MANS ULTIMATE",
+   "ou": "ui/index.html:352",
+   "texte": "▶ LE MANS ULTIMATE STARTEN"
+  },
+  {
+   "fr": "Apparence",
+   "en": "Look",
+   "ou": "ui/index.html:354",
+   "texte": "Uiterlijk"
+  },
+  {
+   "fr": "Couleur",
+   "en": "Colour",
+   "ou": "ui/index.html:355",
+   "texte": "Kleur"
+  },
+  {
+   "fr": "Langue",
+   "en": "Language",
+   "ou": "ui/index.html:356",
+   "texte": "Taal"
+  },
+  {
+   "fr": "Version",
+   "en": "Version",
+   "ou": "ui/index.html:358",
+   "texte": "Versie"
+  },
+  {
+   "fr": "Version installée",
+   "en": "Installed version",
+   "ou": "ui/index.html:359",
+   "texte": "Geïnstalleerde versie"
+  },
+  {
+   "fr": "Un problème depuis la dernière mise à jour ? Télécharge la version précédente et installe-la par-dessus : tes réglages, records et setups sont gardés.",
+   "en": "A problem since the last update? Download the previous version and install it over this one: your settings, records and setups are kept.",
+   "ou": "ui/index.html:360",
+   "texte": "Een probleem sinds de laatste update? Download de vorige versie en installeer die eroverheen: je instellingen, records en setups blijven bewaard."
+  },
+  {
+   "fr": "Toutes les versions",
+   "en": "All versions",
+   "ou": "ui/index.html:363",
+   "texte": "Alle versies"
+  },
+  {
+   "fr": "Soutenir Apex Radio",
+   "en": "Support Apex Radio",
+   "ou": "ui/index.html:366",
+   "texte": "Steun Apex Radio"
+  },
+  {
+   "fr": "Apex Radio est gratuit et le restera. S'il t'aide, tu peux m'offrir un café ou le soutenir chaque mois.",
+   "en": "Apex Radio is free and will stay free. If it helps you, you can buy me a coffee or support it every month.",
+   "ou": "ui/index.html:367",
+   "texte": "Apex Radio is gratis en blijft gratis. Als het je helpt, kun je me een koffie trakteren of het maandelijks steunen."
+  },
+  {
+   "fr": "☕ M'offrir un café (Ko-fi)",
+   "en": "☕ Buy me a coffee (Ko-fi)",
+   "ou": "ui/index.html:369",
+   "texte": "☕ Trakteer me op een koffie (Ko-fi)"
+  },
+  {
+   "fr": "Fichier travaillé",
+   "en": "Working file",
+   "ou": "ui/index.html:379",
+   "texte": "Werkbestand"
+  },
+  {
+   "fr": "QUALIF",
+   "en": "QUALI",
+   "ou": "ui/index.html:380",
+   "texte": "KWALI"
+  },
+  {
+   "fr": "COURSE",
+   "en": "RACE",
+   "ou": "ui/index.html:380",
+   "texte": "RACE"
+  },
+  {
+   "fr": "📁 Choisir le dossier de LMU",
+   "en": "📁 Choose the LMU folder",
+   "ou": "ui/index.html:383",
+   "texte": "📁 LMU-map kiezen"
+  },
+  {
+   "fr": "LMU est installé ailleurs ? Choisis le dossier du jeu (Le Mans Ultimate), Apex trouve les setups dedans.",
+   "en": "LMU is installed elsewhere? Pick the game folder (Le Mans Ultimate), Apex finds the setups inside.",
+   "ou": "ui/index.html:386",
+   "texte": "Staat LMU ergens anders? Kies de spelmap (Le Mans Ultimate), Apex vindt de setups erin."
+  },
+  {
+   "fr": "1 · Le setup que tu utilises",
+   "en": "1 · The setup you're using",
+   "ou": "ui/index.html:389",
+   "texte": "1 · De setup die je gebruikt"
+  },
+  {
+   "fr": "C'EST CE SETUP QUI EST CHARGÉ DANS LE JEU",
+   "en": "THIS IS THE SETUP LOADED IN THE GAME",
+   "ou": "ui/index.html:392",
+   "texte": "DIT IS DE SETUP DIE IN HET SPEL GELADEN IS"
+  },
+  {
+   "fr": "2 · Réglages proposés",
+   "en": "2 · Suggested changes",
+   "ou": "ui/index.html:396",
+   "texte": "2 · Voorgestelde wijzigingen"
+  },
+  {
+   "fr": "APPLIQUER DANS LE FICHIER APEX",
+   "en": "APPLY TO THE APEX FILE",
+   "ou": "ui/index.html:400",
+   "texte": "TOEPASSEN OP HET APEX-BESTAND"
+  },
+  {
+   "fr": "3 · Historique sur ce circuit",
+   "en": "3 · History on this track",
+   "ou": "ui/index.html:404",
+   "texte": "3 · Geschiedenis op dit circuit"
+  },
+  {
+   "fr": "EN ATTENTE",
+   "en": "WAITING",
+   "ou": "ui/index.html:491",
+   "texte": "WACHTEN"
+  },
+  {
+   "fr": "Jeu détecté, monte dans ta voiture.",
+   "en": "Game detected, get in your car.",
+   "ou": "ui/index.html:491",
+   "texte": "Spel gevonden, stap in je auto."
+  },
+  {
+   "fr": "Lance Le Mans Ultimate et monte dans ta voiture.",
+   "en": "Start Le Mans Ultimate and get in your car.",
+   "ou": "ui/index.html:491",
+   "texte": "Start Le Mans Ultimate en stap in je auto."
+  },
+  {
+   "fr": "DRAPEAU JAUNE",
+   "en": "FULL COURSE YELLOW",
+   "ou": "ui/index.html:492",
+   "texte": "FULL COURSE YELLOW"
+  },
+  {
+   "fr": "Drapeau jaune, ralentis.",
+   "en": "Yellow flag, slow down.",
+   "ou": "ui/index.html:492",
+   "texte": "Gele vlag, rustig aan."
+  },
+  {
+   "fr": "Rentre ce tour.",
+   "en": "Pit this lap.",
+   "ou": "ui/index.html:493",
+   "texte": "Box deze ronde."
+  },
+  {
+   "fr": "BOX DANS {0}",
+   "en": "BOX IN {0}",
+   "ou": "ui/index.html:494",
+   "texte": "BOX OVER {0}"
+  },
+  {
+   "fr": "Arrêt à la fin du tour {0}.",
+   "en": "Stop at the end of lap {0}.",
+   "ou": "ui/index.html:494",
+   "texte": "Stop aan het einde van ronde {0}."
+  },
+  {
+   "fr": "DAMIER",
+   "en": "CHEQUERED",
+   "ou": "ui/index.html:495",
+   "texte": "GEBLOKTE VLAG"
+  },
+  {
+   "fr": "Course terminée.",
+   "en": "Race over.",
+   "ou": "ui/index.html:495",
+   "texte": "Race voorbij."
+  },
+  {
+   "fr": "EN PISTE",
+   "en": "ON TRACK",
+   "ou": "ui/index.html:496",
+   "texte": "OP DE BAAN"
+  },
+  {
+   "fr": "RAS, on roule.",
+   "en": "All good, keep going.",
+   "ou": "ui/index.html:496",
+   "texte": "Alles goed, rij door."
+  },
+  {
+   "fr": "DÉMO",
+   "en": "DEMO",
+   "ou": "ui/index.html:503",
+   "texte": "DEMO"
+  },
+  {
+   "fr": "Lancer LMU",
+   "en": "Launch LMU",
+   "ou": "ui/index.html:507",
+   "texte": "LMU starten"
+  },
+  {
+   "fr": "LMU connecté",
+   "en": "LMU connected",
+   "ou": "ui/index.html:509",
+   "texte": "LMU verbonden"
+  },
+  {
+   "fr": "Jeu détecté",
+   "en": "Game detected",
+   "ou": "ui/index.html:509",
+   "texte": "Spel gevonden"
+  },
+  {
+   "fr": "En attente du jeu",
+   "en": "Waiting for the game",
+   "ou": "ui/index.html:509",
+   "texte": "Wachten op het spel"
+  },
+  {
+   "fr": "femme",
+   "en": "female",
+   "ou": "ui/index.html:517",
+   "texte": "vrouwelijk"
+  },
+  {
+   "fr": "homme",
+   "en": "male",
+   "ou": "ui/index.html:517",
+   "texte": "mannelijk"
+  },
+  {
+   "fr": "Affichage téléphone : {0} (même Wi-Fi que le PC)",
+   "en": "Phone view: {0} (same Wi-Fi as the PC)",
+   "ou": "ui/index.html:524",
+   "texte": "Telefoonweergave: {0} (zelfde wifi als de pc)"
+  },
+  {
+   "fr": "meilleur tour",
+   "en": "best lap",
+   "ou": "ui/index.html:529",
+   "texte": "beste ronde"
+  },
+  {
+   "fr": "↩ Revenir à la {0}",
+   "en": "↩ Go back to {0}",
+   "ou": "ui/index.html:536",
+   "texte": "↩ Terug naar {0}"
+  },
+  {
+   "fr": "Nouvelle version {0} disponible (tu as la {1})",
+   "en": "New version {0} available (you have {1})",
+   "ou": "ui/index.html:542",
+   "texte": "Nieuwe versie {0} beschikbaar (je hebt {1})"
+  },
+  {
+   "fr": "TÉLÉCHARGER",
+   "en": "DOWNLOAD",
+   "ou": "ui/index.html:543",
+   "texte": "DOWNLOADEN"
+  },
+  {
+   "fr": "PÉNALITÉ À PURGER",
+   "en": "PENALTY TO SERVE",
+   "ou": "ui/index.html:548",
+   "texte": "STRAF UIT TE ZITTEN"
+  },
+  {
+   "fr": "TOUR",
+   "en": "LAP",
+   "ou": "ui/index.html:548",
+   "texte": "RONDE"
+  },
+  {
+   "fr": "TOI",
+   "en": "YOU",
+   "ou": "ui/index.html:558",
+   "texte": "JIJ"
+  },
+  {
+   "fr": "JESSICA",
+   "en": "ENGINEER",
+   "ou": "ui/index.html:558",
+   "texte": "ENGINEER"
+  },
+  {
+   "fr": "PRÊT",
+   "en": "READY",
+   "ou": "ui/index.html:563",
+   "texte": "KLAAR"
+  },
+  {
+   "fr": "● J'ÉCOUTE…",
+   "en": "● LISTENING…",
+   "ou": "ui/index.html:563",
+   "texte": "● IK LUISTER…"
+  },
+  {
+   "fr": "JE RÉFLÉCHIS…",
+   "en": "THINKING…",
+   "ou": "ui/index.html:563",
+   "texte": "NADENKEN…"
+  },
+  {
+   "fr": "APPUIE SUR LE BOUTON VOULU…",
+   "en": "PRESS THE BUTTON YOU WANT…",
+   "ou": "ui/index.html:564",
+   "texte": "DRUK OP DE KNOP DIE JE WILT…"
+  },
+  {
+   "fr": "PROBLÈME",
+   "en": "PROBLEM",
+   "ou": "ui/index.html:564",
+   "texte": "PROBLEEM"
+  },
+  {
+   "fr": "DÉMARRAGE…",
+   "en": "STARTING…",
+   "ou": "ui/index.html:564",
+   "texte": "STARTEN…"
+  },
+  {
+   "fr": "J'ÉCOUTE…",
+   "en": "LISTENING…",
+   "ou": "ui/index.html:569",
+   "texte": "IK LUISTER…"
+  },
+  {
+   "fr": "appuie sur le bouton…",
+   "en": "press the button…",
+   "ou": "ui/index.html:571",
+   "texte": "druk op de knop…"
+  },
+  {
+   "fr": "Chargement de la reconnaissance vocale… (l'ancienne reste active en attendant)",
+   "en": "Loading speech recognition… (the previous one stays active meanwhile)",
+   "ou": "ui/index.html:578",
+   "texte": "Spraakherkenning wordt geladen… (de vorige blijft zolang actief)"
+  },
+  {
+   "fr": "Reconnaissance vocale prête.",
+   "en": "Speech recognition ready.",
+   "ou": "ui/index.html:579",
+   "texte": "Spraakherkenning klaar."
+  },
+  {
+   "fr": "Reconnaissance vocale en cours de chargement…",
+   "en": "Speech recognition loading…",
+   "ou": "ui/index.html:584",
+   "texte": "Spraakherkenning wordt geladen…"
+  },
+  {
+   "fr": "<b>{0}</b> tour{1} restant{1}",
+   "en": "<b>{0}</b> lap{2} to go",
+   "ou": "ui/index.html:597",
+   "texte": "Nog <b>{0}</b> {1?ronden:ronde}"
+  },
+  {
+   "fr": "P{0} au général · {1} voitures",
+   "en": "P{0} overall · {1} cars",
+   "ou": "ui/index.html:598",
+   "texte": "P{0} overall · {1} auto's"
+  },
+  {
+   "fr": "{0} voitures",
+   "en": "{0} cars",
+   "ou": "ui/index.html:598",
+   "texte": "{0} auto's"
+  },
+  {
+   "fr": "calcul…",
+   "en": "calculating…",
+   "ou": "ui/index.html:603",
+   "texte": "berekenen…"
+  },
+  {
+   "fr": "tour",
+   "en": "lap",
+   "ou": "ui/index.html:607",
+   "texte": "ronde"
+  },
+  {
+   "fr": "Énergie",
+   "en": "Energy",
+   "ou": "ui/index.html:608",
+   "texte": "Energie"
+  },
+  {
+   "fr": "Stratégie en course uniquement",
+   "en": "Strategy in races only",
+   "ou": "ui/index.html:611",
+   "texte": "Strategie alleen in de race"
+  },
+  {
+   "fr": "CALCUL…",
+   "en": "CALC…",
+   "ou": "ui/index.html:612",
+   "texte": "BEREKENEN…"
+  },
+  {
+   "fr": "Après 2 tours propres",
+   "en": "After 2 clean laps",
+   "ou": "ui/index.html:612",
+   "texte": "Na 2 nette ronden"
+  },
+  {
+   "fr": "AU BOUT",
+   "en": "TO THE END",
+   "ou": "ui/index.html:613",
+   "texte": "TOT HET EINDE"
+  },
+  {
+   "fr": "Pas d'arrêt nécessaire",
+   "en": "No stop needed",
+   "ou": "ui/index.html:613",
+   "texte": "Geen stop nodig"
+  },
+  {
+   "fr": "CE TOUR",
+   "en": "THIS LAP",
+   "ou": "ui/index.html:615",
+   "texte": "DEZE RONDE"
+  },
+  {
+   "fr": "4 pneus",
+   "en": "4 tyres",
+   "ou": "ui/index.html:616",
+   "texte": "4 banden"
+  },
+  {
+   "fr": "én.",
+   "en": "en.",
+   "ou": "ui/index.html:617",
+   "texte": "en."
+  },
+  {
+   "fr": "Je règle le menu des stands au moment du box.",
+   "en": "I'll set the pit menu when you box.",
+   "ou": "ui/index.html:625",
+   "texte": "Ik stel het pitmenu in als je binnenkomt."
+  },
+  {
+   "fr": "Écarts",
+   "en": "Gaps",
+   "ou": "ui/index.html:652",
+   "texte": "Gaten"
+  },
+  {
+   "fr": "Mon rythme",
+   "en": "My pace",
+   "ou": "ui/index.html:652",
+   "texte": "Mijn tempo"
+  },
+  {
+   "fr": "Arrêt",
+   "en": "Pit stop",
+   "ou": "ui/index.html:653",
+   "texte": "Pitstop"
+  },
+  {
+   "fr": "Potentiel",
+   "en": "Potential",
+   "ou": "ui/index.html:653",
+   "texte": "Potentieel"
+  },
+  {
+   "fr": "meilleur",
+   "en": "best",
+   "ou": "ui/index.html:657",
+   "texte": "beste"
+  },
+  {
+   "fr": "pas encore de record ici",
+   "en": "no record here yet",
+   "ou": "ui/index.html:658",
+   "texte": "hier nog geen record"
+  },
+  {
+   "fr": "Tour idéal (tes meilleurs secteurs) : {0} s à gagner",
+   "en": "Ideal lap (your best sectors): {0} s to gain",
+   "ou": "ui/index.html:662",
+   "texte": "Ideale ronde (je beste sectoren): {0} s te winnen"
+  },
+  {
+   "fr": "Tour idéal : tes meilleurs secteurs mis bout à bout",
+   "en": "Ideal lap: your best sectors put together",
+   "ou": "ui/index.html:663",
+   "texte": "Ideale ronde: je beste sectoren samengevoegd"
+  },
+  {
+   "fr": "Dernier tour",
+   "en": "Last lap",
+   "ou": "ui/index.html:669",
+   "texte": "Laatste ronde"
+  },
+  {
+   "fr": "(invalide)",
+   "en": "(invalid)",
+   "ou": "ui/index.html:669",
+   "texte": "(ongeldig)"
+  },
+  {
+   "fr": "Derniers tours",
+   "en": "Last laps",
+   "ou": "ui/index.html:678",
+   "texte": "Laatste ronden"
+  },
+  {
+   "fr": "Après le premier tour complet…",
+   "en": "After the first full lap…",
+   "ou": "ui/index.html:680",
+   "texte": "Na de eerste volledige ronde…"
+  },
+  {
+   "fr": "Tracé en cours d'apprentissage : {0} % — il sera enregistré pour la prochaine fois.",
+   "en": "Learning the track layout: {0} % — it will be saved for next time.",
+   "ou": "ui/index.html:695",
+   "texte": "Circuitlayout leren: {0} % — wordt bewaard voor de volgende keer."
+  },
+  {
+   "fr": "V",
+   "en": "T",
+   "ou": "ui/index.html:748",
+   "texte": "B"
+  },
+  {
+   "fr": "PNEUS",
+   "en": "TYRES",
+   "ou": "ui/index.html:749",
+   "texte": "BANDEN"
+  },
+  {
+   "fr": "Voiture équilibrée, rien de répétitif.",
+   "en": "Car balanced, nothing recurring.",
+   "ou": "ui/index.html:750",
+   "texte": "Auto in balans, niets terugkerends."
+  },
+  {
+   "fr": "toi",
+   "en": "you",
+   "ou": "ui/index.html:752",
+   "texte": "jij"
+  },
+  {
+   "fr": "devant / derrière",
+   "en": "ahead / behind",
+   "ou": "ui/index.html:752",
+   "texte": "voor / achter"
+  },
+  {
+   "fr": "· secteurs : <span class=\"good\">vert</span> tu gagnes, <span class=\"bad\">rose</span> tu perds",
+   "en": "· sectors: <span class=\"good\">green</span> you gain, <span class=\"bad\">pink</span> you lose",
+   "ou": "ui/index.html:754",
+   "texte": "· sectoren: <span class=\"good\">groen</span> je wint, <span class=\"bad\">roze</span> je verliest"
+  },
+  {
+   "fr": "Appli arrêtée",
+   "en": "App stopped",
+   "ou": "ui/index.html:759",
+   "texte": "App gestopt"
+  },
+  {
+   "fr": "Micro par défaut de Windows",
+   "en": "Windows default mic",
+   "ou": "ui/index.html:765",
+   "texte": "Standaardmicrofoon van Windows"
+  },
+  {
+   "fr": "(défaut)",
+   "en": "(default)",
+   "ou": "ui/index.html:766",
+   "texte": "(standaard)"
+  },
+  {
+   "fr": "Discret",
+   "en": "Low-key",
+   "ou": "ui/index.html:795",
+   "texte": "Ingetogen"
+  },
+  {
+   "fr": "Normal",
+   "en": "Normal",
+   "ou": "ui/index.html:795",
+   "texte": "Normaal"
+  },
+  {
+   "fr": "Motivant",
+   "en": "Hype",
+   "ou": "ui/index.html:795",
+   "texte": "Opgepept"
+  },
+  {
+   "fr": "Rester appuyé pour parler",
+   "en": "Hold to talk",
+   "ou": "ui/index.html:797",
+   "texte": "Ingedrukt houden om te praten"
+  },
+  {
+   "fr": "Appuyer une fois (arrêt tout seul à la fin de la phrase)",
+   "en": "Press once (stops by itself when you finish)",
+   "ou": "ui/index.html:797",
+   "texte": "Eén keer drukken (stopt vanzelf als je klaar bent)"
+  },
+  {
+   "fr": "Rapide",
+   "en": "Fast",
+   "ou": "ui/index.html:799",
+   "texte": "Snel"
+  },
+  {
+   "fr": "Précise (plus lente)",
+   "en": "Precise (slower)",
+   "ou": "ui/index.html:799",
+   "texte": "Nauwkeurig (trager)"
+  },
+  {
+   "fr": "Demander (fenêtre de Steam)",
+   "en": "Ask (Steam window)",
+   "ou": "ui/index.html:802",
+   "texte": "Vragen (Steam-venster)"
+  },
+  {
+   "fr": "Normal (écran)",
+   "en": "Normal (screen)",
+   "ou": "ui/index.html:802",
+   "texte": "Normaal (scherm)"
+  },
+  {
+   "fr": "VR – SteamVR",
+   "en": "VR – SteamVR",
+   "ou": "ui/index.html:803",
+   "texte": "VR – SteamVR"
+  },
+  {
+   "fr": "VR – OpenXR",
+   "en": "VR – OpenXR",
+   "ou": "ui/index.html:803",
+   "texte": "VR – OpenXR"
+  },
+  {
+   "fr": "Sobre (juste l'info)",
+   "en": "Plain (just the info)",
+   "ou": "ui/index.html:807",
+   "texte": "Zakelijk (alleen de info)"
+  },
+  {
+   "fr": "Radio d'équipe",
+   "en": "Team radio",
+   "ou": "ui/index.html:807",
+   "texte": "Teamradio"
+  },
+  {
+   "fr": "Détendu",
+   "en": "Laid-back",
+   "ou": "ui/index.html:808",
+   "texte": "Relaxed"
+  },
+  {
+   "fr": "Spotter on / off",
+   "en": "Spotter on / off",
+   "ou": "ui/index.html:813",
+   "texte": "Spotter aan / uit"
+  },
+  {
+   "fr": "Radio on / off",
+   "en": "Radio on / off",
+   "ou": "ui/index.html:813",
+   "texte": "Radio aan / uit"
+  },
+  {
+   "fr": "Mode silence",
+   "en": "Quiet mode",
+   "ou": "ui/index.html:814",
+   "texte": "Stille modus"
+  },
+  {
+   "fr": "Choisir",
+   "en": "Set",
+   "ou": "ui/index.html:820",
+   "texte": "Kiezen"
+  },
+  {
+   "fr": "Retirer",
+   "en": "Remove",
+   "ou": "ui/index.html:821",
+   "texte": "Verwijderen"
+  },
+  {
+   "fr": "Apex Radio est fermé. Tu peux fermer cet onglet.",
+   "en": "Apex Radio is closed. You can close this tab.",
+   "ou": "ui/index.html:832",
+   "texte": "Apex Radio is gesloten. Je kunt dit tabblad sluiten."
+  },
+  {
+   "fr": "Fermer ?",
+   "en": "Close?",
+   "ou": "ui/index.html:833",
+   "texte": "Sluiten?"
+  },
+  {
+   "fr": "Recherche…",
+   "en": "Searching…",
+   "ou": "ui/index.html:842",
+   "texte": "Zoeken…"
+  },
+  {
+   "fr": "Dossier trouvé : {0}",
+   "en": "Folder found: {0}",
+   "ou": "ui/index.html:844",
+   "texte": "Map gevonden: {0}"
+  },
+  {
+   "fr": "Aucun dossier choisi.",
+   "en": "No folder chosen.",
+   "ou": "ui/index.html:845",
+   "texte": "Geen map gekozen."
+  },
+  {
+   "fr": "Circuit détecté : {0}",
+   "en": "Track detected: {0}",
+   "ou": "ui/index.html:854",
+   "texte": "Circuit gevonden: {0}"
+  },
+  {
+   "fr": "Aucun circuit détecté pour l'instant (lance le jeu, ou choisis le dossier).",
+   "en": "No track detected yet (start the game, or choose the folder).",
+   "ou": "ui/index.html:854",
+   "texte": "Nog geen circuit gevonden (start het spel of kies de map)."
+  },
+  {
+   "fr": "Dossier des setups LMU introuvable : {0}",
+   "en": "LMU setups folder not found: {0}",
+   "ou": "ui/index.html:855",
+   "texte": "LMU-setupmap niet gevonden: {0}"
+  },
+  {
+   "fr": "Setup en cours : setup d'usine (pas encore enregistré)",
+   "en": "Current setup: default setup (not saved yet)",
+   "ou": "ui/index.html:864",
+   "texte": "Huidige setup: standaardsetup (nog niet opgeslagen)"
+  },
+  {
+   "fr": "Setup en cours : {0}",
+   "en": "Current setup: {0}",
+   "ou": "ui/index.html:864",
+   "texte": "Huidige setup: {0}"
+  },
+  {
+   "fr": "Aucun setup choisi pour ce circuit.",
+   "en": "No setup chosen for this track.",
+   "ou": "ui/index.html:864",
+   "texte": "Geen setup gekozen voor dit circuit."
+  },
+  {
+   "fr": "Ce setup a été fait pour la {0}, mais tu es en {1}.",
+   "en": "This setup was made for the {0}, but you're in the {1}.",
+   "ou": "ui/index.html:867",
+   "texte": "Deze setup is gemaakt voor de {0}, maar je rijdt in de {1}."
+  },
+  {
+   "fr": "Même voiture : la copie APEX sera convertie pour ta version.",
+   "en": "Same car: the APEX copy will be converted for your version.",
+   "ou": "ui/index.html:868",
+   "texte": "Zelfde auto: de APEX-kopie wordt omgezet voor jouw versie."
+  },
+  {
+   "fr": "Choisis d'abord le setup chargé dans le jeu (étape 1).",
+   "en": "First choose the setup loaded in the game (step 1).",
+   "ou": "ui/index.html:872",
+   "texte": "Kies eerst de setup die in het spel geladen is (stap 1)."
+  },
+  {
+   "fr": "Fais quelques tours propres : l'analyse en a {0}, il en faut au moins 3.",
+   "en": "Do a few clean laps: the analysis has {0}, it needs at least 3.",
+   "ou": "ui/index.html:875",
+   "texte": "Rij een paar nette ronden: de analyse heeft er {0}, hij heeft er minstens 3 nodig."
+  },
+  {
+   "fr": "Coche les réglages à appliquer :",
+   "en": "Tick the changes to apply:",
+   "ou": "ui/index.html:876",
+   "texte": "Vink de wijzigingen aan die je wilt toepassen:"
+  },
+  {
+   "fr": "Rien à changer pour l'instant : la voiture est équilibrée.",
+   "en": "Nothing to change for now: the car is balanced.",
+   "ou": "ui/index.html:876",
+   "texte": "Voorlopig niets te veranderen: de auto is in balans."
+  },
+  {
+   "fr": "Réglage",
+   "en": "Setting",
+   "ou": "ui/index.html:877",
+   "texte": "Instelling"
+  },
+  {
+   "fr": "Actuel",
+   "en": "Current",
+   "ou": "ui/index.html:877",
+   "texte": "Huidig"
+  },
+  {
+   "fr": "Proposé",
+   "en": "Suggested",
+   "ou": "ui/index.html:877",
+   "texte": "Voorgesteld"
+  },
+  {
+   "fr": "FAIT EN PISTE",
+   "en": "SET ON TRACK",
+   "ou": "ui/index.html:879",
+   "texte": "INGESTELD OP DE BAAN"
+  },
+  {
+   "fr": "ESSENCE",
+   "en": "FUEL",
+   "ou": "ui/index.html:879",
+   "texte": "BRANDSTOF"
+  },
+  {
+   "fr": "v1 · ton setup de départ ({0})",
+   "en": "v1 · your starting setup ({0})",
+   "ou": "ui/index.html:890",
+   "texte": "v1 · je startsetup ({0})"
+  },
+  {
+   "fr": "depuis",
+   "en": "from",
+   "ou": "ui/index.html:890",
+   "texte": "vanaf"
+  },
+  {
+   "fr": "la plus rapide",
+   "en": "fastest",
+   "ou": "ui/index.html:891",
+   "texte": "de snelste"
+  },
+  {
+   "fr": "dans le fichier APEX",
+   "en": "in the APEX file",
+   "ou": "ui/index.html:892",
+   "texte": "in het APEX-bestand"
+  },
+  {
+   "fr": "Remettre cette version",
+   "en": "Restore this version",
+   "ou": "ui/index.html:895",
+   "texte": "Deze versie terugzetten"
+  },
+  {
+   "fr": "setup de départ",
+   "en": "starting setup",
+   "ou": "ui/index.html:897",
+   "texte": "startsetup"
+  },
+  {
+   "fr": "Fichier dans LMU : <b>{0}</b> (un seul fichier {1}, mis à jour à chaque version)",
+   "en": "File in LMU: <b>{0}</b> (one {1} file, updated with each version)",
+   "ou": "ui/index.html:898",
+   "texte": "Bestand in LMU: <b>{0}</b> (één enkel {1}-bestand, bijgewerkt bij elke versie)"
+  },
+  {
+   "fr": "<br>Pas encore de version créée par Apex Radio sur ce circuit.",
+   "en": "<br>No version created by Apex Radio on this track yet.",
+   "ou": "ui/index.html:900",
+   "texte": "<br>Apex Radio heeft op dit circuit nog geen versie gemaakt."
+  },
+  {
+   "fr": "<span class=\"good\">{0} remis en {1}</span> — recharge-le au garage dans LMU.",
+   "en": "<span class=\"good\">{0} restored to {1}</span> — reload it in the LMU garage.",
+   "ou": "ui/index.html:903",
+   "texte": "<span class=\"good\">{0} teruggezet naar {1}</span> — laad het opnieuw in de LMU-garage."
+  },
+  {
+   "fr": "conso mesurée {0} L/tour",
+   "en": "measured consumption {0} L/lap",
+   "ou": "ui/index.html:921",
+   "texte": "gemeten verbruik {0} L/ronde"
+  },
+  {
+   "fr": "conso pas encore mesurée",
+   "en": "consumption not measured yet",
+   "ou": "ui/index.html:921",
+   "texte": "verbruik nog niet gemeten"
+  },
+  {
+   "fr": "au départ",
+   "en": "at the start",
+   "ou": "ui/index.html:922",
+   "texte": "bij de start"
+  },
+  {
+   "fr": "Durée de la course",
+   "en": "Race length",
+   "ou": "ui/index.html:923",
+   "texte": "Raceduur"
+  },
+  {
+   "fr": "Durée de la course en minutes",
+   "en": "Race length in minutes",
+   "ou": "ui/index.html:923",
+   "texte": "Raceduur in minuten"
+  },
+  {
+   "fr": "ou",
+   "en": "or",
+   "ou": "ui/index.html:924",
+   "texte": "of"
+  },
+  {
+   "fr": "Nombre de tours",
+   "en": "Number of laps",
+   "ou": "ui/index.html:924",
+   "texte": "Aantal ronden"
+  },
+  {
+   "fr": "Choisis ton bouton radio (volant ou clavier)",
+   "en": "Pick your radio button (wheel or keyboard)",
+   "ou": "ui/index.html:944",
+   "texte": "Kies je radioknop (stuur of toetsenbord)"
+  },
+  {
+   "fr": "Teste la voix de l'ingénieur",
+   "en": "Test the engineer's voice",
+   "ou": "ui/index.html:945",
+   "texte": "Test de stem van de engineer"
+  },
+  {
+   "fr": "Appuie sur ton bouton radio et dis « tu m'entends ? »",
+   "en": "Hold your radio button and say \"can you hear me?\"",
+   "ou": "ui/index.html:946",
+   "texte": "Hou je radioknop ingedrukt en zeg „hoor je me?\""
+  },
+  {
+   "fr": "Lance Le Mans Ultimate",
+   "en": "Start Le Mans Ultimate",
+   "ou": "ui/index.html:947",
+   "texte": "Start Le Mans Ultimate"
+  },
+  {
+   "fr": "▶ Lancer",
+   "en": "▶ Launch",
+   "ou": "ui/index.html:953",
+   "texte": "▶ Starten"
+  },
+  {
+   "fr": "Régler",
+   "en": "Set up",
+   "ou": "ui/index.html:953",
+   "texte": "Instellen"
+  },
+  {
+   "fr": "⏳ Lancement…",
+   "en": "⏳ Launching…",
+   "ou": "ui/index.html:960",
+   "texte": "⏳ Wordt gestart…"
+  },
+  {
+   "fr": "<span class=\"good\">{0} mis à jour ({1})</span> — recharge-le au garage dans LMU, puis roule quelques tours pour comparer.",
+   "en": "<span class=\"good\">{0} updated ({1})</span> — reload it in the LMU garage, then do a few laps to compare.",
+   "ou": "ui/index.html:976",
+   "texte": "<span class=\"good\">{0} bijgewerkt ({1})</span> — laad het opnieuw in de LMU-garage en rij dan een paar ronden om te vergelijken."
+  },
+  {
+   "fr": "Ton setup de départ était {0} : j'ai converti la copie APEX pour la LMP2 {1} (même voiture, Oreca 07). Vérifie les réglages dans le garage avant de rouler.",
+   "en": "Your base setup was {0}: I converted the APEX copy for the LMP2 {1} (same car, Oreca 07). Check the settings in the garage before driving.",
+   "ou": "ui/index.html:977",
+   "texte": "Je basissetup was {0}: ik heb de APEX-kopie omgezet voor de LMP2 {1} (zelfde auto, Oreca 07). Controleer de instellingen in de garage voor je gaat rijden."
+  },
+  {
+   "fr": "Mise à jour {0} disponible : télécharge-la sur le PC",
+   "en": "Update {0} available: download it on the PC",
+   "ou": "ui/tel.html:123",
+   "texte": "Update {0} beschikbaar: download hem op de pc"
+  },
+  {
+   "fr": "jeu détecté",
+   "en": "game detected",
+   "ou": "ui/tel.html:125",
+   "texte": "spel gevonden"
+  },
+  {
+   "fr": "en attente du jeu",
+   "en": "waiting for the game",
+   "ou": "ui/tel.html:125",
+   "texte": "wachten op het spel"
+  },
+  {
+   "fr": "Rentre ce tour",
+   "en": "Pit this lap",
+   "ou": "ui/tel.html:130",
+   "texte": "Box deze ronde"
+  },
+  {
+   "fr": "fin du tour {0}",
+   "en": "end of lap {0}",
+   "ou": "ui/tel.html:131",
+   "texte": "einde van ronde {0}"
+  },
+  {
+   "fr": "reste",
+   "en": "left",
+   "ou": "ui/tel.html:138",
+   "texte": "over"
+  },
+  {
+   "fr": "pas de référence",
+   "en": "no reference",
+   "ou": "ui/tel.html:142",
+   "texte": "geen referentie"
+  },
+  {
+   "fr": "PC injoignable",
+   "en": "PC unreachable",
+   "ou": "ui/tel.html:152",
+   "texte": "pc niet bereikbaar"
+  },
+  {
+   "fr": "En attente du jeu…",
+   "en": "Waiting for the game…",
+   "ou": "ui/tel.html:46",
+   "texte": "Wachten op het spel…"
+  },
+  {
+   "fr": "COMPLET · ATELIER",
+   "en": "FULL · WORKSHOP",
+   "ou": "ui/tel.html:59",
+   "texte": "VOLLEDIG · WERKPLAATS"
+  }
+ ],
+ "_aide_questions": "Pour chaque question, écris dans « tournures » comment un pilote le dit dans ta langue. Des mots simples, dans l'ordre (d'autres mots peuvent s'intercaler) ; « | » sépare plusieurs façons de dire ; « * » = n'importe quel mot ; {n} = un nombre. Ex. : [\"wie viel sprit|benzin\"].",
+ "questions": [
+  {
+   "id": "essence",
+   "groupe": "Course",
+   "fr": "combien d'essence",
+   "en": "how much fuel",
+   "tournures": [
+    "hoeveel brandstof|hoeveel benzine|brandstofniveau|brandstof over|benzine over|is de brandstof genoeg|tank"
+   ]
+  },
+  {
+   "id": "conso",
+   "groupe": "Course",
+   "fr": "quelle est ma conso",
+   "en": "what's my consumption",
+   "tournures": [
+    "verbruik|hoeveel verbruik ik|brandstofverbruik"
+   ]
+  },
+  {
+   "id": "energie",
+   "groupe": "Course",
+   "fr": "combien d'énergie virtuelle",
+   "en": "how much virtual energy",
+   "tournures": [
+    "energie|virtuele energie|batterij|accu"
+   ]
+  },
+  {
+   "id": "pneus",
+   "groupe": "Course",
+   "fr": "comment sont mes pneus",
+   "en": "how are my tyres",
+   "tournures": [
+    "banden|hoe zijn de banden|bandenslijtage|bandentemperatuur|bandenspanning|rubber"
+   ]
+  },
+  {
+   "id": "freins",
+   "groupe": "Course",
+   "fr": "comment vont mes freins",
+   "en": "how are my brakes",
+   "tournures": [
+    "remmen|remtemperatuur|hoe zijn de remmen"
+   ]
+  },
+  {
+   "id": "degats",
+   "groupe": "Course",
+   "fr": "y a des dégâts",
+   "en": "any damage",
+   "tournures": [
+    "schade|beschadigd|is de auto kapot|reparatie nodig"
+   ]
+  },
+  {
+   "id": "ecarts",
+   "groupe": "Course",
+   "fr": "les écarts devant et derrière",
+   "en": "gaps ahead and behind",
+   "tournures": [
+    "gaten|hoe zijn de gaten|afstanden|gaps"
+   ]
+  },
+  {
+   "id": "ecart_devant",
+   "groupe": "Course",
+   "fr": "l'écart devant",
+   "en": "gap ahead",
+   "tournures": [
+    "gat naar voren|gat met de auto voor me|hoe ver is de voorganger|gat voor"
+   ]
+  },
+  {
+   "id": "ecart_derriere",
+   "groupe": "Course",
+   "fr": "l'écart derrière",
+   "en": "gap behind",
+   "tournures": [
+    "gat naar achteren|gat met de auto achter me|hoe ver is de achterligger|gat achter"
+   ]
+  },
+  {
+   "id": "il_revient",
+   "groupe": "Course",
+   "fr": "il revient derrière",
+   "en": "is he catching me",
+   "tournures": [
+    "komt hij dichterbij|loopt hij in|haalt hij me in|komt de achterligger"
+   ]
+  },
+  {
+   "id": "qui_devant",
+   "groupe": "Course",
+   "fr": "c'est qui devant",
+   "en": "who's ahead",
+   "tournures": [
+    "wie zit er voor me|wie rijdt er voor me|wie is mijn voorganger"
+   ]
+  },
+  {
+   "id": "qui_derriere",
+   "groupe": "Course",
+   "fr": "c'est qui derrière",
+   "en": "who's behind",
+   "tournures": [
+    "wie zit er achter me|wie rijdt er achter me|wie is mijn achterligger"
+   ]
+  },
+  {
+   "id": "leader",
+   "groupe": "Course",
+   "fr": "qui est le leader",
+   "en": "who's leading",
+   "tournures": [
+    "wie leidt|wie ligt er aan de leiding|wie is eerste|gat met de leider"
+   ]
+  },
+  {
+   "id": "position",
+   "groupe": "Course",
+   "fr": "quelle position",
+   "en": "what position",
+   "tournures": [
+    "welke positie|op welke plek|mijn positie|waar lig ik|welke plaats"
+   ]
+  },
+  {
+   "id": "nb_voitures",
+   "groupe": "Course",
+   "fr": "combien de voitures",
+   "en": "how many cars",
+   "tournures": [
+    "hoeveel autos|hoeveel rijders|hoeveel tegenstanders"
+   ]
+  },
+  {
+   "id": "voiture_p",
+   "groupe": "Course",
+   "fr": "où est p{n}",
+   "en": "where is P{n}",
+   "tournures": [
+    "waar zit p{n}|waar rijdt p{n}|hoe ver is p{n}"
+   ]
+  },
+  {
+   "id": "secteurs_p",
+   "groupe": "Course",
+   "fr": "dans quel secteur p{n} est plus rapide",
+   "en": "where is P{n} faster",
+   "tournures": [
+    "waar is p{n} sneller|in welke sector is p{n} sneller"
+   ]
+  },
+  {
+   "id": "tours_restants",
+   "groupe": "Course",
+   "fr": "combien de tours restants",
+   "en": "how many laps left",
+   "tournures": [
+    "hoeveel ronden|hoeveel rondes|ronden te gaan|rondes te gaan"
+   ]
+  },
+  {
+   "id": "temps_restant",
+   "groupe": "Course",
+   "fr": "combien de temps reste",
+   "en": "how much time left",
+   "tournures": [
+    "hoeveel tijd|resterende tijd|tijd over|hoe lang nog"
+   ]
+  },
+  {
+   "id": "chrono",
+   "groupe": "Course",
+   "fr": "mon dernier tour",
+   "en": "my last lap",
+   "tournures": [
+    "laatste ronde|rondetijd"
+   ]
+  },
+  {
+   "id": "meilleur_tour",
+   "groupe": "Course",
+   "fr": "mon meilleur tour",
+   "en": "my best lap",
+   "tournures": [
+    "beste ronde|snelste ronde|mijn beste tijd"
+   ]
+  },
+  {
+   "id": "rythme",
+   "groupe": "Course",
+   "fr": "est-ce que je suis rapide",
+   "en": "am I fast",
+   "tournures": [
+    "ben ik snel|ben ik langzaam|hoe is mijn tempo|mijn tempo"
+   ]
+  },
+  {
+   "id": "record",
+   "groupe": "Course",
+   "fr": "mon record ici",
+   "en": "my personal best here",
+   "tournures": [
+    "mijn record|persoonlijk record|ideale ronde|record hier"
+   ]
+  },
+  {
+   "id": "secteurs",
+   "groupe": "Course",
+   "fr": "où je perds du temps",
+   "en": "where am I losing time",
+   "tournures": [
+    "waar verlies ik tijd|in welke sector verlies ik|sectoren"
+   ]
+  },
+  {
+   "id": "secteurs_devant",
+   "groupe": "Course",
+   "fr": "où je perds sur celui de devant",
+   "en": "where am I losing to the car ahead",
+   "tournures": [
+    "waar verlies ik op de voorganger|waar is de voorganger sneller"
+   ]
+  },
+  {
+   "id": "tour_valide",
+   "groupe": "Course",
+   "fr": "mon tour est valide",
+   "en": "is my lap valid",
+   "tournures": [
+    "ronde geldig|is de ronde geldig|telt de ronde|is mijn ronde geldig"
+   ]
+  },
+  {
+   "id": "limites",
+   "groupe": "Course",
+   "fr": "limites de piste",
+   "en": "track limits",
+   "tournures": [
+    "track limits|tracklimits|baanbegrenzing|waarschuwingen"
+   ]
+  },
+  {
+   "id": "penalite",
+   "groupe": "Course",
+   "fr": "j'ai une pénalité",
+   "en": "do I have a penalty",
+   "tournures": [
+    "straf|heb ik een straf|drive through|stop and go"
+   ]
+  },
+  {
+   "id": "drapeaux",
+   "groupe": "Course",
+   "fr": "il y a un drapeau",
+   "en": "any flags",
+   "tournures": [
+    "vlag|is er een vlag|welke vlag|gele vlag"
+   ]
+  },
+  {
+   "id": "safety_car",
+   "groupe": "Course",
+   "fr": "c'est la safety car",
+   "en": "is it a safety car",
+   "tournures": [
+    "safety car|safetycar|full course yellow|neutralisatie"
+   ]
+  },
+  {
+   "id": "meteo",
+   "groupe": "Course",
+   "fr": "quelle météo",
+   "en": "what's the weather",
+   "tournures": [
+    "hoe is het weer|wat voor weer|weerbericht|baantemperatuur|luchttemperatuur"
+   ]
+  },
+  {
+   "id": "pluie",
+   "groupe": "Course",
+   "fr": "il va pleuvoir",
+   "en": "will it rain",
+   "tournures": [
+    "regent het|gaat het regenen|regen|komt er regen"
+   ]
+  },
+  {
+   "id": "point",
+   "groupe": "Course",
+   "fr": "fais-moi le point",
+   "en": "give me an update",
+   "tournures": [
+    "overzicht|status|hoe staan we ervoor|update|samenvatting"
+   ]
+  },
+  {
+   "id": "comportement",
+   "groupe": "Course",
+   "fr": "comment se comporte la voiture",
+   "en": "how is the car behaving",
+   "tournures": [
+    "rijgedrag|hoe gedraagt de auto zich|onderstuur|overstuur|balans"
+   ]
+  },
+  {
+   "id": "conseil_setup",
+   "groupe": "Course",
+   "fr": "un conseil de réglage",
+   "en": "any setup advice",
+   "tournures": [
+    "setup tip|setup|wat moet ik aan de setup veranderen|afstelling"
+   ]
+  },
+  {
+   "id": "arret_quand",
+   "groupe": "Stand",
+   "fr": "quand est-ce que je rentre au stand",
+   "en": "when do I pit",
+   "tournures": [
+    "wanneer box|wanneer kom ik binnen|wanneer is de pitstop|pitstop|wanneer stop ik"
+   ]
+  },
+  {
+   "id": "nb_arrets",
+   "groupe": "Stand",
+   "fr": "combien d'arrêts j'ai fait",
+   "en": "how many stops have I made",
+   "tournures": [
+    "hoeveel stops|hoe vaak ben ik binnen geweest|aantal stops"
+   ]
+  },
+  {
+   "id": "prepare_arret",
+   "groupe": "Stand",
+   "fr": "prépare-moi l'arrêt",
+   "en": "prepare the pit stop",
+   "ordre": true,
+   "tournures": [
+    "bereid de stop voor|stop voorbereiden|pitmenu instellen|maak de pitstop klaar"
+   ]
+  },
+  {
+   "id": "repare_tout",
+   "groupe": "Stand",
+   "fr": "répare tout",
+   "en": "repair everything",
+   "ordre": true,
+   "tournures": [
+    "alles repareren|repareer alles|volledig repareren"
+   ]
+  },
+  {
+   "id": "repare_carrosserie",
+   "groupe": "Stand",
+   "fr": "répare la carrosserie",
+   "en": "repair the bodywork",
+   "ordre": true,
+   "tournures": [
+    "carrosserie repareren|repareer de carrosserie|alleen carrosserie"
+   ]
+  },
+  {
+   "id": "pas_reparation",
+   "groupe": "Stand",
+   "fr": "pas de réparation",
+   "en": "no repairs",
+   "ordre": true,
+   "tournures": [
+    "geen reparatie|niet repareren|zonder reparatie"
+   ]
+  },
+  {
+   "id": "pas_essence",
+   "groupe": "Stand",
+   "fr": "pas d'essence",
+   "en": "no fuel",
+   "ordre": true,
+   "tournures": [
+    "geen brandstof|niet tanken|zonder tanken|geen benzine"
+   ]
+  },
+  {
+   "id": "pneus_tous",
+   "groupe": "Stand",
+   "fr": "change les quatre pneus",
+   "en": "change all four tyres",
+   "ordre": true,
+   "tournures": [
+    "alle vier banden|vier nieuwe banden|alle banden wisselen|wissel alle banden"
+   ]
+  },
+  {
+   "id": "pneus_garde",
+   "groupe": "Stand",
+   "fr": "garde les pneus",
+   "en": "keep the tyres",
+   "ordre": true,
+   "tournures": [
+    "banden erop laten|geen nieuwe banden|banden houden|banden niet wisselen"
+   ]
+  },
+  {
+   "id": "pneus_avant",
+   "groupe": "Stand",
+   "fr": "change les deux avant",
+   "en": "change the two fronts",
+   "ordre": true,
+   "tournures": [
+    "voorbanden wisselen|nieuwe voorbanden|alleen voor wisselen|wissel * voorbanden"
+   ]
+  },
+  {
+   "id": "pneus_arriere",
+   "groupe": "Stand",
+   "fr": "change les deux arrière",
+   "en": "change the two rears",
+   "ordre": true,
+   "tournures": [
+    "achterbanden wisselen|nieuwe achterbanden|alleen achter wisselen|wissel * achterbanden"
+   ]
+  },
+  {
+   "id": "pneus_gauche",
+   "groupe": "Stand",
+   "fr": "change les pneus gauches",
+   "en": "change the left tyres",
+   "ordre": true,
+   "tournures": [
+    "linkerbanden wisselen|banden links wisselen|wissel * linkerbanden|nieuwe linkerbanden"
+   ]
+  },
+  {
+   "id": "pneus_droit",
+   "groupe": "Stand",
+   "fr": "change les pneus droits",
+   "en": "change the right tyres",
+   "ordre": true,
+   "tournures": [
+    "rechterbanden wisselen|banden rechts wisselen|wissel * rechterbanden|nieuwe rechterbanden"
+   ]
+  },
+  {
+   "id": "pneu_avg",
+   "groupe": "Stand",
+   "fr": "change seulement l'avant gauche",
+   "en": "only the front left",
+   "ordre": true,
+   "tournures": [
+    "alleen linksvoor|band linksvoor wisselen|wissel linksvoor|alleen links voor"
+   ]
+  },
+  {
+   "id": "pneu_avd",
+   "groupe": "Stand",
+   "fr": "change seulement l'avant droit",
+   "en": "only the front right",
+   "ordre": true,
+   "tournures": [
+    "alleen rechtsvoor|band rechtsvoor wisselen|wissel rechtsvoor|alleen rechts voor"
+   ]
+  },
+  {
+   "id": "pneu_arg",
+   "groupe": "Stand",
+   "fr": "change seulement l'arrière gauche",
+   "en": "only the rear left",
+   "ordre": true,
+   "tournures": [
+    "alleen linksachter|band linksachter wisselen|wissel linksachter|alleen links achter"
+   ]
+  },
+  {
+   "id": "pneu_ard",
+   "groupe": "Stand",
+   "fr": "change seulement l'arrière droit",
+   "en": "only the rear right",
+   "ordre": true,
+   "tournures": [
+    "alleen rechtsachter|band rechtsachter wisselen|wissel rechtsachter|alleen rechts achter"
+   ]
+  },
+  {
+   "id": "silence",
+   "groupe": "Radio",
+   "fr": "silence",
+   "en": "be quiet",
+   "tournures": [
+    "stil|wees stil|stille modus|minder praten|alleen dringend"
+   ]
+  },
+  {
+   "id": "reparle",
+   "groupe": "Radio",
+   "fr": "reparle",
+   "en": "talk again",
+   "tournures": [
+    "praat weer|je mag weer praten|alle info"
+   ]
+  },
+  {
+   "id": "repete",
+   "groupe": "Radio",
+   "fr": "répète",
+   "en": "say again",
+   "tournures": [
+    "herhaal|herhalen|nog een keer|wat zei je|wat zeg je"
+   ]
+  },
+  {
+   "id": "radio_check",
+   "groupe": "Radio",
+   "fr": "tu m'entends",
+   "en": "can you hear me",
+   "tournures": [
+    "hoor je me|radiocheck|kun je me horen|radio check"
+   ]
+  },
+  {
+   "id": "merci",
+   "groupe": "Radio",
+   "fr": "merci",
+   "en": "thanks",
+   "tournures": [
+    "bedankt|dank je|dankjewel|dank je wel"
+   ]
+  },
+  {
+   "id": "bonjour",
+   "groupe": "Radio",
+   "fr": "salut",
+   "en": "hello",
+   "tournures": [
+    "hallo|hoi|goedemorgen|goedendag"
+   ]
+  }
+ ]
+}

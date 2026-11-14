@@ -65,7 +65,7 @@ def extract() -> list[dict]:
         inside_L = set()
         pairs = []
         for node in ast.walk(tree):
-            if isinstance(node, ast.Call) and getattr(node.func, "id", getattr(node.func, "attr", None)) in ("L", "tr") \
+            if isinstance(node, ast.Call) and getattr(node.func, "id", getattr(node.func, "attr", None)) in ("L", "L_", "tr") \
                     and len(node.args) >= 2 and _is_text(node.args[0]) and _is_text(node.args[1]):
                 pairs.append((node.args[0], node.args[1], node.lineno))
                 inside_L.add(id(node.args[0]))

@@ -10,8 +10,10 @@
    les garder, à la place qui sonne juste dans la langue.
 3. Voir l'avancement : `python tools/textes.py --stats`
 
-Pour qu'une langue soit proposée aux joueurs, il faut aussi : une voix Piper dans cette langue
-(licence sans restriction commerciale), et les tournures des questions vocales dans `questions.py`.
+Le fichier couvre ce que dit l'ingénieur ET ce qu'affichent le tableau de bord et la vue téléphone.
+Pour qu'une langue soit vraiment prête pour les joueurs, il faut aussi : une voix Piper dans cette langue
+(licence sans restriction commerciale ; en attendant, l'ingénieur parle anglais), et les tournures des
+questions vocales dans `questions.py`.
 
 🇬🇧 French and English live in the code. Every other language has its own `<code>.json` file here
 (e.g. `de.json` for German). Anything not translated yet is shown and spoken in English.
@@ -23,5 +25,6 @@ Pour qu'une langue soit proposée aux joueurs, il faut aussi : une voix Piper da
    wherever they sound right in your language.
 3. Check progress: `python tools/textes.py --stats`
 
-For a language to be offered to players it also needs a Piper voice in that language (licence with no
-commercial restriction) and the voice-question phrasings in `questions.py`.
+The file covers what the engineer says AND what the dashboard and phone view show.
+For a language to be really ready for players it also needs a Piper voice in that language (licence with no
+commercial restriction; until then the engineer speaks English) and the voice-question phrasings in `questions.py`.

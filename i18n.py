@@ -20,13 +20,19 @@ LANG = "fr"
 DIR = Path(__file__).resolve().parent / "traductions"
 
 _exact: dict[str, str] = {}                       # texte français -> traduction
-_patterns: list[tuple[re.Pattern, str]] = []      # phrases à trous : (motif français, traduction avec {0}, {1}…)
+_patterns: list[tuple[re.Pattern, str, str]] = []  # phrases à trous : (motif, traduction avec {0}, {1}…, modèle français)
 _cache: dict[str, str | None] = {}
 _meta: dict = {}
 
 
+_avail: dict[str, str] | None = None
+
+
 def available() -> dict[str, str]:
     """Langues proposées : {code: nom}. Le français et l'anglais, plus chaque fichier de traductions/."""
+    global _avail
+    if _avail is not None:
+        return _avail
     out = {"fr": "Français", "en": "English"}
     try:
         for f in sorted(DIR.glob("*.json")):
@@ -36,13 +42,22 @@ def available() -> dict[str, str]:
                 pass
     except OSError:
         pass
+    _avail = out
     return out
 
 
 def _template_regex(fr: str) -> re.Pattern:
     parts = re.split(r"\{(\d+)\}", fr)
-    rx = "".join(re.escape(p) if i % 2 == 0 else f"(?P<v{p}>.*?)" for i, p in enumerate(parts))
-    return re.compile("^" + rx + "$", re.S)
+    seen, rx = set(), []
+    for i, p in enumerate(parts):
+        if i % 2 == 0:
+            rx.append(re.escape(p))
+        elif p in seen:            # même valeur deux fois : même texte attendu
+            rx.append(f"(?P=v{p})")
+        else:
+            seen.add(p)
+            rx.append(f"(?P<v{p}>.*?)")
+    return re.compile("^" + "".join(rx) + "$", re.S)
 
 
 def _load(code: str) -> bool:
@@ -62,7 +77,7 @@ def _load(code: str) -> bool:
         if re.search(r"\{\d+\}", fr):
             fixed = re.sub(r"\{\d+\}", "", fr)
             if sum(c.isalpha() for c in fixed) >= 4:      # « {0} » tout seul attraperait n'importe quoi
-                _patterns.append((_template_regex(fr), tr))
+                _patterns.append((_template_regex(fr), tr, fr))
         else:
             _exact[fr] = tr
     # les phrases les plus précises d'abord
@@ -86,15 +101,30 @@ def en() -> bool:
     return LANG != "fr"
 
 
+def _value(v: str, depth: int = 0) -> str:
+    """Une valeur glissée dans une phrase peut être elle-même un texte français (« survirage », « 1 arrêt ») :
+    on la traduit aussi quand on la connaît."""
+    if not v or depth > 1 or not any(c.isalpha() for c in v):
+        return v
+    t = _exact.get(v)
+    if t is None and depth == 0:
+        t = _translate(v)
+    if t is None:
+        m = re.match(r"^([\d.,]+ )(.+)$", v)          # « 1 arrêt », « 3 tours »
+        if m and m.group(2) in _exact:
+            t = m.group(1) + _exact[m.group(2)]
+    return t if t is not None else v
+
+
 def _translate(fr: str) -> str | None:
     if fr in _cache:
         return _cache[fr]
     out = _exact.get(fr)
     if out is None:
-        for rx, tr in _patterns:
+        for rx, tr, _fr in _patterns:
             m = rx.match(fr)
             if m:
-                vals = {k[1:]: v for k, v in m.groupdict().items()}
+                vals = {k[1:]: _value(v) for k, v in m.groupdict().items()}
                 try:
                     out = re.sub(r"\{(\d+)\}", lambda g: vals.get(g.group(1), g.group(0)), tr)
                 except re.error:
@@ -104,6 +134,14 @@ def _translate(fr: str) -> str | None:
         _cache.clear()
     _cache[fr] = out
     return out
+
+
+def catalog() -> dict:
+    """Traductions de la langue choisie, pour le tableau de bord (vide en français et en anglais)."""
+    if LANG in ("fr", "en"):
+        return {"lang": LANG, "exact": {}, "patterns": []}
+    return {"lang": LANG, "exact": dict(_exact), "patterns": [[fr, tr] for _rx, tr, fr in _patterns],
+            "comma": bool(_meta.get("_virgule_decimale", False))}
 
 
 def L(fr: str, en_text: str) -> str:

@@ -44,8 +44,14 @@ DEFAULT = {"fr": "jessica", "en": "lj"}
 CHOICE = dict(DEFAULT)   # langue -> id de voix choisie (rempli depuis config.json au démarrage)
 
 
-def current_id(lang: str | None = None) -> str:
+def voice_lang(lang: str | None = None) -> str:
+    """Langue de la voix : celle de l'appli si on a une voix pour elle (DEFAULT), sinon l'anglais."""
     lang = lang or i18n.LANG
+    return lang if lang in DEFAULT else "en"
+
+
+def current_id(lang: str | None = None) -> str:
+    lang = voice_lang(lang)
     vid = CHOICE.get(lang)
     return vid if vid in VOICES and VOICES[vid][0] == lang else DEFAULT[lang]
 
@@ -64,7 +70,7 @@ def engineer_female() -> bool:
 
 def catalog(lang: str | None = None) -> list[dict]:
     """Voix proposées pour une langue, pour le menu du tableau de bord."""
-    lang = lang or i18n.LANG
+    lang = voice_lang(lang)
     return [{"id": k, "name": v[4], "female": v[5], "mb": v[6],
              "ready": (MODELS / f"{v[1]}.onnx").exists()}
             for k, v in VOICES.items() if v[0] == lang]
@@ -177,7 +183,7 @@ class Voice:
             _, name, folder, speaker, shown, _, _ = VOICES[vid]
             onnx, cfg = self._files(vid)
             if not (cfg.exists() and onnx.exists()):
-                if self._piper is not None and self.loaded and self.loaded[0] == i18n.LANG:
+                if self._piper is not None and self.loaded and self.loaded[0] == voice_lang():
                     # même langue : on garde la voix actuelle pendant le téléchargement de la nouvelle (en arrière-plan)
                     if not self.downloading:
                         threading.Thread(target=self._fetch, args=(vid,), daemon=True).start()
@@ -187,11 +193,11 @@ class Voice:
                 self._piper = PiperVoice.load(onnx, config_path=cfg)
                 self._model = name
             self.speaker = speaker
-            self.loaded = (i18n.LANG, vid)
+            self.loaded = (voice_lang(), vid)
             self.engine = f"Piper · {shown}"
         except Exception as e:
             import traceback; traceback.print_exc()
-            self.loaded = (i18n.LANG, current_id())   # pas de nouvel essai à chaque annonce
+            self.loaded = (voice_lang(), current_id())   # pas de nouvel essai à chaque annonce
             if self._piper is None:
                 print(f"  Voix Piper indisponible ({e!r}). Utilisation de la voix Windows.")
                 self.engine = "Windows" if sys.platform == "win32" else "aucune"
@@ -217,7 +223,7 @@ class Voice:
                 _download(url + ".onnx", onnx, lambda pct: self.downloading and self.downloading.update(pct=pct))
         except Exception as e:
             print(f"  Téléchargement de la voix {shown} impossible : {e!r}")
-            self.loaded = (i18n.LANG, vid)   # on n'insiste pas
+            self.loaded = (voice_lang(), vid)   # on n'insiste pas
         finally:
             self.downloading = None
         if threading.current_thread() is not threading.main_thread() and self._piper is not None:
@@ -278,7 +284,7 @@ class Voice:
     def _speak_windows(self, text: str) -> None:
         safe = text.replace("'", "''")
         ps = ("Add-Type -AssemblyName System.Speech; $s=New-Object System.Speech.Synthesis.SpeechSynthesizer; "
-              f"$v=$s.GetInstalledVoices()|?{{$_.VoiceInfo.Culture.Name -like '{i18n.LANG}*'}}|select -First 1; "
+              f"$v=$s.GetInstalledVoices()|?{{$_.VoiceInfo.Culture.Name -like '{voice_lang()}*'}}|select -First 1; "
               "if($v){$s.SelectVoice($v.VoiceInfo.Name)}; $s.Rate=1; "
               f"$s.Speak('{safe}')")
         r = subprocess.run(["powershell", "-NoProfile", "-Command", ps], capture_output=True, text=True,
@@ -291,7 +297,7 @@ class Voice:
         while True:
             _, _, text, t0, spot = self._q.get()
             import time as _t
-            if self.loaded != (i18n.LANG, current_id()):   # langue ou voix changée : on charge l'autre voix
+            if self.loaded != (voice_lang(), current_id()):   # langue ou voix changée : on charge l'autre voix
                 self._load()
             if spot and _t.monotonic() - t0 > 1.2:
                 continue   # info du spotter périmée : on ne la dit pas

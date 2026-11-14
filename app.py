@@ -349,6 +349,7 @@ def loop(state: State, demo: bool) -> None:
                 "penalty": pen.ui(snap),
                 "phone": PHONE_URL,
                 "lang": i18n.LANG,
+                "langs": i18n.available(),
                 "update": UPD.ui(),
                 "ptt": state.radio.info(),
                 "times": lt.ui(snap),
@@ -426,8 +427,9 @@ def make_handler(state: State):
 
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
-            if self.path.startswith("/api/mics") or self.path.startswith("/api/map"):
-                data = state.radio.mics() if self.path.startswith("/api/mics") else {**state.map.info(), "points": state.map.points()}
+            if self.path.startswith("/api/mics") or self.path.startswith("/api/map") or self.path.startswith("/api/traductions"):
+                data = state.radio.mics() if self.path.startswith("/api/mics") else i18n.catalog() \
+                    if self.path.startswith("/api/traductions") else {**state.map.info(), "points": state.map.points()}
                 body, ctype = json.dumps(data).encode(), "application/json"
                 self.send_response(200)
                 self.send_header("Content-Type", ctype)

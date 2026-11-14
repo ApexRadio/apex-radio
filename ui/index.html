@@ -425,7 +425,40 @@ const sign = v => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(2);
 const WHEELS = ["AVG", "AVD", "ARG", "ARD"];
 let lastRadio = "", setupPrompt = null;
 let LANG = "fr";
-const T = (fr, en) => LANG === "en" ? en : fr;
+let TR = { exact: {}, patterns: [] }, LANGS = { fr: "Français", en: "English" };
+// autres langues : traductions envoyées par Apex (traductions/<code>.json), repli sur l'anglais
+const trNorm = s => { const t = document.createElement("textarea"); t.innerHTML = String(s); return t.value.replace(/\s+/g, " ").trim(); };
+function trValue(v) {   // valeur glissée dans une phrase, elle-même traduite si on la connaît (« 1 arrêt »)
+  if (!/[a-zà-ÿ]/i.test(v)) return v;
+  if (TR.exact[v] != null) return TR.exact[v];
+  const m = /^([\d.,]+ )(.+)$/.exec(v);
+  return m && TR.exact[m[2]] != null ? m[1] + TR.exact[m[2]] : v;
+}
+function trLookup(fr) {
+  const k = trNorm(fr);
+  if (TR.exact[k] != null) return TR.exact[k];
+  for (const [rx, tr] of TR._rx || []) {
+    const m = rx.exec(k);
+    if (m) return tr.replace(/\{(\d+)\}/g, (g, n) => m.groups && m.groups["v" + n] != null ? trValue(m.groups["v" + n]) : g);
+  }
+  return null;
+}
+const T = (fr, en) => LANG === "fr" ? fr : LANG === "en" ? en : (trLookup(fr) ?? en);
+const TA = (fr, en) => LANG === "fr" ? fr : LANG === "en" ? en : (trLookup(fr) ?? en);   // attributs et contenus HTML
+async function loadTr() {
+  TR = { exact: {}, patterns: [] };
+  if (LANG === "fr" || LANG === "en") return;
+  try { TR = await (await fetch("/api/traductions")).json(); } catch (e) { return; }
+  const ex = {};
+  for (const [k, v] of Object.entries(TR.exact || {})) ex[trNorm(k)] = v;
+  TR.exact = ex;
+  TR._rx = (TR.patterns || []).map(([fr, tr]) => {
+    const seen = new Set();
+    const rx = trNorm(fr).split(/\{(\d+)\}/).map((p, i) => i % 2 === 0 ? p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+      : seen.has(p) ? `\\k<v${p}>` : (seen.add(p), `(?<v${p}>.*?)`)).join("");
+    try { return [new RegExp("^" + rx + "$", "s"), tr]; } catch (e) { return null; }
+  }).filter(Boolean);
+}
 // la LMP2 existe en deux versions dans LMU : LMP2 (WEC) et LMP2_ELMS
 function carLabel(cls, car) {
   const c = (cls || "").toUpperCase(), elms = c.includes("ELMS") || (car || "").toUpperCase().includes(":ELMS");
@@ -434,13 +467,14 @@ function carLabel(cls, car) {
 }
 function applyLang() {
   document.documentElement.lang = LANG;
-  document.querySelectorAll("[data-en]").forEach(el => { if (el.dataset.fr === undefined) el.dataset.fr = el.innerHTML; el.innerHTML = LANG === "en" ? el.dataset.en : el.dataset.fr; });
+  document.querySelectorAll("[data-en]").forEach(el => { if (el.dataset.fr === undefined) el.dataset.fr = el.innerHTML; el.innerHTML = TA(el.dataset.fr, el.dataset.en); });
   [["enTitle", "title"], ["enPlaceholder", "placeholder"], ["enAria", "aria-label"]].forEach(([k, attr]) =>
     document.querySelectorAll(`[data-${k.replace(/[A-Z]/g, c => "-" + c.toLowerCase())}]`).forEach(el => {
       const keep = "fr" + k; if (el.dataset[keep] === undefined) el.dataset[keep] = el.getAttribute(attr) || "";
-      el.setAttribute(attr, LANG === "en" ? el.dataset[k] : el.dataset[keep]);
+      el.setAttribute(attr, TA(el.dataset[keep], el.dataset[k]));
     }));
-  $("lang").textContent = LANG === "en" ? "EN" : "FR";
+  $("lang").textContent = LANG.toUpperCase();
+  $("lang").title = LANGS[LANG] || LANG;
   lastRadio = ""; loadMics();
 }
 const WHEELS_EN = ["FL", "FR", "RL", "RR"];
@@ -459,7 +493,8 @@ function callout(s, p, radio) {
 
 function render(d) {
   const s = d.snap || {}, p = d.plan || {}, radio = d.radio || [];
-  if (d.lang && d.lang !== LANG) { LANG = d.lang; applyLang(); }
+  if (d.langs) LANGS = d.langs;
+  if (d.lang && d.lang !== LANG) { LANG = d.lang; loadTr().then(applyLang); }
   $("demo").textContent = d.demo ? T("DÉMO", "DEMO") : "";
   if (d.update && d.update.version) $("ver").textContent = "v" + d.update.version;
   $("status").className = "pill" + (s.on_track ? " live" : "");
@@ -520,9 +555,8 @@ function render(d) {
   }
 
   const t = d.ptt || {};
-  const labels = LANG === "en"
-    ? { "prêt": "READY", "écoute": "● LISTENING…", "réflexion": "THINKING…", "apprentissage": "PRESS THE BUTTON YOU WANT…", "erreur": "PROBLEM", "démarrage": "STARTING…" }
-    : { "prêt": "PRÊT", "écoute": "● J'ÉCOUTE…", "réflexion": "JE RÉFLÉCHIS…", "apprentissage": "APPUIE SUR LE BOUTON VOULU…", "erreur": "PROBLÈME", "démarrage": "DÉMARRAGE…" };
+  const labels = { "prêt": T("PRÊT", "READY"), "écoute": T("● J'ÉCOUTE…", "● LISTENING…"), "réflexion": T("JE RÉFLÉCHIS…", "THINKING…"),
+    "apprentissage": T("APPUIE SUR LE BOUTON VOULU…", "PRESS THE BUTTON YOU WANT…"), "erreur": T("PROBLÈME", "PROBLEM"), "démarrage": T("DÉMARRAGE…", "STARTING…") };
   $("pttstate").textContent = labels[t.state] || "–";
   $("pttstate").className = t.state === "écoute" ? "listen" : "";
   $("listen").hidden = !(t.state === "écoute" || t.state === "réflexion");
@@ -555,7 +589,7 @@ function render(d) {
   const total = s.max_laps ? s.max_laps : p.laps_to_finish != null ? Math.round(s.laps_done + s.lap_frac + p.laps_to_finish) : null;
   $("lapbig").innerHTML = `${T("TOUR", "LAP")} ${cur}${total ? ` <small>/ ${s.max_laps ? "" : "~"}${total}</small>` : ""}`;
   const left = total != null ? Math.max(0, total - cur) : null;
-  $("lapleft").innerHTML = (left != null ? (LANG === "en" ? `<b>${left}</b> lap${left !== 1 ? "s" : ""} to go` : `<b>${left}</b> tour${left > 1 ? "s" : ""} restant${left > 1 ? "s" : ""}`) : "") + (s.time_left != null ? ` · ${fmtTime(s.time_left)}` : "");
+  $("lapleft").innerHTML = (left != null ? T(`<b>${left}</b> tour${left > 1 ? "s" : ""} restant${left > 1 ? "s" : ""}`, `<b>${left}</b> lap${left !== 1 ? "s" : ""} to go`) : "") + (s.time_left != null ? ` · ${fmtTime(s.time_left)}` : "");
   $("lapinfo").textContent = s.class_position && s.class_position !== s.position ? T(`P${s.position} au général · ${s.num_cars} voitures`, `P${s.position} overall · ${s.num_cars} cars`) : T(`${s.num_cars} voitures`, `${s.num_cars} cars`);
   $("gapa").innerHTML = s.gap_ahead != null ? `−${n(s.gap_ahead)} <small class="muted" style="font-size:14px;font-weight:400">${T("devant", "ahead")}</small>` : "–";
   $("gapb").innerHTML = s.gap_behind != null ? `+${n(s.gap_behind)} <small class="muted" style="font-size:14px;font-weight:400">${T("derrière", "behind")}</small>` : "";
@@ -589,7 +623,7 @@ function render(d) {
   $("box").textContent = box; $("box").className = boxCls; $("boxinfo").textContent = info;
 
   $("compound").textContent = s.compound ? `· ${s.compound}` : "";
-  $("tyres").innerHTML = (LANG === "en" ? WHEELS_EN : WHEELS).map((w, i) => {
+  $("tyres").innerHTML = (LANG !== "fr" ? WHEELS_EN : WHEELS).map((w, i) => {
     const wear = (s.tyre_wear?.[i] ?? 1) * 100;
     const cls = wear < 30 ? "bad" : wear < 50 ? "warn" : "";
     return `<div class="tyre"><small>${w}</small><b class="${cls}">${wear.toFixed(0)}%</b><small>${(s.tyre_temp?.[i] ?? -999) > -100 ? n(s.tyre_temp[i], 0) + "°C" : "–"}<span class="press"> · ${(s.tyre_pressure?.[i] || 0) > 0 ? n(s.tyre_pressure[i], 0) + " kPa" : "–"}</span></small></div>`;
@@ -706,7 +740,7 @@ function drawMap(d) {
   });
   $("map").innerHTML = svg;
   const B = d.behavior || {};
-  const items = (B.issues || []).slice(0, 2).map(i => `<div class="it"><span class="tag" style="background:${ISSUE_COL[i.kind]}">${T("V", "T")}${i.corner} · ${LANG === "en" ? (KIND_EN[i.kind] || i.kind.toUpperCase()) : i.kind.toUpperCase()}</span><span>${esc(i.text)} — <span class="tip">${esc(i.tip)}</span></span></div>`);
+  const items = (B.issues || []).slice(0, 2).map(i => `<div class="it"><span class="tag" style="background:${ISSUE_COL[i.kind]}">${T("V", "T")}${i.corner} · ${T(i.kind.toUpperCase(), KIND_EN[i.kind] || i.kind.toUpperCase())}</span><span>${esc(i.text)} — <span class="tip">${esc(i.tip)}</span></span></div>`);
   (B.tyres || []).slice(0, 1).forEach(t => items.push(`<div class="it"><span class="tag" style="background:var(--good)">${T("PNEUS", "TYRES")}</span><span class="tip">${esc(t)}</span></div>`));
   $("behav").innerHTML = items.join("") || (m.ready && (B.laps || 0) >= 3 ? `<div class="it"><span class="tag" style="background:var(--good)">OK</span><span class="tip">${T("Voiture équilibrée, rien de répétitif.", "Car balanced, nothing recurring.")}</span></div>` : "");
   const classes = [...new Map((s.cars || []).map(c => [c.c, c.cls])).entries()];
@@ -729,7 +763,10 @@ function loadMics() {
   }).catch(() => {});
 }
 loadMics();
-$("lang").onclick = () => fetch("/api/lang", { method: "POST", body: JSON.stringify({ lang: LANG === "en" ? "fr" : "en" }) });
+$("lang").onclick = () => {   // fait le tour des langues disponibles (FR → EN → autres → FR)
+  const codes = Object.keys(LANGS), next = codes[(codes.indexOf(LANG) + 1) % codes.length] || "fr";
+  fetch("/api/lang", { method: "POST", body: JSON.stringify({ lang: next }) });
+};
 $("mic").onchange = () => fetch("/api/mic", { method: "POST", body: JSON.stringify({ index: $("mic").value === "" ? null : Number($("mic").value) }) });
 $("learn").onclick = () => fetch("/api/ptt/learn", { method: "POST" });
 
@@ -745,25 +782,25 @@ function applyAccent(id) {
   document.documentElement.style.setProperty("--accent", h);
   document.documentElement.style.setProperty("--accent-rgb", rgb);
 }
-$("accent").innerHTML = ACCENTS.map(a => `<option value="${a[0]}">${LANG === "en" ? a[2] : a[1]}</option>`).join("");
+$("accent").innerHTML = ACCENTS.map(a => `<option value="${a[0]}">${T(a[1], a[2])}</option>`).join("");
 $("accent").onchange = e => { applyAccent(e.target.value);
   fetch("/api/accent", { method: "POST", body: JSON.stringify({ accent: e.target.value }) }); };
 
 // ---- niveau d'encouragements
 const ENC = [["discret", "Discret", "Low-key"], ["normal", "Normal", "Normal"], ["motivant", "Motivant", "Hype"]];
-$("encourage").innerHTML = ENC.map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
+$("encourage").innerHTML = ENC.map(e => `<option value="${e[0]}">${T(e[1], e[2])}</option>`).join("");
 $("pttmode").innerHTML = [["hold", "Rester appuyé pour parler", "Hold to talk"], ["toggle", "Appuyer une fois (arrêt tout seul à la fin de la phrase)", "Press once (stops by itself when you finish)"]]
-  .map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
+  .map(e => `<option value="${e[0]}">${T(e[1], e[2])}</option>`).join("");
 $("asr").innerHTML = [["fast", "Rapide", "Fast"], ["precise", "Précise (plus lente)", "Precise (slower)"]]
-  .map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
+  .map(e => `<option value="${e[0]}">${T(e[1], e[2])}</option>`).join("");
 $("asr").onchange = e => fetch("/api/asr", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
 $("lmumode").innerHTML = [["ask", "Demander (fenêtre de Steam)", "Ask (Steam window)"], ["normal", "Normal (écran)", "Normal (screen)"],
   ["vr", "VR – SteamVR", "VR – SteamVR"], ["openxr", "VR – OpenXR", "VR – OpenXR"]]
-  .map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
+  .map(e => `<option value="${e[0]}">${T(e[1], e[2])}</option>`).join("");
 $("lmumode").onchange = e => fetch("/api/lmu/mode", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
 $("pttmode").onchange = e => fetch("/api/pttmode", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
 $("tone").innerHTML = [["sobre", "Sobre (juste l'info)", "Plain (just the info)"], ["radio", "Radio d'équipe", "Team radio"],
-  ["detente", "Détendu", "Laid-back"]].map(e => `<option value="${e[0]}">${LANG === "en" ? e[2] : e[1]}</option>`).join("");
+  ["detente", "Détendu", "Laid-back"]].map(e => `<option value="${e[0]}">${T(e[1], e[2])}</option>`).join("");
 $("tone").onchange = e => fetch("/api/tone", { method: "POST", body: JSON.stringify({ tone: e.target.value }) });
 $("encourage").onchange = e => fetch("/api/encourage", { method: "POST", body: JSON.stringify({ level: e.target.value }) });
 
@@ -773,7 +810,7 @@ const SC = [["spotter", "Spotter on / off", "Spotter on / off"], ["radio", "Radi
 function renderShortcuts(t) {
   const sc = t.shortcuts || {}, learning = t.learn_target;
   $("sclist").innerHTML = SC.map(([k, fr, en]) => `<div class="row" style="align-items:center;gap:6px">
-    <span>${LANG === "en" ? en : fr}</span>
+    <span>${T(fr, en)}</span>
     <span style="color:var(--accent);flex:1;text-align:right">${learning === k ? T("appuie sur le bouton…", "press the button…") : esc(sc[k] || T("aucun", "none"))}</span>
     <button data-sc="${k}" class="pill" style="padding:2px 8px">${T("Choisir", "Set")}</button>
     ${sc[k] ? `<button data-scclear="${k}" class="pill" style="padding:2px 8px" title="${T("Retirer", "Remove")}">✕</button>` : ""}</div>`).join("");

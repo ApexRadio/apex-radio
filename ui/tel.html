@@ -75,11 +75,16 @@ function trLookup(fr) {
   if (TR.exact[k] != null) return TR.exact[k];
   for (const [rx, tr] of TR._rx || []) {
     const m = rx.exec(k);
-    if (m) return tr.replace(/\{(\d+)\}/g, (g, n) => m.groups && m.groups["v" + n] != null ? trValue(m.groups["v" + n]) : g);
+    if (m) {
+      const g = n => m.groups && m.groups["v" + n] != null ? m.groups["v" + n] : null;
+      return tr.replace(/\{(\d+)\?([^:{}]*):([^{}]*)\}/g, (x, n, a, b) => (g(n) || "").trim() ? a : b)
+               .replace(/\{(\d+)\}/g, (x, n) => g(n) != null ? trValue(g(n)) : x);
+    }
   }
   return null;
 }
-const T = (fr, en) => LANG === "fr" ? fr : LANG === "en" ? en : (trLookup(fr) ?? en);
+const trKeepSpaces = (fr, out) => out == null ? null : (String(fr).match(/^\s*/)[0] + String(out).trim() + String(fr).match(/\s*$/)[0]);
+const T = (fr, en) => LANG === "fr" ? fr : LANG === "en" ? en : (trKeepSpaces(fr, trLookup(fr)) ?? en);
 const TA = (fr, en) => LANG === "fr" ? fr : LANG === "en" ? en : (trLookup(fr) ?? en);   // attributs et contenus HTML
 async function loadTr() {
   TR = { exact: {}, patterns: [] };
@@ -90,8 +95,8 @@ async function loadTr() {
   TR.exact = ex;
   TR._rx = (TR.patterns || []).map(([fr, tr]) => {
     const seen = new Set();
-    const rx = trNorm(fr).split(/\{(\d+)\}/).map((p, i) => i % 2 === 0 ? p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-      : seen.has(p) ? `\\k<v${p}>` : (seen.add(p), `(?<v${p}>.*?)`)).join("");
+    const rx = trNorm(fr).split(/\{(\d+)\}/).map((p, i, arr) => i % 2 === 0 ? p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+      : seen.has(p) ? `\\k<v${p}>` : (seen.add(p), i >= 3 && arr[i - 1] === " " ? `(?<v${p}>\\S+)` : `(?<v${p}>.*?)`)).join("");
     try { return [new RegExp("^" + rx + "$", "s"), tr]; } catch (e) { return null; }
   }).filter(Boolean);
 }

@@ -65,7 +65,7 @@ def extract() -> list[dict]:
         inside_L = set()
         pairs = []
         for node in ast.walk(tree):
-            if isinstance(node, ast.Call) and getattr(node.func, "id", getattr(node.func, "attr", None)) == "L" \
+            if isinstance(node, ast.Call) and getattr(node.func, "id", getattr(node.func, "attr", None)) in ("L", "tr") \
                     and len(node.args) >= 2 and _is_text(node.args[0]) and _is_text(node.args[1]):
                 pairs.append((node.args[0], node.args[1], node.lineno))
                 inside_L.add(id(node.args[0]))
@@ -80,6 +80,34 @@ def extract() -> list[dict]:
             if isinstance(node, ast.Tuple) and len(node.elts) == 2 and all(_is_text(e) for e in node.elts) \
                     and id(node.elts[0]) not in inside_L:
                 pairs.append((node.elts[0], node.elts[1], node.lineno))
+        # deux listes parallèles en arguments : _pep(["Bravo !", …], ["Well done!", …])
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Call):
+                args = node.args
+                for x, y in zip(args, args[1:]):
+                    if isinstance(x, ast.List) and isinstance(y, ast.List) and len(x.elts) == len(y.elts) > 0 \
+                            and all(_is_text(e) for e in x.elts + y.elts):
+                        pairs += [(a, b, node.lineno) for a, b in zip(x.elts, y.elts)]
+        # tableaux français / anglais : TIPS + TIPS_EN (même clés), ou KIND_EN = {"sous-virage": "understeer"}
+        dicts = {}
+        for node in tree.body:
+            if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name) \
+                    and isinstance(node.value, ast.Dict):
+                d = {}
+                for k, v in zip(node.value.keys, node.value.values):
+                    if k is not None and isinstance(v, ast.Constant) and isinstance(v.value, str):
+                        d[ast.unparse(k)] = (k, v, node.lineno)
+                dicts[node.targets[0].id] = d
+        for name, d in dicts.items():
+            if not name.endswith("_EN"):
+                continue
+            base = name[:-3]
+            partner = dicts.get(base) or dicts.get(base + "_FR")
+            for key, (k, v, line) in d.items():
+                if partner and key in partner:
+                    pairs.append((partner[key][1], v, line))
+                elif not partner and isinstance(k, ast.Constant) and isinstance(k.value, str):
+                    pairs.append((k, v, line))
         for a, b, line in pairs:
             slots: dict = {}
             fr, en = _template(a, slots), _template(b, slots)
@@ -188,7 +216,7 @@ def update(code: str, name: str | None, comma: bool | None) -> None:
     intents = json.loads((OUT / "intentions.json").read_text(encoding="utf-8"))["intentions"]
     kept = {q["id"]: q.get("tournures", []) for q in old.get("questions", [])}
     questions = [{"id": i["id"], "groupe": i["groupe"], "fr": i["fr"], "en": i["en"],
-                  "tournures": kept.pop(i["id"], [])} for i in intents]
+                  **({"ordre": True} if i.get("ordre") else {}), "tournures": kept.pop(i["id"], [])} for i in intents]
     data = {
         "_langue": name or old.get("_langue", code),
         "_virgule_decimale": comma if comma is not None else old.get("_virgule_decimale", False),

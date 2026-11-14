@@ -453,8 +453,8 @@ class Behavior:
     def describe(it) -> str:
         k, c, w = it
         if c == 0:
-            return L("la voiture est globalement " + ("sous-vireuse" if k == "sous-virage" else "survireuse"),
-                     "the car is " + ("understeering" if k == "sous-virage" else "oversteering") + " overall")
+            return (L("la voiture est globalement sous-vireuse", "the car is understeering overall") if k == "sous-virage"
+                    else L("la voiture est globalement survireuse", "the car is oversteering overall"))
         if k == "blocage":
             return L(f"blocage {w} au freinage du virage {c}", f"{_wheel_en(w)} lock-up braking into turn {c}")
         if k == "patinage":

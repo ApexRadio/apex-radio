@@ -1,5 +1,5 @@
 {
- "_aide": "Liste de tout ce qu'Apex comprend. « fr » est la phrase française qu'Apex comprend déjà ; chaque langue y associe ses tournures (voir traductions/LISEZMOI.md). {n} = un nombre (position, voiture).",
+ "_aide": "Liste de tout ce qu'Apex comprend. « fr » est la phrase française qu'Apex comprend déjà ; chaque langue y associe ses tournures (voir traductions/LISEZMOI.md). {n} = un nombre (position, voiture). « ordre » : un ordre pour l'arrêt ; s'il est reconnu, il passe avant les questions qui partagent ses mots.",
  "intentions": [
   {
    "id": "essence",
@@ -227,91 +227,106 @@
    "id": "prepare_arret",
    "groupe": "Stand",
    "fr": "prépare-moi l'arrêt",
-   "en": "prepare the pit stop"
+   "en": "prepare the pit stop",
+   "ordre": true
   },
   {
    "id": "repare_tout",
    "groupe": "Stand",
    "fr": "répare tout",
-   "en": "repair everything"
+   "en": "repair everything",
+   "ordre": true
   },
   {
    "id": "repare_carrosserie",
    "groupe": "Stand",
    "fr": "répare la carrosserie",
-   "en": "repair the bodywork"
+   "en": "repair the bodywork",
+   "ordre": true
   },
   {
    "id": "pas_reparation",
    "groupe": "Stand",
    "fr": "pas de réparation",
-   "en": "no repairs"
+   "en": "no repairs",
+   "ordre": true
   },
   {
    "id": "pas_essence",
    "groupe": "Stand",
    "fr": "pas d'essence",
-   "en": "no fuel"
+   "en": "no fuel",
+   "ordre": true
   },
   {
    "id": "pneus_tous",
    "groupe": "Stand",
    "fr": "change les quatre pneus",
-   "en": "change all four tyres"
+   "en": "change all four tyres",
+   "ordre": true
   },
   {
    "id": "pneus_garde",
    "groupe": "Stand",
    "fr": "garde les pneus",
-   "en": "keep the tyres"
+   "en": "keep the tyres",
+   "ordre": true
   },
   {
    "id": "pneus_avant",
    "groupe": "Stand",
    "fr": "change les deux avant",
-   "en": "change the two fronts"
+   "en": "change the two fronts",
+   "ordre": true
   },
   {
    "id": "pneus_arriere",
    "groupe": "Stand",
    "fr": "change les deux arrière",
-   "en": "change the two rears"
+   "en": "change the two rears",
+   "ordre": true
   },
   {
    "id": "pneus_gauche",
    "groupe": "Stand",
    "fr": "change les pneus gauches",
-   "en": "change the left tyres"
+   "en": "change the left tyres",
+   "ordre": true
   },
   {
    "id": "pneus_droit",
    "groupe": "Stand",
    "fr": "change les pneus droits",
-   "en": "change the right tyres"
+   "en": "change the right tyres",
+   "ordre": true
   },
   {
    "id": "pneu_avg",
    "groupe": "Stand",
    "fr": "change seulement l'avant gauche",
-   "en": "only the front left"
+   "en": "only the front left",
+   "ordre": true
   },
   {
    "id": "pneu_avd",
    "groupe": "Stand",
    "fr": "change seulement l'avant droit",
-   "en": "only the front right"
+   "en": "only the front right",
+   "ordre": true
   },
   {
    "id": "pneu_arg",
    "groupe": "Stand",
    "fr": "change seulement l'arrière gauche",
-   "en": "only the rear left"
+   "en": "only the rear left",
+   "ordre": true
   },
   {
    "id": "pneu_ard",
    "groupe": "Stand",
    "fr": "change seulement l'arrière droit",
-   "en": "only the rear right"
+   "en": "only the rear right",
+   "ordre": true
   },
   {
    "id": "silence",

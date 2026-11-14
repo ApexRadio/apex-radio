@@ -23,7 +23,7 @@ _exact: dict[str, str] = {}                       # texte français -> traductio
 _patterns: list[tuple[re.Pattern, str, str]] = []  # phrases à trous : (motif, traduction avec {0}, {1}…, modèle français)
 _cache: dict[str, str | None] = {}
 _meta: dict = {}
-_intents: list[tuple[str, list[re.Pattern]]] = []   # (question française, tournures de la langue)
+_intents: list[tuple[str, list[re.Pattern], bool]] = []   # (question française, tournures de la langue, ordre ?)
 
 
 _avail: dict[str, str] | None = None
@@ -57,7 +57,8 @@ def _template_regex(fr: str) -> re.Pattern:
             rx.append(f"(?P=v{p})")
         else:
             seen.add(p)
-            rx.append(f"(?P<v{p}>.*?)")
+            one_word = i >= 3 and parts[i - 1] == " "   # « {1} {2} » : la 2e valeur est un seul mot
+            rx.append(f"(?P<v{p}>\\S+)" if one_word else f"(?P<v{p}>.*?)")
     return re.compile("^" + "".join(rx) + "$", re.S)
 
 
@@ -92,16 +93,18 @@ def understand(text: str) -> str:
     if LANG in ("fr", "en") or not _intents:
         return text
     t = _plain(text)
-    out = []
-    for fr, rxs in _intents:
+    out, orders = [], []
+    for fr, rxs, order in _intents:
         for rx in rxs:
             m = rx.search(t)
             if m:
                 n = m.groupdict().get("n")
                 q = fr.replace("{n}", n) if n else fr.replace(" {n}", "").replace("{n}", "")
-                if q not in out:
-                    out.append(q)
+                lst = orders if order else out
+                if q not in lst:
+                    lst.append(q)
                 break
+    out = orders or out          # un ordre (« change les pneus arrière ») passe avant la question sur les pneus
     return " et ".join(out) if out else text
 
 
@@ -119,17 +122,23 @@ def _load(code: str) -> bool:
     for q in data.get("questions", []):
         rx = [r for t in q.get("tournures", []) for r in _tournure_regex(t)]
         if q.get("fr") and rx:
-            _intents.append((q["fr"], rx))
+            _intents.append((q["fr"], rx, bool(q.get("ordre"))))
     for e in data.get("textes", []):
-        fr, tr = e.get("fr"), (e.get("texte") or "").strip()
-        if not fr or not tr:
+        fr, tr = e.get("fr"), (e.get("texte") or "")
+        if not fr or not tr.strip():      # les espaces au début / à la fin comptent (« Phrase. » + « Suite. »)
             continue
         if re.search(r"\{\d+\}", fr):
             fixed = re.sub(r"\{\d+\}", "", fr)
-            if sum(c.isalpha() for c in fixed) >= 4:      # « {0} » tout seul attraperait n'importe quoi
+            ends = re.split(r"\{\d+\}", fr)
+            # « {0} » ou « {0} et {1} » tout seuls attraperaient n'importe quoi : il faut du texte fixe,
+            # assez de lettres, ou un début / une fin fixe (« , en {0} »)
+            if sum(c.isalpha() for c in fixed) >= 4 or len(ends[0].strip()) >= 2 or len(ends[-1].strip()) >= 3:
                 _patterns.append((_template_regex(fr), tr, fr))
         else:
             _exact[fr] = tr
+            if "|" in fr and fr.count("|") == tr.count("|"):
+                for a, b in zip(fr.split("|"), tr.split("|")):
+                    _exact.setdefault(a.strip(), b.strip())
     # les phrases les plus précises d'abord
     _patterns.sort(key=lambda p: -len(re.sub(r"\(\?P<v\d+>\.\*\?\)", "", p[0].pattern)))
     return True
@@ -149,6 +158,13 @@ def set_lang(lang: str) -> None:
 def en() -> bool:
     """Vrai pour l'anglais et pour toute langue autre que le français (elles retombent sur l'anglais)."""
     return LANG != "fr"
+
+
+def _fill(tr: str, vals: dict) -> str:
+    """Remplit {0}, {1}… ; {k?A:B} donne A si la valeur k n'est pas vide (ex. le « s » du pluriel français), sinon B :
+    « in {2} {3?Runden:Runde} »."""
+    tr = re.sub(r"\{(\d+)\?([^:{}]*):([^{}]*)\}", lambda g: g.group(2) if vals.get(g.group(1), "").strip() else g.group(3), tr)
+    return re.sub(r"\{(\d+)\}", lambda g: vals.get(g.group(1), g.group(0)), tr)
 
 
 def _value(v: str, depth: int = 0) -> str:
@@ -176,7 +192,7 @@ def _translate(fr: str) -> str | None:
             if m:
                 vals = {k[1:]: _value(v) for k, v in m.groupdict().items()}
                 try:
-                    out = re.sub(r"\{(\d+)\}", lambda g: vals.get(g.group(1), g.group(0)), tr)
+                    out = _fill(tr, vals)
                 except re.error:
                     out = None
                 break

@@ -11,6 +11,8 @@ Voices (Piper models, chosen in the dashboard; downloaded only when selected):
   Kristin (English)                  Public domain    en_US-kristin-medium · LibriVox recordings (https://librivox.org)
   John (English)                     Public domain    en_US-john-medium · LibriVox recordings (https://librivox.org)
   Northern (English)                 CC BY-SA 4.0     en_GB-northern_english_male-medium · OpenSLR 83 (http://www.openslr.org/83/)
+  Kerstin (German)                   CC0 + CC BY 4.0  de_DE-kerstin-medium · OHF-Voice voice-datasets (CC0), fine-tuned from Hi-Fi TTS 92 (CC BY 4.0, https://www.openslr.org/109/)
+  Thorsten (German)                  CC0              de_DE-thorsten-medium · Thorsten-Voice (https://github.com/thorstenMueller/Thorsten-Voice)
   Voice models: rhasspy/piper-voices (https://huggingface.co/rhasspy/piper-voices)
 faster-whisper                     MIT                  https://github.com/SYSTRAN/faster-whisper
 CTranslate2                        MIT                  https://github.com/OpenNMT/CTranslate2

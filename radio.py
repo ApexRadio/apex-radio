@@ -33,6 +33,13 @@ PROMPT = ("Radio d'ingénieur de course, Le Mans Ultimate. Questions du pilote :
           "Répare la carrosserie. Dégâts, écart, position, classement, tours restants, chrono, meilleur tour, pénalité, setup, "
           "sous-virage, survirage, répète, silence. ELMS, WEC, LMP2, Hypercar, GT3.")
 
+PROMPTS = {  # autres langues : vocabulaire de course pour aider la reconnaissance
+    "de": ("Renningenieur-Funk, Le Mans Ultimate. Fragen des Fahrers: Wie viel Sprit habe ich noch? Wie ist das Wetter? "
+           "Wird es regnen? Kommt er näher? Wo ist P6? Wo verliere ich Zeit? Wie sind die Reifen? Wann komme ich in die Box? "
+           "Bereite den Stopp vor. Karosserie reparieren. Abstand, Position, Runden übrig, Rundenzeit, beste Runde, Strafe, "
+           "Setup, Untersteuern, Übersteuern, Bremsen, wiederhol, Ruhe. ELMS, WEC, LMP2, Hypercar, GT3."),
+}
+
 
 def load_config() -> dict:
     try:
@@ -186,7 +193,7 @@ class Radio:
                 audio = (audio * (0.7 / peak)).astype(audio.dtype)   # micro trop bas : on remonte le volume
         except Exception:
             pass
-        segs, _ = self._whisper.transcribe(audio, language=i18n.LANG, beam_size=3, initial_prompt=PROMPT_EN if i18n.en() else PROMPT,
+        segs, _ = self._whisper.transcribe(audio, language=i18n.LANG, beam_size=3, initial_prompt=PROMPTS.get(i18n.LANG) or (PROMPT_EN if i18n.en() else PROMPT),
                                            condition_on_previous_text=False, vad_filter=False)
         text = " ".join(s.text.strip() for s in segs).strip()
         self._keep_clip(audio, text)

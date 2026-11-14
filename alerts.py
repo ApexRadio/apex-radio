@@ -59,7 +59,7 @@ def _dix(x: float) -> str:
     d = round(abs(x) * 10)
     if d >= 10:
         return dec(L(f"{abs(x):.1f} seconde{'s' if abs(x) >= 2 else ''}", f"{abs(x):.1f} seconds"))
-    return L(f"{max(1, d)} dixième" + ("s" if d > 1 else ""), f"{max(1, d)} tenth" + ("s" if d > 1 else ""))
+    return L(f"{max(1, d)} dixième{'s' if d > 1 else ''}", f"{max(1, d)} tenth{'s' if d > 1 else ''}")
 
 
 # ======================================================================= 1. spotter

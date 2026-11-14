@@ -39,8 +39,13 @@ VOICES = {
     "john":     ("en", "en_US-john-medium", "en/en_US/john/medium/", 0, "John", False, 64),     # domaine public (LibriVox)
     "northern": ("en", "en_GB-northern_english_male-medium", "en/en_GB/northern_english_male/medium/", 0,
                  "Northern", False, 63),                                                       # CC BY-SA 4.0 (OpenSLR 83)
+    # allemand (Piper 1.5 ou plus) : données CC0 ; Kerstin affinée depuis Hi-Fi TTS 92 (CC BY 4.0), Thorsten depuis rdh (CC0)
+    "kerstin":  ("de", "de_DE-kerstin-medium", "de/de_DE/kerstin/medium/", 0, "Kerstin", True, 63),
+    "thorsten": ("de", "de_DE-thorsten-medium", "de/de_DE/thorsten/medium/", 0, "Thorsten", False, 63),
 }
-DEFAULT = {"fr": "jessica", "en": "lj"}
+DEFAULT = {"fr": "jessica", "en": "lj", "de": "kerstin"}
+# prononciation des symboles, et virgule décimale (3,6) ou point (3.6), par langue de voix
+SPOKEN = {"fr": (" pour cent", " degrés", True), "en": (" percent", " degrees", False), "de": (" Prozent", " Grad", True)}
 CHOICE = dict(DEFAULT)   # langue -> id de voix choisie (rempli depuis config.json au démarrage)
 
 
@@ -82,11 +87,10 @@ RADIO_EFFECT = True
 
 def spoken(text: str) -> str:
     """Adapte le texte pour qu'il soit bien prononcé."""
-    if i18n.en():
-        text = text.replace("%", " percent").replace("°", " degrees")
-    else:
+    pct, deg, comma = SPOKEN.get(voice_lang(), SPOKEN["en"])
+    if comma:
         text = re.sub(r"(\d)\.(\d)", r"\1,\2", text)      # 3.6 -> 3,6
-        text = text.replace("%", " pour cent").replace("°", " degrés")
+    text = text.replace("%", pct).replace("°", deg)
     text = re.sub(r"\bP(\d+)\b", r"P \1", text)
     text = text.replace("!", ".")
     return text
@@ -262,7 +266,7 @@ class Voice:
         pcm = bytearray()
         rate = 22050
         text = re.sub(r"(?<=\w)#\s*|#(?=\s)", " ", text)   # pseudos du type « Yin# Long » : ne pas lire « dièse »
-        if not i18n.en():
+        if voice_lang() == "fr":
             text = speakable_fr(text)
         for chunk in self._piper.synthesize(text, syn_config=cfg):
             pcm += chunk.audio_int16_bytes

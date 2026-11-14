@@ -31,7 +31,7 @@ def _laptime(s: float | None) -> str:
     if not s:
         return L("pas encore de temps", "no time yet")
     m, r = divmod(s, 60)
-    return dec(f"{int(m)} minute {r:.1f}") if m else dec(L(f"{r:.1f} secondes", f"{r:.1f} seconds"))
+    return dec(L(f"{int(m)} minute {r:.1f}", f"{int(m)} minute {r:.1f}")) if m else dec(L(f"{r:.1f} secondes", f"{r:.1f} seconds"))
 
 
 def _tyre_names(idx: list[int]) -> str:
@@ -845,8 +845,13 @@ def rival(t: str, s: Snapshot) -> str | None:
         if abs(d) < 0.1:
             parts.append(L("Vous tournez dans le même rythme.", "You're lapping at the same pace."))
         else:
-            parts.append(L(f"Il tourne {_f(abs(d))} seconde{'s' if abs(d) >= 2 else ''} {'plus vite' if d < 0 else 'moins vite'} que toi au dernier tour.",
-                           f"He was {_f(abs(d))} s {'quicker' if d < 0 else 'slower'} than you last lap."))
+            sec = f"seconde{'s' if abs(d) >= 2 else ''}"
+            if d < 0:
+                parts.append(L(f"Il tourne {_f(abs(d))} {sec} plus vite que toi au dernier tour.",
+                               f"He was {_f(abs(d))} s quicker than you last lap."))
+            else:
+                parts.append(L(f"Il tourne {_f(abs(d))} {sec} moins vite que toi au dernier tour.",
+                               f"He was {_f(abs(d))} s slower than you last lap."))
     if re.search(r"secteur|perd|plus rapide|plus vite|gagne|sector", t):
         a, b = s.sectors, car.get("sectors")
         if a and b and all(a) and all(b):
@@ -880,7 +885,8 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
         tail = [L(" Je corrige le menu des stands.", " Updating the pit menu.")]
         fix = any(tail[0] in o for o in orders)
         body = [o.replace(tail[0], "") for o in orders]
-        body = [body[0]] + [b.replace("C'est noté, ", "Et ").replace("Copy, ", "And ") for b in body[1:]]
+        noted, also = L("C'est noté, ", "Copy, "), L("Et ", "And ")
+        body = [body[0]] + [b.replace(noted, also) for b in body[1:]]
         nxt = (L(" au prochain arrêt", " at the next stop"))
         body = [b.replace(nxt, "") for b in body[:-1]] + body[-1:]
         return " ".join(body) + (tail[0] if fix else "")

@@ -1,0 +1,47 @@
+name: Sondage Discord
+
+on:
+  workflow_dispatch:
+    inputs:
+      question:
+        description: "Question (300 caractères max)"
+        required: true
+      answers:
+        description: "Réponses séparées par | (2 à 10, 55 caractères max chacune)"
+        required: true
+      hours:
+        description: "Durée en heures (1 à 768)"
+        default: "168"
+      multi:
+        description: "Autoriser plusieurs réponses"
+        type: boolean
+        default: false
+      early:
+        description: "Poster dans #accès-anticipé au lieu de #annonces-news"
+        type: boolean
+        default: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Envoi
+        env:
+          HOOK: ${{ inputs.early && secrets.DISCORD_WEBHOOK_EARLY || secrets.DISCORD_WEBHOOK }}
+          QUESTION: ${{ inputs.question }}
+          ANSWERS: ${{ inputs.answers }}
+          HOURS: ${{ inputs.hours }}
+          MULTI: ${{ inputs.multi }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "Pas de webhook configuré"; exit 1; fi
+          python3 - <<'PY' > payload.json
+          import json, os
+          answers = [a.strip() for a in os.environ["ANSWERS"].split("|") if a.strip()]
+          print(json.dumps({"username": "Apex Radio", "poll": {
+              "question": {"text": os.environ["QUESTION"][:300]},
+              "answers": [{"poll_media": {"text": a[:55]}} for a in answers[:10]],
+              "duration": max(1, min(768, int(os.environ["HOURS"] or 168))),
+              "allow_multiselect": os.environ["MULTI"] == "true"}}))
+          PY
+          curl -fsS -H "Content-Type: application/json" -d @payload.json "$HOOK?wait=true" > out.json
+          python3 -c 'import json; d=json.load(open("out.json")); print("sondage", d.get("id"), "salon", d.get("channel_id"))'

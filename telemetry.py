@@ -363,7 +363,7 @@ class LMUSource:
         s.tyre_inner_temp = inner
         s.tyre_pressure = [w[i].mPressure for i in range(4)]
         s.tyre_opt = float(w[0].mOptimalTemp)
-        s.brake_temp = [float(w[i].mBrakeTemp) for i in range(4)]
+        s.brake_temp = [float(w[i].mBrakeTemp) - 273.15 for i in range(4)]   # LMU donne des kelvins, comme les pneus
         s.compound = _txt(tel.mFrontTireCompoundName)
         name = s.compound.lower()
         s.wet_tyres = any(k in name for k in ("wet", "rain", "pluie", "inter"))

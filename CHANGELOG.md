@@ -1,5 +1,13 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.2.13
+- 🇫🇷 Nouvelles questions : « comment vont mes freins ? », « limites de piste ? », « mon tour est valide ? », « qui est le leader ? », « c'est qui devant / derrière ? », « combien d'arrêts j'ai fait ? », « il y a un drapeau ? », « combien de voitures dans ma catégorie ? », « est-ce que je suis rapide ? ».
+- 🇬🇧 New questions: "how are my brakes?", "track limits?", "is my lap valid?", "who's leading?", "who's ahead / behind?", "how many stops have I made?", "any flags?", "how many cars in my class?", "am I fast?".
+- 🇫🇷 Ordres pour l'arrêt (« change les deux pneus arrière », « répare », « pas d'essence ») : le menu des stands est réglé tout de suite, plus besoin d'attendre l'approche de l'arrêt.
+- 🇬🇧 Pit orders ("change the two rears", "repair", "no fuel") now set the pit menu right away instead of waiting for the stop.
+- 🇫🇷 Correctifs : température des freins juste (LMU la donne en kelvins), « pneus et freins prêts » annoncé au bon moment, lecture du menu des stands réessayée si LMU n'est pas prêt.
+- 🇬🇧 Fixes: correct brake temperature (LMU reports it in kelvin), "tyres and brakes ready" called at the right time, pit menu read retried if LMU isn't ready.
+
 ## 1.2.12
 - 🇫🇷 Ton de la radio au choix (⚙️ Réglages → Ingénieur) : Sobre (juste l'info), Radio d'équipe ou Détendu. L'ingénieur varie aussi beaucoup plus ses phrases pour moins se répéter.
 - 🇬🇧 Pick your radio tone (⚙️ Settings → Engineer): Plain (just the info), Team radio or Laid-back. The engineer also varies his phrases a lot more so he repeats himself less.

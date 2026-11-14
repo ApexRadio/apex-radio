@@ -395,11 +395,162 @@ def penalty(s: Snapshot, p: Plan) -> str:
 TOPICS[:0] = [
     (r"penalit|drive through|stop (and|n|et) go|penalty", penalty),
     (r"(prepare|regle|regule|mets|programme|set up|setup the|program).*(stand|arret|box|menu|pit|stop)|(stand|arret).*(prepare|regle)|prepare (moi )?(l arret|tout|la re)|je rentre (ce tour|au stand|maintenant|ce tout)|box this lap|i m pitting|pitting this lap", pit_command),
-    (r"comporte|sous vir|sousvir|survir|equilibr|reglage|setup|conseil|satope|sur virage|plus vite|ameliorer|progresser|glisse|bloqu|patin|tient pas|braqu|tourne pas|ralenti|pousse|lourde|decroche|chasse|instable|nerveuse|freinage|balance|understeer|oversteer|handling|advice|sliding|locking|wheelspin|loose|snap|braking|won t turn", behavior),
+    (r"comporte|sous vir|sousvir|survir|equilibr|reglage|setup|conseil|satope|sur virage|plus vite|ameliorer|progresser|glisse|bloqu|patin|tient pas|braqu|tourne pas|ralenti|pousse|lourde|decroche|chasse|instable|nerveuse|freinage|\bje freine\b|freine (trop|tot|tard)|balance|understeer|oversteer|handling|advice|sliding|locking|wheelspin|loose|snap|braking|won t turn", behavior),
     (r"record|meilleur temps (ici|du circuit)|tour ideal|personal best|ideal lap", record),
     (r"(secteur|perd|gagne|reprend|compar|plus rapide|plus lent|sector|losing|gaining|faster|slower).*(devant|ahead|in front)|(devant|ahead|in front).*(secteur|perd|gagne|rapide|lent|sector|losing|gaining|faster|slower)", sectors_ahead),
     (r"(secteur|perd|gagne|reprend|compar|plus rapide|plus lent|sector|losing|gaining|faster|slower).*(derriere|behind)|(derriere|behind).*(secteur|perd|gagne|rapide|lent|sector|losing|gaining|faster|slower)", sectors_behind),
     (r"secteur|ou je perds?|ou je gagne|perds? du temps|compar|sector|where am i losing|where do i lose", sectors),
+]
+
+
+# ------------------------------------------------------------------ nouvelles questions (1.2.13)
+def _last_name(d) -> str:
+    return ((d or {}).get("name") or "").split(" ")[-1]
+
+
+def brakes(s: Snapshot, p: Plan) -> str:
+    bt = [b for b in (s.brake_temp or []) if b and b > 0]
+    if len(bt) < 4:
+        return L("Je n'ai pas la température des freins.", "No brake temperature data.")
+    carbon = any(k in (s.car_class or "") for k in ("Hypercar", "LMP2"))
+    cold, hot = (250, 1000) if carbon else (150, 750)
+    front, rear = (bt[0] + bt[1]) / 2, (bt[2] + bt[3]) / 2
+    txt = L(f"Freins à {front:.0f} degrés devant et {rear:.0f} derrière.",
+            f"Brakes at {front:.0f} degrees front and {rear:.0f} rear.")
+    m = max(bt)
+    if m > hot:
+        i = bt.index(m)
+        txt += " " + L(f"L'{_tyre_names([i])} chauffe beaucoup, ménage les gros freinages ou ouvre les écopes.",
+                       f"The {_tyre_names([i])} is very hot, ease the big stops or open the ducts.")
+    elif max(front, rear) < cold:
+        txt += " " + L("Ils sont froids, appuie fort sur les premiers freinages.", "They're cold, brake hard to warm them.")
+    else:
+        txt += " " + L("C'est dans la bonne fenêtre.", "That's in the window.")
+    return txt
+
+
+def track_limits(s: Snapshot, p: Plan) -> str:
+    if not s.tl_per_penalty:
+        return L(f"{s.tl_steps} avertissement{'s' if s.tl_steps > 1 else ''} pour limites de piste."
+                 if s.tl_steps else "Aucun avertissement pour limites de piste.",
+                 f"{s.tl_steps} track limit warning{'s' if s.tl_steps != 1 else ''}." if s.tl_steps else "No track limit warnings.")
+    left = s.tl_per_penalty - s.tl_steps
+    txt = L(f"Limites de piste : {s.tl_steps} avertissement{'s' if s.tl_steps > 1 else ''} sur {s.tl_per_penalty}.",
+            f"Track limits: {s.tl_steps} warning{'s' if s.tl_steps != 1 else ''} of {s.tl_per_penalty}.")
+    if 0 < left <= 1:
+        txt += " " + L("Encore un et c'est la pénalité, reste bien dans les lignes.", "One more and it's a penalty, stay inside the lines.")
+    return txt
+
+
+def lap_valid(s: Snapshot, p: Plan) -> str:
+    if s.lap_invalid:
+        return L("Ce tour est invalidé, il ne comptera pas.", "This lap is invalidated, it won't count.")
+    return L("Pour l'instant ton tour est valide.", "Your lap is valid so far.")
+
+
+def leader(s: Snapshot, p: Plan) -> str:
+    me = s.class_position or s.position
+    if me == 1:
+        b = s.behind
+        tail = (L(f" {_last_name(b)} est à {_sec(s.gap_class_behind)}.", f" {_last_name(b)} is {_sec(s.gap_class_behind)} back.")
+                if b and s.gap_class_behind else "")
+        return L("C'est toi qui mènes ta catégorie !", "You're leading your class!") + tail
+    lead = next((r for r in s.rivals if r.get("cpos") == 1), None)
+    if not lead:
+        return L("Je ne vois pas encore le leader de ta catégorie.", "I can't see your class leader yet.")
+    name = _last_name(lead) or L("le leader", "the leader")
+    g = lead.get("gap")
+    if lead.get("in_pits"):
+        return L(f"Le leader, {name}, est aux stands. Tu es P{me}.", f"The leader, {name}, is in the pits. You're P{me}.")
+    if g is None:
+        return L(f"Le leader de ta catégorie, c'est {name}, il a au moins un tour d'avance. Tu es P{me}.",
+                 f"Your class leader is {name}, at least a lap ahead. You're P{me}.")
+    return L(f"Le leader de ta catégorie, c'est {name}, {_sec(abs(g))} devant toi. Tu es P{me}.",
+             f"Your class leader is {name}, {_sec(abs(g))} ahead. You're P{me}.")
+
+
+def _who_line(car, gap, ahead: bool) -> str:
+    if not car:
+        return (L("Personne devant toi dans ta catégorie, tu es en tête !", "Nobody ahead in your class, you're leading!") if ahead
+                else L("Personne derrière toi dans ta catégorie.", "Nobody behind you in your class."))
+    name = _last_name(car) or L("un pilote", "a driver")
+    where = L("devant", "ahead") if ahead else L("derrière", "behind")
+    txt = L(f"{where.capitalize()}, c'est {name}", f"{where.capitalize()} is {name}")
+    if car.get("car"):
+        txt += L(f", en {car['car']}", f", in the {car['car']}")
+    if car.get("in_pits"):
+        return txt + L(", il est aux stands.", ", he's in the pits.")
+    if gap:
+        txt += L(f", à {_sec(gap)}", f", {_sec(gap)} away")
+    return txt + "."
+
+
+def who_ahead(s: Snapshot, p: Plan) -> str:
+    return _who_line(s.ahead, s.gap_class_ahead, True)
+
+
+def who_behind(s: Snapshot, p: Plan) -> str:
+    return _who_line(s.behind, s.gap_class_behind, False)
+
+
+def stops_count(s: Snapshot, p: Plan) -> str:
+    n = s.pit_stops
+    if not n:
+        return L("Tu n'as pas encore fait d'arrêt.", "You haven't pitted yet.")
+    return L(f"Tu as fait {n} arrêt{'s' if n > 1 else ''}.", f"You've made {n} stop{'s' if n > 1 else ''}.")
+
+
+def flags(s: Snapshot, p: Plan) -> str:
+    if s.game_phase == 6:
+        return L("Neutralisation en cours, safety car ou full course yellow. Pas de dépassement, respecte la vitesse.",
+                 "Neutralisation, safety car or full course yellow. No overtaking, watch your speed.")
+    if s.game_phase == 7:
+        return L("La course est arrêtée, drapeau rouge.", "The race is stopped, red flag.")
+    if s.game_phase == 8:
+        return L("Drapeau à damier, c'est le dernier tour pour toi.", "Chequered flag is out, last lap for you.")
+    if s.yellow:
+        return L("Drapeau jaune sur la piste, prudence et pas de dépassement dans la zone.",
+                 "Yellow flag on track, careful and no overtaking in the zone.")
+    return L("Piste libre, drapeau vert.", "Track is clear, green flag.")
+
+
+def field_size(s: Snapshot, p: Plan) -> str:
+    cls = len(s.rivals) + 1 if s.rivals else 0
+    if cls and s.num_cars and s.num_cars > cls:
+        return L(f"{cls} voitures dans ta catégorie, {s.num_cars} en tout.", f"{cls} cars in your class, {s.num_cars} overall.")
+    if s.num_cars:
+        return L(f"{s.num_cars} voitures en piste.", f"{s.num_cars} cars on track.")
+    return L("Je ne vois pas encore les autres voitures.", "I can't see the other cars yet.")
+
+
+def pace_rank(s: Snapshot, p: Plan) -> str:
+    mine = s.best_lap
+    others = [(r.get("best"), r) for r in s.rivals if r.get("best")]
+    if not mine or not others:
+        return L("Il me faut un tour chrono de toi et des autres pour comparer.", "I need lap times from you and the others to compare.")
+    rank = 1 + sum(1 for b, _ in others if b < mine)
+    best, who = min(others, key=lambda x: x[0])
+    total = len(others) + 1
+    if rank == 1:
+        return L(f"Tu as le meilleur tour de ta catégorie, {_laptime(mine)}. Le plus proche est à {_f(best - mine, 1 if best - mine >= 0.1 else 2)} seconde.",
+                 f"You have the fastest lap in your class, {_laptime(mine)}. Next best is {_f(best - mine, 1 if best - mine >= 0.1 else 2)} s slower.")
+    return L(f"Ton meilleur tour est le {rank}e sur {total} de ta catégorie. Le plus rapide, c'est {_last_name(who)} en {_laptime(best)}, "
+             f"{_f(mine - best, 1 if mine - best >= 0.1 else 2)} seconde devant toi.",
+             f"Your best lap ranks {rank} of {total} in class. Fastest is {_last_name(who)} with {_laptime(best)}, "
+             f"{_f(mine - best, 1 if mine - best >= 0.1 else 2)} s quicker.")
+
+
+TOPICS[:0] = [
+    (r"\bfreins?\b(?! a main)|\bdisques? de frein|\bbrakes?\b", brakes),
+    (r"limites? de (la )?piste|avertissements?|track limits?|\bwarnings?\b", track_limits),
+    (r"(mon |ce |le )?(tour|chrono) (est |il est )?(valide|invalide|compte)|tour valid|valid lap|lap (valid|invalid|count)", lap_valid),
+    (r"\bleader\b|qui (mene|est premier|est en tete|gagne)|en tete de|premier de (la |ma )?(categorie|classe)|ecart (avec|sur|au) (le )?(premier|leader)|who s leading|class leader", leader),
+    (r"(c est )?qui (est |c est )?devant|who s (ahead|in front)|who is (ahead|in front)", who_ahead),
+    (r"(c est )?qui (est |c est )?derriere|who s behind|who is behind", who_behind),
+    (r"combien d arrets|nombre d arrets|(arrets|arret) (j ai|deja) fait|how many (stops|pit stops)", stops_count),
+    (r"safety|voiture de securite|neutralis|full course|\bfcy\b|drapeau(?! a damier)|pourquoi (jaune|rouge)|\bflags?\b|yellow", flags),
+    (r"combien (de |d )(voitures|pilotes|concurrents|adversaires)|how many (cars|drivers)", field_size),
+    (r"(suis je|je suis) (rapide|lent|dans le rythme)|mon rythme (par rapport|face)|meilleur tour de (la course|la categorie|ma categorie)|plus rapide de (la course|la categorie)|fastest lap|am i (fast|quick|slow)", pace_rank),
 ]
 
 
@@ -757,6 +908,18 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
             if fn is sectors and any(r[0] in (sectors_ahead, sectors_behind) for r in replies):
                 continue
             if fn is laptimes and any(r[0] is record for r in replies):
+                continue
+            if fn is gaps and any(r[0] in (who_ahead, who_behind, leader) for r in replies):
+                continue
+            if fn is pit and any(r[0] is stops_count for r in replies):
+                continue
+            if fn is laptimes and any(r[0] in (pace_rank, lap_valid) for r in replies):
+                continue
+            if fn is position and any(r[0] in (leader, field_size) for r in replies):
+                continue
+            if fn is laps and any(r[0] is flags for r in replies):
+                continue
+            if fn is behavior and any(r[0] is brakes for r in replies):
                 continue
             replies.append((fn, fn(s, p)))
     if not replies and not said:

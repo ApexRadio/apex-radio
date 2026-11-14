@@ -50,14 +50,20 @@ Créateur : Laurent (pseudo lolotuner), francophone : **réponds-lui en françai
 - Reddit : publications retirées par les filtres anti-spam (compte récent). Attendre, participer, puis une seule publication à la fois.
 - Toujours demander à Laurent de valider un texte avant de le publier à son nom.
 
-## En cours (13/11/2026)
-- Branche `test-streamdeck-stand` : plugin Stream Deck 0.3.0 (non publié, Laurent doit l'essayer en course d'abord).
-  Touches « Commande voiture » (action `car`, réglage `cmd`) qui affichent l'état réel (phares, contact, limiteur, essuie-glaces,
-  TC/ABS/TC Cut/TC Slip/carto/frein) et touches « Tchat rapide » (action `chat`). Côté Apex : `lmukeys.py` lit les touches LMU
-  du joueur (UserData\Controller / UserData\player, format supposé [appareil, code DIK], appareil 0 = clavier : À VÉRIFIER sur
-  le vrai fichier) et appuie avec SendInput (scancode) ; `/api/lmu/key`, `/api/lmu/chat` ; `snap.car` dans `/api/sd`.
-- Reste à faire : vérifier le fichier de touches LMU de Laurent, copier `app.py`, `telemetry.py`, `lmukeys.py` dans IngenieurCourse,
-  déposer le plugin (construit avec l'identifiant de son Stream Deck, qui ne va pas dans le dépôt) dans ses Téléchargements.
+## En cours (14/11/2026)
+- Deux branches de test, rien de publié :
+  - `test-1.2.13` (l'appli seule, publiable sans le Stream Deck) : nouvelles questions (freins, limites de piste, tour valide,
+    leader, qui est devant/derrière, arrêts, drapeaux, nombre de voitures, rythme), ordres d'arrêt appliqués tout de suite
+    (`apply_now` dans app.py, `prepare(mark_done=False)`), freins convertis de kelvins en °C, lecture du menu réessayée.
+  - `test-streamdeck-0.3.0` (part de `test-1.2.13`) : plugin Stream Deck 0.3.0. Touches « Commande voiture » (action `car`,
+    réglage `cmd`) avec l'état réel et « Tchat rapide » (action `chat`). `lmukeys.py` lit `UserData\player\keyboard.json`
+    (format réel vérifié : `{"Type": "Keyboard", "Input": {"Headlights": 20, ...}}`, codes DIK = scancodes ; « Traction Control 2 »
+    = TC Cut ; tchat = « Realtime Chat », jamais « Quick Chat #n »). État voiture dans `snap.car_state` (surtout pas `snap.car`,
+    qui est le nom de la voiture), envoyé sous la clé `car` de `/api/sd`.
+- Laurent lance l'appli INSTALLÉE (`%LOCALAPPDATA%\Programs\Apex Radio`), pas IngenieurCourse : pour un essai, copier les
+  fichiers dans les deux. Journal : `%LOCALAPPDATA%\Apex Radio\journal.txt`.
+- Reste à faire : course de test de Laurent (touches Voiture/Aides/Tchat, pneus à la voix, freins), durée du démarreur (1,5 s),
+  dossier Caméras du profil. Puis fusion de `test-1.2.13` sur main (1.2.13), puis du plugin.
 
 ## Idées / à faire
 - Vidéo de démo (Reel/Short) : question essence → réponse, spotter, « box box » + menu des stands réglé.

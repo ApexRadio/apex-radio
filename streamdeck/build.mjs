@@ -27,7 +27,10 @@ const LIST = {
     repeat: "M4 9a6 6 0 0 1 10.5-3.5M15 3v3h-3M16 11a6 6 0 0 1-10.5 3.5M5 17v-3h3",
     ask: "M7.5 7a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M10 14.5v.5",
     launch: "M5 2.5v15M5 3h10l-2.5 3.5L15 10H5",
+    car: "M3 13v-2.5l2-4.5h10l2 4.5V13zM3 13v2h2.5v-2M14.5 13v2H17v-2M6 10.5h.5M13.5 10.5h.5",
+    chat: "M4 4h12a1.5 1.5 0 0 1 1.5 1.5v6A1.5 1.5 0 0 1 16 13h-6l-3.5 3v-3H4a1.5 1.5 0 0 1-1.5-1.5v-6A1.5 1.5 0 0 1 4 4z",
 };
+fs.mkdirSync(`${P}/imgs/actions`, { recursive: true });
 for (const [a, d] of Object.entries(LIST)) {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="${d}" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
     fs.writeFileSync(`${P}/imgs/actions/${a}.svg`, svg);

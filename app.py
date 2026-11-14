@@ -861,7 +861,7 @@ def sd_state(state) -> dict:
         out.update({"pos": s.class_position or s.position, "cars": s.num_cars, "fuel": round(s.fuel, 1),
                     "fuel_cap": s.fuel_capacity, "energy": s.energy, "gap_ahead": s.gap_class_ahead,
                     "gap_behind": s.gap_class_behind, "last": s.last_lap, "best": s.best_lap,
-                    "in_pits": s.in_pits, "car": s.car})
+                    "in_pits": s.in_pits, "car": s.car_state})
     out["keys"] = lmukeys.available()
     if p:
         out.update({"range_laps": p.range_laps, "box_in": p.laps_until_box, "fuel_per_lap": p.fuel_per_lap})

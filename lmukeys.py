@@ -19,16 +19,17 @@ COMMANDS = {
     "ignition": [r"ignition"],
     "starter": [r"starter"],
     "limiter": [r"limiter"],
-    "lights": [r"headlight"],
-    "flash": [r"flash|pass(ing)? light"],
+    "lights": [r"headlight(?!.*(pulse|flash))"],
+    "flash": [r"flash|pass(ing)? light|headlights? pulse"],
     "wipers": [r"wiper"],
     "neutral": [r"neutral"],
     "pit_request": [r"request pit|pit request"],
     # réglages + / - : (sujet, sens, mots à exclure), dans n'importe quel ordre dans le nom
-    "tc_up": (r"traction|\btc\b", "up", r"slip|cut|power"),
-    "tc_down": (r"traction|\btc\b", "down", r"slip|cut|power"),
-    "tccut_up": (r"cut|power", "up", None),
-    "tccut_down": (r"cut|power", "down", None),
+    "tc_up": (r"traction|\btc\b", "up", r"slip|cut|power|\b2\b"),
+    "tc_down": (r"traction|\btc\b", "down", r"slip|cut|power|\b2\b"),
+    # dans LMU, « Traction Control 2 » = TC Cut (coupure de puissance)
+    "tccut_up": (r"cut|power|traction control 2|\btc ?2\b", "up", None),
+    "tccut_down": (r"cut|power|traction control 2|\btc ?2\b", "down", None),
     "tcslip_up": (r"slip", "up", None),
     "tcslip_down": (r"slip", "down", None),
     "abs_up": (r"\babs\b|anti.?lock", "up", None),
@@ -39,7 +40,8 @@ COMMANDS = {
     "map_down": (r"(engine|motor) ?map|mixture", "down", None),
     "regen_up": (r"regen", "up", None),
     "regen_down": (r"regen", "down", None),
-    "chat": [r"\bchat\b|talk"],
+    # « Realtime Chat » (tchat libre), pas « Quick Chat #1..9 » (messages tout faits du jeu)
+    "chat": [r"realtime chat|real ?time chat", r"^(?!.*(quick|#)).*\bchat\b|talk"],
 }
 DIRS = {"up": r"\b(up|incr\w*|plus|next|raise)\b|\+", "down": r"\b(down|decr\w*|minus|prev\w*|lower)\b|(?<![a-z])-(?![a-z])",
         "fwd": r"forw\w*|front|fwd", "rear": r"rear\w*|back\w*|bwd"}
@@ -55,12 +57,20 @@ _lock = threading.Lock()
 
 def _candidates(user_data: Path) -> list[Path]:
     out = []
-    for d in (user_data / "Controller", user_data / "player"):
+    for d in (user_data / "player", user_data / "Controller"):
         try:
             out += [p for p in d.glob("*.json") if p.is_file()]
         except OSError:
             pass
-    return sorted(out, key=lambda p: p.stat().st_mtime, reverse=True)
+    # keyboard.json (les touches clavier du joueur) d'abord, puis les plus récents
+    return sorted(out, key=lambda p: (p.name.lower() != "keyboard.json", -p.stat().st_mtime))
+
+
+def _keyboard_file(data) -> dict[str, int]:
+    """Format LMU : {"Type": "Keyboard", "Input": {"Headlights": 20, ...}} (codes DirectInput = scancodes)."""
+    if isinstance(data, dict) and isinstance(data.get("Input"), dict) and str(data.get("Type", "")).lower() == "keyboard":
+        return {k: v for k, v in data["Input"].items() if isinstance(v, int) and 0 < v < 256}
+    return {}
 
 
 def _keyboard_code(v) -> int | None:
@@ -106,6 +116,8 @@ def load(user_data: str | Path | None = None, verbose: bool = True) -> int:
         except (OSError, ValueError):
             continue
         before = len(found)
+        for k, v in _keyboard_file(data).items():
+            found.setdefault(k, v)
         _walk(data, found)
         if len(found) > before and not src:
             src = f.name
@@ -119,10 +131,17 @@ def load(user_data: str | Path | None = None, verbose: bool = True) -> int:
                     subj, d, excl = pats
                     ok = re.search(subj, low) and re.search(DIRS[d], low) and not (excl and re.search(excl, low))
                 else:
-                    ok = any(re.search(p, low) for p in pats)
+                    ok = False
                 if ok:
                     _map[cmd], _names[cmd] = code, name
                     break
+            if cmd not in _map and not isinstance(pats, tuple):
+                for p in pats:   # motifs par ordre de préférence
+                    hit = next(((n, c) for n, c in found.items()
+                                if re.search(p, re.sub(r"^control\s*-\s*", "", n.lower().replace("_", " ")))), None)
+                    if hit:
+                        _names[cmd], _map[cmd] = hit
+                        break
         _loaded_from = src
     if verbose:
         if _map:
@@ -200,7 +219,7 @@ def chat(text: str) -> bool:
 
     def run():
         _tap(key)
-        time.sleep(0.25)
+        time.sleep(0.35)   # laisse la boîte de tchat s'ouvrir
         for ch in text:
             _send(char=ch)
             _send(char=ch, up=True)

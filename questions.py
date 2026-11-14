@@ -862,6 +862,7 @@ def rival(t: str, s: Snapshot) -> str | None:
 
 def answer(text: str, s: Snapshot, p: Plan) -> str:
     global LAST_TEXT
+    text = i18n.understand(text)   # autres langues : leurs tournures deviennent la question française
     c = command(text)
     if c:
         return c

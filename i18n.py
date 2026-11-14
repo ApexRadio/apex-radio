@@ -23,6 +23,7 @@ _exact: dict[str, str] = {}                       # texte français -> traductio
 _patterns: list[tuple[re.Pattern, str, str]] = []  # phrases à trous : (motif, traduction avec {0}, {1}…, modèle français)
 _cache: dict[str, str | None] = {}
 _meta: dict = {}
+_intents: list[tuple[str, list[re.Pattern]]] = []   # (question française, tournures de la langue)
 
 
 _avail: dict[str, str] | None = None
@@ -35,7 +36,7 @@ def available() -> dict[str, str]:
         return _avail
     out = {"fr": "Français", "en": "English"}
     try:
-        for f in sorted(DIR.glob("*.json")):
+        for f in sorted(p for p in DIR.glob("*.json") if p.name != "intentions.json"):
             try:
                 out[f.stem] = json.loads(f.read_text(encoding="utf-8")).get("_langue", f.stem)
             except (OSError, ValueError):
@@ -60,6 +61,50 @@ def _template_regex(fr: str) -> re.Pattern:
     return re.compile("^" + "".join(rx) + "$", re.S)
 
 
+def _plain(text: str) -> str:
+    """Minuscules, sans accents ni ponctuation : « Wie viel Sprit ? » -> « wie viel sprit »."""
+    import unicodedata
+    t = unicodedata.normalize("NFD", str(text).lower())
+    t = "".join(c for c in t if unicodedata.category(c) != "Mn")
+    return re.sub(r"[^\w{}*|]+", " ", t).strip()
+
+
+def _tournure_regex(t: str) -> list[re.Pattern]:
+    """Tournure écrite par le traducteur : des mots (dans l'ordre, d'autres mots peuvent s'intercaler),
+    « | » sépare plusieurs façons de dire, « * » = n'importe quel mot, {n} = un nombre (ex. « wo ist p{n} »)."""
+    out = []
+    for alt in _plain(t).split("|"):
+        words = alt.split()
+        if not words:
+            continue
+        parts = [r"(?P<n>\d+)" if w == "{n}" else r"\S+" if w == "*" else
+                 re.escape(w).replace(r"\{n\}", r"(?P<n>\d+)") for w in words]
+        try:
+            out.append(re.compile(r"\b" + r"\s+(?:\S+\s+){0,3}?".join(parts) + r"\b"))
+        except re.error:
+            pass
+    return out
+
+
+def understand(text: str) -> str:
+    """Question dans une autre langue que le français et l'anglais : on reconnaît ses tournures et on la
+    transforme en question(s) française(s), qu'Apex sait déjà comprendre. Sans tournure reconnue : texte inchangé."""
+    if LANG in ("fr", "en") or not _intents:
+        return text
+    t = _plain(text)
+    out = []
+    for fr, rxs in _intents:
+        for rx in rxs:
+            m = rx.search(t)
+            if m:
+                n = m.groupdict().get("n")
+                q = fr.replace("{n}", n) if n else fr.replace(" {n}", "").replace("{n}", "")
+                if q not in out:
+                    out.append(q)
+                break
+    return " et ".join(out) if out else text
+
+
 def _load(code: str) -> bool:
     global _meta
     try:
@@ -70,6 +115,11 @@ def _load(code: str) -> bool:
     _patterns.clear()
     _cache.clear()
     _meta = {k: v for k, v in data.items() if k.startswith("_")}
+    _intents.clear()
+    for q in data.get("questions", []):
+        rx = [r for t in q.get("tournures", []) for r in _tournure_regex(t)]
+        if q.get("fr") and rx:
+            _intents.append((q["fr"], rx))
     for e in data.get("textes", []):
         fr, tr = e.get("fr"), (e.get("texte") or "").strip()
         if not fr or not tr:

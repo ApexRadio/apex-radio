@@ -184,27 +184,42 @@ def update(code: str, name: str | None, comma: bool | None) -> None:
     texts = extract()
     for e in texts:
         e["texte"] = done.pop(e["fr"], "")
+    # tournures des questions vocales : une entrée par intention (traductions/intentions.json)
+    intents = json.loads((OUT / "intentions.json").read_text(encoding="utf-8"))["intentions"]
+    kept = {q["id"]: q.get("tournures", []) for q in old.get("questions", [])}
+    questions = [{"id": i["id"], "groupe": i["groupe"], "fr": i["fr"], "en": i["en"],
+                  "tournures": kept.pop(i["id"], [])} for i in intents]
     data = {
         "_langue": name or old.get("_langue", code),
         "_virgule_decimale": comma if comma is not None else old.get("_virgule_decimale", False),
         "_aide": "Remplis « texte » pour chaque phrase (aide : « en »). Garde les {0}, {1}… : ce sont des valeurs.",
         "textes": texts,
+        "_aide_questions": "Pour chaque question, écris dans « tournures » comment un pilote le dit dans ta langue. "
+                           "Des mots simples, dans l'ordre (d'autres mots peuvent s'intercaler) ; « | » sépare plusieurs "
+                           "façons de dire ; « * » = n'importe quel mot ; {n} = un nombre. Ex. : [\"wie viel sprit|benzin\"].",
+        "questions": questions,
     }
     if done:   # traductions de phrases qui n'existent plus dans l'appli : gardées à part
         data["_anciennes"] = done
+    if kept:
+        data["_anciennes_questions"] = kept
     path.write_text(json.dumps(data, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     n = sum(1 for e in texts if e["texte"])
-    print(f"{path.relative_to(ROOT)} : {len(texts)} textes, {n} traduits ({100 * n // max(1, len(texts))} %)")
+    nq = sum(1 for q in questions if q["tournures"])
+    print(f"{path.relative_to(ROOT)} : {len(texts)} textes, {n} traduits ({100 * n // max(1, len(texts))} %) ; "
+          f"{len(questions)} questions, {nq} avec tournures")
 
 
 def stats() -> None:
     texts = extract()
     print(f"{len(texts)} textes dans l'appli")
-    for f in sorted(OUT.glob("*.json")):
+    for f in sorted(p for p in OUT.glob("*.json") if p.name != "intentions.json"):
         d = json.loads(f.read_text(encoding="utf-8"))
         have = {e["fr"] for e in d.get("textes", []) if e.get("texte")}
         n = sum(1 for e in texts if e["fr"] in have)
-        print(f"  {f.stem} ({d.get('_langue', '?')}) : {n}/{len(texts)} ({100 * n // max(1, len(texts))} %)")
+        nq = sum(1 for q in d.get("questions", []) if q.get("tournures"))
+        print(f"  {f.stem} ({d.get('_langue', '?')}) : textes {n}/{len(texts)} ({100 * n // max(1, len(texts))} %), "
+              f"questions {nq}/{len(d.get('questions', []))}")
 
 
 if __name__ == "__main__":

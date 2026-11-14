@@ -1,0 +1,353 @@
+{
+ "_aide": "Liste de tout ce qu'Apex comprend. « fr » est la phrase française qu'Apex comprend déjà ; chaque langue y associe ses tournures (voir traductions/LISEZMOI.md). {n} = un nombre (position, voiture).",
+ "intentions": [
+  {
+   "id": "essence",
+   "groupe": "Course",
+   "fr": "combien d'essence",
+   "en": "how much fuel"
+  },
+  {
+   "id": "conso",
+   "groupe": "Course",
+   "fr": "quelle est ma conso",
+   "en": "what's my consumption"
+  },
+  {
+   "id": "energie",
+   "groupe": "Course",
+   "fr": "combien d'énergie virtuelle",
+   "en": "how much virtual energy"
+  },
+  {
+   "id": "pneus",
+   "groupe": "Course",
+   "fr": "comment sont mes pneus",
+   "en": "how are my tyres"
+  },
+  {
+   "id": "freins",
+   "groupe": "Course",
+   "fr": "comment vont mes freins",
+   "en": "how are my brakes"
+  },
+  {
+   "id": "degats",
+   "groupe": "Course",
+   "fr": "y a des dégâts",
+   "en": "any damage"
+  },
+  {
+   "id": "ecarts",
+   "groupe": "Course",
+   "fr": "les écarts devant et derrière",
+   "en": "gaps ahead and behind"
+  },
+  {
+   "id": "ecart_devant",
+   "groupe": "Course",
+   "fr": "l'écart devant",
+   "en": "gap ahead"
+  },
+  {
+   "id": "ecart_derriere",
+   "groupe": "Course",
+   "fr": "l'écart derrière",
+   "en": "gap behind"
+  },
+  {
+   "id": "il_revient",
+   "groupe": "Course",
+   "fr": "il revient derrière",
+   "en": "is he catching me"
+  },
+  {
+   "id": "qui_devant",
+   "groupe": "Course",
+   "fr": "c'est qui devant",
+   "en": "who's ahead"
+  },
+  {
+   "id": "qui_derriere",
+   "groupe": "Course",
+   "fr": "c'est qui derrière",
+   "en": "who's behind"
+  },
+  {
+   "id": "leader",
+   "groupe": "Course",
+   "fr": "qui est le leader",
+   "en": "who's leading"
+  },
+  {
+   "id": "position",
+   "groupe": "Course",
+   "fr": "quelle position",
+   "en": "what position"
+  },
+  {
+   "id": "nb_voitures",
+   "groupe": "Course",
+   "fr": "combien de voitures",
+   "en": "how many cars"
+  },
+  {
+   "id": "voiture_p",
+   "groupe": "Course",
+   "fr": "où est p{n}",
+   "en": "where is P{n}"
+  },
+  {
+   "id": "secteurs_p",
+   "groupe": "Course",
+   "fr": "dans quel secteur p{n} est plus rapide",
+   "en": "where is P{n} faster"
+  },
+  {
+   "id": "tours_restants",
+   "groupe": "Course",
+   "fr": "combien de tours restants",
+   "en": "how many laps left"
+  },
+  {
+   "id": "temps_restant",
+   "groupe": "Course",
+   "fr": "combien de temps reste",
+   "en": "how much time left"
+  },
+  {
+   "id": "chrono",
+   "groupe": "Course",
+   "fr": "mon dernier tour",
+   "en": "my last lap"
+  },
+  {
+   "id": "meilleur_tour",
+   "groupe": "Course",
+   "fr": "mon meilleur tour",
+   "en": "my best lap"
+  },
+  {
+   "id": "rythme",
+   "groupe": "Course",
+   "fr": "est-ce que je suis rapide",
+   "en": "am I fast"
+  },
+  {
+   "id": "record",
+   "groupe": "Course",
+   "fr": "mon record ici",
+   "en": "my personal best here"
+  },
+  {
+   "id": "secteurs",
+   "groupe": "Course",
+   "fr": "où je perds du temps",
+   "en": "where am I losing time"
+  },
+  {
+   "id": "secteurs_devant",
+   "groupe": "Course",
+   "fr": "où je perds sur celui de devant",
+   "en": "where am I losing to the car ahead"
+  },
+  {
+   "id": "tour_valide",
+   "groupe": "Course",
+   "fr": "mon tour est valide",
+   "en": "is my lap valid"
+  },
+  {
+   "id": "limites",
+   "groupe": "Course",
+   "fr": "limites de piste",
+   "en": "track limits"
+  },
+  {
+   "id": "penalite",
+   "groupe": "Course",
+   "fr": "j'ai une pénalité",
+   "en": "do I have a penalty"
+  },
+  {
+   "id": "drapeaux",
+   "groupe": "Course",
+   "fr": "il y a un drapeau",
+   "en": "any flags"
+  },
+  {
+   "id": "safety_car",
+   "groupe": "Course",
+   "fr": "c'est la safety car",
+   "en": "is it a safety car"
+  },
+  {
+   "id": "meteo",
+   "groupe": "Course",
+   "fr": "quelle météo",
+   "en": "what's the weather"
+  },
+  {
+   "id": "pluie",
+   "groupe": "Course",
+   "fr": "il va pleuvoir",
+   "en": "will it rain"
+  },
+  {
+   "id": "point",
+   "groupe": "Course",
+   "fr": "fais-moi le point",
+   "en": "give me an update"
+  },
+  {
+   "id": "comportement",
+   "groupe": "Course",
+   "fr": "comment se comporte la voiture",
+   "en": "how is the car behaving"
+  },
+  {
+   "id": "conseil_setup",
+   "groupe": "Course",
+   "fr": "un conseil de réglage",
+   "en": "any setup advice"
+  },
+  {
+   "id": "arret_quand",
+   "groupe": "Stand",
+   "fr": "quand est-ce que je rentre au stand",
+   "en": "when do I pit"
+  },
+  {
+   "id": "nb_arrets",
+   "groupe": "Stand",
+   "fr": "combien d'arrêts j'ai fait",
+   "en": "how many stops have I made"
+  },
+  {
+   "id": "prepare_arret",
+   "groupe": "Stand",
+   "fr": "prépare-moi l'arrêt",
+   "en": "prepare the pit stop"
+  },
+  {
+   "id": "repare_tout",
+   "groupe": "Stand",
+   "fr": "répare tout",
+   "en": "repair everything"
+  },
+  {
+   "id": "repare_carrosserie",
+   "groupe": "Stand",
+   "fr": "répare la carrosserie",
+   "en": "repair the bodywork"
+  },
+  {
+   "id": "pas_reparation",
+   "groupe": "Stand",
+   "fr": "pas de réparation",
+   "en": "no repairs"
+  },
+  {
+   "id": "pas_essence",
+   "groupe": "Stand",
+   "fr": "pas d'essence",
+   "en": "no fuel"
+  },
+  {
+   "id": "pneus_tous",
+   "groupe": "Stand",
+   "fr": "change les quatre pneus",
+   "en": "change all four tyres"
+  },
+  {
+   "id": "pneus_garde",
+   "groupe": "Stand",
+   "fr": "garde les pneus",
+   "en": "keep the tyres"
+  },
+  {
+   "id": "pneus_avant",
+   "groupe": "Stand",
+   "fr": "change les deux avant",
+   "en": "change the two fronts"
+  },
+  {
+   "id": "pneus_arriere",
+   "groupe": "Stand",
+   "fr": "change les deux arrière",
+   "en": "change the two rears"
+  },
+  {
+   "id": "pneus_gauche",
+   "groupe": "Stand",
+   "fr": "change les pneus gauches",
+   "en": "change the left tyres"
+  },
+  {
+   "id": "pneus_droit",
+   "groupe": "Stand",
+   "fr": "change les pneus droits",
+   "en": "change the right tyres"
+  },
+  {
+   "id": "pneu_avg",
+   "groupe": "Stand",
+   "fr": "change seulement l'avant gauche",
+   "en": "only the front left"
+  },
+  {
+   "id": "pneu_avd",
+   "groupe": "Stand",
+   "fr": "change seulement l'avant droit",
+   "en": "only the front right"
+  },
+  {
+   "id": "pneu_arg",
+   "groupe": "Stand",
+   "fr": "change seulement l'arrière gauche",
+   "en": "only the rear left"
+  },
+  {
+   "id": "pneu_ard",
+   "groupe": "Stand",
+   "fr": "change seulement l'arrière droit",
+   "en": "only the rear right"
+  },
+  {
+   "id": "silence",
+   "groupe": "Radio",
+   "fr": "silence",
+   "en": "be quiet"
+  },
+  {
+   "id": "reparle",
+   "groupe": "Radio",
+   "fr": "reparle",
+   "en": "talk again"
+  },
+  {
+   "id": "repete",
+   "groupe": "Radio",
+   "fr": "répète",
+   "en": "say again"
+  },
+  {
+   "id": "radio_check",
+   "groupe": "Radio",
+   "fr": "tu m'entends",
+   "en": "can you hear me"
+  },
+  {
+   "id": "merci",
+   "groupe": "Radio",
+   "fr": "merci",
+   "en": "thanks"
+  },
+  {
+   "id": "bonjour",
+   "groupe": "Radio",
+   "fr": "salut",
+   "en": "hello"
+  }
+ ]
+}

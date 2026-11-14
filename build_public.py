@@ -14,7 +14,7 @@ FILES = ["app.py", "alerts.py", "behavior.py", "debrief.py", "i18n.py", "inciden
          "phrases.py", "pitmenu.py", "questions.py", "radio.py", "setups.py", "strategy.py", "tactics.py", "telemetry.py", "trackmap.py",
          "voice.py", "requirements.txt", "Lancer.bat", "Demo.bat", "apex.ico", "LICENSE", "README.md",
          "THIRD_PARTY_LICENSES.txt", "LISEZMOI.txt"]
-DIRS = ["ui", "vendor"]
+DIRS = ["ui", "vendor", "traductions"]
 
 if OUT.exists():
     shutil.rmtree(OUT)

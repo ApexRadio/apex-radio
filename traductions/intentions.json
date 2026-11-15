@@ -14,6 +14,12 @@
    "en": "what's my consumption"
   },
   {
+   "id": "essence_course",
+   "groupe": "Course",
+   "fr": "combien d'essence pour la course",
+   "en": "how much fuel for the race"
+  },
+  {
    "id": "energie",
    "groupe": "Course",
    "fr": "combien d'énergie virtuelle",

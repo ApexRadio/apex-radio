@@ -3,8 +3,14 @@
 ## 1.2.14
 - 🇫🇷 Voitures plus lentes devant : l'annonce arrive environ 30 secondes avant de les rattraper (au lieu de 2 secondes d'écart), avec le virage où tu vas les doubler (« GT3 plus lente devant, tu la rattrapes dans 30 secondes, au virage 7 »).
 - 🇬🇧 Slower cars ahead: the call now comes about 30 seconds before you catch them (instead of a 2-second gap), with the turn where you'll pass them ("Slower GT3 ahead, you'll catch it in 30 seconds, at turn 7").
-- 🇫🇷 Essence de départ : avant la course, l'ingénieur te prévient si tu pars avec trop (ou pas assez) d'essence ou d'énergie (« Pour 24 tours, il te faut 42 litres. Tu en as 70, tu peux en enlever 28 »). Nouvelle question : « combien d'essence pour la course ? ».
-- 🇬🇧 Starting fuel: before the race, the engineer warns you if you're starting with too much (or too little) fuel or energy ("For 24 laps, you need 42 litres. You have 70, you can take off 28"). New question: "how much fuel for the race?".
+- 🇫🇷 Briefing d'avant-course : avant le départ, l'ingénieur fait le point (durée, nombre de tours, arrêts prévus, essence ou énergie à mettre, météo). Il te prévient si tu pars avec trop ou pas assez d'essence (« Il te faut 42 litres au départ. Tu as 70 litres, tu peux en enlever 28 »). Questions : « combien d'essence pour la course ? », « briefing ».
+- 🇬🇧 Pre-race briefing: before the start, the engineer runs through race length, laps, planned stops, fuel or energy to start with, and weather. He warns you if you're carrying too much or too little fuel ("You need 42 litres at the start. You have 70 litres, you can take off 28"). Questions: "how much fuel for the race?", "briefing".
+- 🇫🇷 Limiteur : « Limiteur ! » si tu entres dans les stands sans l'avoir mis.
+- 🇬🇧 Pit limiter: "Pit limiter!" if you enter the pit lane without it.
+- 🇫🇷 Sortie des stands : l'ingénieur te prévient si une voiture arrive au moment où tu ressors (« Attention en sortie, Hypercar qui arrive, reste sur ta ligne »), ou que la sortie est dégagée. Le bout de la voie des stands est appris à ta première sortie sur chaque circuit.
+- 🇬🇧 Pit exit: the engineer warns you if a car is coming as you rejoin ("Careful on exit, Hypercar coming, hold your line"), or tells you the exit is clear. The end of the pit lane is learned on your first exit at each track.
+- 🇫🇷 Économie d'essence : si économiser un peu par tour permet de faire un arrêt de moins (même sur une course à plusieurs arrêts, et aussi en énergie virtuelle), l'ingénieur te le propose (« Si tu économises 0,2 litre par tour, on fait 1 arrêt au lieu de 2 »).
+- 🇬🇧 Fuel saving: if saving a little each lap means one stop fewer (also on multi-stop races and with virtual energy), the engineer suggests it ("Save 0.2 litres a lap and we make 1 stop instead of 2").
 
 ## 1.2.13
 - 🇫🇷 Nouvelles questions : « comment vont mes freins ? », « limites de piste ? », « mon tour est valide ? », « qui est le leader ? », « c'est qui devant / derrière ? », « combien d'arrêts j'ai fait ? », « il y a un drapeau ? », « combien de voitures dans ma catégorie ? », « est-ce que je suis rapide ? ».

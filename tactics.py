@@ -213,6 +213,7 @@ class FuelBook:
         except Exception:
             self.data = {}
         self._race_key = None
+        self.weather = None      # fonction(s) -> phrase météo pour le briefing (branchée par app.py)
         self._last_save = 0.0
 
     def _save(self) -> None:
@@ -278,68 +279,119 @@ class FuelBook:
             energy = min(1.0, e)
         return {"laps": laps, "litres": min(litres, int(cap)) if cap else litres, "stop": stop, "cap": cap, "energy": energy}
 
+    def _no_data(self, s) -> str:
+        d = self.data.get(s.track, {}) if s.track else {}
+        if not d.get("fpl"):
+            return L("Je ne connais pas encore ta conso sur ce circuit. Fais au moins 3 tours propres, en essais par exemple.",
+                     "I don't know your consumption on this track yet. Do at least 3 clean laps, in practice for example.")
+        return L("Je ne connais pas la durée de la course. Indique-la dans l'Atelier.",
+                 "I don't know the race length. Enter it in the Workshop.")
+
+    def _tank(self, s, n) -> str:
+        """Ce que tu as dans le réservoir par rapport à ce qu'il faut (avant le départ seulement)."""
+        if n["stop"]:
+            return ""
+        pct = n["energy"] is not None
+        have = (s.energy * 100 if s.energy is not None else None) if pct else s.fuel
+        want = n["energy"] * 100 if pct else n["litres"]
+        if not have or s.session != "course" or s.game_phase >= 5:
+            return ""
+        diff = have - want
+        h, x = round(have), round(abs(diff))
+        if diff >= (5 if pct else 3):
+            return (L(f"Tu as {h} % d'énergie, tu peux en enlever {x} %, la voiture sera plus légère.",
+                      f"You have {h} % energy, you can take off {x} %, the car will be lighter.") if pct else
+                    L(f"Tu as {h} litres, tu peux en enlever {x}, la voiture sera plus légère.",
+                      f"You have {h} litres, you can take off {x}, the car will be lighter."))
+        if diff < -1:
+            return (L(f"Attention, tu n'as que {h} % d'énergie, rajoute {x} %.",
+                      f"Careful, you only have {h} % energy, add {x} %.") if pct else
+                    L(f"Attention, tu n'as que {h} litres, rajoute-en {x}.",
+                      f"Careful, you only have {h} litres, add {x}."))
+        return L("Tu as ce qu'il faut, c'est bon.", "You've got what you need, all good.")
+
     def brief(self, s) -> str:
         """Réponse à « combien d'essence pour la course ? »."""
         n = self.need(s)
         if n is None:
-            d = self.data.get(s.track, {}) if s.track else {}
-            if not d.get("fpl"):
-                return L("Je ne connais pas encore ta conso sur ce circuit. Fais au moins 3 tours propres, en essais par exemple.",
-                         "I don't know your consumption on this track yet. Do at least 3 clean laps, in practice for example.")
-            return L("Je ne connais pas la durée de la course. Indique-la dans l'Atelier.",
-                     "I don't know the race length. Enter it in the Workshop.")
+            return self._no_data(s)
         laps = n["laps"]
-        if n["energy"] is not None:
-            need_txt = L(f"Pour {laps} tours, il te faut {n['energy'] * 100:.0f} % d'énergie.",
-                         f"For {laps} laps, you need {n['energy'] * 100:.0f} % energy.")
-            have = s.energy * 100 if s.energy is not None else None
-            unit_fr, unit_en, want = " %", " %", n["energy"] * 100
-        else:
-            need_txt = L(f"Pour {laps} tours, il te faut {n['litres']} litres.", f"For {laps} laps, you need {n['litres']} litres.")
-            have, unit_fr, unit_en, want = s.fuel, " litres", " litres", n["litres"]
-        out = need_txt
         if n["stop"]:
-            out = L(f"Pour {laps} tours, un plein ne suffit pas : pars le réservoir plein, il faudra un arrêt.",
-                    f"For {laps} laps, one tank isn't enough: start full, you'll need a stop.")
-            return out
-        if have and s.session == "course" and s.game_phase < 5:
-            diff, pct = have - want, unit_fr == " %"
-            h, x = round(have), round(abs(diff))
-            if diff >= (5 if pct else 3):
-                out += " " + (L(f"Tu as {h} % d'énergie, tu peux en enlever {x} %, la voiture sera plus légère.",
-                                f"You have {h} % energy, you can take off {x} %, the car will be lighter.") if pct else
-                              L(f"Tu as {h} litres, tu peux en enlever {x}, la voiture sera plus légère.",
-                                f"You have {h} litres, you can take off {x}, the car will be lighter."))
-            elif diff < -1:
-                out += " " + (L(f"Attention, tu n'as que {h} % d'énergie, rajoute {x} %.",
-                                f"Careful, you only have {h} % energy, add {x} %.") if pct else
-                              L(f"Attention, tu n'as que {h} litres, rajoute-en {x}.",
-                                f"Careful, you only have {h} litres, add {x}."))
+            return L(f"Pour {laps} tours, un plein ne suffit pas : pars le réservoir plein, il faudra un arrêt.",
+                     f"For {laps} laps, one tank isn't enough: start full, you'll need a stop.")
+        if n["energy"] is not None:
+            out = L(f"Pour {laps} tours, il te faut {n['energy'] * 100:.0f} % d'énergie.",
+                    f"For {laps} laps, you need {n['energy'] * 100:.0f} % energy.")
+        else:
+            out = L(f"Pour {laps} tours, il te faut {n['litres']} litres.", f"For {laps} laps, you need {n['litres']} litres.")
+        tank = self._tank(s, n)
+        return out + (" " + tank if tank else "")
+
+    def _stops(self, s, n) -> tuple[int, int] | None:
+        """(arrêts prévus, tour du premier arrêt) en partant le plein fait."""
+        d = self.data.get(s.track, {})
+        fpl, epl, cap = d.get("fpl"), d.get("epl") if n["energy"] is not None else None, n["cap"]
+        stint = min(cap / fpl if cap and fpl else math.inf, 1.0 / epl if epl else math.inf)
+        if stint == math.inf:
+            return None
+        stops = max(0, math.ceil((n["laps"] + 0.5) / max(stint - 0.5, 1.0)) - 1)
+        return stops, max(1, math.floor(stint - 0.2))
+
+    def briefing(self, s) -> str:
+        """Point avant le départ : durée, arrêts, essence, météo."""
+        n = self.need(s)
+        parts = []
+        mins = round(s.time_left / 60) if (s.session == "course" and s.time_left and not s.max_laps and s.game_phase < 5) else None
+        if n is not None:
+            laps = n["laps"]
+            if s.max_laps or not mins:
+                parts.append(L(f"Briefing : course de {laps} tours.", f"Briefing: {laps}-lap race."))
+            elif mins == 60:
+                parts.append(L(f"Briefing : course d'une heure, environ {laps} tours.", f"Briefing: one-hour race, about {laps} laps."))
+            elif mins % 60 == 0:
+                parts.append(L(f"Briefing : course de {mins // 60} heures, environ {laps} tours.",
+                               f"Briefing: {mins // 60}-hour race, about {laps} laps."))
             else:
-                out += " " + L("Tu as ce qu'il faut, c'est bon.", "You've got what you need, all good.")
-        return out
+                parts.append(L(f"Briefing : course de {mins} minutes, environ {laps} tours.",
+                               f"Briefing: {mins}-minute race, about {laps} laps."))
+            st = self._stops(s, n)
+            if st and st[0] == 0:
+                parts.append(L("Pas d'arrêt nécessaire pour l'essence.", "No fuel stop needed."))
+            elif st and st[0] == 1:
+                parts.append(L(f"Un arrêt prévu, vers le tour {st[1]}. Pars le réservoir plein.",
+                               f"One stop planned, around lap {st[1]}. Start with a full tank."))
+            elif st:
+                parts.append(L(f"{st[0]} arrêts prévus, le premier vers le tour {st[1]}. Pars le réservoir plein.",
+                               f"{st[0]} stops planned, the first around lap {st[1]}. Start with a full tank."))
+            if not n["stop"]:
+                if n["energy"] is not None:
+                    parts.append(L(f"Il te faut {n['energy'] * 100:.0f} % d'énergie au départ.",
+                                   f"You need {n['energy'] * 100:.0f} % energy at the start."))
+                else:
+                    parts.append(L(f"Il te faut {n['litres']} litres au départ.", f"You need {n['litres']} litres at the start."))
+                tank = self._tank(s, n)
+                if tank:
+                    parts.append(tank)
+        else:
+            parts.append(L("Briefing.", "Briefing.") + " " + self._no_data(s))
+        if self.weather:
+            try:
+                w = self.weather(s)
+            except Exception:
+                w = ""
+            if w:
+                parts.append(w)
+        return " ".join(parts)
 
     def pre_race(self, s, say) -> None:
-        """Une fois par course, avant le départ : prévient si tu pars avec trop (ou pas assez) d'essence."""
+        """Une fois par course, avant le départ : le briefing (durée, arrêts, essence, météo)."""
         if s.session != "course" or s.game_phase >= 5 or not s.on_track or not s.track or not s.fuel:
             return
         key = (s.track, s.session_code, "depart")
         if getattr(self, "_pre_key", None) == key:
             return
-        n = self.need(s)
-        if n is None:
-            return
         self._pre_key = key
-        if n["stop"]:
-            return                              # course plus longue qu'un plein : rien à enlever
-        if n["energy"] is not None:
-            diff = (s.energy or 0) * 100 - n["energy"] * 100
-            if diff >= 5 or diff < -1:
-                say(None, self.brief(s))
-        else:
-            diff = s.fuel - n["litres"]
-            if diff >= 3 or diff < -1:
-                say(None, self.brief(s))
+        say(None, self.briefing(s))
 
     def set_race(self, track: str, minutes: int | None, laps: int | None = None) -> None:
         d = self.data.setdefault(track, {})

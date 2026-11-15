@@ -58,7 +58,10 @@ def fuel(s: Snapshot, p: Plan) -> str:
         out += " " + pick("a_fuel3", [("C'est bon pour aller au bout.", "That's enough to the finish."),
                                       ("Largement de quoi finir.", "Plenty to make the finish."),
                                       ("Tu es tranquille jusqu'à l'arrivée.", "You're fine all the way to the flag.")])
-    if p.save_per_lap:
+    if p.save_per_lap and (p.stops_needed or 0) > 1:
+        out += L(f" Si tu économises {_f(p.save_per_lap)} litre par tour, on fait un arrêt de moins.",
+                 f" Save {_f(p.save_per_lap)} litres a lap and we make one stop fewer.")
+    elif p.save_per_lap:
         out += L(f" Si tu économises {_f(p.save_per_lap)} litre par tour, on évite l'arrêt.",
                  f" Save {_f(p.save_per_lap)} litres a lap and we skip the stop.")
     return out
@@ -274,7 +277,9 @@ def _forecast_text(fc: list, now: float, total: float | None, label: str) -> str
     if not wet:
         return L(f"{label} : pas de pluie prévue.", f"{label}: no rain expected.")
     n = max(wet, key=lambda x: x["rain"])
-    sky = (SKY_FR if not i18n.en() else SKY_EN)[n["sky"]] if 0 <= n["sky"] < len(SKY_FR) else ""
+    names = L("dégagé|quelques nuages|nuageux|couvert|très couvert|bruine|pluie légère|pluie|forte pluie|orage|déluge",
+              "clear|few clouds|cloudy|overcast|heavy overcast|drizzle|light rain|rain|heavy rain|storm|downpour").split("|")
+    sky = names[n["sky"]] if 0 <= n["sky"] < len(names) else ""
     when = ""
     if total:
         mins = (n["at"] - now) * total / 60
@@ -716,7 +721,12 @@ RACE_FUEL_RX = (r"(essence|carbu\w*|fuel|energie|energy|litres?|plein)\b.*\b(pou
                 r"\b(course|race|depart|start)\b")
 
 
+BRIEFING = None     # fonction() -> briefing d'avant-course
+
+
 def race_fuel_command(t: str, s: Snapshot) -> str | None:
+    if BRIEFING is not None and re.search(r"\bbriefing\b|\bbrief\b|\bbriefe\b", t):
+        return BRIEFING()
     # pendant la course, « combien d'essence pour finir » garde la réponse habituelle (ce qu'il reste)
     if RACE_FUEL is None or (s.session == "course" and s.game_phase >= 5) or not re.search(RACE_FUEL_RX, t):
         return None

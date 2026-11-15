@@ -42,7 +42,7 @@ from incidents import Incidents
 from lmu_probe import Probe
 import phrases
 import lmukeys
-from alerts import Spotter, Traffic, GapTrend, TrackLimits, Damage, Weather, WarmUp, CarInfo, Places, Morale, car_label, set_encourage
+from alerts import Spotter, Traffic, GapTrend, TrackLimits, Damage, Weather, WarmUp, CarInfo, Places, Morale, car_label, set_encourage, PitLane
 import debrief
 from pitmenu import PitCrew
 from radio import save_config
@@ -153,6 +153,7 @@ def loop(state: State, demo: bool) -> None:
     spotter.enabled = state.radio.cfg.get("spotter", True)
     state.spotter = spotter
     traffic, trend, limits, damage = Traffic(beh), GapTrend(), TrackLimits(beh), Damage()
+    pitlane = PitLane()
     warmup, carinfo, places, morale = WarmUp(), CarInfo(), Places(), Morale()
     set_encourage(state.radio.cfg.get("encourage", "normal"))
     phrases.set_tone(state.radio.cfg.get("tone", "radio"))
@@ -216,6 +217,9 @@ def loop(state: State, demo: bool) -> None:
 
     questions.CANCEL_SET = cancel_orders
     questions.RACE_FUEL = lambda: state.fuel.brief(state.snap) if state.snap else None
+    questions.BRIEFING = lambda: state.fuel.briefing(state.snap) if state.snap else None
+    state.fuel.weather = lambda s: questions._forecast_text(Weather.LAST.forecast if Weather.LAST else [], 0.0,
+                                                            s.time_left, L("Météo", "Weather"))
 
     def setup_sync():
         """Toutes les 15 s : quel setup est chargé dans LMU ? (sélection automatique dans l'atelier)"""
@@ -313,6 +317,7 @@ def loop(state: State, demo: bool) -> None:
             spotter.session = snap.session
             inc.update(snap)
             traffic.update(snap, plan, say)
+            pitlane.update(snap, say)
             trend.update(snap, say)
             limits.update(snap, say)
             warmup.update(snap, say)

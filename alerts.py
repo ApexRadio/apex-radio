@@ -971,3 +971,96 @@ class Weather:
             if mins >= -1:
                 out.append({"mins": round(mins), "rain": round(n["rain"] * 100), "sky": L("|".join(SKY_FR), "|".join(SKY_EN)).split("|")[max(0, min(10, n["sky"]))]})
         return out[:4]
+
+
+# ======================================================================= 13. voie des stands
+class PitLane:
+    """Limiteur oublié à l'entrée des stands, et trafic qui arrive quand tu ressors.
+    Le point de sortie de chaque circuit est appris à la première sortie (stands.json)."""
+    LIMIT = 17.0       # m/s (~60 km/h) : au-dessus, le limiteur aurait dû être mis
+
+    def __init__(self) -> None:
+        try:
+            from paths import DATA
+            self.file = DATA / "stands.json"
+            self.exits = json.loads(self.file.read_text(encoding="utf-8"))
+        except Exception:
+            self.file, self.exits = None, {}
+        self.was_in = False
+        self._reset(0.0)
+
+    def _reset(self, now: float) -> None:
+        self.t_in, self.lim1, self.lim2, self.stopped, self.exit_said = now, False, False, False, False
+
+    def _save(self) -> None:
+        if self.file:
+            try:
+                self.file.write_text(json.dumps(self.exits, indent=1, ensure_ascii=False), encoding="utf-8")
+            except Exception:
+                pass
+
+    def update(self, s, say) -> None:
+        if not s.on_track or not s.track or not s.track_len:
+            self.was_in = False
+            return
+        me = next((c for c in s.cars if c.get("me")), None)
+        if not me:
+            return
+        now = time.monotonic()
+        if s.in_pits and not self.was_in:
+            self._reset(now)
+        if not s.in_pits and self.was_in and self.stopped:
+            self.exits[s.track] = round(me["f"], 4)          # fin de la voie des stands : on la retient
+            self._save()
+        self.was_in = s.in_pits
+        if not s.in_pits:
+            return
+        if s.speed < 1.0:
+            self.stopped = True
+        # 1) limiteur
+        if not self.stopped and s.limiter is False and s.speed > self.LIMIT:
+            dt = now - self.t_in
+            if dt > 1.0 and not self.lim1:
+                self.lim1 = True
+                say(None, L("Limiteur !", "Pit limiter!"), urgent=True)
+            elif dt > 5.0 and not self.lim2:
+                self.lim2 = True
+                say(None, L("Limiteur, tu vas prendre une pénalité !", "Pit limiter, you'll get a penalty!"), urgent=True)
+        # 2) sortie des stands
+        if self.stopped and not self.exit_said and s.speed > 5.0 and s.session != "qualif":
+            self._exit(s, me, say)
+
+    def _exit(self, s, me, say) -> None:
+        L_len = s.track_len
+        f_exit = self.exits.get(s.track)
+        threats = []
+        if f_exit is not None:
+            d = ((f_exit - me["f"]) % 1) * L_len
+            if d > 0.3 * L_len:
+                return                                        # pas encore dans la voie de sortie
+            my_eta = d / max(s.speed, 12.0)
+            if my_eta > 8.0:
+                return                                        # on prévient à quelques secondes de la sortie
+            for c in s.cars:
+                if c.get("me") or c.get("pits") or c.get("spd", 0) < 20:
+                    continue
+                eta = ((f_exit - c["f"]) % 1) * L_len / c["spd"]
+                if -1.0 < eta - my_eta < 3.0:
+                    threats.append(c)
+        else:
+            # circuit pas encore connu : on regarde juste ce qui arrive derrière au moment où tu repars
+            for c in s.cars:
+                if c.get("me") or c.get("pits") or c.get("spd", 0) < 20:
+                    continue
+                if ((me["f"] - c["f"]) % 1) * L_len / c["spd"] < 6.0:
+                    threats.append(c)
+        self.exit_said = True
+        if len(threats) == 1:
+            name = class_name(threats[0]["cls"])
+            say(None, L(f"Attention en sortie, {name} qui arrive, reste sur ta ligne.",
+                        f"Careful on exit, {name} coming, hold your line."), urgent=True)
+        elif threats:
+            say(None, L(f"Attention en sortie, {len(threats)} voitures qui arrivent, reste sur ta ligne.",
+                        f"Careful on exit, {len(threats)} cars coming, hold your line."), urgent=True)
+        elif f_exit is not None:
+            say(None, L("Sortie des stands dégagée.", "Pit exit is clear."))

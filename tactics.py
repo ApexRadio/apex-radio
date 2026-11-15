@@ -221,13 +221,17 @@ class FuelBook:
         except Exception:
             pass
 
-    def update(self, s, plan, eng) -> None:
+    def update(self, s, plan, eng, say=None) -> None:
+        if say:
+            self.pre_race(s, say)
         if not s.on_track or not s.track or s.in_pits:
             return
         d = self.data.setdefault(s.track, {})
         changed = False
         clean = [l for l in eng.laps if l.time and not l.dirty and l.number > 0]
         if plan.fuel_per_lap and len(clean) >= 3 and s.raining < 0.1:
+            if plan.energy_per_lap:
+                d["epl"] = round(plan.energy_per_lap, 4)
             d.update({"fpl": round(plan.fuel_per_lap, 3), "avg": round(plan.avg_lap or 0, 3) or d.get("avg"),
                       "cap": s.fuel_capacity or d.get("cap"), "car": s.car, "class": s.car_class,
                       "date": time.strftime("%d/%m/%Y")})
@@ -244,6 +248,98 @@ class FuelBook:
         if changed and time.monotonic() - self._last_save > 30:
             self._last_save = time.monotonic()
             self._save()
+
+    # ------------------------------------------------------- avant le départ
+    def need(self, s) -> dict | None:
+        """Ce qu'il faut pour la course : tours, litres (et énergie). Durée lue dans la session en cours si c'est
+        la course, sinon la dernière course connue sur ce circuit. None si on ne sait pas encore."""
+        d = self.data.get(s.track, {}) if s.track else {}
+        fpl, avg = d.get("fpl"), d.get("avg")
+        if not fpl:
+            return None
+        laps = None
+        if s.session == "course" and s.max_laps:
+            laps = s.max_laps
+        elif s.session == "course" and s.time_left and avg and s.game_phase < 5:
+            laps = math.ceil(s.time_left / avg)
+        elif d.get("race_laps"):
+            laps = d["race_laps"]
+        elif d.get("race_min") and avg:
+            laps = math.ceil(d["race_min"] * 60 / avg)
+        if not laps:
+            return None
+        cap = s.fuel_capacity or d.get("cap")
+        litres = math.ceil((laps + 1) * fpl)        # + 1 tour : tour de formation et marge
+        stop = bool(cap and litres > cap)
+        energy = None
+        if s.energy is not None and d.get("epl"):
+            e = (laps + 1) * d["epl"]
+            stop = stop or e > 1.0
+            energy = min(1.0, e)
+        return {"laps": laps, "litres": min(litres, int(cap)) if cap else litres, "stop": stop, "cap": cap, "energy": energy}
+
+    def brief(self, s) -> str:
+        """Réponse à « combien d'essence pour la course ? »."""
+        n = self.need(s)
+        if n is None:
+            d = self.data.get(s.track, {}) if s.track else {}
+            if not d.get("fpl"):
+                return L("Je ne connais pas encore ta conso sur ce circuit. Fais au moins 3 tours propres, en essais par exemple.",
+                         "I don't know your consumption on this track yet. Do at least 3 clean laps, in practice for example.")
+            return L("Je ne connais pas la durée de la course. Indique-la dans l'Atelier.",
+                     "I don't know the race length. Enter it in the Workshop.")
+        laps = n["laps"]
+        if n["energy"] is not None:
+            need_txt = L(f"Pour {laps} tours, il te faut {n['energy'] * 100:.0f} % d'énergie.",
+                         f"For {laps} laps, you need {n['energy'] * 100:.0f} % energy.")
+            have = s.energy * 100 if s.energy is not None else None
+            unit_fr, unit_en, want = " %", " %", n["energy"] * 100
+        else:
+            need_txt = L(f"Pour {laps} tours, il te faut {n['litres']} litres.", f"For {laps} laps, you need {n['litres']} litres.")
+            have, unit_fr, unit_en, want = s.fuel, " litres", " litres", n["litres"]
+        out = need_txt
+        if n["stop"]:
+            out = L(f"Pour {laps} tours, un plein ne suffit pas : pars le réservoir plein, il faudra un arrêt.",
+                    f"For {laps} laps, one tank isn't enough: start full, you'll need a stop.")
+            return out
+        if have and s.session == "course" and s.game_phase < 5:
+            diff, pct = have - want, unit_fr == " %"
+            h, x = round(have), round(abs(diff))
+            if diff >= (5 if pct else 3):
+                out += " " + (L(f"Tu as {h} % d'énergie, tu peux en enlever {x} %, la voiture sera plus légère.",
+                                f"You have {h} % energy, you can take off {x} %, the car will be lighter.") if pct else
+                              L(f"Tu as {h} litres, tu peux en enlever {x}, la voiture sera plus légère.",
+                                f"You have {h} litres, you can take off {x}, the car will be lighter."))
+            elif diff < -1:
+                out += " " + (L(f"Attention, tu n'as que {h} % d'énergie, rajoute {x} %.",
+                                f"Careful, you only have {h} % energy, add {x} %.") if pct else
+                              L(f"Attention, tu n'as que {h} litres, rajoute-en {x}.",
+                                f"Careful, you only have {h} litres, add {x}."))
+            else:
+                out += " " + L("Tu as ce qu'il faut, c'est bon.", "You've got what you need, all good.")
+        return out
+
+    def pre_race(self, s, say) -> None:
+        """Une fois par course, avant le départ : prévient si tu pars avec trop (ou pas assez) d'essence."""
+        if s.session != "course" or s.game_phase >= 5 or not s.on_track or not s.track or not s.fuel:
+            return
+        key = (s.track, s.session_code, "depart")
+        if getattr(self, "_pre_key", None) == key:
+            return
+        n = self.need(s)
+        if n is None:
+            return
+        self._pre_key = key
+        if n["stop"]:
+            return                              # course plus longue qu'un plein : rien à enlever
+        if n["energy"] is not None:
+            diff = (s.energy or 0) * 100 - n["energy"] * 100
+            if diff >= 5 or diff < -1:
+                say(None, self.brief(s))
+        else:
+            diff = s.fuel - n["litres"]
+            if diff >= 3 or diff < -1:
+                say(None, self.brief(s))
 
     def set_race(self, track: str, minutes: int | None, laps: int | None = None) -> None:
         d = self.data.setdefault(track, {})

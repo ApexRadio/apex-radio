@@ -710,6 +710,19 @@ def repair_command(t: str) -> str | None:
     return out
 
 
+RACE_FUEL = None    # fonction() -> réponse à « combien d'essence pour la course ? »
+RACE_FUEL_RX = (r"(essence|carbu\w*|fuel|energie|energy|litres?|plein)\b.*\b(pour (la |cette |toute la )?course|de depart|au depart|"
+                r"for (the |this )?race|to start|at the start)|(starting|race) fuel|(combien|how much).*(mettre|faut|need|put|start).*"
+                r"\b(course|race|depart|start)\b")
+
+
+def race_fuel_command(t: str, s: Snapshot) -> str | None:
+    # pendant la course, « combien d'essence pour finir » garde la réponse habituelle (ce qu'il reste)
+    if RACE_FUEL is None or (s.session == "course" and s.game_phase >= 5) or not re.search(RACE_FUEL_RX, t):
+        return None
+    return RACE_FUEL()
+
+
 CANCEL_SET = None   # fonction(quoi: "tout" | "pneus" | "essence") : on oublie les ordres du pilote ; renvoie True si le menu est re-réglé
 CANCEL = (r"^(bon |non |euh |ok )?(annule|annuler|annulez|annulation|laisse tomber|laisse beton|oublie|on oublie|oublie ca|"
           r"on annule|je (veux )?annule\w*|tu peux annuler|cancel|cancel that|cancel it|forget it|never mind|nevermind|scrap that)\b")
@@ -913,6 +926,9 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
         body = [b.replace(nxt, "") for b in body[:-1]] + body[-1:]
         return " ".join(body) + (tail[0] if fix else "")
     k = cancel_command(t)
+    if k:
+        return k
+    k = race_fuel_command(t, s)
     if k:
         return k
     if not s.on_track:

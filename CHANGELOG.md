@@ -3,6 +3,8 @@
 ## 1.2.14
 - 🇫🇷 Voitures plus lentes devant : l'annonce arrive environ 30 secondes avant de les rattraper (au lieu de 2 secondes d'écart), avec le virage où tu vas les doubler (« GT3 plus lente devant, tu la rattrapes dans 30 secondes, au virage 7 »).
 - 🇬🇧 Slower cars ahead: the call now comes about 30 seconds before you catch them (instead of a 2-second gap), with the turn where you'll pass them ("Slower GT3 ahead, you'll catch it in 30 seconds, at turn 7").
+- 🇫🇷 Essence de départ : avant la course, l'ingénieur te prévient si tu pars avec trop (ou pas assez) d'essence ou d'énergie (« Pour 24 tours, il te faut 42 litres. Tu en as 70, tu peux en enlever 28 »). Nouvelle question : « combien d'essence pour la course ? ».
+- 🇬🇧 Starting fuel: before the race, the engineer warns you if you're starting with too much (or too little) fuel or energy ("For 24 laps, you need 42 litres. You have 70, you can take off 28"). New question: "how much fuel for the race?".
 
 ## 1.2.13
 - 🇫🇷 Nouvelles questions : « comment vont mes freins ? », « limites de piste ? », « mon tour est valide ? », « qui est le leader ? », « c'est qui devant / derrière ? », « combien d'arrêts j'ai fait ? », « il y a un drapeau ? », « combien de voitures dans ma catégorie ? », « est-ce que je suis rapide ? ».

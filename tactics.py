@@ -303,13 +303,18 @@ class FuelBook:
                     f"For {laps} laps, one tank isn't enough: start full, you'll need a stop.")
             return out
         if have and s.session == "course" and s.game_phase < 5:
-            diff = have - want
-            if diff >= (5 if unit_fr == " %" else 3):
-                out += " " + L(f"Tu en as {have:.0f}{unit_fr}, tu peux en enlever {diff:.0f}{unit_fr}, la voiture sera plus légère.",
-                               f"You have {have:.0f}{unit_en}, you can take off {diff:.0f}{unit_en}, the car will be lighter.")
+            diff, pct = have - want, unit_fr == " %"
+            h, x = round(have), round(abs(diff))
+            if diff >= (5 if pct else 3):
+                out += " " + (L(f"Tu as {h} % d'énergie, tu peux en enlever {x} %, la voiture sera plus légère.",
+                                f"You have {h} % energy, you can take off {x} %, the car will be lighter.") if pct else
+                              L(f"Tu as {h} litres, tu peux en enlever {x}, la voiture sera plus légère.",
+                                f"You have {h} litres, you can take off {x}, the car will be lighter."))
             elif diff < -1:
-                out += " " + L(f"Attention, tu n'en as que {have:.0f}{unit_fr}, rajoute-en {-diff:.0f}{unit_fr}.",
-                               f"Careful, you only have {have:.0f}{unit_en}, add {-diff:.0f}{unit_en}.")
+                out += " " + (L(f"Attention, tu n'as que {h} % d'énergie, rajoute {x} %.",
+                                f"Careful, you only have {h} % energy, add {x} %.") if pct else
+                              L(f"Attention, tu n'as que {h} litres, rajoute-en {x}.",
+                                f"Careful, you only have {h} litres, add {x}."))
             else:
                 out += " " + L("Tu as ce qu'il faut, c'est bon.", "You've got what you need, all good.")
         return out

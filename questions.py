@@ -277,7 +277,9 @@ def _forecast_text(fc: list, now: float, total: float | None, label: str) -> str
     if not wet:
         return L(f"{label} : pas de pluie prévue.", f"{label}: no rain expected.")
     n = max(wet, key=lambda x: x["rain"])
-    sky = (SKY_FR if not i18n.en() else SKY_EN)[n["sky"]] if 0 <= n["sky"] < len(SKY_FR) else ""
+    names = L("dégagé|quelques nuages|nuageux|couvert|très couvert|bruine|pluie légère|pluie|forte pluie|orage|déluge",
+              "clear|few clouds|cloudy|overcast|heavy overcast|drizzle|light rain|rain|heavy rain|storm|downpour").split("|")
+    sky = names[n["sky"]] if 0 <= n["sky"] < len(names) else ""
     when = ""
     if total:
         mins = (n["at"] - now) * total / 60

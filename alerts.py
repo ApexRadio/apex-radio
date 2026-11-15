@@ -139,7 +139,7 @@ class Spotter:
 class Traffic:
     GLOBAL_GAP = 30.0        # s : pas plus d'une annonce de trafic toutes les 30 s
 
-    CATCH_WINDOW = (8.0, 25.0)  # s : on prévient quand on va rattraper une voiture plus lente dans 8 à 25 s
+    CATCH_WINDOW = (18.0, 32.0)  # s : on prévient environ 30 s avant de rattraper une voiture plus lente
 
     def __init__(self, behavior=None) -> None:
         self.beh = behavior
@@ -201,7 +201,7 @@ class Traffic:
             key = (c["id"], "front")
             prev = self.prev_gap.get(key)
             self.prev_gap[key] = gap
-            if gap < 8:
+            if gap < 20:                                # au-delà, trop loin pour estimer
                 slow.append((gap, prev, c, key))
         slow.sort(key=lambda x: x[0])
         if now - self.last < self.GLOBAL_GAP:
@@ -221,17 +221,36 @@ class Traffic:
                 self.said[x[3]] = now
             self.last = now
             name = class_name(c["cls"])
-            corner = self.beh.corner_at((me["f"] + t * speed / L) % 1) if self.beh else None
-            where = L_(f", tu la rattrapes au virage {corner}", f", you'll catch it at turn {corner}") if corner else ""
-            if gap < 1.0:
-                sec = L_("moins d'une seconde", "less than a second")
+            f_catch = (me["f"] + t * speed / L) % 1
+            corner, before = None, False
+            if self.beh:
+                corner = self.beh.corner_at(f_catch)
+                if not corner:
+                    corner = self.beh.corner_at(f_catch, ahead=0.03)   # dans la ligne droite juste avant
+                    before = bool(corner)
+            secs = max(5, int(round(t / 5.0)) * 5)
+            n = len(group)
+            if n > 1:
+                if corner and before:
+                    msg = L_(f"{n} {name} plus lentes devant, tu les rattrapes dans {secs} secondes, avant le virage {corner}.",
+                             f"{n} slower {name} cars ahead, you'll catch them in {secs} seconds, before turn {corner}.")
+                elif corner:
+                    msg = L_(f"{n} {name} plus lentes devant, tu les rattrapes dans {secs} secondes, au virage {corner}.",
+                             f"{n} slower {name} cars ahead, you'll catch them in {secs} seconds, at turn {corner}.")
+                else:
+                    msg = L_(f"{n} {name} plus lentes devant, tu les rattrapes dans {secs} secondes.",
+                             f"{n} slower {name} cars ahead, you'll catch them in {secs} seconds.")
             else:
-                sec = L_(f"{gap:.0f} seconde{'s' if round(gap) > 1 else ''}", f"{gap:.0f} second{'s' if round(gap) != 1 else ''}")
-            if len(group) > 1:
-                where = where.replace("la rattrapes", "les rattrapes").replace("catch it", "catch them")
-                say(None, L_(f"{len(group)} {name} devant, à {sec}{where}.", f"{len(group)} {name} cars ahead, {sec}{where}."))
-            else:
-                say(None, L_(f"{name} plus lente devant, à {sec}{where}.", f"Slower {name} ahead, {sec}{where}."))
+                if corner and before:
+                    msg = L_(f"{name} plus lente devant, tu la rattrapes dans {secs} secondes, avant le virage {corner}.",
+                             f"Slower {name} ahead, you'll catch it in {secs} seconds, before turn {corner}.")
+                elif corner:
+                    msg = L_(f"{name} plus lente devant, tu la rattrapes dans {secs} secondes, au virage {corner}.",
+                             f"Slower {name} ahead, you'll catch it in {secs} seconds, at turn {corner}.")
+                else:
+                    msg = L_(f"{name} plus lente devant, tu la rattrapes dans {secs} secondes.",
+                             f"Slower {name} ahead, you'll catch it in {secs} seconds.")
+            say(None, msg)
             return
 
 

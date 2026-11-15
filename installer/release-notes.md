@@ -1,16 +1,14 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
-## 🆕 1.2.12
-- 🇫🇷 Ton de la radio au choix (⚙️ Réglages → Ingénieur) : Sobre (juste l'info), Radio d'équipe ou Détendu. L'ingénieur varie aussi beaucoup plus ses phrases pour moins se répéter.
-- 🇬🇧 Pick your radio tone (⚙️ Settings → Engineer): Plain (just the info), Team radio or Laid-back. The engineer also varies his phrases a lot more so he repeats himself less.
-- 🇫🇷 Pneus au stand, un par un : « change juste les deux avant », « les pneus gauches », « seulement l'arrière droit », « garde les pneus ».
-- 🇬🇧 Tyres at the stop, one by one: "just change the fronts", "the left tyres", "only the rear right", "keep the tyres".
-- 🇫🇷 Plus d'infos en course : écarts avec les voitures devant et derrière, conseils de setup. La fréquence suit ton niveau d'encouragements.
-- 🇬🇧 More info during the race: gaps to the cars ahead and behind, setup tips. How often depends on your encouragement level.
-- 🇫🇷 Fin de course : s'il ne manque qu'un peu d'essence, l'ingénieur te dit d'économiser au lieu de t'appeler au stand.
-- 🇬🇧 End of race: if you're only slightly short on fuel, the engineer tells you to save instead of calling you in.
-- 🇫🇷 Correctifs : température des pneus identique à celle du jeu, « pneus froids » seulement quand ils le sont vraiment, « répare mais sans essence » bien compris, nouvel ordre « pas d'essence », « drapeau jaune » au lieu de « neutralisation ».
-- 🇬🇧 Fixes: tyre temperature now matches the game, "cold tyres" only when they really are, "repair but no fuel" understood, new "no fuel" order, "yellow flag" wording.
+## 🆕 1.2.13
+- 🇫🇷 Nouvelles questions : « comment vont mes freins ? », « limites de piste ? », « mon tour est valide ? », « qui est le leader ? », « c'est qui devant / derrière ? », « combien d'arrêts j'ai fait ? », « il y a un drapeau ? », « combien de voitures dans ma catégorie ? », « est-ce que je suis rapide ? ».
+- 🇬🇧 New questions: "how are my brakes?", "track limits?", "is my lap valid?", "who's leading?", "who's ahead / behind?", "how many stops have I made?", "any flags?", "how many cars in my class?", "am I fast?".
+- 🇫🇷 Ordres pour l'arrêt (« change les deux pneus arrière », « répare », « pas d'essence ») : le menu des stands est réglé tout de suite, plus besoin d'attendre l'approche de l'arrêt.
+- 🇬🇧 Pit orders ("change the two rears", "repair", "no fuel") now set the pit menu right away instead of waiting for the stop.
+- 🇫🇷 « Annule » / « laisse tomber » : oublie les ordres donnés pour le prochain arrêt (ou seulement les pneus / l'essence) et remet le plan d'Apex dans le menu des stands.
+- 🇬🇧 "Cancel" / "never mind": drops your orders for the next stop (or just tyres / fuel) and puts Apex's plan back in the pit menu.
+- 🇫🇷 Correctifs : température des freins juste (LMU la donne en kelvins), « pneus et freins prêts » annoncé au bon moment, lecture du menu des stands réessayée si LMU n'est pas prêt.
+- 🇬🇧 Fixes: correct brake temperature (LMU reports it in kelvin), "tyres and brakes ready" called at the right time, pit menu read retried if LMU isn't ready.
 
 ## 🇫🇷 Installation
 Télécharge **ApexRadio-Setup.exe** ci-dessous, lance-le, clique sur Suivant. C'est tout : Python et tous les composants sont inclus.

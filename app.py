@@ -199,6 +199,22 @@ def loop(state: State, demo: bool) -> None:
 
     questions.TYRES_SET = set_tyres
 
+    def cancel_orders(what: str = "tout") -> bool:
+        """Le pilote dit « annule » : on oublie ses ordres pour le prochain arrêt, Apex reprend son propre plan."""
+        if what in ("tout", "pneus"):
+            crew.tyres_for = eng.tyre_order = None
+        if what in ("tout", "essence"):
+            crew.no_fuel_for = None
+        if what == "tout":
+            damage.choice, damage.choice_all = None, True
+            if state.snap is not None:
+                damage._apply(state.snap)
+                if state.plan is not None:
+                    state.plan.repair, state.plan.no_repair, state.plan.repair_all = state.snap.repair, state.snap.no_repair, state.snap.repair_all
+        return apply_now()
+
+    questions.CANCEL_SET = cancel_orders
+
     def setup_sync():
         """Toutes les 15 s : quel setup est chargé dans LMU ? (sélection automatique dans l'atelier)"""
         while not demo:

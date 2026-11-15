@@ -5,6 +5,8 @@
 - 🇬🇧 New questions: "how are my brakes?", "track limits?", "is my lap valid?", "who's leading?", "who's ahead / behind?", "how many stops have I made?", "any flags?", "how many cars in my class?", "am I fast?".
 - 🇫🇷 Ordres pour l'arrêt (« change les deux pneus arrière », « répare », « pas d'essence ») : le menu des stands est réglé tout de suite, plus besoin d'attendre l'approche de l'arrêt.
 - 🇬🇧 Pit orders ("change the two rears", "repair", "no fuel") now set the pit menu right away instead of waiting for the stop.
+- 🇫🇷 « Annule » / « laisse tomber » : oublie les ordres donnés pour le prochain arrêt (ou seulement les pneus / l'essence) et remet le plan d'Apex dans le menu des stands.
+- 🇬🇧 "Cancel" / "never mind": drops your orders for the next stop (or just tyres / fuel) and puts Apex's plan back in the pit menu.
 - 🇫🇷 Correctifs : température des freins juste (LMU la donne en kelvins), « pneus et freins prêts » annoncé au bon moment, lecture du menu des stands réessayée si LMU n'est pas prêt.
 - 🇬🇧 Fixes: correct brake temperature (LMU reports it in kelvin), "tyres and brakes ready" called at the right time, pit menu read retried if LMU isn't ready.
 

@@ -222,22 +222,35 @@ class Traffic:
             self.last = now
             name = class_name(c["cls"])
             f_catch = (me["f"] + t * speed / L) % 1
-            where = ""
+            corner, before = None, False
             if self.beh:
                 corner = self.beh.corner_at(f_catch)
-                if corner:
-                    where = L_(f", au virage {corner}", f", at turn {corner}")
-                else:
+                if not corner:
                     corner = self.beh.corner_at(f_catch, ahead=0.03)   # dans la ligne droite juste avant
-                    if corner:
-                        where = L_(f", avant le virage {corner}", f", before turn {corner}")
+                    before = bool(corner)
             secs = max(5, int(round(t / 5.0)) * 5)
-            if len(group) > 1:
-                say(None, L_(f"{len(group)} {name} plus lentes devant, tu les rattrapes dans {secs} secondes{where}.",
-                             f"{len(group)} slower {name} cars ahead, you'll catch them in {secs} seconds{where}."))
+            n = len(group)
+            if n > 1:
+                if corner and before:
+                    msg = L_(f"{n} {name} plus lentes devant, tu les rattrapes dans {secs} secondes, avant le virage {corner}.",
+                             f"{n} slower {name} cars ahead, you'll catch them in {secs} seconds, before turn {corner}.")
+                elif corner:
+                    msg = L_(f"{n} {name} plus lentes devant, tu les rattrapes dans {secs} secondes, au virage {corner}.",
+                             f"{n} slower {name} cars ahead, you'll catch them in {secs} seconds, at turn {corner}.")
+                else:
+                    msg = L_(f"{n} {name} plus lentes devant, tu les rattrapes dans {secs} secondes.",
+                             f"{n} slower {name} cars ahead, you'll catch them in {secs} seconds.")
             else:
-                say(None, L_(f"{name} plus lente devant, tu la rattrapes dans {secs} secondes{where}.",
-                             f"Slower {name} ahead, you'll catch it in {secs} seconds{where}."))
+                if corner and before:
+                    msg = L_(f"{name} plus lente devant, tu la rattrapes dans {secs} secondes, avant le virage {corner}.",
+                             f"Slower {name} ahead, you'll catch it in {secs} seconds, before turn {corner}.")
+                elif corner:
+                    msg = L_(f"{name} plus lente devant, tu la rattrapes dans {secs} secondes, au virage {corner}.",
+                             f"Slower {name} ahead, you'll catch it in {secs} seconds, at turn {corner}.")
+                else:
+                    msg = L_(f"{name} plus lente devant, tu la rattrapes dans {secs} secondes.",
+                             f"Slower {name} ahead, you'll catch it in {secs} seconds.")
+            say(None, msg)
             return
 
 

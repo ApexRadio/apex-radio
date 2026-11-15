@@ -710,6 +710,28 @@ def repair_command(t: str) -> str | None:
     return out
 
 
+CANCEL_SET = None   # fonction(quoi: "tout" | "pneus" | "essence") : on oublie les ordres du pilote ; renvoie True si le menu est re-réglé
+CANCEL = (r"^(bon |non |euh |ok )?(annule|annuler|annulez|annulation|laisse tomber|laisse beton|oublie|on oublie|oublie ca|"
+          r"on annule|je (veux )?annule\w*|tu peux annuler|cancel|cancel that|cancel it|forget it|never mind|nevermind|scrap that)\b")
+
+
+def cancel_command(t: str) -> str | None:
+    """« annule » / « laisse tomber » : on oublie les ordres donnés pour le prochain arrêt, Apex reprend son plan."""
+    if not re.search(CANCEL, t):
+        return None
+    if CANCEL_SET is None:
+        return L("Je ne peux pas changer le menu des stands pour l'instant.", "I can't change the pit menu right now.")
+    if re.search(r"pneu|gomme|roue|tyre|tire|wheel", t):
+        what, out = "pneus", L("C'est annulé pour les pneus, je reviens à mon plan.", "Tyre change cancelled, back to my plan.")
+    elif re.search(r"essence|carbu|ravitaill|plein|fuel", t):
+        what, out = "essence", L("C'est annulé pour l'essence, je reviens à mon plan.", "Fuel order cancelled, back to my plan.")
+    else:
+        what, out = "tout", L("C'est annulé, je reviens à mon plan pour le prochain arrêt.", "Cancelled, back to my plan for the next stop.")
+    if CANCEL_SET(what):
+        out += L(" Je corrige le menu des stands.", " Updating the pit menu.")
+    return out
+
+
 NO_FUEL = (r"\b(pas|sans|aucun|zero|0) (de |d |du )?(essence|ravitaill\w*|carbu\w*|plein|fuel|refuel\w*|litres?)\b|"
            r"\bne (mets|met|mettez|ajoute|rajoute|remets) (pas|rien) (d |de )?(essence|carbu)|"
            r"\bno (fuel|refuel\w*)\b|without (fuel|refuel\w*)|don t (add )?(any )?fuel|skip (the )?(fuel|refuel\w*)")
@@ -890,6 +912,9 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
         nxt = (L(" au prochain arrêt", " at the next stop"))
         body = [b.replace(nxt, "") for b in body[:-1]] + body[-1:]
         return " ".join(body) + (tail[0] if fix else "")
+    k = cancel_command(t)
+    if k:
+        return k
     if not s.on_track:
         # hors piste, « comment ça va » est une politesse, pas une demande de point complet
         polite = bool(re.search(r"\bca va\b|comment vas tu|how are you", t))

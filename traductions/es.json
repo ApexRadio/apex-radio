@@ -846,67 +846,67 @@
   {
    "fr": "/tel",
    "en": "/phone",
-   "ou": "app.py:506",
+   "ou": "app.py:508",
    "texte": ""
   },
   {
    "fr": "/api/ptt/down",
    "en": "/api/ptt/up",
-   "ou": "app.py:525",
+   "ou": "app.py:527",
    "texte": ""
   },
   {
    "fr": "Rien à répéter pour l'instant.",
    "en": "Nothing to repeat yet.",
-   "ou": "app.py:529",
+   "ou": "app.py:531",
    "texte": "Todavía nada que repetir."
   },
   {
    "fr": "Radio en français.",
    "en": "Radio in English.",
-   "ou": "app.py:537",
+   "ou": "app.py:539",
    "texte": "Radio en español."
   },
   {
    "fr": "Radio check, niveau du son.",
    "en": "Radio check, volume level.",
-   "ou": "app.py:572",
+   "ou": "app.py:574",
    "texte": "Prueba de radio, nivel de volumen."
   },
   {
    "fr": "/api/setup/dir",
    "en": "/api/setup/pickdir",
-   "ou": "app.py:610",
+   "ou": "app.py:612",
    "texte": ""
   },
   {
    "fr": "Setup remis en version {0}. Recharge-le au garage.",
    "en": "Setup restored to version {0}. Reload it in the garage.",
-   "ou": "app.py:641",
+   "ou": "app.py:643",
    "texte": "Setup restaurado a la versión {0}. Recárgalo en el garaje."
   },
   {
    "fr": "Setup {0} mis à jour, version {1}. Recharge-le au garage, je refais l'analyse.",
    "en": "{0} setup updated, version {1}. Reload it in the garage, I'll redo the analysis.",
-   "ou": "app.py:661",
+   "ou": "app.py:663",
    "texte": "Setup {0} actualizado, versión {1}. Recárgalo en el garaje, rehago el análisis."
   },
   {
    "fr": "Je télécharge la voix de {0}, {1} prend la radio dans une minute.",
    "en": "Downloading {0}'s voice, it'll take over the radio in a minute.",
-   "ou": "app.py:690",
+   "ou": "app.py:692",
    "texte": "Descargo la voz de {0}, {1} toma la radio en un minuto."
   },
   {
    "fr": "Radio check. Tu m'entends bien ? On est prêts pour la course.",
    "en": "Radio check. Do you copy? We're ready to race.",
-   "ou": "app.py:693",
+   "ou": "app.py:695",
    "texte": "Prueba de radio. ¿Me recibes? Estamos listos para correr."
   },
   {
    "fr": "Ce dossier ne contient pas les setups de LMU.",
    "en": "This folder doesn't contain LMU setups.",
-   "ou": "app.py:855",
+   "ou": "app.py:857",
    "texte": "Esta carpeta no contiene setups de LMU."
   },
   {
@@ -918,421 +918,451 @@
   {
    "fr": "Répartition de freinage",
    "en": "Brake bias",
-   "ou": "behavior.py:114",
+   "ou": "behavior.py:119",
    "texte": "Reparto de frenada"
   },
   {
    "fr": "Contrôle de traction",
    "en": "Traction control",
-   "ou": "behavior.py:114",
+   "ou": "behavior.py:119",
    "texte": "Control de tracción"
   },
   {
    "fr": "Barre antiroulis avant",
    "en": "Front anti-roll bar",
-   "ou": "behavior.py:114",
+   "ou": "behavior.py:119",
    "texte": "Barra estabilizadora delantera"
   },
   {
    "fr": "Barre antiroulis arrière",
    "en": "Rear anti-roll bar",
-   "ou": "behavior.py:114",
+   "ou": "behavior.py:119",
    "texte": "Barra estabilizadora trasera"
   },
   {
    "fr": "tc",
    "en": "abs",
-   "ou": "behavior.py:152",
+   "ou": "behavior.py:162",
    "texte": ""
   },
   {
    "fr": "à {0} % à l'avant",
    "en": "{0} % front",
-   "ou": "behavior.py:285",
+   "ou": "behavior.py:308",
    "texte": "al {0} % delante"
   },
   {
    "fr": "sur {0}",
    "en": "{0}",
-   "ou": "behavior.py:287",
+   "ou": "behavior.py:310",
    "texte": "en {0}"
   },
   {
    "fr": "{0} {1} {2}, je réévalue.",
    "en": "{3} now {2}, re-evaluating.",
-   "ou": "behavior.py:288",
+   "ou": "behavior.py:311",
    "texte": "{0}: {2}, reevalúo."
   },
   {
    "fr": "sous-virage",
    "en": "entrée",
-   "ou": "behavior.py:35",
+   "ou": "behavior.py:40",
    "texte": "subviraje"
   },
   {
    "fr": "{0}. Conseil : {1}.",
    "en": "{0}. Tip: {1}.",
-   "ou": "behavior.py:373",
+   "ou": "behavior.py:408",
    "texte": "{0}. Consejo: {1}."
-  },
-  {
-   "fr": "survirage",
-   "en": "entrée",
-   "ou": "behavior.py:38",
-   "texte": "sobreviraje"
   },
   {
    "fr": "{0}. Ça se corrige au garage, je te le rappelle après la course.",
    "en": "{0}. That's a garage fix, I'll remind you after the race.",
-   "ou": "behavior.py:380",
+   "ou": "behavior.py:415",
    "texte": "{0}. Eso se corrige en el garaje, te lo recuerdo después de la carrera."
   },
   {
    "fr": " et {0}",
    "en": " and {0}",
-   "ou": "behavior.py:390",
+   "ou": "behavior.py:425",
    "texte": " y {0}"
   },
   {
    "fr": "blocage {0} au freinage des virages {1}",
    "en": "{0} lock-up braking into turns {1}",
-   "ou": "behavior.py:392",
+   "ou": "behavior.py:427",
    "texte": "bloqueo {0} en la frenada de las curvas {1}"
   },
   {
    "fr": "patinage en sortie des virages {0}",
    "en": "wheelspin on exit of turns {0}",
-   "ou": "behavior.py:394",
+   "ou": "behavior.py:429",
    "texte": "patinaje a la salida de las curvas {0}"
+  },
+  {
+   "fr": "survirage",
+   "en": "entrée",
+   "ou": "behavior.py:43",
+   "texte": "sobreviraje"
   },
   {
    "fr": "trop d'angle de volant aux virages {0}, l'avant glisse",
    "en": "too much steering at turns {0}, the front is sliding",
-   "ou": "behavior.py:396",
+   "ou": "behavior.py:431",
    "texte": "demasiado ángulo de volante en las curvas {0}, el morro desliza"
   },
   {
    "fr": "{0} au milieu des virages {1}",
    "en": "mid-corner {0} at turns {1}",
-   "ou": "behavior.py:398",
+   "ou": "behavior.py:433",
    "texte": "{0} en el medio de las curvas {1}"
   },
   {
    "fr": "{0} en {1} des virages {2}",
    "en": "{0} on {1} at turns {2}",
-   "ou": "behavior.py:399",
+   "ou": "behavior.py:434",
    "texte": "{0} en {1} de las curvas {2}"
-  },
-  {
-   "fr": "blocage",
-   "en": "avant",
-   "ou": "behavior.py:41",
-   "texte": "bloqueo"
   },
   {
    "fr": "plus chaud{s} à l'intérieur{d} : un peu moins de carrossage",
    "en": "hotter on the inside{d}: a bit less camber",
-   "ou": "behavior.py:421",
+   "ou": "behavior.py:456",
    "texte": "más caliente por dentro{d}: un poco menos de caída"
   },
   {
    "fr": "plus chaud{s} à l'extérieur : un peu plus de carrossage",
    "en": "hotter on the outside: a bit more camber",
-   "ou": "behavior.py:422",
+   "ou": "behavior.py:457",
    "texte": "más caliente por fuera: un poco más de caída"
   },
   {
    "fr": "chaud{s} au centre : pression un peu trop haute",
    "en": "hot in the middle: pressure a bit too high",
-   "ou": "behavior.py:423",
+   "ou": "behavior.py:458",
    "texte": "caliente en el centro: presión un poco alta"
   },
   {
    "fr": "froid{s} au centre : pression un peu trop basse",
    "en": "cold in the middle: pressure a bit too low",
-   "ou": "behavior.py:424",
+   "ou": "behavior.py:459",
    "texte": "fría en el centro: presión un poco baja"
+  },
+  {
+   "fr": "blocage",
+   "en": "avant",
+   "ou": "behavior.py:46",
+   "texte": "bloqueo"
   },
   {
    "fr": "avant gauche|avant droit|arrière gauche|arrière droit",
    "en": "front left|front right|rear left|rear right",
-   "ou": "behavior.py:426",
+   "ou": "behavior.py:461",
    "texte": "delantera izquierda|delantera derecha|trasera izquierda|trasera derecha"
-  },
-  {
-   "fr": "patinage",
-   "en": "",
-   "ou": "behavior.py:43",
-   "texte": "patinaje"
   },
   {
    "fr": "avant",
    "en": "front",
-   "ou": "behavior.py:430",
+   "ou": "behavior.py:465",
    "texte": "delanteros"
   },
   {
    "fr": "arrière",
    "en": "rear",
-   "ou": "behavior.py:430",
+   "ou": "behavior.py:465",
    "texte": "traseros"
   },
   {
    "fr": "pneus {0} ",
    "en": "{0} tyres ",
-   "ou": "behavior.py:434",
+   "ou": "behavior.py:469",
    "texte": "neumáticos {0} "
-  },
-  {
-   "fr": "surbraquage",
-   "en": "",
-   "ou": "behavior.py:44",
-   "texte": "demasiado ángulo de volante"
   },
   {
    "fr": "pneu {0} ",
    "en": "{0} tyre ",
-   "ou": "behavior.py:441",
+   "ou": "behavior.py:476",
    "texte": "neumático {0} "
+  },
+  {
+   "fr": "patinage",
+   "en": "",
+   "ou": "behavior.py:48",
+   "texte": "patinaje"
   },
   {
    "fr": "Côté pneus : ",
    "en": "Tyres: ",
-   "ou": "behavior.py:448",
+   "ou": "behavior.py:483",
    "texte": "Neumáticos: "
   },
   {
    "fr": ". C'est pour le garage, je te le rappelle après la course.",
    "en": ". That's for the garage, I'll remind you after the race.",
-   "ou": "behavior.py:449",
+   "ou": "behavior.py:484",
    "texte": ". Eso es para el garaje, te lo recuerdo después de la carrera."
+  },
+  {
+   "fr": "surbraquage",
+   "en": "",
+   "ou": "behavior.py:49",
+   "texte": "demasiado ángulo de volante"
   },
   {
    "fr": "la voiture est globalement sous-vireuse",
    "en": "the car is understeering overall",
-   "ou": "behavior.py:456",
+   "ou": "behavior.py:491",
    "texte": "el coche subvira en general"
   },
   {
    "fr": "la voiture est globalement survireuse",
    "en": "the car is oversteering overall",
-   "ou": "behavior.py:457",
+   "ou": "behavior.py:492",
    "texte": "el coche sobrevira en general"
   },
   {
    "fr": "blocage {0} au freinage du virage {1}",
    "en": "{0} lock-up braking into turn {1}",
-   "ou": "behavior.py:459",
+   "ou": "behavior.py:494",
    "texte": "bloqueo {0} en la frenada de la curva {1}"
   },
   {
    "fr": "patinage en sortie du virage {0}",
    "en": "wheelspin on exit of turn {0}",
-   "ou": "behavior.py:461",
+   "ou": "behavior.py:496",
    "texte": "patinaje a la salida de la curva {0}"
   },
   {
    "fr": "trop d'angle de volant au virage {0}, l'avant glisse",
    "en": "too much steering at turn {0}, the front is sliding",
-   "ou": "behavior.py:463",
+   "ou": "behavior.py:498",
    "texte": "demasiado ángulo de volante en la curva {0}, el morro desliza"
   },
   {
    "fr": "{0} au milieu du virage {1}",
    "en": "mid-corner {0} at turn {1}",
-   "ou": "behavior.py:465",
+   "ou": "behavior.py:500",
    "texte": "{0} en el medio de la curva {1}"
   },
   {
    "fr": "{0} en {1} du virage {2}",
    "en": "{0} on {1} of turn {2}",
-   "ou": "behavior.py:466",
+   "ou": "behavior.py:501",
    "texte": "{0} en {1} de la curva {2}"
   },
   {
-   "fr": "freine un peu moins fort à l'attaque du virage {0}, la répartition a déjà assez bougé",
-   "en": "brake a little less hard into turn {0}, the bias has moved enough already",
-   "ou": "behavior.py:475",
-   "texte": "frena un poco menos fuerte en la curva {0}, el reparto ya se ha movido bastante"
+   "fr": "c'est le pilotage plutôt que le réglage, freine un peu moins fort à l'attaque et relâche plus progressivement",
+   "en": "that's driving rather than setup, brake a little less hard at the start and release more progressively",
+   "ou": "behavior.py:515",
+   "texte": "eso es pilotaje más que reglaje, frena un poco menos fuerte al principio y suelta el freno más progresivamente"
+  },
+  {
+   "fr": "monte l'ABS d'un cran, de {0} à {1}",
+   "en": "one more click of ABS, from {0} to {1}",
+   "ou": "behavior.py:520",
+   "texte": "sube el ABS un punto, de {0} a {1}"
   },
   {
    "fr": "passe la répartition de freinage de {0} à {1} % à l'avant",
    "en": "move the brake bias from {0} to {1} % front",
-   "ou": "behavior.py:479",
+   "ou": "behavior.py:523",
    "texte": "pasa el reparto de frenada de {0} a {1} % delante"
+  },
+  {
+   "fr": "freine un peu moins fort à l'attaque ; au garage, baisse un peu la pression de freinage",
+   "en": "brake a little less hard at the start; in the garage, lower the brake pressure a little",
+   "ou": "behavior.py:526",
+   "texte": "frena un poco menos fuerte al principio; en el garaje, baja un poco la presión de freno"
+  },
+  {
+   "fr": "au garage, un peu plus de blocage du différentiel au lever de pied pour stabiliser l'arrière",
+   "en": "in the garage, a bit more diff coast lock to settle the rear",
+   "ou": "behavior.py:528",
+   "texte": "en el garaje, un poco más de bloqueo del diferencial al levantar para estabilizar la trasera"
+  },
+  {
+   "fr": "au garage, barre antiroulis avant plus souple ; la répartition a déjà été réglée",
+   "en": "in the garage, softer front anti-roll bar; the brake bias is already set",
+   "ou": "behavior.py:533",
+   "texte": "en el garaje, barra estabilizadora delantera más blanda; el reparto ya está ajustado"
+  },
+  {
+   "fr": "au garage, un peu plus de blocage du différentiel au lever de pied ; la répartition a déjà été réglée",
+   "en": "in the garage, a bit more diff coast lock; the brake bias is already set",
+   "ou": "behavior.py:536",
+   "texte": "en el garaje, un poco más de bloqueo del diferencial al levantar; el reparto ya está ajustado"
   },
   {
    "fr": "recule la répartition de freinage de {0} à {1} % à l'avant",
    "en": "move the brake bias back from {0} to {1} % front",
-   "ou": "behavior.py:485",
+   "ou": "behavior.py:539",
    "texte": "retrasa el reparto de frenada de {0} a {1} % delante"
   },
   {
    "fr": "recule un peu la répartition de freinage",
    "en": "move the brake bias back a little",
-   "ou": "behavior.py:487",
+   "ou": "behavior.py:541",
    "texte": "retrasa un poco el reparto de frenada"
   },
   {
    "fr": "avance la répartition de freinage de {0} à {1} % à l'avant",
    "en": "move the brake bias forward from {0} to {1} % front",
-   "ou": "behavior.py:489",
+   "ou": "behavior.py:543",
    "texte": "adelanta el reparto de frenada de {0} a {1} % delante"
   },
   {
    "fr": "avance un peu la répartition de freinage",
    "en": "move the brake bias forward a little",
-   "ou": "behavior.py:491",
+   "ou": "behavior.py:545",
    "texte": "adelanta un poco el reparto de frenada"
   },
   {
    "fr": "monte le contrôle de traction d'un cran, et dose l'accélération en sortie",
    "en": "one more click of traction control, and be smoother on exit",
-   "ou": "behavior.py:493",
+   "ou": "behavior.py:547",
    "texte": "un clic más de control de tracción, y más suave a la salida"
   },
   {
    "fr": "Pour le setup, voici ce que je changerais : ",
    "en": "For the setup, here's what I'd change: ",
-   "ou": "behavior.py:510",
+   "ou": "behavior.py:564",
    "texte": "Para el setup, esto es lo que cambiaría: "
   },
   {
    "fr": ". J'ouvre l'atelier setup avec mes propositions.",
    "en": ". I'm opening the setup workshop with my suggestions.",
-   "ou": "behavior.py:511",
+   "ou": "behavior.py:565",
    "texte": ". Abro el taller de setup con mis sugerencias."
   },
   {
    "fr": "J'ai besoin d'un tour complet pour connaître le circuit avant d'analyser la voiture.",
    "en": "I need a full lap to learn the track before analysing the car.",
-   "ou": "behavior.py:516",
+   "ou": "behavior.py:570",
    "texte": "Necesito una vuelta completa para aprender el circuito antes de analizar el coche."
   },
   {
    "fr": "J'analyse encore, il me faut deux ou trois tours propres.",
    "en": "Still analysing, I need two or three clean laps.",
-   "ou": "behavior.py:519",
+   "ou": "behavior.py:573",
    "texte": "Sigo analizando, necesito dos o tres vueltas limpias."
   },
   {
    "fr": "La voiture est plutôt équilibrée, rien de répétitif à signaler.",
    "en": "The car is fairly balanced, nothing recurring to report.",
-   "ou": "behavior.py:524",
+   "ou": "behavior.py:578",
    "texte": "El coche está bastante equilibrado, nada recurrente que señalar."
   },
   {
    "fr": "Pneus : ",
    "en": "Tyres: ",
-   "ou": "behavior.py:526",
+   "ou": "behavior.py:580",
    "texte": "Neumáticos: "
   },
   {
    "fr": "recule un peu la répartition de freinage, ou assouplis la barre antiroulis avant",
    "en": "move the brake bias back a little, or soften the front anti-roll bar",
-   "ou": "behavior.py:64",
+   "ou": "behavior.py:69",
    "texte": "retrasa un poco el reparto de frenada, o ablanda la barra delantera"
   },
   {
    "fr": "assouplis la barre antiroulis avant, ou ajoute un cran d'aileron avant",
    "en": "soften the front anti-roll bar, or add a click of front wing",
-   "ou": "behavior.py:64",
+   "ou": "behavior.py:69",
    "texte": "ablanda la barra delantera, o añade un clic de alerón delantero"
   },
   {
    "fr": "réduis le blocage du différentiel en accélération, ou assouplis l'avant",
    "en": "reduce the diff power lock, or soften the front",
-   "ou": "behavior.py:64",
+   "ou": "behavior.py:69",
    "texte": "reduce el bloqueo del diferencial en aceleración, o ablanda el tren delantero"
   },
   {
    "fr": "avance un peu la répartition de freinage, ou réduis le frein moteur",
    "en": "move the brake bias forward a little, or reduce engine braking",
-   "ou": "behavior.py:64",
+   "ou": "behavior.py:69",
    "texte": "adelanta un poco el reparto de frenada, o reduce el freno motor"
   },
   {
    "fr": "assouplis la barre antiroulis arrière, ou ajoute un cran d'aileron arrière",
    "en": "soften the rear anti-roll bar, or add a click of rear wing",
-   "ou": "behavior.py:64",
+   "ou": "behavior.py:69",
    "texte": "ablanda la barra trasera, o añade un clic de alerón trasero"
   },
   {
    "fr": "monte le contrôle de traction d'un cran, ou assouplis la barre antiroulis arrière",
    "en": "one more click of traction control, or soften the rear anti-roll bar",
-   "ou": "behavior.py:64",
+   "ou": "behavior.py:69",
    "texte": "un clic más de control de tracción, o ablanda la barra trasera"
   },
   {
    "fr": "recule la répartition de freinage d'un demi-point",
    "en": "move the brake bias back half a point",
-   "ou": "behavior.py:64",
+   "ou": "behavior.py:69",
    "texte": "retrasa el reparto de frenada medio punto"
   },
   {
    "fr": "avance la répartition de freinage d'un demi-point",
    "en": "move the brake bias forward half a point",
-   "ou": "behavior.py:64",
+   "ou": "behavior.py:69",
    "texte": "adelanta el reparto de frenada medio punto"
   },
   {
    "fr": "monte le contrôle de traction d'un cran, ou sois plus progressif à l'accélération",
    "en": "one more click of traction control, or be smoother on the throttle",
-   "ou": "behavior.py:64",
+   "ou": "behavior.py:69",
    "texte": "un clic más de control de tracción, o más suave con el acelerador"
   },
   {
    "fr": "tu tournes trop le volant, l'avant décroche et la voiture freine : moins d'angle, l'avant accrochera mieux",
    "en": "too much steering lock, the front lets go and scrubs speed: less angle and the front will grip better",
-   "ou": "behavior.py:64",
+   "ou": "behavior.py:69",
    "texte": "demasiado giro de volante, el morro se va y frena el coche: menos ángulo y el morro agarrará mejor"
   },
   {
    "fr": "barre antiroulis avant plus souple",
    "en": "softer front anti-roll bar",
-   "ou": "behavior.py:76",
+   "ou": "behavior.py:81",
    "texte": "barra delantera más blanda"
   },
   {
    "fr": "différentiel moins bloqué en accélération, ou barre antiroulis avant plus souple",
    "en": "less diff power lock, or softer front anti-roll bar",
-   "ou": "behavior.py:76",
+   "ou": "behavior.py:81",
    "texte": "menos bloqueo del diferencial en aceleración, o barra delantera más blanda"
   },
   {
    "fr": "barre antiroulis arrière plus souple, ou un cran d'aileron arrière",
    "en": "softer rear anti-roll bar, or a click of rear wing",
-   "ou": "behavior.py:76",
+   "ou": "behavior.py:81",
    "texte": "barra trasera más blanda, o un clic de alerón trasero"
   },
   {
    "fr": "barre antiroulis arrière plus souple",
    "en": "softer rear anti-roll bar",
-   "ou": "behavior.py:76",
+   "ou": "behavior.py:81",
    "texte": "barra trasera más blanda"
   },
   {
    "fr": "plus de blocage du différentiel au lever de pied",
    "en": "more diff coast lock",
-   "ou": "behavior.py:76",
+   "ou": "behavior.py:81",
    "texte": "más bloqueo del diferencial en retención"
   },
   {
    "fr": "entrée",
    "en": "entry",
-   "ou": "behavior.py:86",
+   "ou": "behavior.py:91",
    "texte": "entrada"
   },
   {
    "fr": "milieu",
    "en": "mid-corner",
-   "ou": "behavior.py:86",
+   "ou": "behavior.py:91",
    "texte": "medio de curva"
   },
   {
    "fr": "sortie",
    "en": "exit",
-   "ou": "behavior.py:86",
+   "ou": "behavior.py:91",
    "texte": "salida"
   },
   {
@@ -3432,193 +3462,277 @@
   {
    "fr": "Tu roules avec le setup d'usine : il n'existe pas en fichier, donc Apex ne peut pas le modifier. Dans le garage de LMU, clique sur Enregistrer et donne-lui un nom (par exemple « Base »). Apex le détectera tout seul et pourra créer le setup modifié.",
    "en": "You're driving the default setup: it isn't saved as a file, so Apex can't change it. In the LMU garage, click Save and give it a name (for example \"Base\"). Apex will pick it up automatically and can then create the modified setup.",
-   "ou": "setups.py:143",
+   "ou": "setups.py:147",
    "texte": "Llevas el setup por defecto: no existe como archivo, así que Apex no puede cambiarlo. En el garaje de LMU, haz clic en Guardar y ponle un nombre (por ejemplo «Base»). Apex lo detectará automáticamente y podrá crear el setup modificado."
   },
   {
    "fr": "Qualif",
    "en": "Course",
-   "ou": "setups.py:303",
+   "ou": "setups.py:310",
    "texte": ""
+  },
+  {
+   "fr": "Bilan du setup {0} : {1} plus rapide que {2}",
+   "en": "Setup {0} review: {1} faster than {2}",
+   "ou": "setups.py:460",
+   "texte": "Balance del setup {0}: {1} más rápido que {2}"
+  },
+  {
+   "fr": "Bilan du setup {0} : même chrono que {1}",
+   "en": "Setup {0} review: same lap time as {1}",
+   "ou": "setups.py:461",
+   "texte": "Balance del setup {0}: mismo tiempo que {1}"
+  },
+  {
+   "fr": ", et ce problème a disparu : {0}",
+   "en": ", and this problem is gone: {0}",
+   "ou": "setups.py:463",
+   "texte": ", y este problema ha desaparecido: {0}"
+  },
+  {
+   "fr": ". On le garde.",
+   "en": ". We keep it.",
+   "ou": "setups.py:464",
+   "texte": ". Nos lo quedamos."
+  },
+  {
+   "fr": "Bilan du setup {0} : {1} plus lent que {2}",
+   "en": "Setup {0} review: {1} slower than {2}",
+   "ou": "setups.py:466",
+   "texte": "Balance del setup {0}: {1} más lento que {2}"
+  },
+  {
+   "fr": ", et un nouveau problème : {0}",
+   "en": ", and a new problem: {0}",
+   "ou": "setups.py:469",
+   "texte": ", y un problema nuevo: {0}"
+  },
+  {
+   "fr": ". Je te conseille de revenir à {0}, c'est un bouton dans l'atelier.",
+   "en": ". I'd go back to {0}, there's a button in the workshop.",
+   "ou": "setups.py:470",
+   "texte": ". Te aconsejo volver a {0}, hay un botón en el taller."
+  },
+  {
+   "fr": "Bilan du setup {0} : pas de vraie différence avec {1}. Garde celui où tu te sens le mieux.",
+   "en": "Setup {0} review: no real difference from {1}. Keep the one you feel best in.",
+   "ou": "setups.py:473",
+   "texte": "Balance del setup {0}: ninguna diferencia real con {1}. Quédate con el que te sientas mejor."
   },
   {
    "fr": "réglage fait en piste",
    "en": "set on track",
-   "ou": "setups.py:470",
+   "ou": "setups.py:540",
    "texte": "ajustado en pista"
   },
   {
    "fr": "{0} ({1} % à l'avant)",
    "en": "{0} ({1} % front)",
-   "ou": "setups.py:491",
+   "ou": "setups.py:561",
    "texte": "{0} ({1} % delante)"
   },
   {
    "fr": "abs",
    "en": "AntilockBrakeSystemMapSetting",
-   "ou": "setups.py:492",
+   "ou": "setups.py:562",
    "texte": ""
   },
   {
    "fr": "{0} (sur {1})",
    "en": "{0} ({1})",
-   "ou": "setups.py:500",
+   "ou": "setups.py:570",
    "texte": "{0} (en {1})"
   },
   {
    "fr": "Essence au départ",
    "en": "Starting fuel",
-   "ou": "setups.py:526",
+   "ou": "setups.py:596",
    "texte": "Combustible de salida"
   },
   {
    "fr": "essence pour la course : ",
    "en": "fuel for the race: ",
-   "ou": "setups.py:528",
+   "ou": "setups.py:598",
    "texte": "combustible para la carrera: "
   },
   {
    "fr": "Choisis d'abord le setup que tu utilises.",
    "en": "First choose the setup you're using.",
-   "ou": "setups.py:537",
+   "ou": "setups.py:607",
    "texte": "Primero elige el setup que usas."
   },
   {
    "fr": "Fichier introuvable.",
    "en": "File not found.",
-   "ou": "setups.py:540",
+   "ou": "setups.py:610",
    "texte": "Archivo no encontrado."
   },
   {
    "fr": "GENERAL",
    "en": "FuelSetting",
-   "ou": "setups.py:550",
+   "ou": "setups.py:620",
    "texte": ""
   },
   {
-   "fr": "températures du pneu {0}",
-   "en": "{0} tyre temperatures",
-   "ou": "setups.py:606",
-   "texte": "Temperaturas de neumáticos {0}"
+   "fr": "{0} (et {1} autre{2})",
+   "en": "{0} (and {1} more)",
+   "ou": "setups.py:658",
+   "texte": "{0} (y {1} {2?más:más})"
   },
   {
-   "fr": "fond plat qui touche",
-   "en": "floor bottoming",
-   "ou": "setups.py:606",
-   "texte": "el fondo toca el suelo"
+   "fr": "freins {0} trop chauds ({1} °C)",
+   "en": "{0} brakes too hot ({1} °C)",
+   "ou": "setups.py:706",
+   "texte": "frenos {0} demasiado calientes ({1} °C)"
   },
   {
-   "fr": "camber_less",
-   "en": "camber_more",
-   "ou": "setups.py:607",
-   "texte": ""
-  },
-  {
-   "fr": "pressure_down",
-   "en": "pressure_up",
-   "ou": "setups.py:611",
-   "texte": ""
-  },
-  {
-   "fr": "Rien à créer.",
-   "en": "Nothing to create.",
-   "ou": "setups.py:627",
-   "texte": "Nada que crear."
-  },
-  {
-   "fr": "Un fichier « {0} » existe déjà et n'a pas été créé par Apex Radio : je n'y touche pas.",
-   "en": "A file \"{0}\" already exists and wasn't created by Apex Radio: I won't touch it.",
-   "ou": "setups.py:633",
-   "texte": "Ya existe un archivo «{0}» que no ha creado Apex Radio: no lo toco."
-  },
-  {
-   "fr": "Windows refuse l'écriture dans le dossier des setups. Lance Apex Radio en administrateur, ou déplace LMU hors de Program Files.",
-   "en": "Windows won't allow writing to the setups folder. Run Apex Radio as administrator, or move LMU out of Program Files.",
-   "ou": "setups.py:656",
-   "texte": "Windows no permite escribir en la carpeta de setups. Ejecuta Apex Radio como administrador o saca LMU de Archivos de programa."
-  },
-  {
-   "fr": "Version introuvable.",
-   "en": "Version not found.",
-   "ou": "setups.py:676",
-   "texte": "Versión no encontrada."
-  },
-  {
-   "fr": "« {0} » n'a pas été créé par Apex Radio : je n'y touche pas.",
-   "en": "\"{0}\" wasn't created by Apex Radio: I won't touch it.",
-   "ou": "setups.py:680",
-   "texte": "«{0}» no lo ha creado Apex Radio: no lo toco."
-  },
-  {
-   "fr": "Windows refuse l'écriture dans le dossier des setups.",
-   "en": "Windows won't allow writing to the setups folder.",
-   "ou": "setups.py:686",
-   "texte": "Windows no permite escribir en la carpeta de setups."
+   "fr": "freins {0} trop froids ({1} °C)",
+   "en": "{0} brakes too cold ({1} °C)",
+   "ou": "setups.py:708",
+   "texte": "frenos {0} demasiado fríos ({1} °C)"
   },
   {
    "fr": "Aileron avant",
    "en": "Front wing",
-   "ou": "setups.py:69",
+   "ou": "setups.py:71",
    "texte": "Alerón delantero"
   },
   {
    "fr": "Aileron arrière",
    "en": "Rear wing",
-   "ou": "setups.py:69",
+   "ou": "setups.py:71",
    "texte": "Alerón trasero"
   },
   {
    "fr": "Différentiel (accélération)",
    "en": "Diff (power)",
-   "ou": "setups.py:69",
+   "ou": "setups.py:71",
    "texte": "Diferencial (aceleración)"
   },
   {
    "fr": "Différentiel (lever de pied)",
    "en": "Diff (coast)",
-   "ou": "setups.py:69",
+   "ou": "setups.py:71",
    "texte": "Diferencial (retención)"
   },
   {
    "fr": "Carrossage",
    "en": "Camber",
-   "ou": "setups.py:69",
+   "ou": "setups.py:71",
    "texte": "Caída"
   },
   {
    "fr": "Pression",
    "en": "Pressure",
-   "ou": "setups.py:69",
+   "ou": "setups.py:71",
    "texte": "Presión"
   },
   {
    "fr": "Hauteur de caisse",
    "en": "Ride height",
-   "ou": "setups.py:69",
+   "ou": "setups.py:71",
    "texte": "Altura"
+  },
+  {
+   "fr": "Pression de freinage",
+   "en": "Brake pressure",
+   "ou": "setups.py:71",
+   "texte": "Presión de freno"
+  },
+  {
+   "fr": "Écopes de frein avant",
+   "en": "Front brake ducts",
+   "ou": "setups.py:71",
+   "texte": "Tomas de freno delanteras"
+  },
+  {
+   "fr": "Écopes de frein arrière",
+   "en": "Rear brake ducts",
+   "ou": "setups.py:71",
+   "texte": "Tomas de freno traseras"
+  },
+  {
+   "fr": "températures du pneu {0}",
+   "en": "{0} tyre temperatures",
+   "ou": "setups.py:718",
+   "texte": "Temperaturas de neumáticos {0}"
+  },
+  {
+   "fr": "fond plat qui touche",
+   "en": "floor bottoming",
+   "ou": "setups.py:718",
+   "texte": "el fondo toca el suelo"
+  },
+  {
+   "fr": "camber_less",
+   "en": "camber_more",
+   "ou": "setups.py:719",
+   "texte": ""
+  },
+  {
+   "fr": "pressure_down",
+   "en": "pressure_up",
+   "ou": "setups.py:723",
+   "texte": ""
+  },
+  {
+   "fr": "Rien à créer.",
+   "en": "Nothing to create.",
+   "ou": "setups.py:739",
+   "texte": "Nada que crear."
+  },
+  {
+   "fr": "Un fichier « {0} » existe déjà et n'a pas été créé par Apex Radio : je n'y touche pas.",
+   "en": "A file \"{0}\" already exists and wasn't created by Apex Radio: I won't touch it.",
+   "ou": "setups.py:745",
+   "texte": "Ya existe un archivo «{0}» que no ha creado Apex Radio: no lo toco."
+  },
+  {
+   "fr": "Windows refuse l'écriture dans le dossier des setups. Lance Apex Radio en administrateur, ou déplace LMU hors de Program Files.",
+   "en": "Windows won't allow writing to the setups folder. Run Apex Radio as administrator, or move LMU out of Program Files.",
+   "ou": "setups.py:768",
+   "texte": "Windows no permite escribir en la carpeta de setups. Ejecuta Apex Radio como administrador o saca LMU de Archivos de programa."
+  },
+  {
+   "fr": "Version introuvable.",
+   "en": "Version not found.",
+   "ou": "setups.py:788",
+   "texte": "Versión no encontrada."
+  },
+  {
+   "fr": "« {0} » n'a pas été créé par Apex Radio : je n'y touche pas.",
+   "en": "\"{0}\" wasn't created by Apex Radio: I won't touch it.",
+   "ou": "setups.py:792",
+   "texte": "«{0}» no lo ha creado Apex Radio: no lo toco."
+  },
+  {
+   "fr": "Windows refuse l'écriture dans le dossier des setups.",
+   "en": "Windows won't allow writing to the setups folder.",
+   "ou": "setups.py:798",
+   "texte": "Windows no permite escribir en la carpeta de setups."
   },
   {
    "fr": "AVG",
    "en": "FL",
-   "ou": "setups.py:76",
+   "ou": "setups.py:80",
    "texte": "DI"
   },
   {
    "fr": "AVD",
    "en": "FR",
-   "ou": "setups.py:76",
+   "ou": "setups.py:80",
    "texte": "DD"
   },
   {
    "fr": "ARG",
    "en": "RL",
-   "ou": "setups.py:76",
+   "ou": "setups.py:80",
    "texte": "TI"
   },
   {
    "fr": "ARD",
    "en": "RR",
-   "ou": "setups.py:76",
+   "ou": "setups.py:80",
    "texte": "TD"
   },
   {
@@ -5416,111 +5530,123 @@
    "texte": "Archivo en LMU: <b>{0}</b> (un único archivo {1}, actualizado en cada versión)"
   },
   {
+   "fr": "Bilan",
+   "en": "Review",
+   "ou": "ui/index.html:900",
+   "texte": "Balance"
+  },
+  {
+   "fr": "Revenir à",
+   "en": "Go back to",
+   "ou": "ui/index.html:901",
+   "texte": "Volver a"
+  },
+  {
    "fr": "<br>Pas encore de version créée par Apex Radio sur ce circuit.",
    "en": "<br>No version created by Apex Radio on this track yet.",
-   "ou": "ui/index.html:900",
+   "ou": "ui/index.html:903",
    "texte": "<br>Apex Radio aún no ha creado ninguna versión en este circuito."
   },
   {
    "fr": "<span class=\"good\">{0} remis en {1}</span> — recharge-le au garage dans LMU.",
    "en": "<span class=\"good\">{0} restored to {1}</span> — reload it in the LMU garage.",
-   "ou": "ui/index.html:903",
+   "ou": "ui/index.html:906",
    "texte": "<span class=\"good\">{0} restaurado a {1}</span> — recárgalo en el garaje de LMU."
   },
   {
    "fr": "conso mesurée {0} L/tour",
    "en": "measured consumption {0} L/lap",
-   "ou": "ui/index.html:921",
+   "ou": "ui/index.html:924",
    "texte": "consumo medido {0} L/vuelta"
   },
   {
    "fr": "conso pas encore mesurée",
    "en": "consumption not measured yet",
-   "ou": "ui/index.html:921",
+   "ou": "ui/index.html:924",
    "texte": "consumo aún sin medir"
   },
   {
    "fr": "au départ",
    "en": "at the start",
-   "ou": "ui/index.html:922",
+   "ou": "ui/index.html:925",
    "texte": "en la salida"
   },
   {
    "fr": "Durée de la course",
    "en": "Race length",
-   "ou": "ui/index.html:923",
+   "ou": "ui/index.html:926",
    "texte": "Duración de la carrera"
   },
   {
    "fr": "Durée de la course en minutes",
    "en": "Race length in minutes",
-   "ou": "ui/index.html:923",
+   "ou": "ui/index.html:926",
    "texte": "Duración de la carrera en minutos"
   },
   {
    "fr": "ou",
    "en": "or",
-   "ou": "ui/index.html:924",
+   "ou": "ui/index.html:927",
    "texte": "o"
   },
   {
    "fr": "Nombre de tours",
    "en": "Number of laps",
-   "ou": "ui/index.html:924",
+   "ou": "ui/index.html:927",
    "texte": "Número de vueltas"
   },
   {
    "fr": "Choisis ton bouton radio (volant ou clavier)",
    "en": "Pick your radio button (wheel or keyboard)",
-   "ou": "ui/index.html:944",
+   "ou": "ui/index.html:947",
    "texte": "Elige tu botón de radio (volante o teclado)"
   },
   {
    "fr": "Teste la voix de l'ingénieur",
    "en": "Test the engineer's voice",
-   "ou": "ui/index.html:945",
+   "ou": "ui/index.html:948",
    "texte": "Prueba la voz del ingeniero"
   },
   {
    "fr": "Appuie sur ton bouton radio et dis « tu m'entends ? »",
    "en": "Hold your radio button and say \"can you hear me?\"",
-   "ou": "ui/index.html:946",
+   "ou": "ui/index.html:949",
    "texte": "Mantén tu botón de radio y di «¿me oyes?»"
   },
   {
    "fr": "Lance Le Mans Ultimate",
    "en": "Start Le Mans Ultimate",
-   "ou": "ui/index.html:947",
+   "ou": "ui/index.html:950",
    "texte": "Inicia Le Mans Ultimate"
   },
   {
    "fr": "▶ Lancer",
    "en": "▶ Launch",
-   "ou": "ui/index.html:953",
+   "ou": "ui/index.html:956",
    "texte": "▶ Iniciar"
   },
   {
    "fr": "Régler",
    "en": "Set up",
-   "ou": "ui/index.html:953",
+   "ou": "ui/index.html:956",
    "texte": "Configurar"
   },
   {
    "fr": "⏳ Lancement…",
    "en": "⏳ Launching…",
-   "ou": "ui/index.html:960",
+   "ou": "ui/index.html:963",
    "texte": "⏳ Iniciando…"
   },
   {
    "fr": "<span class=\"good\">{0} mis à jour ({1})</span> — recharge-le au garage dans LMU, puis roule quelques tours pour comparer.",
    "en": "<span class=\"good\">{0} updated ({1})</span> — reload it in the LMU garage, then do a few laps to compare.",
-   "ou": "ui/index.html:976",
+   "ou": "ui/index.html:979",
    "texte": "<span class=\"good\">{0} actualizado ({1})</span> — recárgalo en el garaje de LMU y da unas vueltas para comparar."
   },
   {
    "fr": "Ton setup de départ était {0} : j'ai converti la copie APEX pour la LMP2 {1} (même voiture, Oreca 07). Vérifie les réglages dans le garage avant de rouler.",
    "en": "Your base setup was {0}: I converted the APEX copy for the LMP2 {1} (same car, Oreca 07). Check the settings in the garage before driving.",
-   "ou": "ui/index.html:977",
+   "ou": "ui/index.html:980",
    "texte": "Tu setup de base era {0}: he convertido la copia APEX para el LMP2 {1} (mismo coche, Oreca 07). Revisa los ajustes en el garaje antes de salir."
   },
   {

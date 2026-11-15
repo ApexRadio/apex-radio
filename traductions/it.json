@@ -46,250 +46,196 @@
    "texte": "{0} arriva da dietro, {1} {2?secondi:secondo}, {3}."
   },
   {
-   "fr": ", tu la rattrapes au virage {0}",
-   "en": ", you'll catch it at turn {0}",
-   "ou": "alerts.py:225",
-   "texte": ", la prendi alla curva {0}"
+   "fr": "{0} {1} plus lentes devant, tu les rattrapes dans {2} secondes, avant le virage {3}.",
+   "en": "{0} slower {1} cars ahead, you'll catch them in {2} seconds, before turn {3}.",
+   "ou": "alerts.py:235",
+   "texte": "{0} {1} più lente davanti, le prendi tra {2} secondi, prima della curva {3}."
   },
   {
-   "fr": "moins d'une seconde",
-   "en": "less than a second",
-   "ou": "alerts.py:227",
-   "texte": "meno di un secondo"
+   "fr": "{0} {1} plus lentes devant, tu les rattrapes dans {2} secondes, au virage {3}.",
+   "en": "{0} slower {1} cars ahead, you'll catch them in {2} seconds, at turn {3}.",
+   "ou": "alerts.py:238",
+   "texte": "{0} {1} più lente davanti, le prendi tra {2} secondi, alla curva {3}."
   },
   {
-   "fr": "{0} {1} plus lentes devant, à {2}{3}.",
-   "en": "{0} {1} cars ahead, {2}{3}.",
-   "ou": "alerts.py:232",
-   "texte": "{0} {1} più lente davanti, a {2}{3}."
+   "fr": "{0} {1} plus lentes devant, tu les rattrapes dans {2} secondes.",
+   "en": "{0} slower {1} cars ahead, you'll catch them in {2} seconds.",
+   "ou": "alerts.py:241",
+   "texte": "{0} {1} più lente davanti, le prendi tra {2} secondi."
   },
   {
-   "fr": "{0} plus lente devant, à {1}{2}.",
-   "en": "Slower {0} ahead, {1}{2}.",
-   "ou": "alerts.py:234",
-   "texte": "{0} più lenta davanti, a {1}{2}."
+   "fr": "{0} plus lente devant, tu la rattrapes dans {1} secondes, avant le virage {2}.",
+   "en": "Slower {0} ahead, you'll catch it in {1} seconds, before turn {2}.",
+   "ou": "alerts.py:245",
+   "texte": "{0} più lenta davanti, la prendi tra {1} secondi, prima della curva {2}."
+  },
+  {
+   "fr": "{0} plus lente devant, tu la rattrapes dans {1} secondes, au virage {2}.",
+   "en": "Slower {0} ahead, you'll catch it in {1} seconds, at turn {2}.",
+   "ou": "alerts.py:248",
+   "texte": "{0} più lenta davanti, la prendi tra {1} secondi, alla curva {2}."
+  },
+  {
+   "fr": "{0} plus lente devant, tu la rattrapes dans {1} secondes.",
+   "en": "Slower {0} ahead, you'll catch it in {1} seconds.",
+   "ou": "alerts.py:251",
+   "texte": "{0} più lenta davanti, la prendi tra {1} secondi."
   },
   {
    "fr": "la voiture",
    "en": "the car",
-   "ou": "alerts.py:284",
+   "ou": "alerts.py:303",
    "texte": "la macchina"
   },
   {
    "fr": "P{0} à {1} devant",
    "en": "P{0} {1} ahead",
-   "ou": "alerts.py:307",
+   "ou": "alerts.py:326",
    "texte": "P{0} {1} davanti"
   },
   {
    "fr": "P{0} à {1} derrière",
    "en": "P{0} {1} behind",
-   "ou": "alerts.py:309",
+   "ou": "alerts.py:328",
    "texte": "P{0} {1} dietro"
   },
   {
    "fr": "Point écarts :",
    "en": "Gaps:",
-   "ou": "alerts.py:312",
+   "ou": "alerts.py:331",
    "texte": "Distacchi:"
   },
   {
    "fr": "Les écarts :",
    "en": "Gap check:",
-   "ou": "alerts.py:312",
+   "ou": "alerts.py:331",
    "texte": "Controllo distacchi:"
   },
   {
    "fr": "Côté écarts,",
    "en": "On the gaps,",
-   "ou": "alerts.py:312",
+   "ou": "alerts.py:331",
    "texte": "Sui distacchi:"
   },
   {
    "fr": "Tu es dans les roues de P{0}, attaque !",
    "en": "You're on P{0}'s gearbox, attack!",
-   "ou": "alerts.py:332",
+   "ou": "alerts.py:351",
    "texte": "Sei attaccato al cambio di P{0}, attacca!"
   },
   {
    "fr": "Tu es collé à P{0}, c'est le moment d'attaquer !",
    "en": "You're glued to P{0}, time to attack!",
-   "ou": "alerts.py:333",
+   "ou": "alerts.py:352",
    "texte": "Sei incollato a P{0}, è ora di attaccare!"
   },
   {
    "fr": "P{0} est juste devant, à moins d'une seconde. Attaque !",
    "en": "P{0} is just ahead, under a second. Attack!",
-   "ou": "alerts.py:334",
+   "ou": "alerts.py:353",
    "texte": "P{0} è appena davanti, a meno di un secondo. Attacca!"
   },
   {
    "fr": "Mets-lui la pression, montre-toi dans ses rétros.",
    "en": "Put him under pressure, show yourself in his mirrors.",
-   "ou": "alerts.py:334",
+   "ou": "alerts.py:353",
    "texte": "Mettilo sotto pressione, fatti vedere nei suoi specchietti."
   },
   {
    "fr": "Il est à portée, cherche l'ouverture au freinage.",
    "en": "He's in range, look for a gap under braking.",
-   "ou": "alerts.py:334",
+   "ou": "alerts.py:353",
    "texte": "È a tiro, cerca un varco in frenata."
   },
   {
    "fr": "Il commence à craquer, reste collé et attends sa faute.",
    "en": "He's starting to crack, stay close and wait for his mistake.",
-   "ou": "alerts.py:334",
+   "ou": "alerts.py:353",
    "texte": "Sta cominciando a cedere, resta vicino e aspetta il suo errore."
   },
   {
    "fr": "Tu reprends {0} par tour sur P{1}, dans ses roues dans {2} tour{3}.",
    "en": "You're gaining {0} a lap on P{1}, on his gearbox in {2} lap{3}.",
-   "ou": "alerts.py:340",
+   "ou": "alerts.py:359",
    "texte": "Guadagni {0} al giro su P{1}, tra {2} {3?giri:giro} sei attaccato."
   },
   {
    "fr": "Tu reviens sur P{0}, {1} par tour. Tu seras sur lui dans {2} tour{3}.",
    "en": "You're closing on P{0}, {1} a lap. You'll be on him in {2} lap{3}.",
-   "ou": "alerts.py:342",
+   "ou": "alerts.py:361",
    "texte": "Ti avvicini a P{0}, {1} al giro. Gli sarai addosso tra {2} {3?giri:giro}."
   },
   {
    "fr": "P{0} est à portée : tu lui prends {1} par tour.",
    "en": "P{0} is in range: you're taking {1} a lap off him.",
-   "ou": "alerts.py:344",
+   "ou": "alerts.py:363",
    "texte": "P{0} è a tiro: gli rosicchi {1} al giro."
   },
   {
    "fr": "Pousse, il perd du temps !",
    "en": "Push, he's losing time!",
-   "ou": "alerts.py:345",
+   "ou": "alerts.py:364",
    "texte": "Spingi, sta perdendo tempo!"
   },
   {
    "fr": "Super rythme, va le chercher !",
    "en": "Great pace, go get him!",
-   "ou": "alerts.py:345",
+   "ou": "alerts.py:364",
    "texte": "Gran ritmo, vai a prenderlo!"
   },
   {
    "fr": "Il est en difficulté, mets-lui la pression !",
    "en": "He's struggling, put the pressure on!",
-   "ou": "alerts.py:345",
+   "ou": "alerts.py:364",
    "texte": "È in difficoltà, mettigli pressione!"
   },
   {
    "fr": "Tu grappilles sur P{0}, petit à petit.",
    "en": "You're chipping away at P{0}, bit by bit.",
-   "ou": "alerts.py:350",
+   "ou": "alerts.py:369",
    "texte": "Stai rosicchiando P{0}, poco alla volta."
   },
   {
    "fr": "Continue comme ça.",
    "en": "Keep it going.",
-   "ou": "alerts.py:350",
+   "ou": "alerts.py:369",
    "texte": "Continua così."
   },
   {
    "fr": "Reste régulier, ça va payer.",
    "en": "Stay consistent, it'll pay off.",
-   "ou": "alerts.py:350",
+   "ou": "alerts.py:369",
    "texte": "Resta costante, pagherà."
   },
   {
    "fr": "P{0} s'échappe de {1} par tour.",
    "en": "P{0} is pulling away by {1} a lap.",
-   "ou": "alerts.py:353",
+   "ou": "alerts.py:372",
    "texte": "P{0} sta allungando, {1} al giro."
   },
   {
    "fr": "P{0} prend le large, {1} par tour.",
    "en": "P{0} is getting away, {1} a lap.",
-   "ou": "alerts.py:354",
+   "ou": "alerts.py:373",
    "texte": "P{0} se ne sta andando, {1} al giro."
   },
   {
    "fr": "Accroche-toi, ne le laisse pas filer.",
    "en": "Hang on, don't let him go.",
-   "ou": "alerts.py:354",
+   "ou": "alerts.py:373",
    "texte": "Tieni duro, non lasciarlo andare."
   },
   {
    "fr": "Reste concentré, fais ta course.",
    "en": "Stay focused, run your own race.",
-   "ou": "alerts.py:354",
+   "ou": "alerts.py:373",
    "texte": "Resta concentrato, fai la tua gara."
   },
   {
    "fr": "Pas de panique, la course est longue.",
    "en": "No panic, it's a long race.",
-   "ou": "alerts.py:354",
-   "texte": "Niente panico, la gara è lunga."
-  },
-  {
-   "fr": "P{0} est dans tes roues, défends !",
-   "en": "P{0} is right behind you, defend!",
-   "ou": "alerts.py:365",
-   "texte": "P{0} è proprio dietro, difenditi!"
-  },
-  {
-   "fr": "Attention, P{0} est collé derrière toi. Défends ta place !",
-   "en": "Careful, P{0} is glued to you. Defend your place!",
-   "ou": "alerts.py:366",
-   "texte": "Attenzione, P{0} è incollato a te. Difendi la posizione!"
-  },
-  {
-   "fr": "P{0} est juste derrière, à moins d'une seconde !",
-   "en": "P{0} is right behind, under a second!",
-   "ou": "alerts.py:367",
-   "texte": "P{0} è proprio dietro, a meno di un secondo!"
-  },
-  {
-   "fr": "Ferme l'intérieur aux freinages.",
-   "en": "Cover the inside into the braking zones.",
-   "ou": "alerts.py:367",
-   "texte": "Chiudi l'interno in frenata."
-  },
-  {
-   "fr": "Pas d'erreur, soigne tes sorties de virage.",
-   "en": "No mistakes, nail your corner exits.",
-   "ou": "alerts.py:367",
-   "texte": "Niente errori, cura le uscite di curva."
-  },
-  {
-   "fr": "Ne lui laisse aucune ouverture.",
-   "en": "Don't give him any gap.",
-   "ou": "alerts.py:367",
-   "texte": "Non lasciargli nessuno spazio."
-  },
-  {
-   "fr": "P{0} revient de {1} par tour, il sera sur toi dans {2} tour{3}.",
-   "en": "P{0} is closing by {1} a lap, he'll be on you in {2} lap{3}.",
-   "ou": "alerts.py:371",
-   "texte": "P{0} si avvicina di {1} al giro, ti sarà addosso tra {2} {3?giri:giro}."
-  },
-  {
-   "fr": "Attention derrière : P{0} te reprend {1} par tour.",
-   "en": "Watch your mirrors: P{0} is taking {1} a lap off you.",
    "ou": "alerts.py:373",
-   "texte": "Occhio agli specchietti: P{0} ti rosicchia {1} al giro."
-  },
-  {
-   "fr": "Il est plus rapide, pousse un peu plus.",
-   "en": "He's quicker, push a bit harder.",
-   "ou": "alerts.py:374",
-   "texte": "È più veloce, spingi un po' di più."
-  },
-  {
-   "fr": "Ne lâche rien, garde ton rythme.",
-   "en": "Don't give up, keep your pace.",
-   "ou": "alerts.py:374",
-   "texte": "Non mollare, mantieni il tuo ritmo."
-  },
-  {
-   "fr": "Reste propre, fais tes trajectoires et il ne passera pas.",
-   "en": "Stay clean, hit your lines and he won't get by.",
-   "ou": "alerts.py:374",
-   "texte": "Pulito, rispetta le tue traiettorie e non passerà."
+   "texte": "Niente panico, la gara è lunga."
   },
   {
    "fr": "avant gauche|avant droite|arrière gauche|arrière droite",
@@ -298,33 +244,99 @@
    "texte": "anteriore sinistra|anteriore destra|posteriore sinistra|posteriore destra"
   },
   {
+   "fr": "P{0} est dans tes roues, défends !",
+   "en": "P{0} is right behind you, defend!",
+   "ou": "alerts.py:384",
+   "texte": "P{0} è proprio dietro, difenditi!"
+  },
+  {
+   "fr": "Attention, P{0} est collé derrière toi. Défends ta place !",
+   "en": "Careful, P{0} is glued to you. Defend your place!",
+   "ou": "alerts.py:385",
+   "texte": "Attenzione, P{0} è incollato a te. Difendi la posizione!"
+  },
+  {
+   "fr": "P{0} est juste derrière, à moins d'une seconde !",
+   "en": "P{0} is right behind, under a second!",
+   "ou": "alerts.py:386",
+   "texte": "P{0} è proprio dietro, a meno di un secondo!"
+  },
+  {
+   "fr": "Ferme l'intérieur aux freinages.",
+   "en": "Cover the inside into the braking zones.",
+   "ou": "alerts.py:386",
+   "texte": "Chiudi l'interno in frenata."
+  },
+  {
+   "fr": "Pas d'erreur, soigne tes sorties de virage.",
+   "en": "No mistakes, nail your corner exits.",
+   "ou": "alerts.py:386",
+   "texte": "Niente errori, cura le uscite di curva."
+  },
+  {
+   "fr": "Ne lui laisse aucune ouverture.",
+   "en": "Don't give him any gap.",
+   "ou": "alerts.py:386",
+   "texte": "Non lasciargli nessuno spazio."
+  },
+  {
+   "fr": "P{0} revient de {1} par tour, il sera sur toi dans {2} tour{3}.",
+   "en": "P{0} is closing by {1} a lap, he'll be on you in {2} lap{3}.",
+   "ou": "alerts.py:390",
+   "texte": "P{0} si avvicina di {1} al giro, ti sarà addosso tra {2} {3?giri:giro}."
+  },
+  {
+   "fr": "Attention derrière : P{0} te reprend {1} par tour.",
+   "en": "Watch your mirrors: P{0} is taking {1} a lap off you.",
+   "ou": "alerts.py:392",
+   "texte": "Occhio agli specchietti: P{0} ti rosicchia {1} al giro."
+  },
+  {
+   "fr": "Il est plus rapide, pousse un peu plus.",
+   "en": "He's quicker, push a bit harder.",
+   "ou": "alerts.py:393",
+   "texte": "È più veloce, spingi un po' di più."
+  },
+  {
+   "fr": "Ne lâche rien, garde ton rythme.",
+   "en": "Don't give up, keep your pace.",
+   "ou": "alerts.py:393",
+   "texte": "Non mollare, mantieni il tuo ritmo."
+  },
+  {
+   "fr": "Reste propre, fais tes trajectoires et il ne passera pas.",
+   "en": "Stay clean, hit your lines and he won't get by.",
+   "ou": "alerts.py:393",
+   "texte": "Pulito, rispetta le tue traiettorie e non passerà."
+  },
+  {
    "fr": "Tu creuses l'écart sur P{0}, {1} par tour.",
    "en": "You're pulling away from P{0}, {1} a lap.",
-   "ou": "alerts.py:380",
+   "ou": "alerts.py:399",
    "texte": "Stai allungando su P{0}, {1} al giro."
   },
   {
    "fr": "Tu prends le large sur P{0}, {1} par tour.",
    "en": "You're getting away from P{0}, {1} a lap.",
-   "ou": "alerts.py:381",
+   "ou": "alerts.py:400",
    "texte": "Ti stai staccando da P{0}, {1} al giro."
   },
   {
    "fr": "Super boulot, continue comme ça !",
    "en": "Great job, keep it up!",
-   "ou": "alerts.py:381",
+   "ou": "alerts.py:400",
    "texte": "Ottimo lavoro, continua così!"
   },
   {
    "fr": "Tu le décroches, garde ce rythme.",
    "en": "You're dropping him, keep this pace.",
-   "ou": "alerts.py:381",
+   "ou": "alerts.py:400",
    "texte": "Lo stai staccando, tieni questo ritmo."
   },
   {
    "fr": "Parfait, il ne peut pas suivre.",
    "en": "Perfect, he can't keep up.",
-   "ou": "alerts.py:381",
+   "ou": "alerts.py:400",
    "texte": "Perfetto, non riesce a starti dietro."
   },
   {
@@ -358,256 +370,220 @@
    "texte": ""
   },
   {
-   "fr": "{0} places de plus",
-   "en": "{0} places gained",
-   "ou": "alerts.py:466",
-   "texte": "{0} posizioni guadagnate"
-  },
-  {
-   "fr": "Une place de plus",
-   "en": "One place up",
-   "ou": "alerts.py:467",
-   "texte": "Una posizione in più"
-  },
-  {
-   "fr": "Et une place de gagnée",
-   "en": "And that's a place gained",
-   "ou": "alerts.py:467",
-   "texte": "Ed è una posizione guadagnata"
-  },
-  {
-   "fr": "Tu gagnes une place",
-   "en": "You gain a place",
-   "ou": "alerts.py:468",
-   "texte": "Guadagni una posizione"
-  },
-  {
-   "fr": "Bien joué !",
-   "en": "Nice one!",
-   "ou": "alerts.py:469",
-   "texte": "Bravo!"
-  },
-  {
-   "fr": "Superbe dépassement !",
-   "en": "Great move!",
-   "ou": "alerts.py:469",
-   "texte": "Gran sorpasso!"
-  },
-  {
-   "fr": "Continue !",
-   "en": "Keep going!",
-   "ou": "alerts.py:469",
-   "texte": "Continua così!"
-  },
-  {
    "fr": "voiture",
    "en": "car",
    "ou": "alerts.py:47",
    "texte": "macchina"
   },
   {
+   "fr": "{0} places de plus",
+   "en": "{0} places gained",
+   "ou": "alerts.py:485",
+   "texte": "{0} posizioni guadagnate"
+  },
+  {
+   "fr": "Une place de plus",
+   "en": "One place up",
+   "ou": "alerts.py:486",
+   "texte": "Una posizione in più"
+  },
+  {
+   "fr": "Et une place de gagnée",
+   "en": "And that's a place gained",
+   "ou": "alerts.py:486",
+   "texte": "Ed è una posizione guadagnata"
+  },
+  {
+   "fr": "Tu gagnes une place",
+   "en": "You gain a place",
+   "ou": "alerts.py:487",
+   "texte": "Guadagni una posizione"
+  },
+  {
+   "fr": "Bien joué !",
+   "en": "Nice one!",
+   "ou": "alerts.py:488",
+   "texte": "Bravo!"
+  },
+  {
+   "fr": "Superbe dépassement !",
+   "en": "Great move!",
+   "ou": "alerts.py:488",
+   "texte": "Gran sorpasso!"
+  },
+  {
+   "fr": "Continue !",
+   "en": "Keep going!",
+   "ou": "alerts.py:488",
+   "texte": "Continua così!"
+  },
+  {
    "fr": "{0}, tu es P{1}. ",
    "en": "{0}, you're P{1}. ",
-   "ou": "alerts.py:472",
+   "ou": "alerts.py:491",
    "texte": "{0}, sei P{1}. "
   },
   {
    "fr": "Tu perds {0} place{1}, P{2}. ",
    "en": "You lose {0} place{1}, P{2}. ",
-   "ou": "alerts.py:475",
+   "ou": "alerts.py:494",
    "texte": "Perdi {0} {1?posizioni:posizione}, P{2}. "
   },
   {
    "fr": "Accroche-toi, on va la reprendre.",
    "en": "Hang on, we'll get it back.",
-   "ou": "alerts.py:476",
+   "ou": "alerts.py:495",
    "texte": "Tieni duro, la recupereremo."
   },
   {
    "fr": "Pas grave, reste concentré.",
    "en": "No worries, stay focused.",
-   "ou": "alerts.py:477",
+   "ou": "alerts.py:496",
    "texte": "Tranquillo, resta concentrato."
   },
   {
    "fr": "Respire, la course est longue.",
    "en": "Breathe, it's a long race.",
-   "ou": "alerts.py:478",
+   "ou": "alerts.py:497",
    "texte": "Respira, la gara è lunga."
   },
   {
    "fr": "Bon départ, tu as gagné {0} place{1}, tu es P{2}.",
    "en": "Good start, you gained {0} place{1}, you're P{2}.",
-   "ou": "alerts.py:484",
+   "ou": "alerts.py:503",
    "texte": "Bella partenza, hai guadagnato {0} {1?posizioni:posizione}, sei P{2}."
   },
   {
    "fr": "Superbe !",
    "en": "Superb!",
-   "ou": "alerts.py:487",
+   "ou": "alerts.py:506",
    "texte": "Super!"
   },
   {
    "fr": "Continue comme ça !",
    "en": "Keep it up!",
-   "ou": "alerts.py:487",
+   "ou": "alerts.py:506",
    "texte": "Continua così!"
   },
   {
    "fr": "Excellent premier tour !",
    "en": "Excellent first lap!",
-   "ou": "alerts.py:488",
+   "ou": "alerts.py:507",
    "texte": "Ottimo primo giro!"
   },
   {
    "fr": "Premier tour difficile, tu as perdu {0} place{1}, tu es P{2}.",
    "en": "Tough first lap, you lost {0} place{1}, you're P{2}.",
-   "ou": "alerts.py:490",
+   "ou": "alerts.py:509",
    "texte": "Primo giro difficile, hai perso {0} {1?posizioni:posizione}, sei P{2}."
   },
   {
    "fr": "Pas grave, on va les reprendre.",
    "en": "No worries, we'll get them back.",
-   "ou": "alerts.py:493",
+   "ou": "alerts.py:512",
    "texte": "Tranquillo, le recupereremo."
   },
   {
    "fr": "La course est longue, reste calme.",
    "en": "It's a long race, stay calm.",
-   "ou": "alerts.py:494",
+   "ou": "alerts.py:513",
    "texte": "La gara è lunga, resta calmo."
   },
   {
    "fr": "Premier tour propre, tu gardes ta place, P{0}.",
    "en": "Clean first lap, you hold your place, P{0}.",
-   "ou": "alerts.py:496",
+   "ou": "alerts.py:515",
    "texte": "Primo giro pulito, mantieni la posizione, P{0}."
   },
   {
    "fr": "Maintenant, on attaque !",
    "en": "Now let's attack!",
-   "ou": "alerts.py:498",
+   "ou": "alerts.py:517",
    "texte": "Ora attacchiamo!"
   },
   {
    "fr": "Super tour, {0} seconde de mieux que le précédent !",
    "en": "Great lap, {0} seconds quicker than the last one!",
-   "ou": "alerts.py:546",
+   "ou": "alerts.py:565",
    "texte": "Gran giro, {0} secondi meglio del precedente!"
   },
   {
    "fr": "Gros tour ! {0} seconde de mieux.",
    "en": "Big lap! {0} seconds quicker.",
-   "ou": "alerts.py:548",
+   "ou": "alerts.py:567",
    "texte": "Giro enorme! {0} secondi meglio."
   },
   {
    "fr": "Excellent, tu as gagné {0} seconde sur ce tour.",
    "en": "Excellent, you found {0} seconds on that lap.",
-   "ou": "alerts.py:549",
+   "ou": "alerts.py:568",
    "texte": "Ottimo, hai guadagnato {0} secondi in questo giro."
   },
   {
    "fr": "Belle régularité, continue sur ce rythme.",
    "en": "Nice and consistent, keep this pace.",
-   "ou": "alerts.py:552",
+   "ou": "alerts.py:571",
    "texte": "Bello costante, tieni questo ritmo."
   },
   {
    "fr": "Très régulier, c'est parfait.",
    "en": "Very consistent, that's perfect.",
-   "ou": "alerts.py:553",
+   "ou": "alerts.py:572",
    "texte": "Molto costante, perfetto."
   },
   {
    "fr": "Même chrono que le tour d'avant, super régularité.",
    "en": "Same time as last lap, great consistency.",
-   "ou": "alerts.py:554",
+   "ou": "alerts.py:573",
    "texte": "Stesso tempo del giro precedente, grande costanza."
   },
   {
    "fr": "On a eu un coup dur, mais tu remontes. Continue comme ça !",
    "en": "We had a tough moment, but you're coming back. Keep it up!",
-   "ou": "alerts.py:557",
+   "ou": "alerts.py:576",
    "texte": "Abbiamo avuto un momento difficile, ma stai rimontando. Continua così!"
   },
   {
    "fr": "Oublie l'incident, regarde devant, tu vas plus vite qu'eux.",
    "en": "Forget the incident, look ahead, you're quicker than them.",
-   "ou": "alerts.py:558",
+   "ou": "alerts.py:577",
    "texte": "Dimentica l'incidente, guarda avanti, sei più veloce di loro."
   },
   {
    "fr": "Belle réaction après le pépin, je sens que tu vas remonter.",
    "en": "Great reaction after the trouble, I can feel you climbing back.",
-   "ou": "alerts.py:559",
+   "ou": "alerts.py:578",
    "texte": "Gran reazione dopo il problema, sento che stai risalendo."
   },
   {
    "fr": "P{0}, tu es sur le podium, garde la tête froide !",
    "en": "P{0}, you're on the podium, stay cool!",
-   "ou": "alerts.py:561",
+   "ou": "alerts.py:580",
    "texte": "P{0}, sei sul podio, stai tranquillo!"
   },
   {
    "fr": "Tu fais du bon boulot, reste concentré.",
    "en": "You're doing a good job, stay focused.",
-   "ou": "alerts.py:563",
+   "ou": "alerts.py:582",
    "texte": "Stai facendo un buon lavoro, resta concentrato."
   },
   {
    "fr": "Chaque tour compte, on continue à pousser.",
    "en": "Every lap counts, keep pushing.",
-   "ou": "alerts.py:564",
+   "ou": "alerts.py:583",
    "texte": "Ogni giro conta, continua a spingere."
   },
   {
    "fr": "La course est longue, tout peut encore arriver.",
    "en": "It's a long race, anything can still happen.",
-   "ou": "alerts.py:565",
+   "ou": "alerts.py:584",
    "texte": "La gara è lunga, può ancora succedere di tutto."
   },
   {
    "fr": "Bien, propre et régulier, c'est comme ça qu'on gagne des places.",
    "en": "Good, clean and consistent, that's how we gain places.",
-   "ou": "alerts.py:566",
+   "ou": "alerts.py:585",
    "texte": "Bene, pulito e costante, è così che si guadagnano posizioni."
-  },
-  {
-   "fr": " au virage {0}",
-   "en": " at turn {0}",
-   "ou": "alerts.py:592",
-   "texte": " alla curva {0}"
-  },
-  {
-   "fr": "Limites de piste{0}, avertissement {1} sur {2}.",
-   "en": "Track limits{0}, warning {1} of {2}.",
-   "ou": "alerts.py:596",
-   "texte": "Limiti della pista{0}, avvertimento {1} di {2}."
-  },
-  {
-   "fr": "la prochaine, c'est la pénalité !",
-   "en": "next one is a penalty!",
-   "ou": "alerts.py:599",
-   "texte": "la prossima è penalità!"
-  },
-  {
-   "fr": "encore {0} avant la pénalité.",
-   "en": "{0} more before a penalty.",
-   "ou": "alerts.py:600",
-   "texte": "ancora {0} prima di una penalità."
-  },
-  {
-   "fr": "Limites de piste{0}, avertissement {1} sur {2}, {3}",
-   "en": "Track limits{0}, warning {1} of {2}, {3}",
-   "ou": "alerts.py:601",
-   "texte": "Limiti della pista{0}, avvertimento {1} di {2}, {3}"
-  },
-  {
-   "fr": "Limites de piste{0}, avertissement numéro {1}.",
-   "en": "Track limits{0}, warning number {1}.",
-   "ou": "alerts.py:604",
-   "texte": "Limiti della pista{0}, avvertimento numero {1}."
   },
   {
    "fr": "{0} seconde{1}",
@@ -616,141 +592,177 @@
    "texte": "{0} secondi"
   },
   {
+   "fr": " au virage {0}",
+   "en": " at turn {0}",
+   "ou": "alerts.py:611",
+   "texte": " alla curva {0}"
+  },
+  {
+   "fr": "Limites de piste{0}, avertissement {1} sur {2}.",
+   "en": "Track limits{0}, warning {1} of {2}.",
+   "ou": "alerts.py:615",
+   "texte": "Limiti della pista{0}, avvertimento {1} di {2}."
+  },
+  {
+   "fr": "la prochaine, c'est la pénalité !",
+   "en": "next one is a penalty!",
+   "ou": "alerts.py:618",
+   "texte": "la prossima è penalità!"
+  },
+  {
+   "fr": "encore {0} avant la pénalité.",
+   "en": "{0} more before a penalty.",
+   "ou": "alerts.py:619",
+   "texte": "ancora {0} prima di una penalità."
+  },
+  {
    "fr": "{0} dixième{1}",
    "en": "{0} tenth{1}",
    "ou": "alerts.py:62",
    "texte": "{0} {1?decimi:decimo}"
   },
   {
+   "fr": "Limites de piste{0}, avertissement {1} sur {2}, {3}",
+   "en": "Track limits{0}, warning {1} of {2}, {3}",
+   "ou": "alerts.py:620",
+   "texte": "Limiti della pista{0}, avvertimento {1} di {2}, {3}"
+  },
+  {
+   "fr": "Limites de piste{0}, avertissement numéro {1}.",
+   "en": "Track limits{0}, warning number {1}.",
+   "ou": "alerts.py:623",
+   "texte": "Limiti della pista{0}, avvertimento numero {1}."
+  },
+  {
    "fr": "Attention, pneus froids et freins froids. Doucement au premier freinage.",
    "en": "Careful, cold tyres and cold brakes. Easy on the first braking zone.",
-   "ou": "alerts.py:666",
+   "ou": "alerts.py:685",
    "texte": "Attenzione, gomme e freni freddi. Delicato alla prima frenata."
   },
   {
    "fr": "Attention, pneus froids. Fais-les monter en température avant d'attaquer.",
    "en": "Careful, cold tyres. Bring them up to temperature before you push.",
-   "ou": "alerts.py:669",
+   "ou": "alerts.py:688",
    "texte": "Attenzione, gomme fredde. Portale in temperatura prima di spingere."
   },
   {
    "fr": "Attention, freins froids. Freine plus tôt les premiers virages.",
    "en": "Careful, cold brakes. Brake earlier for the first few corners.",
-   "ou": "alerts.py:672",
+   "ou": "alerts.py:691",
    "texte": "Attenzione, freni freddi. Frena prima nelle prime curve."
   },
   {
    "fr": "Pneus et freins en température. Vas-y, tu peux attaquer !",
    "en": "Tyres and brakes are up to temperature. Go on, you can push now!",
-   "ou": "alerts.py:679",
+   "ou": "alerts.py:698",
    "texte": "Gomme e freni in temperatura. Vai, ora puoi spingere!"
   },
   {
    "fr": "Tout est chaud, pneus et freins. À toi de jouer !",
    "en": "Everything's warm, tyres and brakes. Over to you!",
-   "ou": "alerts.py:681",
+   "ou": "alerts.py:700",
    "texte": "Tutto caldo, gomme e freni. Tocca a te!"
   },
   {
    "fr": "C'est bon, pneus et freins sont prêts. Tu peux pousser !",
    "en": "All good, tyres and brakes are ready. You can push!",
-   "ou": "alerts.py:682",
+   "ou": "alerts.py:701",
    "texte": "Tutto ok, gomme e freni pronti. Puoi spingere!"
   },
   {
    "fr": "{0}, version {1}",
    "en": "{0}, {1} version",
-   "ou": "alerts.py:691",
+   "ou": "alerts.py:710",
    "texte": "{0}, versione {1}"
   },
   {
    "fr": "Je ne vois pas encore ta voiture. Va au garage ou monte dans la voiture.",
    "en": "I can't see your car yet. Go to the garage or get in the car.",
-   "ou": "alerts.py:696",
+   "ou": "alerts.py:715",
    "texte": "Non vedo ancora la tua macchina. Vai ai box o sali in macchina."
   },
   {
    "fr": "Tu es en {0}.",
    "en": "You're in the {0}.",
-   "ou": "alerts.py:699",
+   "ou": "alerts.py:718",
    "texte": "Sei sulla {0}."
   },
   {
    "fr": " Charge bien un setup fait pour la {0} {1}.",
    "en": " Make sure you load a setup made for the {1} {0}.",
-   "ou": "alerts.py:702",
+   "ou": "alerts.py:721",
    "texte": " Assicurati di caricare un setup fatto per la {1} {0}."
   },
   {
    "fr": "Contact ! ",
    "en": "Contact! ",
-   "ou": "alerts.py:760",
+   "ou": "alerts.py:779",
    "texte": "Contatto! "
   },
   {
    "fr": "Gros dégâts à la carrosserie.",
    "en": "Heavy body damage.",
-   "ou": "alerts.py:761",
+   "ou": "alerts.py:780",
    "texte": "Danni pesanti alla carrozzeria."
   },
   {
    "fr": "Dégâts légers à la carrosserie.",
    "en": "Light body damage.",
-   "ou": "alerts.py:761",
+   "ou": "alerts.py:780",
    "texte": "Danni leggeri alla carrozzeria."
   },
   {
    "fr": " Je regarde l'aéro et les suspensions.",
    "en": " Checking aero and suspension.",
-   "ou": "alerts.py:762",
+   "ou": "alerts.py:781",
    "texte": " Controllo aerodinamica e sospensioni."
   },
   {
    "fr": "Crevaison {0} ! Rentre au stand, doucement.",
    "en": "Puncture {0}! Box, take it easy.",
-   "ou": "alerts.py:770",
+   "ou": "alerts.py:789",
    "texte": "Foratura {0}! Box, vai piano."
   },
   {
    "fr": "Roue {0} perdue ! Rentre au stand.",
    "en": "Lost the {0} wheel! Box now.",
-   "ou": "alerts.py:773",
+   "ou": "alerts.py:792",
    "texte": "Persa la ruota {0}! Box subito."
   },
   {
    "fr": "Une pièce s'est détachée de la voiture.",
    "en": "A part has come off the car.",
-   "ou": "alerts.py:777",
+   "ou": "alerts.py:796",
    "texte": "Si è staccato un pezzo dalla macchina."
   },
   {
    "fr": "Aéro endommagé à {0} %.",
    "en": "Aero damaged {0} %.",
-   "ou": "alerts.py:816",
+   "ou": "alerts.py:835",
    "texte": "Aerodinamica danneggiata {0} %."
   },
   {
    "fr": " On répare au prochain arrêt.",
    "en": " We'll fix it at the next stop.",
-   "ou": "alerts.py:817",
+   "ou": "alerts.py:836",
    "texte": " La sistemiamo alla prossima sosta."
   },
   {
    "fr": "Suspension {0} touchée à {1} %. Attention au comportement.",
    "en": "{0} suspension damaged {1} %. Watch the handling.",
-   "ou": "alerts.py:823",
+   "ou": "alerts.py:842",
    "texte": "Sospensione {0} danneggiata {1} %. Attenzione al comportamento."
   },
   {
    "fr": "Météo : pluie probable dans environ {0} minutes, {1} % de risque.",
    "en": "Weather: rain likely in about {0} minutes, {1} % chance.",
-   "ou": "alerts.py:940",
+   "ou": "alerts.py:959",
    "texte": "Meteo: probabile pioggia tra circa {0} minuti, {1} % di probabilità."
   },
   {
    "fr": "Météo : éclaircie prévue dans environ {0} minutes.",
    "en": "Weather: drying up in about {0} minutes.",
-   "ou": "alerts.py:944",
+   "ou": "alerts.py:963",
    "texte": "Meteo: si asciuga tra circa {0} minuti."
   },
   {

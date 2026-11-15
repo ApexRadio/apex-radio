@@ -1,5 +1,9 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.2.14
+- 🇫🇷 Voitures plus lentes devant : l'annonce arrive environ 30 secondes avant de les rattraper (au lieu de 2 secondes d'écart), avec le virage où tu vas les doubler (« GT3 plus lente devant, tu la rattrapes dans 30 secondes, au virage 7 »).
+- 🇬🇧 Slower cars ahead: the call now comes about 30 seconds before you catch them (instead of a 2-second gap), with the turn where you'll pass them ("Slower GT3 ahead, you'll catch it in 30 seconds, at turn 7").
+
 ## 1.2.13
 - 🇫🇷 Nouvelles questions : « comment vont mes freins ? », « limites de piste ? », « mon tour est valide ? », « qui est le leader ? », « c'est qui devant / derrière ? », « combien d'arrêts j'ai fait ? », « il y a un drapeau ? », « combien de voitures dans ma catégorie ? », « est-ce que je suis rapide ? ».
 - 🇬🇧 New questions: "how are my brakes?", "track limits?", "is my lap valid?", "who's leading?", "who's ahead / behind?", "how many stops have I made?", "any flags?", "how many cars in my class?", "am I fast?".

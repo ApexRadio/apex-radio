@@ -218,7 +218,7 @@ def loop(state: State, demo: bool) -> None:
     questions.RACE_FUEL = lambda: state.fuel.brief(state.snap) if state.snap else None
     questions.BRIEFING = lambda: state.fuel.briefing(state.snap) if state.snap else None
     state.fuel.weather = lambda s: questions._forecast_text(Weather.LAST.forecast if Weather.LAST else [], 0.0,
-                                                            s.time_left, L("Météo", "Weather"))
+                                                            s.time_left, i18n.L("Météo", "Weather"))
 
     def setup_sync():
         """Toutes les 15 s : quel setup est chargé dans LMU ? (sélection automatique dans l'atelier)"""
@@ -348,7 +348,9 @@ def loop(state: State, demo: bool) -> None:
             if L and L.get("lap") != last_lap_seen:
                 last_lap_seen = L.get("lap")
                 if L.get("valid"):
-                    state.workshop.record_lap(snap.track, L["lap"], beh.issues)
+                    rv = state.workshop.record_lap(snap.track, L["lap"], beh.issues)
+                    if rv:
+                        say(None, rv)
             if demo and isinstance(source, DemoSource) and plan.laps_until_box is not None \
                     and plan.laps_until_box <= 1 and snap.lap_frac > 0.6 and not snap.in_pits:
                 source.request_pit(plan.fuel_to_add or 0, plan.energy_target, bool(plan.change_tyres or plan.tyre_compound))
@@ -483,7 +485,7 @@ def make_handler(state: State):
                 else:
                     tr = state.track()
                     fuel = state.fuel.suggest(tr)
-                    data = {**ws.propose(tr, beh.issues, beh.tyre_findings, beh.live_controls(tr), fuel),
+                    data = {**ws.propose(tr, beh.issues, beh.tyre_findings, beh.live_controls(tr), fuel, beh.brake_peaks),
                             "folders": ws.folders(), "analysis_laps": beh.laps_seen, "fuel": fuel}
                 body = json.dumps(data, default=lambda o: None).encode()
                 self.send_response(200)
@@ -650,7 +652,7 @@ def make_handler(state: State):
                     out = {"error": None}
                 else:
                     prop = ws.propose(tr, state.beh.issues, state.beh.tyre_findings, state.beh.live_controls(tr),
-                                      state.fuel.suggest(tr))
+                                      state.fuel.suggest(tr), state.beh.brake_peaks)
                     keep = set(req.get("keys") or [])
                     chosen = [c for c in prop["changes"] if f"{c['section']}|{c['key']}" in keep]
                     out = ws.create(tr, chosen)

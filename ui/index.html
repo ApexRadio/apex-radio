@@ -855,6 +855,9 @@ async function wsLoad(keepChecks) {
   const baseRes = !vers.length && WS.label && res[WS.label] ? `<div class="ver"><b>${esc(WS.label)}</b> (${T("setup de départ", "starting setup")})<br>${T("Meilleur tour", "Best lap")} : <b>${fmtLap(res[WS.label].best)}</b> (${res[WS.label].laps || 0} ${T("tours", "laps")})</div>` : "";
   $("wshist").innerHTML = (WS.apex_file ? T(`Fichier dans LMU : <b>${esc(WS.apex_file)}</b> (un seul fichier ${WS.mode === "Qualif" ? "qualif" : "course"}, mis à jour à chaque version)`,
                                             `File in LMU: <b>${esc(WS.apex_file)}</b> (one ${WS.mode === "Qualif" ? "qualifying" : "race"} file, updated with each version)`) : "")
+    + (WS.review ? `<div class="ver" style="border-color:${WS.review.verdict === "worse" ? "var(--bad, #ff5470)" : "var(--accent)"}"><b>${T("Bilan", "Review")}</b> · ${esc(WS.review.text)}`
+        + (WS.review.verdict === "worse" && WS.review.base_version ? `<br><button class="wsrestore" data-v="${WS.review.base_version}" style="margin-top:6px">${T("Revenir à", "Go back to")} ${esc(WS.review.base)}</button>` : "")
+        + `</div>` : "")
     + (hist + baseRes || T("<br>Pas encore de version créée par Apex Radio sur ce circuit.", "<br>No version created by Apex Radio on this track yet."));
   document.querySelectorAll(".wsrestore").forEach(b => b.onclick = async () => {
     const r = await (await fetch("/api/setup/restore", { method: "POST", body: JSON.stringify({ version: Number(b.dataset.v) }) })).json();

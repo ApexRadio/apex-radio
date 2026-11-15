@@ -329,6 +329,13 @@
    "ordre": true
   },
   {
+   "id": "annule",
+   "groupe": "Stand",
+   "fr": "annule",
+   "en": "cancel",
+   "ordre": true
+  },
+  {
    "id": "silence",
    "groupe": "Radio",
    "fr": "silence",

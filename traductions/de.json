@@ -778,81 +778,87 @@
    "texte": "Spotter aus."
   },
   {
+   "fr": "tout",
+   "en": "pneus",
+   "ou": "app.py:204",
+   "texte": ""
+  },
+  {
    "fr": "Ton setup {0} est fait pour la {1}, et tu es en {2}. Pas de souci : c'est la même voiture, je convertirai la copie APEX pour ta version.",
    "en": "Your setup {0} is made for the {1}, and you're in the {2}. No problem: it's the same car, I'll convert the APEX copy for your version.",
-   "ou": "app.py:230",
+   "ou": "app.py:246",
    "texte": "Dein Setup {0} ist für den {1} gemacht, und du fährst den {2}. Kein Problem: es ist dasselbe Auto, ich konvertiere die APEX-Kopie für deine Version."
   },
   {
    "fr": "Attention, ton setup {0} a été fait pour la {1}, mais tu es en {2}. Charge plutôt un setup fait pour cette voiture.",
    "en": "Careful, your setup {0} was made for the {1}, but you're in the {2}. Better load a setup made for this car.",
-   "ou": "app.py:236",
+   "ou": "app.py:252",
    "texte": "Vorsicht, dein Setup {0} wurde für den {1} gemacht, aber du fährst den {2}. Lade lieber ein Setup für dieses Auto."
   },
   {
    "fr": "/tel",
    "en": "/phone",
-   "ou": "app.py:484",
+   "ou": "app.py:500",
    "texte": ""
   },
   {
    "fr": "/api/ptt/down",
    "en": "/api/ptt/up",
-   "ou": "app.py:503",
+   "ou": "app.py:519",
    "texte": ""
   },
   {
    "fr": "Rien à répéter pour l'instant.",
    "en": "Nothing to repeat yet.",
-   "ou": "app.py:507",
+   "ou": "app.py:523",
    "texte": "Noch nichts zu wiederholen."
   },
   {
    "fr": "Radio en français.",
    "en": "Radio in English.",
-   "ou": "app.py:515",
+   "ou": "app.py:531",
    "texte": "Funk auf Deutsch."
   },
   {
    "fr": "Radio check, niveau du son.",
    "en": "Radio check, volume level.",
-   "ou": "app.py:550",
+   "ou": "app.py:566",
    "texte": "Funkcheck, Lautstärke."
   },
   {
    "fr": "/api/setup/dir",
    "en": "/api/setup/pickdir",
-   "ou": "app.py:588",
+   "ou": "app.py:604",
    "texte": ""
   },
   {
    "fr": "Setup remis en version {0}. Recharge-le au garage.",
    "en": "Setup restored to version {0}. Reload it in the garage.",
-   "ou": "app.py:619",
+   "ou": "app.py:635",
    "texte": "Setup auf Version {0} zurückgesetzt. Lade es in der Box neu."
   },
   {
    "fr": "Setup {0} mis à jour, version {1}. Recharge-le au garage, je refais l'analyse.",
    "en": "{0} setup updated, version {1}. Reload it in the garage, I'll redo the analysis.",
-   "ou": "app.py:639",
+   "ou": "app.py:655",
    "texte": "Setup {0} aktualisiert, Version {1}. Lade es in der Box neu, ich analysiere noch einmal."
   },
   {
    "fr": "Je télécharge la voix de {0}, {1} prend la radio dans une minute.",
    "en": "Downloading {0}'s voice, it'll take over the radio in a minute.",
-   "ou": "app.py:668",
+   "ou": "app.py:684",
    "texte": "Ich lade die Stimme von {0} herunter, {1} übernimmt in einer Minute den Funk."
   },
   {
    "fr": "Radio check. Tu m'entends bien ? On est prêts pour la course.",
    "en": "Radio check. Do you copy? We're ready to race.",
-   "ou": "app.py:671",
+   "ou": "app.py:687",
    "texte": "Funkcheck. Hörst du mich? Wir sind bereit fürs Rennen."
   },
   {
    "fr": "Ce dossier ne contient pas les setups de LMU.",
    "en": "This folder doesn't contain LMU setups.",
-   "ou": "app.py:833",
+   "ou": "app.py:849",
    "texte": "Dieser Ordner enthält keine LMU-Setups."
   },
   {
@@ -3028,16 +3034,28 @@
    "texte": "Energie bei {0} %."
   },
   {
-   "fr": "Je ne peux pas changer l'essence pour l'instant.",
-   "en": "I can't change the fuel right now.",
-   "ou": "questions.py:724",
-   "texte": "Ich kann den Sprit gerade nicht ändern."
+   "fr": "Je ne peux pas changer le menu des stands pour l'instant.",
+   "en": "I can't change the pit menu right now.",
+   "ou": "questions.py:723",
+   "texte": "Ich kann das Boxenmenü gerade nicht ändern."
   },
   {
-   "fr": "C'est noté, pas d'essence au prochain arrêt.",
-   "en": "Copy, no fuel at the next stop.",
-   "ou": "questions.py:726",
-   "texte": "Verstanden, kein Sprit beim nächsten Stopp."
+   "fr": "C'est annulé pour les pneus, je reviens à mon plan.",
+   "en": "Tyre change cancelled, back to my plan.",
+   "ou": "questions.py:725",
+   "texte": "Reifenwechsel gestrichen, zurück zu meinem Plan."
+  },
+  {
+   "fr": "C'est annulé pour l'essence, je reviens à mon plan.",
+   "en": "Fuel order cancelled, back to my plan.",
+   "ou": "questions.py:727",
+   "texte": "Sprit-Anweisung gestrichen, zurück zu meinem Plan."
+  },
+  {
+   "fr": "C'est annulé, je reviens à mon plan pour le prochain arrêt.",
+   "en": "Cancelled, back to my plan for the next stop.",
+   "ou": "questions.py:729",
+   "texte": "Gestrichen, für den nächsten Stopp gilt wieder mein Plan."
   },
   {
    "fr": " {0} % par tour, soit {1} tours.",
@@ -3046,70 +3064,76 @@
    "texte": " {0} % pro Runde, also {1} Runden."
   },
   {
+   "fr": "Je ne peux pas changer l'essence pour l'instant.",
+   "en": "I can't change the fuel right now.",
+   "ou": "questions.py:746",
+   "texte": "Ich kann den Sprit gerade nicht ändern."
+  },
+  {
+   "fr": "C'est noté, pas d'essence au prochain arrêt.",
+   "en": "Copy, no fuel at the next stop.",
+   "ou": "questions.py:748",
+   "texte": "Verstanden, kein Sprit beim nächsten Stopp."
+  },
+  {
    "fr": "les quatre pneus",
    "en": "all four tyres",
-   "ou": "questions.py:738",
+   "ou": "questions.py:760",
    "texte": "alle vier Reifen"
   },
   {
    "fr": "les deux pneus avant",
    "en": "the two fronts",
-   "ou": "questions.py:739",
+   "ou": "questions.py:761",
    "texte": "die beiden Vorderreifen"
   },
   {
    "fr": "les deux pneus arrière",
    "en": "the two rears",
-   "ou": "questions.py:739",
+   "ou": "questions.py:761",
    "texte": "die beiden Hinterreifen"
   },
   {
    "fr": "les deux pneus gauches",
    "en": "the two left tyres",
-   "ou": "questions.py:740",
+   "ou": "questions.py:762",
    "texte": "die beiden linken Reifen"
   },
   {
    "fr": "les deux pneus droits",
    "en": "the two right tyres",
-   "ou": "questions.py:740",
+   "ou": "questions.py:762",
    "texte": "die beiden rechten Reifen"
   },
   {
    "fr": "le pneu {0}",
    "en": "the {0} tyre",
-   "ou": "questions.py:744",
+   "ou": "questions.py:766",
    "texte": "den Reifen {0}"
   },
   {
    "fr": "les pneus ",
    "en": "the ",
-   "ou": "questions.py:746",
+   "ou": "questions.py:768",
    "texte": "die Reifen "
   },
   {
    "fr": "Je ne peux pas changer les pneus pour l'instant.",
    "en": "I can't change the tyres right now.",
-   "ou": "questions.py:787",
+   "ou": "questions.py:809",
    "texte": "Ich kann die Reifen gerade nicht ändern."
   },
   {
    "fr": "C'est noté, on garde les pneus au prochain arrêt.",
    "en": "Copy, we keep the tyres at the next stop.",
-   "ou": "questions.py:790",
+   "ou": "questions.py:812",
    "texte": "Verstanden, die Reifen bleiben beim nächsten Stopp drauf."
   },
   {
    "fr": "C'est noté, on change {0} au prochain arrêt.",
    "en": "Copy, we change {0} at the next stop.",
-   "ou": "questions.py:793",
+   "ou": "questions.py:815",
    "texte": "Verstanden, wir wechseln {0} beim nächsten Stopp."
-  },
-  {
-   "fr": "un",
-   "en": "premier",
-   "ou": "questions.py:809",
-   "texte": ""
   },
   {
    "fr": "Il reste {0} tours.",
@@ -3124,82 +3148,70 @@
    "texte": "Noch {0} Runden."
   },
   {
-   "fr": "P{0}, c'est toi !",
-   "en": "P{0}, that's you!",
-   "ou": "questions.py:826",
-   "texte": "P{0}, das bist du!"
-  },
-  {
    "fr": "Plus que {0} tours avant l'arrivée.",
    "en": "Just {0} laps to the finish.",
    "ou": "questions.py:83",
    "texte": "Nur noch {0} Runden bis ins Ziel."
   },
   {
+   "fr": "un",
+   "en": "premier",
+   "ou": "questions.py:831",
+   "texte": ""
+  },
+  {
+   "fr": "P{0}, c'est toi !",
+   "en": "P{0}, that's you!",
+   "ou": "questions.py:848",
+   "texte": "P{0}, das bist du!"
+  },
+  {
    "fr": "Je ne vois pas de P{0} dans ta catégorie.",
    "en": "I can't see a P{0} in your class.",
-   "ou": "questions.py:830",
+   "ou": "questions.py:852",
    "texte": "Ich sehe keinen P{0} in deiner Klasse."
   },
   {
    "fr": "ce pilote",
    "en": "that driver",
-   "ou": "questions.py:831",
+   "ou": "questions.py:853",
    "texte": "dieser Fahrer"
   },
   {
    "fr": "{0} est aux stands.",
    "en": "{0} is in the pits.",
-   "ou": "questions.py:836",
+   "ou": "questions.py:858",
    "texte": "{0} ist an der Box."
   },
   {
    "fr": "{0} est {1} {2} toi.",
    "en": "{0} is {1} {2} you.",
-   "ou": "questions.py:838",
+   "ou": "questions.py:860",
    "texte": "{0} ist {1} {2}."
   },
   {
    "fr": "{0} n'est pas dans le même tour que toi.",
    "en": "{0} isn't on the same lap as you.",
-   "ou": "questions.py:841",
+   "ou": "questions.py:863",
    "texte": "{0} ist nicht in derselben Runde wie du."
   },
   {
    "fr": "Vous tournez dans le même rythme.",
    "en": "You're lapping at the same pace.",
-   "ou": "questions.py:846",
+   "ou": "questions.py:868",
    "texte": "Ihr fahrt das gleiche Tempo."
   },
   {
    "fr": "Il tourne {0} {1} plus vite que toi au dernier tour.",
    "en": "He was {0} s quicker than you last lap.",
-   "ou": "questions.py:850",
+   "ou": "questions.py:872",
    "texte": "Er war in der letzten Runde {0} Sekunden schneller als du."
   },
   {
    "fr": "Il tourne {0} {1} moins vite que toi au dernier tour.",
    "en": "He was {0} s slower than you last lap.",
-   "ou": "questions.py:853",
+   "ou": "questions.py:875",
    "texte": "Er war in der letzten Runde {0} Sekunden langsamer als du."
-  },
-  {
-   "fr": "Il te prend le plus de temps dans le secteur {0}, {1} seconde.",
-   "en": "He's quickest against you in sector {0}, {1} s.",
-   "ou": "questions.py:861",
-   "texte": "Am meisten Zeit nimmt er dir im Sektor {0} ab, {1} Sekunden."
-  },
-  {
-   "fr": "Tu es plus rapide que lui dans les trois secteurs.",
-   "en": "You're quicker than him in all three sectors.",
-   "ou": "questions.py:864",
-   "texte": "Du bist in allen drei Sektoren schneller als er."
-  },
-  {
-   "fr": "Je n'ai rien entendu, répète.",
-   "en": "I didn't hear anything, say again.",
-   "ou": "questions.py:876",
-   "texte": "Ich habe nichts gehört, wiederhol bitte."
   },
   {
    "fr": "C'est le dernier tour, donne tout !",
@@ -3208,28 +3220,22 @@
    "texte": "Das ist die letzte Runde, gib alles!"
   },
   {
-   "fr": "C'est noté, ",
-   "en": "Copy, ",
-   "ou": "questions.py:888",
-   "texte": "Verstanden, "
+   "fr": "Il te prend le plus de temps dans le secteur {0}, {1} seconde.",
+   "en": "He's quickest against you in sector {0}, {1} s.",
+   "ou": "questions.py:883",
+   "texte": "Am meisten Zeit nimmt er dir im Sektor {0} ab, {1} Sekunden."
   },
   {
-   "fr": "Et ",
-   "en": "And ",
-   "ou": "questions.py:888",
-   "texte": "Und "
+   "fr": "Tu es plus rapide que lui dans les trois secteurs.",
+   "en": "You're quicker than him in all three sectors.",
+   "ou": "questions.py:886",
+   "texte": "Du bist in allen drei Sektoren schneller als er."
   },
   {
-   "fr": " au prochain arrêt",
-   "en": " at the next stop",
-   "ou": "questions.py:890",
-   "texte": " beim nächsten Stopp"
-  },
-  {
-   "fr": "Je n'ai pas encore de données, monte dans la voiture.",
-   "en": "No data yet, get in the car.",
-   "ou": "questions.py:899",
-   "texte": "Noch keine Daten, steig ins Auto."
+   "fr": "Je n'ai rien entendu, répète.",
+   "en": "I didn't hear anything, say again.",
+   "ou": "questions.py:898",
+   "texte": "Ich habe nichts gehört, wiederhol bitte."
   },
   {
    "fr": "Moins d'une minute, encore environ {0} tours.",
@@ -3238,34 +3244,46 @@
    "texte": "Unter einer Minute, noch etwa {0} Runden."
   },
   {
-   "fr": "Je t'entends, mais je n'ai pas compris. Une fois en piste, demande-moi l'essence, les pneus, le stand, les écarts, la position ou la météo.",
-   "en": "I hear you, but I didn't get that. Once you're on track, ask me about fuel, tyres, pit stop, gaps, position or weather.",
-   "ou": "questions.py:902",
-   "texte": "Ich höre dich, aber das habe ich nicht verstanden. Sobald du auf der Strecke bist, frag mich nach Sprit, Reifen, Boxenstopp, Abständen, Position oder Wetter."
-  },
-  {
    "fr": "Moins d'une minute.",
    "en": "Under a minute to go.",
    "ou": "questions.py:91",
    "texte": "Weniger als eine Minute."
   },
   {
+   "fr": "C'est noté, ",
+   "en": "Copy, ",
+   "ou": "questions.py:910",
+   "texte": "Verstanden, "
+  },
+  {
+   "fr": "Et ",
+   "en": "And ",
+   "ou": "questions.py:910",
+   "texte": "Und "
+  },
+  {
+   "fr": " au prochain arrêt",
+   "en": " at the next stop",
+   "ou": "questions.py:912",
+   "texte": " beim nächsten Stopp"
+  },
+  {
+   "fr": "Je n'ai pas encore de données, monte dans la voiture.",
+   "en": "No data yet, get in the car.",
+   "ou": "questions.py:924",
+   "texte": "Noch keine Daten, steig ins Auto."
+  },
+  {
+   "fr": "Je t'entends, mais je n'ai pas compris. Une fois en piste, demande-moi l'essence, les pneus, le stand, les écarts, la position ou la météo.",
+   "en": "I hear you, but I didn't get that. Once you're on track, ask me about fuel, tyres, pit stop, gaps, position or weather.",
+   "ou": "questions.py:927",
+   "texte": "Ich höre dich, aber das habe ich nicht verstanden. Sobald du auf der Strecke bist, frag mich nach Sprit, Reifen, Boxenstopp, Abständen, Position oder Wetter."
+  },
+  {
    "fr": "Il reste {0} minute{1}",
    "en": "{0} minute{1} to go",
    "ou": "questions.py:93",
    "texte": "Noch {0} {1?Minuten:Minute}"
-  },
-  {
-   "fr": "Je n'ai pas compris ta question. Pose-la-moi en une phrase courte.",
-   "en": "I didn't get your question. Ask me in one short sentence.",
-   "ou": "questions.py:935",
-   "texte": "Ich habe deine Frage nicht verstanden. Stell sie mir in einem kurzen Satz."
-  },
-  {
-   "fr": "Pas sûr d'avoir compris, voilà le point. ",
-   "en": "Not sure I got that, here's the update. ",
-   "ou": "questions.py:938",
-   "texte": "Nicht sicher, ob ich das verstanden habe, hier der Überblick. "
   },
   {
    "fr": ", environ {0} tours.",
@@ -3278,6 +3296,18 @@
    "en": "You've done {0} laps.",
    "ou": "questions.py:96",
    "texte": "Du hast {0} Runden gefahren."
+  },
+  {
+   "fr": "Je n'ai pas compris ta question. Pose-la-moi en une phrase courte.",
+   "en": "I didn't get your question. Ask me in one short sentence.",
+   "ou": "questions.py:960",
+   "texte": "Ich habe deine Frage nicht verstanden. Stell sie mir in einem kurzen Satz."
+  },
+  {
+   "fr": "Pas sûr d'avoir compris, voilà le point. ",
+   "en": "Not sure I got that, here's the update. ",
+   "ou": "questions.py:963",
+   "texte": "Nicht sicher, ob ich das verstanden habe, hier der Überblick. "
   },
   {
    "fr": "aucun",
@@ -5845,6 +5875,16 @@
    "ordre": true,
    "tournures": [
     "nur hinten rechts|reifen hinten rechts wechseln|wechsel hinten rechts"
+   ]
+  },
+  {
+   "id": "annule",
+   "groupe": "Stand",
+   "fr": "annule",
+   "en": "cancel",
+   "ordre": true,
+   "tournures": [
+    "abbrechen|vergiss es|annullieren|doch nicht|storno"
    ]
   },
   {

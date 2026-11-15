@@ -183,10 +183,14 @@ class PitCrew:
                 opts = [x.get("text", "") for x in it.get("settings", [])]
                 print(f"  Menu stand [{it.get('PMC Value')}] {it.get('name')} : {len(opts)} choix, ex. {opts[:4]}")
         except Exception as e:
-            print(f"  Menu stand : lecture impossible ({e.__class__.__name__})")
+            self.dump_tries = getattr(self, "dump_tries", 0) + 1
+            if self.dump_tries < 4:   # LMU pas encore prêt (« Invalid state ») : on réessaiera
+                self.dump_at = time.time() + 30
+                self.dumped = False
+            print(f"  Menu stand : lecture impossible ({e.__class__.__name__}){', nouvel essai dans 30 s' if not self.dumped else ''}")
 
     def update(self, s, p) -> None:
-        if not self.dumped and s.on_track and not self.demo:
+        if not self.dumped and s.on_track and not self.demo and time.time() >= getattr(self, "dump_at", 0):
             self.dumped = True
             threading.Thread(target=self._dump, daemon=True).start()
         if self.mode != "auto" or not s.on_track or s.in_pits or s.session != "course" or s.game_phase == 8:
@@ -195,12 +199,13 @@ class PitCrew:
             if self.done_for != s.pit_stops:
                 self.prepare(s, p)
 
-    def prepare(self, s, p, asked: bool = False) -> None:
-        if self.busy:
+    def prepare(self, s, p, asked: bool = False, mark_done: bool = True) -> None:
+        if self.busy or s is None:
             return
         if not p or p.fuel_to_add is None and not asked:
             return
-        self.done_for = s.pit_stops
+        if mark_done:
+            self.done_for = s.pit_stops
         fuel_total = 0.0 if self.no_fuel_for == s.pit_stops else getattr(p, "fuel_total", None)
         tyres = "Wet" if p.tyre_compound == "pluie" else "dry" if p.tyre_compound == "slicks" else \
             "same" if p.change_tyres else "keep" if p.change_tyres is False else None

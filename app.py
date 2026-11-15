@@ -171,21 +171,23 @@ def loop(state: State, demo: bool) -> None:
         for o in (state.snap, state.plan):
             if o is not None:
                 o.repair, o.no_repair, o.repair_all = want, not want, want and full
-        # menu des stands déjà réglé pour cet arrêt : on le refait tout de suite
-        if crew.done_for == state.snap.pit_stops and state.snap.on_track and not state.snap.in_pits:
-            crew.prepare(state.snap, state.plan, asked=True)
-            return True
-        return False
+        return apply_now()
 
     questions.REPAIR_SET = set_repair
+
+    def apply_now() -> bool:
+        """Ordre du pilote pour le prochain arrêt : on règle le menu des stands tout de suite (sans attendre l'approche
+        de l'arrêt), sans marquer l'arrêt comme préparé : la préparation automatique pourra encore ajuster l'essence."""
+        sn = state.snap
+        if sn is None or not sn.on_track or sn.in_pits or crew.mode == "off" or crew.busy:
+            return False
+        crew.prepare(sn, state.plan, asked=True, mark_done=crew.done_for == sn.pit_stops)
+        return True
 
     def set_no_fuel() -> bool:
         """Le pilote dit « pas d'essence » / « sans ravitaillement » : valable pour le prochain arrêt."""
         crew.no_fuel_for = state.snap.pit_stops if state.snap is not None else None
-        if crew.done_for == state.snap.pit_stops and state.snap.on_track and not state.snap.in_pits:
-            crew.prepare(state.snap, state.plan, asked=True)
-            return True
-        return False
+        return apply_now()
 
     questions.FUEL_SET = set_no_fuel
 
@@ -193,12 +195,25 @@ def loop(state: State, demo: bool) -> None:
         """Le pilote dit « change juste les deux avant » / « garde les pneus » : valable pour le prochain arrêt."""
         order = (state.snap.pit_stops, tuple(wheels)) if state.snap is not None else None
         crew.tyres_for = eng.tyre_order = order
-        if crew.done_for == state.snap.pit_stops and state.snap.on_track and not state.snap.in_pits:
-            crew.prepare(state.snap, state.plan, asked=True)
-            return True
-        return False
+        return apply_now()
 
     questions.TYRES_SET = set_tyres
+
+    def cancel_orders(what: str = "tout") -> bool:
+        """Le pilote dit « annule » : on oublie ses ordres pour le prochain arrêt, Apex reprend son propre plan."""
+        if what in ("tout", "pneus"):
+            crew.tyres_for = eng.tyre_order = None
+        if what in ("tout", "essence"):
+            crew.no_fuel_for = None
+        if what == "tout":
+            damage.choice, damage.choice_all = None, True
+            if state.snap is not None:
+                damage._apply(state.snap)
+                if state.plan is not None:
+                    state.plan.repair, state.plan.no_repair, state.plan.repair_all = state.snap.repair, state.snap.no_repair, state.snap.repair_all
+        return apply_now()
+
+    questions.CANCEL_SET = cancel_orders
 
     def setup_sync():
         """Toutes les 15 s : quel setup est chargé dans LMU ? (sélection automatique dans l'atelier)"""

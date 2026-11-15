@@ -11,6 +11,16 @@
 - 🇬🇧 Pit exit: the engineer warns you if a car is coming as you rejoin ("Careful on exit, Hypercar coming, hold your line"), or tells you the exit is clear. The end of the pit lane is learned on your first exit at each track.
 - 🇫🇷 Économie d'essence : si économiser un peu par tour permet de faire un arrêt de moins (même sur une course à plusieurs arrêts, et aussi en énergie virtuelle), l'ingénieur te le propose (« Si tu économises 0,2 litre par tour, on fait 1 arrêt au lieu de 2 »).
 - 🇬🇧 Fuel saving: if saving a little each lap means one stop fewer (also on multi-stop races and with virtual energy), the engineer suggests it ("Save 0.2 litres a lap and we make 1 stop instead of 2").
+- 🇫🇷 Atelier setup plus malin : les problèmes sont regroupés (un sous-virage dans 4 virages = 1 cran de plus qu'un seul virage), le plus coûteux est traité en premier, et 3 changements d'équilibre au maximum à la fois pour savoir ce qui a aidé.
+- 🇬🇧 Smarter setup workshop: problems are grouped (understeer in 4 corners gets a bigger change than in one), the costliest is fixed first, and at most 3 balance changes at once so you can tell what helped.
+- 🇫🇷 Bilan du setup : après 3 tours avec une nouvelle version, l'ingénieur la compare à la précédente (chrono, problèmes disparus ou apparus) et te dit de la garder ou de revenir en arrière (bouton dans l'atelier).
+- 🇬🇧 Setup review: after 3 laps on a new version, the engineer compares it with the previous one (lap time, problems gone or new) and tells you to keep it or go back (button in the workshop).
+- 🇫🇷 Virages lents / rapides : sous-virage ou survirage dans les virages rapides corrigé à l'aileron, dans les virages lents aux barres antiroulis.
+- 🇬🇧 Slow / fast corners: understeer or oversteer in fast corners is fixed with the wing, in slow corners with the anti-roll bars.
+- 🇫🇷 Freins : écopes de frein proposées quand les freins sont trop chauds ou trop froids.
+- 🇬🇧 Brakes: brake ducts suggested when the brakes run too hot or too cold.
+- 🇫🇷 Blocages de roues : dans 1 ou 2 virages, conseil de pilotage (pas de réglage) ; dans beaucoup de virages, l'ABS d'abord, puis la pression de freinage, la répartition seulement en dernier et une seule fois par circuit ; blocages arrière corrigés au différentiel. Plus d'analyse des blocages avec pneus ou freins froids, plus de va-et-vient sur la répartition, et 3 tours d'attente après un changement avant de juger.
+- 🇬🇧 Wheel lock-ups: in 1 or 2 corners, a driving tip (no setup change); in many corners, ABS first, then brake pressure, brake bias only as a last resort and once per track; rear lock-ups fixed with the diff. Lock-ups are ignored on cold tyres or brakes, no more back-and-forth on the bias, and 3 laps' wait after a change before judging.
 
 ## 1.2.13
 - 🇫🇷 Nouvelles questions : « comment vont mes freins ? », « limites de piste ? », « mon tour est valide ? », « qui est le leader ? », « c'est qui devant / derrière ? », « combien d'arrêts j'ai fait ? », « il y a un drapeau ? », « combien de voitures dans ma catégorie ? », « est-ce que je suis rapide ? ».

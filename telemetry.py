@@ -87,6 +87,8 @@ class Snapshot:
     driver: str = ""
     lap_time: float | None = None    # temps écoulé dans le tour en cours (s)
     penalties: int = 0               # pénalités à purger (drive-through / stop-go)
+    limiter: bool | None = None      # limiteur de vitesse des stands (None : pas de limiteur sur cette voiture)
+    speed: float = 0.0               # ta vitesse (m/s)
 
     @property
     def done(self) -> bool:
@@ -334,6 +336,9 @@ class LMUSource:
 
         s.gap_ahead = tel.mTimeGapCarAhead if tel.mTimeGapCarAhead > 0 else None
         s.gap_behind = tel.mTimeGapCarBehind if tel.mTimeGapCarBehind > 0 else None
+
+        s.limiter = bool(tel.mSpeedLimiter) if getattr(tel, "mSpeedLimiterAvailable", 1) else None
+        s.speed = math.sqrt(tel.mLocalVel.x ** 2 + tel.mLocalVel.y ** 2 + tel.mLocalVel.z ** 2)
 
         s.fuel = tel.mFuel
         s.fuel_capacity = tel.mFuelCapacity

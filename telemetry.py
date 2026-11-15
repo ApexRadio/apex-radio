@@ -128,6 +128,7 @@ def dynamics_sample(tel, sc, info) -> dict:
         "opt": tel.mWheels[0].mOptimalTemp, "ride": [tel.mFrontRideHeight, tel.mRearRideHeight],
         "tc": tel.mTC, "abs": tel.mABS, "bias": tel.mRearBrakeBias,
         "farb": tel.mFrontAntiSway, "rarb": tel.mRearAntiSway,
+        "btemp": [w.mBrakeTemp - 273.15 for w in tel.mWheels],
     }
 
 

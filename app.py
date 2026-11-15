@@ -214,6 +214,7 @@ def loop(state: State, demo: bool) -> None:
         return apply_now()
 
     questions.CANCEL_SET = cancel_orders
+    questions.RACE_FUEL = lambda: state.fuel.brief(state.snap) if state.snap else None
 
     def setup_sync():
         """Toutes les 15 s : quel setup est chargé dans LMU ? (sélection automatique dans l'atelier)"""
@@ -319,7 +320,7 @@ def loop(state: State, demo: bool) -> None:
             pen.update(snap, say)
             under.update(snap, plan, say)
             pace.update(snap, eng, say)
-            state.fuel.update(snap, plan, eng)
+            state.fuel.update(snap, plan, eng, say)
             # fin de session (drapeau à damier) : rappel des réglages garage + ouverture de l'atelier
             key = (snap.track, snap.session_code)
             if snap.on_track and snap.done and session_end["key"] != key and snap.laps_done >= 3:

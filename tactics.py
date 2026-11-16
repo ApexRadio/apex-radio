@@ -231,8 +231,12 @@ class FuelBook:
         changed = False
         clean = [l for l in eng.laps if l.time and not l.dirty and l.number > 0]
         if plan.fuel_per_lap and len(clean) >= 3 and s.raining < 0.1:
+            if d.get("class") and s.car_class and d["class"] != s.car_class:
+                d.clear()                                   # autre voiture : sa conso ne vaut rien pour celle-ci
             if plan.energy_per_lap:
                 d["epl"] = round(plan.energy_per_lap, 4)
+            else:
+                d.pop("epl", None)
             d.update({"fpl": round(plan.fuel_per_lap, 3), "avg": round(plan.avg_lap or 0, 3) or d.get("avg"),
                       "cap": s.fuel_capacity or d.get("cap"), "car": s.car, "class": s.car_class,
                       "date": time.strftime("%d/%m/%Y")})
@@ -254,14 +258,15 @@ class FuelBook:
     def need(self, s) -> dict | None:
         """Ce qu'il faut pour la course : tours, litres (et énergie). Durée lue dans la session en cours si c'est
         la course, sinon la dernière course connue sur ce circuit. None si on ne sait pas encore."""
-        d = self.data.get(s.track, {}) if s.track else {}
+        d = self._mine(s)
         fpl, avg = d.get("fpl"), d.get("avg")
         if not fpl:
             return None
         laps = None
         if s.session == "course" and s.max_laps:
             laps = s.max_laps
-        elif s.session == "course" and s.time_left and avg and s.game_phase < 5:
+        elif s.session == "course" and s.time_left and s.time_left >= 300 and avg and s.game_phase < 5:
+            # avant le départ, LMU donne parfois le compte à rebours de la grille (1 min) au lieu de la durée
             laps = math.ceil(s.time_left / avg)
         elif d.get("race_laps"):
             laps = d["race_laps"]
@@ -279,8 +284,15 @@ class FuelBook:
             energy = min(1.0, e)
         return {"laps": laps, "litres": min(litres, int(cap)) if cap else litres, "stop": stop, "cap": cap, "energy": energy}
 
-    def _no_data(self, s) -> str:
+    def _mine(self, s) -> dict:
+        """Données du circuit, seulement si elles viennent de la même catégorie de voiture."""
         d = self.data.get(s.track, {}) if s.track else {}
+        if d.get("class") and s.car_class and d["class"] != s.car_class:
+            return {}
+        return d
+
+    def _no_data(self, s) -> str:
+        d = self._mine(s)
         if not d.get("fpl"):
             return L("Je ne connais pas encore ta conso sur ce circuit. Fais au moins 3 tours propres, en essais par exemple.",
                      "I don't know your consumption on this track yet. Do at least 3 clean laps, in practice for example.")
@@ -329,7 +341,7 @@ class FuelBook:
 
     def _stops(self, s, n) -> tuple[int, int] | None:
         """(arrêts prévus, tour du premier arrêt) en partant le plein fait."""
-        d = self.data.get(s.track, {})
+        d = self._mine(s)
         fpl, epl, cap = d.get("fpl"), d.get("epl") if n["energy"] is not None else None, n["cap"]
         stint = min(cap / fpl if cap and fpl else math.inf, 1.0 / epl if epl else math.inf)
         if stint == math.inf:
@@ -341,7 +353,10 @@ class FuelBook:
         """Point avant le départ : durée, arrêts, essence, météo."""
         n = self.need(s)
         parts = []
-        mins = round(s.time_left / 60) if (s.session == "course" and s.time_left and not s.max_laps and s.game_phase < 5) else None
+        mins = round(s.time_left / 60) if (s.session == "course" and s.time_left and s.time_left >= 300
+                                           and not s.max_laps and s.game_phase < 5) else None
+        if mins is None and not s.max_laps:
+            mins = self._mine(s).get("race_min")
         if n is not None:
             laps = n["laps"]
             if s.max_laps or not mins:

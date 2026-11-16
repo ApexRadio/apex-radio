@@ -50,12 +50,44 @@ def _liters(text: str) -> float | None:
     return float(m.group(1).replace(",", ".")) if m else None
 
 
-def plan_menu(menu: list, fuel_total: float | None, tyres: str | None, compound: str, repair) -> tuple[list, list]:
+def _pct(text: str) -> float | None:
+    m = re.match(r"\s*(\d+(?:[.,]\d+)?)\s*%", text or "")
+    return float(m.group(1).replace(",", ".")) if m else None
+
+
+def _energy_item(menu: list):
+    """Voitures à énergie virtuelle (GT3, Hypercars) : la ligne « VIRTUAL ENERGY » en %, c'est elle qui compte.
+    La ligne 7 y est le « FUEL RATIO », à ne jamais prendre pour des litres."""
+    return next((it for it in menu if "ENERGY" in (it.get("name") or "").upper()
+                 and any(_pct(x.get("text")) is not None for x in it.get("settings", []))), None)
+
+
+def plan_menu(menu: list, fuel_total: float | None, tyres: str | None, compound: str, repair,
+              energy_total: float | None = None, energy_now: float | None = None) -> tuple[list, list]:
     """repair : None = on ne touche pas, False = « Ne pas réparer », "body" = carrosserie, "all" = tout réparer."""
-    """Retourne (menu modifié, liste de ce qui change en clair). tyres : None/"keep"/"same"/"Wet"/"dry"."""
+    """Retourne (menu modifié, liste de ce qui change en clair). tyres : None/"keep"/"same"/"Wet"/"dry".
+    fuel_total == 0 : on n'ajoute rien (essence ou énergie). energy_total : niveau d'énergie voulu (0..1)."""
     menu = json.loads(json.dumps(menu))   # copie
     changes = []
-    it = _item(menu, FUEL)
+    ve = _energy_item(menu)
+    it = None if ve else _item(menu, FUEL)
+    if it and "RATIO" in (it.get("name") or "").upper():
+        it = None
+    if ve and (fuel_total == 0 or energy_total is not None):
+        opts = [(i, _pct(x.get("text"))) for i, x in enumerate(ve["settings"])]
+        opts = [(i, v) for i, v in opts if v is not None]
+        if opts:
+            if fuel_total == 0:      # on n'ajoute rien : le niveau le plus haut qui ne dépasse pas ce qu'on a déjà
+                cur = (energy_now or 0) * 100
+                low = [o for o in opts if o[1] <= cur + 0.5]
+                idx, v = max(low, key=lambda o: o[1]) if low else min(opts, key=lambda o: o[1])
+                changes.append(L("pas d'énergie", "no energy"))
+            else:
+                want = energy_total * 100
+                ok = [o for o in opts if o[1] >= want]
+                idx, v = min(ok, key=lambda o: o[1]) if ok else max(opts, key=lambda o: o[1])
+                changes.append(L(f"énergie à {v:.0f} %", f"energy to {v:.0f} %"))
+            ve["currentSetting"] = idx
     if it and fuel_total == 0:   # le pilote a dit « pas d'essence » : niveau le plus bas = on n'ajoute rien
         opts = [(i, _liters(s.get("text"))) for i, s in enumerate(it["settings"])]
         opts = [(i, l) for i, l in opts if l is not None]
@@ -206,18 +238,22 @@ class PitCrew:
             return
         if mark_done:
             self.done_for = s.pit_stops
-        fuel_total = 0.0 if self.no_fuel_for == s.pit_stops else getattr(p, "fuel_total", None)
+        # arrêt imprévu (crevaison, dégâts…) alors que l'essence suffit : on n'en remet pas
+        unplanned = not getattr(p, "stops_needed", 0)
+        keep = self.no_fuel_for == s.pit_stops or unplanned
+        fuel_total = 0.0 if keep else getattr(p, "fuel_total", None)
+        energy_total = None if keep else getattr(p, "energy_target", None)
         tyres = "Wet" if p.tyre_compound == "pluie" else "dry" if p.tyre_compound == "slicks" else \
             "same" if p.change_tyres else "keep" if p.change_tyres is False else None
         if self.tyres_for and self.tyres_for[0] == s.pit_stops and not p.tyre_compound:
             tyres = tuple(self.tyres_for[1])   # l'ordre du pilote passe avant le calcul
         self.busy = True
-        threading.Thread(target=self._run, args=(fuel_total, tyres, s.compound,
+        threading.Thread(target=self._run, args=(fuel_total, energy_total, s.energy, tyres, s.compound,
                                                        ("all" if getattr(p, "repair_all", False) else "body") if getattr(p, "repair", False)
                                                        else False if getattr(p, "no_repair", False) else None),
                          daemon=True).start()
 
-    def _run(self, fuel_total, tyres, compound, repair) -> None:
+    def _run(self, fuel_total, energy_total, energy_now, tyres, compound, repair) -> None:
         try:
             if self.demo:
                 time.sleep(0.5)
@@ -233,13 +269,13 @@ class PitCrew:
             menu = read_menu()
             if not menu:
                 raise RuntimeError("menu des stands vide")
-            new, changes = plan_menu(menu, fuel_total, tyres, compound, repair)
+            new, changes = plan_menu(menu, fuel_total, tyres, compound, repair, energy_total, energy_now)
             status, _ = _req("POST", "/rest/garage/PitMenu/loadPitMenu", new)
             time.sleep(0.4)
             check = read_menu()
             bad = [it["name"] for it in new
                    if (c := _item(check, it["PMC Value"])) and c["currentSetting"] != it["currentSetting"]
-                   and it["PMC Value"] in (FUEL, TIRES, DAMAGE) + WHEELS]
+                   and (it["PMC Value"] in (FUEL, TIRES, DAMAGE) + WHEELS or "ENERGY" in (it.get("name") or "").upper())]
             if bad:
                 self.status = L("⚠ Menu non pris en compte : ", "⚠ Menu not applied: ") + ", ".join(bad)
                 self._say(L("Attention, je n'ai pas réussi à régler tout le menu des stands, vérifie-le.",

@@ -881,14 +881,21 @@ function renderRace() {
   if (document.activeElement && box.contains(document.activeElement)) return;
   const conso = f.fpl ? T(`conso mesurée ${f.fpl.toFixed(2).replace(".", ",")} L/tour`, `measured consumption ${f.fpl.toFixed(2)} L/lap`) : T("conso pas encore mesurée", "consumption not measured yet");
   const res = f.litres ? `<b style="color:#FFE500">${f.litres} L ${T("au départ", "at the start")}</b> (${esc(f.why)})` : esc(f.why || "");
-  box.innerHTML = `<div class="race"><span>${T("Durée de la course", "Race length")}</span><input id="racemin" type="number" min="5" max="1440" step="5" value="${f.race_min || ""}" aria-label="${T("Durée de la course en minutes", "Race length in minutes")}"> min
+  box.innerHTML = `<div class="race"><span>${T("Durée de la course", "Race length")}</span><input id="racemin" type="number" min="1" max="1440" step="1" value="${f.race_min || ""}" aria-label="${T("Durée de la course en minutes", "Race length in minutes")}"> min
     <span class="muted">${T("ou", "or")}</span><input id="racelaps" type="number" min="1" max="500" value="${f.race_laps || ""}" aria-label="${T("Nombre de tours", "Number of laps")}"> ${T("tours", "laps")}
     <button id="raceok" class="pitm">OK</button></div><div>${conso} · ${res}</div>`;
-  $("raceok").onclick = async () => {
+  const saveRace = async () => {
     const minutes = Number($("racemin").value) || null, laps = Number($("racelaps").value) || null;
     await fetch("/api/setup/race", { method: "POST", body: JSON.stringify({ minutes: laps ? null : minutes, laps }) });
-    $("raceok").blur(); wsLoad(true);
+    if (document.activeElement) document.activeElement.blur();
+    wsLoad(true);
   };
+  // enregistré dès qu'on change la valeur (Entrée ou clic ailleurs), pas seulement avec le bouton OK
+  $("raceok").onclick = saveRace;
+  ["racemin", "racelaps"].forEach(id => {
+    $(id).onchange = saveRace;
+    $(id).onkeydown = e => { if (e.key === "Enter") saveRace(); };
+  });
 }
 document.querySelectorAll(".wsmode").forEach(b => b.onclick = async () => {
   await fetch("/api/setup/mode", { method: "POST", body: JSON.stringify({ mode: b.dataset.m }) });

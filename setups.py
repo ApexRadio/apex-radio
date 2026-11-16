@@ -546,7 +546,8 @@ class Workshop:
         """Si LMU a remis un réglage à son ancienne valeur, c'est qu'Apex avait dépassé la plage permise sur cette voiture
         (ex. carrossage avant déjà au minimum) : on retient la butée pour ne plus le reproposer."""
         h = self.history.get(self._hkey(st["folder"]), {})
-        lim = h.setdefault("limits", {})
+        # les butées sont celles de la voiture : valables sur tous les circuits
+        lim = self.history.setdefault("_limits", {}).setdefault(s.vehicle or "?", {})
         vers = [v for v in h.get("versions", []) if v.get("backup")]
         if vers:
             try:

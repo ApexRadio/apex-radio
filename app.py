@@ -177,6 +177,32 @@ def loop(state: State, demo: bool) -> None:
 
     questions.REPAIR_SET = set_repair
 
+    def setup_summary(sn) -> str | None:
+        """Fin de session : on annonce exactement ce que l'atelier propose (pas des conseils qu'il ne peut pas appliquer)."""
+        try:
+            ws, tr = state.workshop, sn.track
+            if not ws.state(tr).get("current"):
+                return None
+            prop = ws.propose(tr, state.beh.issues, state.beh.tyre_findings, state.beh.live_controls(tr),
+                              state.fuel.suggest(tr), state.beh.brake_peaks)
+        except Exception:
+            return None
+        if prop.get("error"):
+            return None
+        bal = [c for c in prop["changes"] if not c.get("fuel") and not c.get("live")]
+        if bal:
+            items = [L(f"{c['label']} de {c['from_disp']} à {c['to_disp']}, pour {c['why']}",
+                       f"{c['label']} from {c['from_disp']} to {c['to_disp']}, for {c['why']}") for c in bal[:3]]
+            return (L("Pour le setup, je te propose : ", "For the setup, I suggest: ") + " ; ".join(items)
+                    + L(". C'est coché dans l'atelier setup : clique sur Créer, puis recharge le setup au garage.",
+                        ". It's ticked in the setup workshop: click Create, then reload the setup in the garage."))
+        if state.beh.issues:
+            return L("J'ai noté des choses à améliorer, mais les réglages qui les corrigent sont déjà au bout de leur plage sur ce setup. "
+                     "Rien de nouveau à changer pour l'instant.",
+                     "I noted things to improve, but the settings that fix them are already at the end of their range on this setup. "
+                     "Nothing new to change for now.")
+        return None
+
     def apply_now() -> bool:
         """Ordre du pilote pour le prochain arrêt : on règle le menu des stands tout de suite (sans attendre l'approche
         de l'arrêt), sans marquer l'arrêt comme préparé : la préparation automatique pourra encore ajuster l'essence."""
@@ -336,7 +362,7 @@ def loop(state: State, demo: bool) -> None:
             key = (snap.track, snap.session_code)
             if snap.on_track and snap.done and session_end["key"] != key and snap.laps_done >= 3:
                 session_end["key"] = key
-                msg = beh.end_of_session()
+                msg = setup_summary(snap) or beh.end_of_session()
                 if msg:
                     say(None, msg)
                     session_end["prompt"] += 1

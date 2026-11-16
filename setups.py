@@ -672,21 +672,24 @@ class Workshop:
             elif k == "sous-virage":
                 if w == "entrée":
                     cands = [("SUSPENSION", "FrontAntiSwaySetting", -1), ("DRIVELINE", "DiffCoastSetting", -coast),
-                             ("CONTROLS", "RearBrakeSetting", -bias_dir)]
+                             ("SUSPENSION", "RearAntiSwaySetting", +1), ("CONTROLS", "RearBrakeSetting", -bias_dir)]
                 elif w == "milieu":
                     cands = ([("FRONTWING", "FWSetting", +1), ("SUSPENSION", "FrontAntiSwaySetting", -1)] if fast else
                              [("SUSPENSION", "FrontAntiSwaySetting", -1), ("FRONTWING", "FWSetting", +1)])
+                    cands += [("SUSPENSION", "RearAntiSwaySetting", +1), ("REARWING", "RWSetting", -1)]
                 else:
-                    cands = [("DRIVELINE", "DiffPowerSetting", -power), ("SUSPENSION", "FrontAntiSwaySetting", -1)]
+                    cands = [("DRIVELINE", "DiffPowerSetting", -power), ("SUSPENSION", "FrontAntiSwaySetting", -1),
+                             ("SUSPENSION", "RearAntiSwaySetting", +1)]
             elif k == "survirage":
                 if w == "entrée":
                     cands = [("DRIVELINE", "DiffCoastSetting", coast), ("CONTROLS", "RearBrakeSetting", bias_dir)]
                 elif w == "milieu":
                     cands = ([("REARWING", "RWSetting", +1), ("SUSPENSION", "RearAntiSwaySetting", -1)] if fast else
                              [("SUSPENSION", "RearAntiSwaySetting", -1), ("REARWING", "RWSetting", +1)])
+                    cands += [("SUSPENSION", "FrontAntiSwaySetting", +1)]
                 else:
                     cands = [("CONTROLS", "TractionControlMapSetting", +1), ("SUSPENSION", "RearAntiSwaySetting", -1),
-                             ("DRIVELINE", "DiffPowerSetting", -power)]
+                             ("DRIVELINE", "DiffPowerSetting", -power), ("SUSPENSION", "FrontAntiSwaySetting", +1)]
             for sec, key, d in cands:
                 before = len(changes)
                 add(sec, key, d * clicks, why)

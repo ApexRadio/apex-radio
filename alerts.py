@@ -247,7 +247,10 @@ class Traffic:
         slow.sort(key=lambda x: x[0])
         if now - self.last < self.GLOBAL_GAP:
             return
-        lo, hi = self.CATCH_WINDOW
+        # ~30 s avant sur les grands circuits ; sur un petit (tour de 50 s), 30 s c'est plus d'un demi-tour et trop
+        # d'imprévus (bagarre, arrêt, trafic) : on prévient au plus 40 % d'un tour avant, pour rester juste
+        target = min(30.0, 0.4 * mine)
+        lo, hi = max(8.0, target - 12.0), target + 2.0
         for gap, prev, c, key in slow:
             if prev is None or prev <= gap or now - self.said.get(key, -999) < 120:
                 continue

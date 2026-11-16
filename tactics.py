@@ -247,7 +247,9 @@ class FuelBook:
                 d["race_laps"] = s.max_laps
                 d.pop("race_min", None)
             elif s.time_left:
-                d["race_min"] = int(round((s.elapsed + s.time_left) / 60))
+                # au feu vert, le temps restant = la durée de la course (le temps déjà écoulé compte la grille
+                # et le tour de formation : avec, 30 minutes devenaient 32 et Apex prévoyait 3 tours de trop)
+                d["race_min"] = int(round(s.time_left / 60))
                 d.pop("race_laps", None)
             changed = True
         if changed and time.monotonic() - self._last_save > 30:

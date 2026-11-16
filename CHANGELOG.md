@@ -29,6 +29,10 @@
 - 🇬🇧 Fixed: "don't repair, just the tyre" was understood as "repair everything". Now: no repairs, and only the punctured tyre is changed ("just the tyres": all four).
 - 🇫🇷 Briefing : il ne prend plus le compte à rebours de la grille (1 minute) pour la durée de la course, et il n'utilise plus la conso d'une autre voiture sur le même circuit.
 - 🇬🇧 Briefing: no longer mistakes the grid countdown (1 minute) for the race length, and no longer uses another car's consumption on the same track.
+- 🇫🇷 Fin de course : l'ingénieur annonce exactement les réglages que l'atelier propose (et dit quand rien ne peut être changé), au lieu de conseils généraux que l'atelier ne pouvait pas toujours appliquer. Plus de solutions de rechange quand un réglage est déjà au bout (barre antiroulis de l'autre essieu, aileron).
+- 🇬🇧 End of session: the engineer now reads out exactly the changes the workshop suggests (and says when nothing can be changed), instead of general advice the workshop couldn't always apply. More fallbacks when a setting is already at its limit (other axle's anti-roll bar, wing).
+- 🇫🇷 Atelier : la durée de course s'enregistre dès qu'on la change, et la durée mesurée au départ ne compte plus la grille (30 min restaient 32).
+- 🇬🇧 Workshop: race length is saved as soon as you change it, and the length measured at the start no longer includes the grid (30 min became 32).
 
 ## 1.2.13
 - 🇫🇷 Nouvelles questions : « comment vont mes freins ? », « limites de piste ? », « mon tour est valide ? », « qui est le leader ? », « c'est qui devant / derrière ? », « combien d'arrêts j'ai fait ? », « il y a un drapeau ? », « combien de voitures dans ma catégorie ? », « est-ce que je suis rapide ? ».

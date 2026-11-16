@@ -39,6 +39,8 @@
 - 🇬🇧 Workshop: when LMU puts a setting back to its old value (Apex went past the allowed range, e.g. camber already at its minimum), Apex remembers the limit and stops suggesting it. Clearer suggested values ("≈ -1.4 deg" or "+1 click").
 - 🇫🇷 Stream Deck : dossier Tchat à 14 messages (salut, bonne course, bien joué, oups, lag, à +…).
 - 🇬🇧 Stream Deck: Chat folder with 14 messages (hi, good race, nice move, oops, lag, see you…).
+- 🇫🇷 Voitures plus lentes : sur les petits circuits, l'annonce arrive au plus 40 % d'un tour avant (environ 20 s pour un tour de 50 s) au lieu de 30 s, pour rester juste.
+- 🇬🇧 Slower cars: on short tracks, the call comes at most 40% of a lap ahead (about 20 s for a 50 s lap) instead of 30 s, to stay accurate.
 
 ## 1.2.13
 - 🇫🇷 Nouvelles questions : « comment vont mes freins ? », « limites de piste ? », « mon tour est valide ? », « qui est le leader ? », « c'est qui devant / derrière ? », « combien d'arrêts j'ai fait ? », « il y a un drapeau ? », « combien de voitures dans ma catégorie ? », « est-ce que je suis rapide ? ».

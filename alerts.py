@@ -60,7 +60,7 @@ def _dix(x: float) -> str:
     d = round(abs(x) * 10)
     if d >= 10:
         return dec(L(f"{abs(x):.1f} seconde{'s' if abs(x) >= 2 else ''}", f"{abs(x):.1f} seconds"))
-    return L(f"{max(1, d)} dixième" + ("s" if d > 1 else ""), f"{max(1, d)} tenth" + ("s" if d > 1 else ""))
+    return L(f"{max(1, d)} dixième{'s' if d > 1 else ''}", f"{max(1, d)} tenth{'s' if d > 1 else ''}")
 
 
 # ======================================================================= 1. spotter
@@ -613,10 +613,11 @@ class Morale:
         lines = []
         if prev and last < prev - 0.3:
             d = prev - last
-            lines.append(var("lap", [(f"Super tour, {d:.1f} seconde de mieux que le précédent !".replace(".", ","),
+            ds = dec(f"{d:.1f}")
+            lines.append(var("lap", [(f"Super tour, {ds} seconde de mieux que le précédent !",
                                       f"Great lap, {d:.1f} seconds quicker than the last one!"),
-                                     (f"Gros tour ! {d:.1f} seconde de mieux.".replace(".", ","), f"Big lap! {d:.1f} seconds quicker."),
-                                     (f"Excellent, tu as gagné {d:.1f} seconde sur ce tour.".replace(".", ","),
+                                     (f"Gros tour ! {ds} seconde de mieux.", f"Big lap! {d:.1f} seconds quicker."),
+                                     (f"Excellent, tu as gagné {ds} seconde sur ce tour.",
                                       f"Excellent, you found {d:.1f} seconds on that lap.")]))
         elif prev and abs(last - prev) < 0.4:
             lines.append(var("reg", [("Belle régularité, continue sur ce rythme.", "Nice and consistent, keep this pace."),

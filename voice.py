@@ -39,13 +39,35 @@ VOICES = {
     "john":     ("en", "en_US-john-medium", "en/en_US/john/medium/", 0, "John", False, 64),     # domaine public (LibriVox)
     "northern": ("en", "en_GB-northern_english_male-medium", "en/en_GB/northern_english_male/medium/", 0,
                  "Northern", False, 63),                                                       # CC BY-SA 4.0 (OpenSLR 83)
+    # allemand (Piper 1.5 ou plus) : données CC0 ; Kerstin affinée depuis Hi-Fi TTS 92 (CC BY 4.0), Thorsten depuis rdh (CC0)
+    "kerstin":  ("de", "de_DE-kerstin-medium", "de/de_DE/kerstin/medium/", 0, "Kerstin", True, 63),
+    "thorsten": ("de", "de_DE-thorsten-medium", "de/de_DE/thorsten/medium/", 0, "Thorsten", False, 63),
+    # espagnol, italien, portugais (Brésil), néerlandais (Piper 1.5 ou plus) : données CC0 (OHF-Voice voice-datasets),
+    # sauf Sharvard (CC BY 3.0, Univ. Édimbourg) ; bases d'entraînement Hi-Fi TTS 92 (CC BY 4.0) ou rdh (CC0)
+    "sharvard": ("es", "es_ES-sharvard-medium", "es/es_ES/sharvard/medium/", 1, "Sharvard", True, 77),
+    "davefx":   ("es", "es_ES-davefx-medium", "es/es_ES/davefx/medium/", 0, "Davefx", False, 63),
+    "paola":    ("it", "it_IT-paola-medium", "it/it_IT/paola/medium/", 0, "Paola", True, 63),
+    "faber":    ("pt", "pt_BR-faber-medium", "pt/pt_BR/faber/medium/", 0, "Faber", False, 63),
+    "cadu":     ("pt", "pt_BR-cadu-medium", "pt/pt_BR/cadu/medium/", 0, "Cadu", False, 63),
+    "nathalie": ("nl", "nl_BE-nathalie-medium", "nl/nl_BE/nathalie/medium/", 0, "Nathalie", True, 63),
+    "pim":      ("nl", "nl_NL-pim-medium", "nl/nl_NL/pim/medium/", 0, "Pim", False, 63),
 }
-DEFAULT = {"fr": "jessica", "en": "lj"}
+DEFAULT = {"fr": "jessica", "en": "lj", "de": "kerstin", "es": "sharvard", "it": "paola", "pt": "faber", "nl": "nathalie"}
+# prononciation des symboles, et virgule décimale (3,6) ou point (3.6), par langue de voix
+SPOKEN = {"fr": (" pour cent", " degrés", True), "en": (" percent", " degrees", False), "de": (" Prozent", " Grad", True),
+          "es": (" por ciento", " grados", True), "it": (" per cento", " gradi", True),
+          "pt": (" por cento", " graus", True), "nl": (" procent", " graden", True)}
 CHOICE = dict(DEFAULT)   # langue -> id de voix choisie (rempli depuis config.json au démarrage)
 
 
-def current_id(lang: str | None = None) -> str:
+def voice_lang(lang: str | None = None) -> str:
+    """Langue de la voix : celle de l'appli si on a une voix pour elle (DEFAULT), sinon l'anglais."""
     lang = lang or i18n.LANG
+    return lang if lang in DEFAULT else "en"
+
+
+def current_id(lang: str | None = None) -> str:
+    lang = voice_lang(lang)
     vid = CHOICE.get(lang)
     return vid if vid in VOICES and VOICES[vid][0] == lang else DEFAULT[lang]
 
@@ -64,7 +86,7 @@ def engineer_female() -> bool:
 
 def catalog(lang: str | None = None) -> list[dict]:
     """Voix proposées pour une langue, pour le menu du tableau de bord."""
-    lang = lang or i18n.LANG
+    lang = voice_lang(lang)
     return [{"id": k, "name": v[4], "female": v[5], "mb": v[6],
              "ready": (MODELS / f"{v[1]}.onnx").exists()}
             for k, v in VOICES.items() if v[0] == lang]
@@ -76,11 +98,10 @@ RADIO_EFFECT = True
 
 def spoken(text: str) -> str:
     """Adapte le texte pour qu'il soit bien prononcé."""
-    if i18n.en():
-        text = text.replace("%", " percent").replace("°", " degrees")
-    else:
+    pct, deg, comma = SPOKEN.get(voice_lang(), SPOKEN["en"])
+    if comma:
         text = re.sub(r"(\d)\.(\d)", r"\1,\2", text)      # 3.6 -> 3,6
-        text = text.replace("%", " pour cent").replace("°", " degrés")
+    text = text.replace("%", pct).replace("°", deg)
     text = re.sub(r"\bP(\d+)\b", r"P \1", text)
     text = text.replace("!", ".")
     return text
@@ -177,7 +198,7 @@ class Voice:
             _, name, folder, speaker, shown, _, _ = VOICES[vid]
             onnx, cfg = self._files(vid)
             if not (cfg.exists() and onnx.exists()):
-                if self._piper is not None and self.loaded and self.loaded[0] == i18n.LANG:
+                if self._piper is not None and self.loaded and self.loaded[0] == voice_lang():
                     # même langue : on garde la voix actuelle pendant le téléchargement de la nouvelle (en arrière-plan)
                     if not self.downloading:
                         threading.Thread(target=self._fetch, args=(vid,), daemon=True).start()
@@ -187,11 +208,11 @@ class Voice:
                 self._piper = PiperVoice.load(onnx, config_path=cfg)
                 self._model = name
             self.speaker = speaker
-            self.loaded = (i18n.LANG, vid)
+            self.loaded = (voice_lang(), vid)
             self.engine = f"Piper · {shown}"
         except Exception as e:
             import traceback; traceback.print_exc()
-            self.loaded = (i18n.LANG, current_id())   # pas de nouvel essai à chaque annonce
+            self.loaded = (voice_lang(), current_id())   # pas de nouvel essai à chaque annonce
             if self._piper is None:
                 print(f"  Voix Piper indisponible ({e!r}). Utilisation de la voix Windows.")
                 self.engine = "Windows" if sys.platform == "win32" else "aucune"
@@ -217,7 +238,7 @@ class Voice:
                 _download(url + ".onnx", onnx, lambda pct: self.downloading and self.downloading.update(pct=pct))
         except Exception as e:
             print(f"  Téléchargement de la voix {shown} impossible : {e!r}")
-            self.loaded = (i18n.LANG, vid)   # on n'insiste pas
+            self.loaded = (voice_lang(), vid)   # on n'insiste pas
         finally:
             self.downloading = None
         if threading.current_thread() is not threading.main_thread() and self._piper is not None:
@@ -256,7 +277,7 @@ class Voice:
         pcm = bytearray()
         rate = 22050
         text = re.sub(r"(?<=\w)#\s*|#(?=\s)", " ", text)   # pseudos du type « Yin# Long » : ne pas lire « dièse »
-        if not i18n.en():
+        if voice_lang() == "fr":
             text = speakable_fr(text)
         for chunk in self._piper.synthesize(text, syn_config=cfg):
             pcm += chunk.audio_int16_bytes
@@ -278,7 +299,7 @@ class Voice:
     def _speak_windows(self, text: str) -> None:
         safe = text.replace("'", "''")
         ps = ("Add-Type -AssemblyName System.Speech; $s=New-Object System.Speech.Synthesis.SpeechSynthesizer; "
-              f"$v=$s.GetInstalledVoices()|?{{$_.VoiceInfo.Culture.Name -like '{i18n.LANG}*'}}|select -First 1; "
+              f"$v=$s.GetInstalledVoices()|?{{$_.VoiceInfo.Culture.Name -like '{voice_lang()}*'}}|select -First 1; "
               "if($v){$s.SelectVoice($v.VoiceInfo.Name)}; $s.Rate=1; "
               f"$s.Speak('{safe}')")
         r = subprocess.run(["powershell", "-NoProfile", "-Command", ps], capture_output=True, text=True,
@@ -291,7 +312,7 @@ class Voice:
         while True:
             _, _, text, t0, spot = self._q.get()
             import time as _t
-            if self.loaded != (i18n.LANG, current_id()):   # langue ou voix changée : on charge l'autre voix
+            if self.loaded != (voice_lang(), current_id()):   # langue ou voix changée : on charge l'autre voix
                 self._load()
             if spot and _t.monotonic() - t0 > 1.2:
                 continue   # info du spotter périmée : on ne la dit pas

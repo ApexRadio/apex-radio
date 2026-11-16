@@ -346,6 +346,8 @@ class ACEvoSource:
         track = _txt(st.track)
         cfg = _txt(st.trackConfig)
         s.track = track + (f" {cfg}" if cfg and cfg.lower() not in ("gp", "default", track.lower()) else "")
+        # nom propre à AC EVO : la carte, la conso et les records ne se mélangent pas avec le Monza de LMU
+        s.track += " (AC EVO)"
         s.car = _txt(g.carModel)
         s.car_class = s.car or "AC EVO"
         sname = _txt(st.sessionName)
@@ -445,7 +447,7 @@ class ACEvoSource:
                 continue
             x, z = _xz(g.carCoords[i])
             mine = i == pi
-            f = s.lap_frac if mine else self.line.where(x, z)
+            f = s.lap_frac if mine else (self.line.where(x, z) if self.line.ready() else None)
             prev = self._prev.get(i)
             spd = math.hypot(x - prev[0], z - prev[1]) / max(1e-3, now - prev[2]) if prev else 0.0
             self._prev[i] = (x, z, now)

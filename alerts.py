@@ -18,6 +18,7 @@ import random
 import sys
 import threading
 import time
+from collections import deque
 import urllib.request
 
 from i18n import L, dec
@@ -166,6 +167,7 @@ class Traffic:
         pace = {k: sorted(v)[len(v) // 2] for k, v in bests.items()}
         mine = pace.get(me["c"]) or my_lap
         now = time.monotonic()
+        self._learn_speed(s, me)
         if now - self.last < self.GLOBAL_GAP:
             return
         for c in s.cars:
@@ -187,21 +189,60 @@ class Traffic:
                                 f"{name} coming up behind, {gap:.0f} second{'s' if round(gap) != 1 else ''}, {when}."))
         self._slower_ahead(s, me, pace, mine, speed, now, say)
 
+    NB = 200   # le tour découpé en 200 tronçons : ta vitesse habituelle dans chacun
+
+    def _learn_speed(self, s, me) -> None:
+        """Retient ta vitesse le long du tour (lente en virage, rapide en ligne droite)."""
+        if getattr(self, "vtrack", None) != s.track:
+            self.vtrack, self.vbin = s.track, [0.0] * self.NB
+        v = me.get("spd") or s.speed
+        if v and v > 5:
+            b = int(me["f"] * self.NB) % self.NB
+            self.vbin[b] = v if not self.vbin[b] else 0.7 * self.vbin[b] + 0.3 * v
+
+    def _predict(self, L, f_me, d, ratio):
+        """Où et quand tu rattrapes une voiture à d mètres devant, qui roule `ratio` fois plus lentement que toi
+        (même profil de vitesse que toi, à l'échelle). On fait avancer les deux voitures pas à pas : c'est juste
+        même quand la rencontre a lieu après une grande ligne droite ou une série de virages."""
+        vb = getattr(self, "vbin", None)
+        if not vb or sum(1 for v in vb if v) < 0.8 * self.NB:
+            return None
+        known = [v for v in vb if v]
+        avg = sum(known) / len(known)
+        vel = lambda f: vb[int((f % 1) * self.NB) % self.NB] or avg
+        pm, ps, t, dt = f_me, f_me + d / L, 0.0, 0.2
+        while t < 90:
+            pm += vel(pm) * dt / L
+            ps += vel(ps) / ratio * dt / L
+            t += dt
+            if pm >= ps:
+                return t, ps % 1
+        return None
+
     def _slower_ahead(self, s, me, pace, mine, speed, now, say) -> None:
         """Catégorie plus lente devant : on prévient où tu vas la rattraper, pour anticiper le dépassement.
         Une seule annonce à la fois (la plus proche), pas plus d'une fois toutes les 2 minutes par voiture."""
         L = s.track_len
-        slow = []
+        v_me = L / mine                                  # vitesse MOYENNE sur le tour (pas la vitesse du moment :
+        slow = []                                        # en sortie de virage ou en bout de ligne droite, elle fausse tout)
+        hist = getattr(self, "dist_hist", None)
+        if hist is None:
+            hist = self.dist_hist = {}
         for c in s.cars:
             if c.get("me") or c.get("pits") or c["c"] == me["c"] or c["c"] not in pace:
                 continue
             if pace[c["c"]] - mine <= 0.02 * mine:      # pas nettement plus lente
                 continue
-            gap = ((c["f"] - me["f"]) % 1) * L / speed  # temps pour arriver là où elle est
+            d = ((c["f"] - me["f"]) % 1) * L             # mètres jusqu'à elle
             key = (c["id"], "front")
+            h = hist.setdefault(key, deque(maxlen=40))
+            if h and d > h[-1][1] + 0.3 * L:             # elle vient d'être dépassée / tour bouclé : on repart à zéro
+                h.clear()
+            h.append((now, d))
+            gap = d / v_me                               # secondes pour arriver là où elle est
             prev = self.prev_gap.get(key)
             self.prev_gap[key] = gap
-            if gap < 20:                                # au-delà, trop loin pour estimer
+            if gap < 20:                                 # au-delà, trop loin pour estimer
                 slow.append((gap, prev, c, key))
         slow.sort(key=lambda x: x[0])
         if now - self.last < self.GLOBAL_GAP:
@@ -210,10 +251,22 @@ class Traffic:
         for gap, prev, c, key in slow:
             if prev is None or prev <= gap or now - self.said.get(key, -999) < 120:
                 continue
-            closing = speed - L / pace[c["c"]]           # m/s gagnés sur elle
+            v_slow = L / pace[c["c"]]
+            closing = v_me - v_slow                       # m/s gagnés sur elle, d'après les rythmes au tour
+            h = hist.get(key) or []
+            old = next(((t0, d0) for t0, d0 in h if now - t0 >= 8.0), None)
+            if old and now - old[0] <= 25:                # rapprochement vraiment mesuré ces dernières secondes
+                meas = (old[1] - h[-1][1]) / (now - old[0])
+                if meas > 0:
+                    closing = 0.5 * closing + 0.5 * meas
             if closing <= 0:
                 continue
-            t = gap * speed / closing                     # secondes avant de la rattraper
+            d = gap * v_me
+            t = d / closing                               # secondes avant de la rattraper
+            f_catch = (c["f"] + t * v_slow / L) % 1      # là où SERA la voiture lente quand on la rejoint
+            pr = self._predict(L, me["f"], d, pace[c["c"]] / mine)
+            if pr:                                        # mieux : avec ta vitesse réelle le long du tour
+                t, f_catch = pr
             if not (lo < t < hi):                         # trop tôt (inutile) ou trop tard (déjà dessus)
                 continue
             group = [x for x in slow if x[2]["c"] == c["c"] and 0 <= x[0] - gap < 2.0]
@@ -221,7 +274,6 @@ class Traffic:
                 self.said[x[3]] = now
             self.last = now
             name = class_name(c["cls"])
-            f_catch = (me["f"] + t * speed / L) % 1
             corner, before = None, False
             if self.beh:
                 corner = self.beh.corner_at(f_catch)

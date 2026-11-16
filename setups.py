@@ -122,7 +122,7 @@ class Setup:
                     break
         for c in changes:
             idx, disp, n = self.values[(c["section"], c["key"])]
-            shown = c["to_disp"] if not str(c["to_disp"]).startswith("cran") else f"APEX (avant : {c['from_disp']})"
+            shown = c["to_disp"] if not (str(c["to_disp"]).startswith("cran") or c.get("est")) else f"APEX (avant : {c['from_disp']})"
             lines[n] = f"{c['key']}={c['to']}//{shown}"
         for i, line in enumerate(lines):
             if line.startswith("Notes="):
@@ -522,8 +522,22 @@ class Workshop:
             return None
         if known and new > max(known) + 3:
             return None
+        to_disp, est = known.get(new), False
+        if to_disp is None:
+            # pas encore vu dans tes fichiers : on l'estime à partir des valeurs connues (crans réguliers), sinon on dit « 1 cran de plus / de moins »
+            pts = sorted((i, _num(d)) for i, d in known.items() if _num(d) is not None)
+            unit = re.sub(r"^[\s\-+\d.,]+", "", disp or "").strip()
+            if len(pts) >= 2 and pts[-1][0] != pts[0][0]:
+                step = (pts[-1][1] - pts[0][1]) / (pts[-1][0] - pts[0][0])
+                v = pts[0][1] + (new - pts[0][0]) * step
+                to_disp = f"≈ {v:.{max(0, min(2, len(str(step).split('.')[-1]) if '.' in str(round(step, 2)) else 0))}f} {unit}".strip()
+            else:
+                n = abs(delta)
+                to_disp = L(f"{'+' if delta > 0 else '−'}{n} cran{'s' if n > 1 else ''} (depuis {disp})",
+                            f"{'+' if delta > 0 else '−'}{n} click{'s' if n > 1 else ''} (from {disp})")
+            est = True
         return {"section": section, "key": key, "label": label(section, key), "from": idx, "to": new, "from_disp": disp,
-                "to_disp": known.get(new, f"cran {new}")}
+                "to_disp": to_disp, "est": est}
 
     def _direction(self, setup: Setup, section: str, key: str, default: int) -> int:
         """+1 si monter l'index fait monter la valeur affichée, -1 sinon (appris de tes fichiers)."""

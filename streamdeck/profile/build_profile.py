@@ -400,9 +400,13 @@ def build():
     # tchat : messages tout prêts (texte modifiable sous chaque touche)
     t = chat
     t.put(0, 0, back(t))
-    for (c, r), (label, text) in {(1, 0): ("DÉSOLÉ", "Sorry!"), (2, 0): ("MERCI", "Thanks!"), (3, 0): ("GL HF", "Good luck, have fun!"),
-                                  (4, 0): ("GG", "GG, good race!"), (0, 1): ("PASSE", "Go ahead, I'll let you by"),
-                                  (1, 1): ("ATTENTION", "Careful, car stopped on track")}.items():
+    for (c, r), (label, text) in {(1, 0): ("SALUT", "Hi everyone!"), (2, 0): ("GL HF", "Good luck, have fun!"),
+                                  (3, 0): ("MERCI", "Thanks!"), (4, 0): ("DÉSOLÉ", "Sorry!"),
+                                  (0, 1): ("PASSE", "Go ahead, I'll let you by"), (1, 1): ("BIEN JOUÉ", "Nice move!"),
+                                  (2, 1): ("ATTENTION", "Careful, car stopped on track"), (3, 1): ("OUPS", "Oops, my bad"),
+                                  (4, 1): ("LAG", "Sorry, lag"), (0, 2): ("BONNE COURSE", "Have a good race!"),
+                                  (1, 2): ("GG", "GG, good race!"), (2, 2): ("MERCI COURSE", "Thanks for the clean race!"),
+                                  (3, 2): ("À +", "See you next race!"), (4, 2): ("BONNE NUIT", "Good night all!")}.items():
         t.put(c, r, apex("chat", label=label, text=text))
 
     empty = Page("4722c796-e705-4a70-aabf-4440297ba767")   # page « par défaut » vide, comme dans les profils du logiciel

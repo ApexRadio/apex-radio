@@ -399,6 +399,7 @@ def loop(state: State, demo: bool) -> None:
                 "asr": state.radio.cfg.get("asr", "fast"), "asr_loading": bool(getattr(state.radio, "asr_loading", False)),
                 "lmu_mode": state.radio.cfg.get("lmu_mode", "ask"),
                 "autolaunch_lmu": bool(state.radio.cfg.get("autolaunch_lmu")),
+                "game": state.radio.cfg.get("game", "lmu"),
                 "voice": {"on": state.voice.enabled, "engine": state.voice.engine, "volume": state.voice.volume,
                           "quiet": state.voice.quiet, "choice": voices.current_id(), "list": voices.catalog(),
                           "name": voices.engineer_name(),
@@ -618,7 +619,12 @@ def make_handler(state: State):
                     self.end_headers()
                     return
             elif self.path == "/api/lmu/launch":
-                launch_lmu(state.radio.cfg.get("lmu_mode", "ask"))
+                launch_lmu(state.radio.cfg.get("lmu_mode", "ask"), state.radio.cfg.get("game", "lmu"))
+            elif self.path == "/api/game":
+                n = int(self.headers.get("Content-Length") or 0)
+                g = json.loads(self.rfile.read(n) or b"{}").get("game", "lmu")
+                state.radio.cfg["game"] = g if g in GAME_NAMES else "lmu"
+                save_config(state.radio.cfg)
             elif self.path == "/api/lmu/mode":
                 n = int(self.headers.get("Content-Length") or 0)
                 m = json.loads(self.rfile.read(n) or b"{}").get("mode", "ask")
@@ -843,6 +849,8 @@ class _Tee:
 
 
 LMU_STEAM_ID = 2399420
+ACEVO_STEAM_ID = 3058630   # Assetto Corsa EVO
+GAME_NAMES = {"lmu": "Le Mans Ultimate", "acevo": "Assetto Corsa EVO"}
 
 
 def _steam_exe() -> str | None:
@@ -921,9 +929,11 @@ def sd_state(state) -> dict:
     return out
 
 
-def launch_lmu(mode: str = "ask") -> bool:
+def launch_lmu(mode: str = "ask", game: str = "lmu") -> bool:
     """Lance Le Mans Ultimate par Steam. mode « ask » : steam.exe -applaunch (Steam propose ses options s'il y en a) ;
     « normal » / « vr » / « openxr » : on demande directement cette option à Steam (steam://launch/<id>/<type>)."""
+    if game == "acevo":
+        return launch_steam_game(ACEVO_STEAM_ID, "Assetto Corsa EVO")
     url = f"steam://rungameid/{LMU_STEAM_ID}"
     try:
         if sys.platform == "win32":
@@ -950,11 +960,32 @@ def launch_lmu(mode: str = "ask") -> bool:
         return False
 
 
+def launch_steam_game(app_id: int, name: str) -> bool:
+    """Lance un jeu Steam (sans option de lancement particulière)."""
+    try:
+        if sys.platform == "win32":
+            exe = _steam_exe()
+            import subprocess
+            if exe:
+                subprocess.Popen([exe, "-applaunch", str(app_id)], close_fds=True,
+                                 creationflags=getattr(subprocess, "DETACHED_PROCESS", 0))
+            else:
+                os.startfile(f"steam://rungameid/{app_id}")
+        else:
+            import webbrowser
+            webbrowser.open(f"steam://rungameid/{app_id}")
+        print(f"  Lancement de {name} par Steam…")
+        return True
+    except Exception as e:
+        print(f"  Impossible de lancer {name} : {e!r}")
+        return False
+
+
 def autolaunch_lmu(state) -> None:
     """Option : si LMU n'est pas déjà lancé quelques secondes après l'ouverture d'Apex, on le démarre."""
     time.sleep(6)
     if state.radio.cfg.get("autolaunch_lmu") and not getattr(state.snap, "connected", False):
-        launch_lmu(state.radio.cfg.get("lmu_mode", "ask"))
+        launch_lmu(state.radio.cfg.get("lmu_mode", "ask"), state.radio.cfg.get("game", "lmu"))
 
 
 def main() -> None:
@@ -993,7 +1024,7 @@ def main() -> None:
     UPD.start()
     url = f"http://localhost:{PORT}"
     print("=" * 56)
-    print(f"  APEX//RADIO {UPD.version} — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate"))
+    print(f"  APEX//RADIO {UPD.version} — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate / Assetto Corsa EVO"))
     print(f"  Tableau de bord : {url}")
     print(f"  Sur téléphone : http://{local_ip()}:{PORT}/tel")
     print(f"  Tes données : {DATA}")

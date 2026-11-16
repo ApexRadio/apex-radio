@@ -222,6 +222,8 @@ class PitCrew:
             print(f"  Menu stand : lecture impossible ({e.__class__.__name__}){', nouvel essai dans 30 s' if not self.dumped else ''}")
 
     def update(self, s, p) -> None:
+        if getattr(s, "game", "lmu") != "lmu":   # menu des stands : seulement Le Mans Ultimate pour l'instant
+            return
         if not self.dumped and s.on_track and not self.demo and time.time() >= getattr(self, "dump_at", 0):
             self.dumped = True
             threading.Thread(target=self._dump, daemon=True).start()
@@ -232,7 +234,7 @@ class PitCrew:
                 self.prepare(s, p)
 
     def prepare(self, s, p, asked: bool = False, mark_done: bool = True) -> None:
-        if self.busy or s is None:
+        if self.busy or s is None or getattr(s, "game", "lmu") != "lmu":
             return
         if not p or p.fuel_to_add is None and not asked:
             return

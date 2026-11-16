@@ -25,6 +25,7 @@ WHEELS = ("AVG", "AVD", "ARG", "ARD")  # avant gauche, avant droit, arrière gau
 @dataclass
 class Snapshot:
     connected: bool = False          # le jeu est-il lancé
+    game: str = "lmu"                # jeu lu : "lmu" (Le Mans Ultimate) ou "acevo" (Assetto Corsa EVO)
     on_track: bool = False           # le joueur est-il dans une voiture
     track: str = ""
     car: str = ""
@@ -389,6 +390,46 @@ class LMUSource:
             y -= 256
         s.yellow = 1 <= y <= 6 or s.game_phase == 6
         return s
+
+
+class AutoSource:
+    """Choisit tout seul le jeu lancé : Assetto Corsa EVO s'il tourne, sinon Le Mans Ultimate."""
+
+    def __init__(self) -> None:
+        from acevo import ACEvoSource
+        self.lmu = LMUSource()
+        self.acevo = ACEvoSource()
+        self.cur = self.lmu
+        self._check = 0.0
+
+    def _pick(self):
+        now = time.time()
+        if now - self._check > 2:
+            self._check = now
+            try:
+                new = self.acevo if self.acevo.alive() else self.lmu
+            except Exception:
+                new = self.lmu
+            if new is not self.cur:
+                print(f"  Jeu détecté : {'Assetto Corsa EVO' if new is self.acevo else 'Le Mans Ultimate'}")
+                self.cur = new
+        return self.cur
+
+    def read(self) -> Snapshot:
+        return self._pick().read()
+
+    def fast_sample(self) -> dict | None:
+        return self.cur.fast_sample()
+
+    def spot_sample(self) -> dict | None:
+        return self.cur.spot_sample()
+
+    def close(self) -> None:
+        for src in (self.lmu, self.acevo):
+            try:
+                src.close()
+            except Exception:
+                pass
 
 
 def demo_track(f: float) -> tuple[float, float]:

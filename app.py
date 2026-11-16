@@ -131,8 +131,8 @@ def make_source(demo: bool):
     if sys.platform != "win32":
         print("La lecture en direct de LMU ne fonctionne que sous Windows. Lance avec --demo pour tester.")
         sys.exit(1)
-    from telemetry import LMUSource
-    return LMUSource()
+    from telemetry import AutoSource
+    return AutoSource()     # Le Mans Ultimate ou Assetto Corsa EVO, selon le jeu lancé
 
 
 def loop(state: State, demo: bool) -> None:
@@ -350,7 +350,8 @@ def loop(state: State, demo: bool) -> None:
             places.update(snap, say)
             morale.update(snap, say)
             carinfo.update(snap, say)
-            if state.workshop:
+            lmu = getattr(snap, "game", "lmu") == "lmu"   # atelier setup : fichiers LMU seulement
+            if state.workshop and lmu:
                 state.workshop.car_class, state.workshop.car = snap.car_class, snap.car
             weather.update(snap, say)
             crew.update(snap, plan)
@@ -362,24 +363,24 @@ def loop(state: State, demo: bool) -> None:
             key = (snap.track, snap.session_code)
             if snap.on_track and snap.done and session_end["key"] != key and snap.laps_done >= 3:
                 session_end["key"] = key
-                msg = setup_summary(snap) or beh.end_of_session()
+                msg = (setup_summary(snap) if lmu else None) or beh.end_of_session()
                 if msg:
                     say(None, msg)
                     session_end["prompt"] += 1
-            recorder.update(snap, lt, beh, eng, state.workshop.state(snap.track).get("label") if snap.track else None)
+            recorder.update(snap, lt, beh, eng, state.workshop.state(snap.track).get("label") if snap.track and lmu else None)
             if probe:
                 probe.update(snap)
             state.snap, state.plan = snap, plan
             if snap.track:
                 state.last_track = snap.track
-            if snap.session == "qualif":
+            if snap.session == "qualif" and lmu:
                 state.workshop.set_mode("Qualif")
-            elif snap.session == "course":
+            elif snap.session == "course" and lmu:
                 state.workshop.set_mode("Course")
             L = lt.last
             if L and L.get("lap") != last_lap_seen:
                 last_lap_seen = L.get("lap")
-                if L.get("valid"):
+                if L.get("valid") and lmu:
                     rv = state.workshop.record_lap(snap.track, L["lap"], beh.issues)
                     if rv:
                         say(None, rv)

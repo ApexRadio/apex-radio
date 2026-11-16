@@ -683,7 +683,7 @@ def chat(t: str, s: Snapshot, alone: bool = True) -> list[str]:
 # de la phrase (« réparation sans ravitaillement » = on répare !)
 NO_REPAIR = (r"\b(pas|plus|sans|aucune?) (besoin )?(de |d |la |les |des )?repar|"
              r"\b(annule|annuler|enleve|enlever|retire|retirer|supprime|supprimer|oublie|leve|lever) (les |la |des )?repar|"
-             r"\bne (le |la |les )?repar\w* (pas|rien)|\brepar\w* non\b|\bne repare pas|"
+             r"\bne (le |la |les )?repar\w* (pas|rien)|\brepar\w* non\b|\bne repare pas|\brepare (pas|rien)\b|\breparez pas\b|"
              r"don t (fix|repair)|no repairs?\b|skip (the )?repairs?|cancel (the )?repairs?|"
              r"\b(remove|no) (the )?(repairs?|damage)")
 DO_REPAIR = (r"\b(repare|reparer|reparez|reparation|reparations|reparte)\b|\brepart (tout|juste|la carrosserie|seulement)|\bfix (the )?(car|damage)|\brepair")
@@ -824,8 +824,15 @@ def parse_wheels(t: str):
     return w or None
 
 
-def tyre_command(t: str) -> str | None:
+def tyre_command(t: str, s: Snapshot | None = None) -> str | None:
     w = parse_wheels(t)
+    if w is None and re.search(r"\b(juste|seulement|uniquement|change|changer|changez|remplace|remplacer)\b.*\bpneus?\b|\bpneus? (creve|crevee|crevaison)", t):
+        # « juste le pneu » / « change le pneu crevé » : la ou les roues crevées ; « juste les pneus » : les quatre
+        flat = tuple(i for i, f in enumerate(getattr(s, "flat", None) or []) if f)
+        if re.search(r"\bpneus\b|\bles pneu", t):
+            w = (0, 1, 2, 3)
+        elif flat:
+            w = flat
     if w is None:
         return None
     if TYRES_SET is None:
@@ -917,7 +924,7 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
     # ordres pour le prochain arrêt : réparations et/ou essence (« répare mais sans ravitaillement »)
     f = fuel_command(t)
     r = repair_command(t)
-    w = tyre_command(t)
+    w = tyre_command(t, s)
     orders = [x for x in (r, w, f) if x]
     if orders:
         # « répare, change les avants et pas d'essence » : une seule phrase, « je corrige le menu » une fois à la fin

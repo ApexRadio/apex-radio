@@ -21,6 +21,14 @@
 - 🇬🇧 Brakes: brake ducts suggested when the brakes run too hot or too cold.
 - 🇫🇷 Blocages de roues : dans 1 ou 2 virages, conseil de pilotage (pas de réglage) ; dans beaucoup de virages, l'ABS d'abord, puis la pression de freinage, la répartition seulement en dernier et une seule fois par circuit ; blocages arrière corrigés au différentiel. Plus d'analyse des blocages avec pneus ou freins froids, plus de va-et-vient sur la répartition, et 3 tours d'attente après un changement avant de juger.
 - 🇬🇧 Wheel lock-ups: in 1 or 2 corners, a driving tip (no setup change); in many corners, ABS first, then brake pressure, brake bias only as a last resort and once per track; rear lock-ups fixed with the diff. Lock-ups are ignored on cold tyres or brakes, no more back-and-forth on the bias, and 3 laps' wait after a change before judging.
+- 🇫🇷 Voitures plus lentes : le moment et le virage de la rencontre sont maintenant calculés avec ta vraie vitesse le long du tour (lente en virage, rapide en ligne droite), et plus avec la vitesse du moment. Beaucoup plus juste.
+- 🇬🇧 Slower cars: when and where you'll catch them is now worked out from your real speed around the lap (slow in corners, fast on straights) instead of your speed at that instant. Much more accurate.
+- 🇫🇷 Corrigé : sur les voitures à énergie virtuelle (GT3, Hypercars), Apex réglait par erreur la ligne « FUEL RATIO » au lieu de l'énergie, et un arrêt imprévu (crevaison) remettait de l'énergie. Maintenant, l'énergie est réglée sur la bonne ligne, et sur un arrêt imprévu alors que l'essence suffit, on n'en remet pas.
+- 🇬🇧 Fixed: on virtual-energy cars (GT3, Hypercars), Apex was setting the "FUEL RATIO" line instead of the energy, and an unplanned stop (puncture) added energy. Energy now goes on the right line, and an unplanned stop adds none when the fuel is enough.
+- 🇫🇷 Corrigé : « répare pas, juste le pneu » était compris comme « répare tout ». Maintenant : pas de réparation, et seul le pneu crevé est changé (« juste les pneus » : les quatre).
+- 🇬🇧 Fixed: "don't repair, just the tyre" was understood as "repair everything". Now: no repairs, and only the punctured tyre is changed ("just the tyres": all four).
+- 🇫🇷 Briefing : il ne prend plus le compte à rebours de la grille (1 minute) pour la durée de la course, et il n'utilise plus la conso d'une autre voiture sur le même circuit.
+- 🇬🇧 Briefing: no longer mistakes the grid countdown (1 minute) for the race length, and no longer uses another car's consumption on the same track.
 
 ## 1.2.13
 - 🇫🇷 Nouvelles questions : « comment vont mes freins ? », « limites de piste ? », « mon tour est valide ? », « qui est le leader ? », « c'est qui devant / derrière ? », « combien d'arrêts j'ai fait ? », « il y a un drapeau ? », « combien de voitures dans ma catégorie ? », « est-ce que je suis rapide ? ».

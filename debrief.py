@@ -291,7 +291,8 @@ def records_page() -> str:
                  + (f"  ({' · '.join(f'S{i + 1} {x:.3f}' for i, x in enumerate(sec))})" if sec else "")
                  + (f"\n🎯 {L('Tour idéal', 'Ideal lap')} {fmt(ideal)}" if ideal else "")
                  + f"\n📅 {r.get('date', '')} · Apex Radio")
-        rows.append(f"""<div class="rec">{_thumb(track)}
+        game = "acevo" if track.endswith("(AC EVO)") else "lmu"
+        rows.append(f"""<div class="rec" data-game="{game}">{_thumb(track)}
   <div class="info"><div class="tr">{html.escape(track)}</div>
     <div class="muted">{html.escape(class_name(cls))} · {html.escape(r.get('car', ''))} · {html.escape(r.get('date', ''))}</div>
     <div class="muted mono" style="font-size:13px">{sec_html}</div>{_spark(prog.get((track, cls), []))}</div>
@@ -306,7 +307,19 @@ display:flex;align-items:center;justify-content:center}
 .share{margin-top:8px;font:inherit;font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:transparent;color:inherit;cursor:pointer}
 .share:hover{border-color:#FFE500}.share.ok{border-color:#3DFFA2;color:#3DFFA2}
 @media(max-width:700px){.rec{grid-template-columns:1fr}.best{text-align:left}}</style>
-<script>document.addEventListener("click", async e => {
+<script>
+function recFilter(v) {
+  try { localStorage.setItem("apex_rec_game", v); } catch (_) {}
+  let n = 0;
+  document.querySelectorAll(".rec").forEach(r => { const on = v === "all" || r.dataset.game === v; r.hidden = !on; n += on; });
+  const e = document.getElementById("recnone"); if (e) e.hidden = n > 0 || !document.querySelector(".rec");
+}
+document.addEventListener("DOMContentLoaded", () => {
+  const sel = document.getElementById("recgame"); if (!sel) return;
+  let v = "all"; try { v = localStorage.getItem("apex_rec_game") || "all"; } catch (_) {}
+  sel.value = v; recFilter(sel.value); sel.onchange = () => recFilter(sel.value);
+});
+document.addEventListener("click", async e => {
   const b = e.target.closest(".share"); if (!b) return;
   const t = b.dataset.share, old = b.textContent;
   let ok = false;
@@ -316,8 +329,13 @@ display:flex;align-items:center;justify-content:center}
   b.textContent = ok ? "✓ """ + L("Copié ! Colle-le dans #chronos-laptimes", "Copied! Paste it in #chronos-laptimes") + """" : old;
   b.classList.toggle("ok", ok); setTimeout(() => { b.textContent = old; b.classList.remove("ok"); }, 4000);
 });</script>"""
+    picker = (f"<p><label class='muted' for='recgame'>{L('Jeu', 'Game')} </label>"
+              f"<select id='recgame' style='font:inherit;padding:4px 8px;border-radius:8px;background:var(--panel);color:inherit;border:1px solid var(--line)'>"
+              f"<option value='all'>{L('Tous les jeux', 'All games')}</option><option value='lmu'>Le Mans Ultimate</option>"
+              f"<option value='acevo'>Assetto Corsa EVO</option></select></p>"
+              f"<p class='muted' id='recnone' hidden>{L('Pas encore de record sur ce jeu.', 'No record on this game yet.')}</p>")
     body = css + L("<h1>MEILLEURS TOURS</h1><p class='muted'>Ton record sur chaque circuit, par catégorie (tours valides uniquement).</p>",
-                   "<h1>BEST LAPS</h1><p class='muted'>Your record on each track, by class (valid laps only).</p>") + \
+                   "<h1>BEST LAPS</h1><p class='muted'>Your record on each track, by class (valid laps only).</p>") + picker + \
         ("".join(rows) or "<p class='muted'>" + L("Pas encore de record : fais quelques tours valides avec Apex Radio ouvert.",
                                                  "No record yet: do a few valid laps with Apex Radio running.") + "</p>")
     return _page(L("Meilleurs tours", "Best laps"), body)

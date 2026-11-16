@@ -35,6 +35,10 @@
 - 🇬🇧 Workshop: race length is saved as soon as you change it, and the length measured at the start no longer includes the grid (30 min became 32).
 - 🇫🇷 Réglages : la langue se choisit dans un menu déroulant (plus besoin de cliquer plusieurs fois sur le bouton).
 - 🇬🇧 Settings: pick the language from a drop-down list (no more clicking the button several times).
+- 🇫🇷 Atelier : quand LMU remet un réglage à son ancienne valeur (Apex avait dépassé la plage permise, ex. carrossage déjà au minimum), Apex retient la butée et ne le repropose plus. Valeurs proposées plus claires (« ≈ -1,4 deg » ou « +1 cran »).
+- 🇬🇧 Workshop: when LMU puts a setting back to its old value (Apex went past the allowed range, e.g. camber already at its minimum), Apex remembers the limit and stops suggesting it. Clearer suggested values ("≈ -1.4 deg" or "+1 click").
+- 🇫🇷 Stream Deck : dossier Tchat à 14 messages (salut, bonne course, bien joué, oups, lag, à +…).
+- 🇬🇧 Stream Deck: Chat folder with 14 messages (hi, good race, nice move, oops, lag, see you…).
 
 ## 1.2.13
 - 🇫🇷 Nouvelles questions : « comment vont mes freins ? », « limites de piste ? », « mon tour est valide ? », « qui est le leader ? », « c'est qui devant / derrière ? », « combien d'arrêts j'ai fait ? », « il y a un drapeau ? », « combien de voitures dans ma catégorie ? », « est-ce que je suis rapide ? ».

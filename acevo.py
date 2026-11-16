@@ -204,6 +204,12 @@ class _Page:
         return cls.from_buffer_copy(C.string_at(self.ptr, C.sizeof(cls)))
 
 
+def _xz(c) -> tuple[float, float]:
+    """Coordonnées AC EVO -> repère d'Apex Radio (celui de LMU). L'axe x d'AC EVO est inversé :
+    sans ça, le spotter annonçait « à droite » pour une voiture à gauche."""
+    return -c[0], c[2]
+
+
 class TrackLine:
     """Tracé appris sur tes propres tours : position (x, z) -> progression dans le tour (0..1).
     Sert à placer les autres voitures, dont AC EVO ne donne que les coordonnées."""
@@ -313,11 +319,11 @@ class ACEvoSource:
         if pi is None:
             return None
         n = max(1, int(g.activeCars))
-        me = g.carCoords[pi]
+        mx, mz = _xz(g.carCoords[pi])
         if not (g.inPitLane or g.carLocation in (1, 2, 3)):
-            self.line.learn(me[0], me[2], float(g.npos))   # apprend le tracé ~25 fois/s
-        others = [(g.carCoords[i][0], g.carCoords[i][2]) for i in range(min(n, 60)) if i != pi]
-        return {"me": (me[0], me[2]), "others": others, "t": time.monotonic() - self._t0}
+            self.line.learn(mx, mz, float(g.npos))   # apprend le tracé ~25 fois/s
+        others = [_xz(g.carCoords[i]) for i in range(min(n, 60)) if i != pi]
+        return {"me": (mx, mz), "others": others, "t": time.monotonic() - self._t0}
 
     def fast_sample(self) -> dict | None:
         # analyse du comportement (blocages, sous-virage…) : pas encore branchée pour AC EVO
@@ -429,8 +435,7 @@ class ACEvoSource:
         n = min(60, max(1, int(g.activeCars)))
         now = time.monotonic()
         if pi is not None and not s.in_pits:
-            me = g.carCoords[pi]
-            self.line.learn(me[0], me[2], s.lap_frac)
+            self.line.learn(*_xz(g.carCoords[pi]), s.lap_frac)
         L = s.track_len or 0
         ref = s.best_lap or s.last_lap
         gaps_ahead, gaps_behind = [], []
@@ -438,6 +443,7 @@ class ACEvoSource:
             x, y, z = g.carCoords[i]
             if not (x or y or z):
                 continue
+            x, z = _xz(g.carCoords[i])
             mine = i == pi
             f = s.lap_frac if mine else self.line.where(x, z)
             prev = self._prev.get(i)

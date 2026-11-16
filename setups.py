@@ -520,6 +520,9 @@ class Workshop:
         new = idx + delta
         if new < 0:
             return None
+        lim = getattr(self, "_limits", {}).get(f"{section}|{key}")
+        if lim and (new - lim["at"]) * lim["block"] > 0:
+            return None   # LMU n'accepte pas d'aller plus loin sur cette voiture
         if known and new > max(known) + 3:
             return None
         to_disp, est = known.get(new), False
@@ -538,6 +541,33 @@ class Workshop:
             est = True
         return {"section": section, "key": key, "label": label(section, key), "from": idx, "to": new, "from_disp": disp,
                 "to_disp": to_disp, "est": est}
+
+    def _learn_limits(self, st: dict, s: Setup) -> dict:
+        """Si LMU a remis un réglage à son ancienne valeur, c'est qu'Apex avait dépassé la plage permise sur cette voiture
+        (ex. carrossage avant déjà au minimum) : on retient la butée pour ne plus le reproposer."""
+        h = self.history.get(self._hkey(st["folder"]), {})
+        lim = h.setdefault("limits", {})
+        vers = [v for v in h.get("versions", []) if v.get("backup")]
+        if vers:
+            try:
+                b = Setup(Path(vers[-1]["backup"]))
+            except Exception:
+                b = None
+            changed = False
+            for (sec, key), (bi, bd, _) in (b.values.items() if b else []):
+                m = re.match(r"APEX \(avant : (.*)\)$", bd or "")
+                cur = s.get(sec, key)
+                if not m or not cur or cur[1].startswith("APEX") or cur[0] == bi or cur[1].strip() != m.group(1).strip():
+                    continue
+                k = f"{sec}|{key}"
+                new = {"block": 1 if bi > cur[0] else -1, "at": cur[0]}
+                if lim.get(k) != new:
+                    lim[k] = new
+                    changed = True
+                    print(f"  Atelier : {key} ({sec}) remis par LMU à {cur[1]} : butée retenue")
+            if changed:
+                self._save()
+        return lim
 
     def _direction(self, setup: Setup, section: str, key: str, default: int) -> int:
         """+1 si monter l'index fait monter la valeur affichée, -1 sinon (appris de tes fichiers)."""
@@ -623,6 +653,7 @@ class Workshop:
         if not path.exists():
             return {**st, "changes": [], "error": L("Fichier introuvable.", "File not found.")}
         s = Setup(path)
+        self._limits = self._learn_limits(st, s)
         changes, used, conflict = [], set(), {}
         for ch in self._live(s, live or {}):      # ce que tu as réglé toi-même en piste passe en premier
             changes.append(ch)
@@ -789,7 +820,8 @@ class Workshop:
         shutil.copyfile(apex, bdir / f"v{n}.svm")
         h["versions"].append({"version": n, "label": f"v{n}", "base": from_label, "date": time.strftime("%d/%m/%Y %H:%M"),
                               "backup": str(bdir / f"v{n}.svm"),
-                              "changes": [{k: c[k] for k in ("label", "key", "section", "from_disp", "to_disp", "why")} for c in changes]})
+                              "changes": [{k: c[k] for k in ("label", "key", "section", "from", "to", "from_disp", "to_disp", "why") if k in c}
+                                          for c in changes]})
         h["current"], h["apex_file"], h["apex_label"] = name, name, f"v{n}"
         self._save()
         self.scan(force=True)

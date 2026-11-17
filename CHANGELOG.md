@@ -3,6 +3,8 @@
 ## 1.2.14
 - 🇫🇷 Nouveau : Apex Radio fonctionne aussi avec **Assetto Corsa EVO** ! Le jeu lancé est reconnu tout seul. Dans AC EVO : briefing et plan d'essence, positions gagnées/perdues, chronos et records, temps restant, spotter, carte du circuit, écarts devant/derrière, pneus et freins froids, dégâts, limiteur et drapeaux. Pas encore dans AC EVO : le menu des stands automatique, l'atelier setup et l'analyse du pilotage.
 - 🇬🇧 New: Apex Radio now also works with **Assetto Corsa EVO**! The running game is detected automatically. In AC EVO: briefing and fuel plan, places gained/lost, lap times and records, time left, spotter, track map, gaps ahead/behind, cold tyres and brakes, damage, pit limiter and flags. Not yet in AC EVO: automatic pit menu, setup workshop and driving analysis.
+- 🇫🇷 🌍 Apex Radio parle maintenant allemand, espagnol, italien, néerlandais et portugais (interface, voix et reconnaissance vocale).
+- 🇬🇧 🌍 Apex Radio now speaks German, Spanish, Italian, Dutch and Portuguese (interface, voice and speech recognition).
 - 🇫🇷 Réglages → Jeu : choisis « Mon jeu » (Le Mans Ultimate ou Assetto Corsa EVO) pour le bouton de lancement et le lancement automatique.
 - 🇬🇧 Settings → Game: pick "My game" (Le Mans Ultimate or Assetto Corsa EVO) for the launch button and auto-launch.
 - 🇫🇷 Records : un menu permet de choisir le jeu (tous, LMU ou AC EVO).

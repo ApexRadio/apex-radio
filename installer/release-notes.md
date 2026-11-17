@@ -3,6 +3,8 @@
 ## 🆕 1.2.14
 - 🇫🇷 Nouveau : Apex Radio fonctionne aussi avec **Assetto Corsa EVO** (reconnu tout seul) : essence, positions, chronos, spotter, carte, écarts, alertes. Le menu des stands automatique et l'atelier setup restent pour LMU pour l'instant.
 - 🇬🇧 New: Apex Radio now also works with **Assetto Corsa EVO** (detected automatically): fuel, positions, lap times, spotter, map, gaps, alerts. The automatic pit menu and setup workshop stay LMU-only for now.
+- 🇫🇷 🌍 Apex Radio parle maintenant allemand, espagnol, italien, néerlandais et portugais (interface, voix et reconnaissance vocale).
+- 🇬🇧 🌍 Apex Radio now speaks German, Spanish, Italian, Dutch and Portuguese (interface, voice and speech recognition).
 - 🇫🇷 Briefing d'avant-course : durée, tours, arrêts, météo, et l'essence à mettre (« Tu as 75 litres, tu peux en enlever 26 »).
 - 🇬🇧 Pre-race briefing: race length, laps, stops, weather, and how much fuel to start with ("You have 75 litres, you can take off 26").
 - 🇫🇷 Voitures plus lentes annoncées environ 30 secondes avant, avec le virage où tu vas les rattraper.

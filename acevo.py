@@ -326,8 +326,33 @@ class ACEvoSource:
         return {"me": (mx, mz), "others": others, "t": time.monotonic() - self._t0}
 
     def fast_sample(self) -> dict | None:
-        # analyse du comportement (blocages, sous-virage…) : pas encore branchée pour AC EVO
-        return None
+        """Dynamique de ta voiture (~50 fois/s) pour l'analyse du pilotage : blocages, patinage, sous/survirage.
+        Mêmes clés et mêmes unités que LMU (voir telemetry.dynamics_sample)."""
+        if not self._open():
+            return None
+        g = self.pages["graphics"].read(Graphics)
+        if g.status != 2:
+            return None
+        p = self.pages["physics"].read(Physics)
+        core = [float(x) for x in p.tyreCoreTemperature]
+        bias = float(p.brakeBias)                       # part à l'avant (0,62) ; LMU donne la part à l'arrière
+        return {
+            "lap": int(g.totalLapCount), "f": min(1.0, max(0.0, float(g.npos))),
+            "pits": bool(g.inPitLane) or int(g.carLocation) in (1, 2, 3),
+            "speed": max(0.0, float(p.speedKmh) / 3.6),
+            "lat": float(p.accG[0]) * 9.81,              # AC EVO : en g ; LMU : en m/s²
+            "steer": float(p.steerAngle), "thr": float(p.gas), "brk": float(p.brake),
+            "alpha": [abs(float(x)) for x in p.slipAngle],   # radians, comme LMU
+            "ratio": [float(x) for x in p.slipRatio],        # négatif = roue qui bloque, comme LMU
+            # AC EVO ne donne pas la température intérieur/milieu/extérieur : on prend le cœur du pneu partout
+            "temps": [[t, t, t] for t in core],
+            "opt": 85.0,
+            "ride": [float(p.rideHeight[0]) / 1000, float(p.rideHeight[1]) / 1000],   # mm -> m
+            "tc": float(g.elec.tcLevel), "abs": float(g.elec.absLevel),
+            "bias": (1 - bias) if 0.2 < bias < 0.8 else None,
+            "farb": None, "rarb": None,
+            "btemp": [float(x) for x in p.brakeTemp],
+        }
 
     def read(self):
         from telemetry import Snapshot
@@ -423,6 +448,12 @@ class ACEvoSource:
         s.track_temp = float(p.roadTemp)
         s.yellow = g.flag == 5 or g.globalFlag == 5
         s.track_len = float(st.trackLengthM) or (g.session.lapLengthKm * 1000)
+
+        # dégâts carrosserie : AC EVO donne 0..1 par zone, Apex attend 0/1/2 sur 8 zones
+        def lvl(v):
+            return 0 if v < 0.15 else 1 if v < 0.6 else 2
+        d = g.damage
+        s.dents = [lvl(d.front), lvl(d.right), lvl(d.rear), lvl(d.left), lvl(d.center), 0, 0, 0]
 
         try:
             s.car_state = {"lights": g.instr.mainLight > 0, "limiter": bool(g.elec.pitLimiterOn),

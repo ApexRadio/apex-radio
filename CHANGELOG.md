@@ -1,5 +1,55 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.2.14
+- 🇫🇷 Nouveau : Apex Radio fonctionne aussi avec **Assetto Corsa EVO** ! Le jeu lancé est reconnu tout seul. Dans AC EVO : briefing et plan d'essence, positions gagnées/perdues, chronos et records, temps restant, spotter, carte du circuit, écarts devant/derrière, pneus et freins froids, dégâts, limiteur et drapeaux. Pas encore dans AC EVO : le menu des stands automatique, l'atelier setup et l'analyse du pilotage.
+- 🇬🇧 New: Apex Radio now also works with **Assetto Corsa EVO**! The running game is detected automatically. In AC EVO: briefing and fuel plan, places gained/lost, lap times and records, time left, spotter, track map, gaps ahead/behind, cold tyres and brakes, damage, pit limiter and flags. Not yet in AC EVO: automatic pit menu, setup workshop and driving analysis.
+- 🇫🇷 Réglages → Jeu : choisis « Mon jeu » (Le Mans Ultimate ou Assetto Corsa EVO) pour le bouton de lancement et le lancement automatique.
+- 🇬🇧 Settings → Game: pick "My game" (Le Mans Ultimate or Assetto Corsa EVO) for the launch button and auto-launch.
+- 🇫🇷 Records : un menu permet de choisir le jeu (tous, LMU ou AC EVO).
+- 🇬🇧 Records: a menu lets you pick the game (all, LMU or AC EVO).
+- 🇫🇷 Corrigé : l'atelier n'affichait plus l'historique des versions (et le bouton « Revenir à ») une fois le jeu fermé pour les setups ELMS/WEC, et le bilan setup de fin de course ne s'affichait pas.
+- 🇬🇧 Fixed: the workshop no longer showed the version history (and the "Go back to" button) for ELMS/WEC setups once the game was closed, and the end-of-race setup summary didn't show.
+- 🇫🇷 Voitures plus lentes devant : l'annonce arrive environ 30 secondes avant de les rattraper (au lieu de 2 secondes d'écart), avec le virage où tu vas les doubler (« GT3 plus lente devant, tu la rattrapes dans 30 secondes, au virage 7 »).
+- 🇬🇧 Slower cars ahead: the call now comes about 30 seconds before you catch them (instead of a 2-second gap), with the turn where you'll pass them ("Slower GT3 ahead, you'll catch it in 30 seconds, at turn 7").
+- 🇫🇷 Briefing d'avant-course : avant le départ, l'ingénieur fait le point (durée, nombre de tours, arrêts prévus, essence ou énergie à mettre, météo). Il te prévient si tu pars avec trop ou pas assez d'essence (« Il te faut 42 litres au départ. Tu as 70 litres, tu peux en enlever 28 »). Questions : « combien d'essence pour la course ? », « briefing ».
+- 🇬🇧 Pre-race briefing: before the start, the engineer runs through race length, laps, planned stops, fuel or energy to start with, and weather. He warns you if you're carrying too much or too little fuel ("You need 42 litres at the start. You have 70 litres, you can take off 28"). Questions: "how much fuel for the race?", "briefing".
+- 🇫🇷 Limiteur : « Limiteur ! » si tu entres dans les stands sans l'avoir mis.
+- 🇬🇧 Pit limiter: "Pit limiter!" if you enter the pit lane without it.
+- 🇫🇷 Sortie des stands : l'ingénieur te prévient si une voiture arrive au moment où tu ressors (« Attention en sortie, Hypercar qui arrive, reste sur ta ligne »), ou que la sortie est dégagée. Le bout de la voie des stands est appris à ta première sortie sur chaque circuit.
+- 🇬🇧 Pit exit: the engineer warns you if a car is coming as you rejoin ("Careful on exit, Hypercar coming, hold your line"), or tells you the exit is clear. The end of the pit lane is learned on your first exit at each track.
+- 🇫🇷 Économie d'essence : si économiser un peu par tour permet de faire un arrêt de moins (même sur une course à plusieurs arrêts, et aussi en énergie virtuelle), l'ingénieur te le propose (« Si tu économises 0,2 litre par tour, on fait 1 arrêt au lieu de 2 »).
+- 🇬🇧 Fuel saving: if saving a little each lap means one stop fewer (also on multi-stop races and with virtual energy), the engineer suggests it ("Save 0.2 litres a lap and we make 1 stop instead of 2").
+- 🇫🇷 Atelier setup plus malin : les problèmes sont regroupés (un sous-virage dans 4 virages = 1 cran de plus qu'un seul virage), le plus coûteux est traité en premier, et 3 changements d'équilibre au maximum à la fois pour savoir ce qui a aidé.
+- 🇬🇧 Smarter setup workshop: problems are grouped (understeer in 4 corners gets a bigger change than in one), the costliest is fixed first, and at most 3 balance changes at once so you can tell what helped.
+- 🇫🇷 Bilan du setup : après 3 tours avec une nouvelle version, l'ingénieur la compare à la précédente (chrono, problèmes disparus ou apparus) et te dit de la garder ou de revenir en arrière (bouton dans l'atelier).
+- 🇬🇧 Setup review: after 3 laps on a new version, the engineer compares it with the previous one (lap time, problems gone or new) and tells you to keep it or go back (button in the workshop).
+- 🇫🇷 Virages lents / rapides : sous-virage ou survirage dans les virages rapides corrigé à l'aileron, dans les virages lents aux barres antiroulis.
+- 🇬🇧 Slow / fast corners: understeer or oversteer in fast corners is fixed with the wing, in slow corners with the anti-roll bars.
+- 🇫🇷 Freins : écopes de frein proposées quand les freins sont trop chauds ou trop froids.
+- 🇬🇧 Brakes: brake ducts suggested when the brakes run too hot or too cold.
+- 🇫🇷 Blocages de roues : dans 1 ou 2 virages, conseil de pilotage (pas de réglage) ; dans beaucoup de virages, l'ABS d'abord, puis la pression de freinage, la répartition seulement en dernier et une seule fois par circuit ; blocages arrière corrigés au différentiel. Plus d'analyse des blocages avec pneus ou freins froids, plus de va-et-vient sur la répartition, et 3 tours d'attente après un changement avant de juger.
+- 🇬🇧 Wheel lock-ups: in 1 or 2 corners, a driving tip (no setup change); in many corners, ABS first, then brake pressure, brake bias only as a last resort and once per track; rear lock-ups fixed with the diff. Lock-ups are ignored on cold tyres or brakes, no more back-and-forth on the bias, and 3 laps' wait after a change before judging.
+- 🇫🇷 Voitures plus lentes : le moment et le virage de la rencontre sont maintenant calculés avec ta vraie vitesse le long du tour (lente en virage, rapide en ligne droite), et plus avec la vitesse du moment. Beaucoup plus juste.
+- 🇬🇧 Slower cars: when and where you'll catch them is now worked out from your real speed around the lap (slow in corners, fast on straights) instead of your speed at that instant. Much more accurate.
+- 🇫🇷 Corrigé : sur les voitures à énergie virtuelle (GT3, Hypercars), Apex réglait par erreur la ligne « FUEL RATIO » au lieu de l'énergie, et un arrêt imprévu (crevaison) remettait de l'énergie. Maintenant, l'énergie est réglée sur la bonne ligne, et sur un arrêt imprévu alors que l'essence suffit, on n'en remet pas.
+- 🇬🇧 Fixed: on virtual-energy cars (GT3, Hypercars), Apex was setting the "FUEL RATIO" line instead of the energy, and an unplanned stop (puncture) added energy. Energy now goes on the right line, and an unplanned stop adds none when the fuel is enough.
+- 🇫🇷 Corrigé : « répare pas, juste le pneu » était compris comme « répare tout ». Maintenant : pas de réparation, et seul le pneu crevé est changé (« juste les pneus » : les quatre).
+- 🇬🇧 Fixed: "don't repair, just the tyre" was understood as "repair everything". Now: no repairs, and only the punctured tyre is changed ("just the tyres": all four).
+- 🇫🇷 Briefing : il ne prend plus le compte à rebours de la grille (1 minute) pour la durée de la course, et il n'utilise plus la conso d'une autre voiture sur le même circuit.
+- 🇬🇧 Briefing: no longer mistakes the grid countdown (1 minute) for the race length, and no longer uses another car's consumption on the same track.
+- 🇫🇷 Fin de course : l'ingénieur annonce exactement les réglages que l'atelier propose (et dit quand rien ne peut être changé), au lieu de conseils généraux que l'atelier ne pouvait pas toujours appliquer. Plus de solutions de rechange quand un réglage est déjà au bout (barre antiroulis de l'autre essieu, aileron).
+- 🇬🇧 End of session: the engineer now reads out exactly the changes the workshop suggests (and says when nothing can be changed), instead of general advice the workshop couldn't always apply. More fallbacks when a setting is already at its limit (other axle's anti-roll bar, wing).
+- 🇫🇷 Atelier : la durée de course s'enregistre dès qu'on la change, et la durée mesurée au départ ne compte plus la grille (30 min restaient 32).
+- 🇬🇧 Workshop: race length is saved as soon as you change it, and the length measured at the start no longer includes the grid (30 min became 32).
+- 🇫🇷 Réglages : la langue se choisit dans un menu déroulant (plus besoin de cliquer plusieurs fois sur le bouton).
+- 🇬🇧 Settings: pick the language from a drop-down list (no more clicking the button several times).
+- 🇫🇷 Atelier : quand LMU remet un réglage à son ancienne valeur (Apex avait dépassé la plage permise, ex. carrossage déjà au minimum), Apex retient la butée et ne le repropose plus. Valeurs proposées plus claires (« ≈ -1,4 deg » ou « +1 cran »).
+- 🇬🇧 Workshop: when LMU puts a setting back to its old value (Apex went past the allowed range, e.g. camber already at its minimum), Apex remembers the limit and stops suggesting it. Clearer suggested values ("≈ -1.4 deg" or "+1 click").
+- 🇫🇷 Stream Deck : dossier Tchat à 14 messages (salut, bonne course, bien joué, oups, lag, à +…).
+- 🇬🇧 Stream Deck: Chat folder with 14 messages (hi, good race, nice move, oops, lag, see you…).
+- 🇫🇷 Voitures plus lentes : sur les petits circuits, l'annonce arrive au plus 40 % d'un tour avant (environ 20 s pour un tour de 50 s) au lieu de 30 s, pour rester juste.
+- 🇬🇧 Slower cars: on short tracks, the call comes at most 40% of a lap ahead (about 20 s for a 50 s lap) instead of 30 s, to stay accurate.
+
 ## 1.2.13
 - 🇫🇷 Nouvelles questions : « comment vont mes freins ? », « limites de piste ? », « mon tour est valide ? », « qui est le leader ? », « c'est qui devant / derrière ? », « combien d'arrêts j'ai fait ? », « il y a un drapeau ? », « combien de voitures dans ma catégorie ? », « est-ce que je suis rapide ? ».
 - 🇬🇧 New questions: "how are my brakes?", "track limits?", "is my lap valid?", "who's leading?", "who's ahead / behind?", "how many stops have I made?", "any flags?", "how many cars in my class?", "am I fast?".

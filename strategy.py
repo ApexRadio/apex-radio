@@ -237,10 +237,22 @@ class Engineer:
             self.plan = p
             return p
 
-        # économie possible pour éviter l'arrêt ?
-        if p.stops_needed == 1 and short < 1.2 and p.limited_by == "essence":
-            p.save_per_lap = short * fpl / max(p.laps_to_finish, 1)
-        if p.save_per_lap and 0.1 <= p.save_per_lap <= 0.15 * fpl and p.laps_to_finish >= 3:
+        # économie possible pour faire un arrêt de moins ?
+        # avec un arrêt de moins, il manque `short_laps` tours : on les étale sur ce qu'il reste à rouler
+        k = p.stops_needed - 1
+        short_laps = p.laps_to_finish + MARGIN_LAPS - (p.range_laps + k * max(full_stint - MARGIN_LAPS, 1.0))
+        if short_laps > 0 and p.laps_to_finish >= 3:
+            if p.limited_by == "essence":
+                p.save_per_lap = short_laps * fpl / p.laps_to_finish
+                ok = 0.1 <= p.save_per_lap <= 0.12 * fpl
+            else:
+                save_e = short_laps * epl / p.laps_to_finish          # fraction d'énergie par tour
+                ok = 0.001 <= save_e <= 0.12 * epl
+        else:
+            ok = False
+        if not (ok and p.limited_by == "essence"):
+            p.save_per_lap = None
+        if ok and p.limited_by == "essence" and k == 0:
             q = dec(f"{p.save_per_lap:.1f}")
             self.say("stint:save", pick("save", [
                 (f"Il manque un peu d'essence pour finir. Si tu économises {q} litre par tour, on évite l'arrêt.",
@@ -251,6 +263,24 @@ class Engineer:
                  f"Fuel save mode: {q} litres a lap, lift a bit earlier before braking, and we skip the stop."),
                 (f"Si tu veux éviter l'arrêt, il faut {q} litre de moins par tour. Lift and coast, c'est jouable.",
                  f"To skip the stop we need {q} litres less a lap. Lift and coast, it's doable.")]), elapsed=et)
+        elif ok and p.limited_by == "essence":
+            q = dec(f"{p.save_per_lap:.1f}")
+            n_now, n_new = p.stops_needed, k
+            self.say("stint:save", L(f"Si tu économises {q} litre par tour, on fait {n_new} arrêt{'s' if n_new > 1 else ''} "
+                                     f"au lieu de {n_now}. Lève un peu plus tôt avant les freinages.",
+                                     f"Save {q} litres a lap and we make {n_new} stop{'s' if n_new > 1 else ''} instead of {n_now}. "
+                                     "Lift a bit earlier before braking."), elapsed=et)
+        elif ok:
+            q = dec(f"{save_e * 100:.1f}")
+            if k == 0:
+                txt = L(f"Si tu économises {q} % d'énergie par tour, on évite l'arrêt. Lève un peu plus tôt avant les freinages.",
+                        f"Save {q} % energy a lap and we can skip the stop. Lift a bit earlier before braking.")
+            else:
+                txt = L(f"Si tu économises {q} % d'énergie par tour, on fait {k} arrêt{'s' if k > 1 else ''} au lieu de "
+                        f"{p.stops_needed}. Lève un peu plus tôt avant les freinages.",
+                        f"Save {q} % energy a lap and we make {k} stop{'s' if k > 1 else ''} instead of {p.stops_needed}. "
+                        "Lift a bit earlier before braking.")
+            self.say("stint:save", txt, elapsed=et)
 
         # tour d'arrêt
         k = math.floor(s.lap_frac + p.range_laps - BOX_RESERVE)
@@ -332,7 +362,7 @@ class Engineer:
                 (f"Prépare-toi, box dans {n} tours. On met {sv}.", f"Get ready, box in {n} laps. {sv}.")]), elapsed=et)
         if not ("stint:plan" in self._said):
             lim = L("l'énergie", "energy") if p.limited_by == "énergie" else L("l'essence", "fuel")
-            c, r, k = f"{p.fuel_per_lap:.1f}", f"{p.range_laps:.1f}", p.stops_needed
+            c, r, k = dec(f"{p.fuel_per_lap:.1f}"), dec(f"{p.range_laps:.1f}"), p.stops_needed
             st_fr, st_en = f"{k} arrêt{'s' if k > 1 else ''}", f"{k} stop{'s' if k > 1 else ''}"
             self.say("stint:plan", pick("plan", [
                 (f"Conso {c} litres par tour. Autonomie {r} tours, c'est {lim} qui limite. Il faudra {st_fr}.",

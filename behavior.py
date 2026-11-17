@@ -27,6 +27,11 @@ GLOBAL_UNDER = 0.04    # équilibre moyen au-delà duquel la voiture est "global
 GLOBAL_OVER = -0.025
 SAY_EVERY = 3          # au plus une annonce de comportement tous les 3 tours
 LOCK = -0.18           # taux de glissement : roue bloquée
+FAST_V = 42.0          # m/s (~150 km/h) : vitesse mini au-delà de laquelle un virage est « rapide » (l'aéro compte plus)
+COLD_TYRE = 55.0       # °C : pneus avant froids, un blocage ne veut rien dire
+COLD_BRAKE = 180.0     # °C : freins avant froids
+LOCK_DRIVING = 2       # blocage dans 1 ou 2 virages seulement : conseil de pilotage, pas de réglage
+HOLD_LAPS = 3          # après un changement de réglage, on attend 3 tours avant de juger
 SPIN = 0.15            # taux de glissement : patinage
 WHEEL = ["avant gauche", "avant droit", "arrière gauche", "arrière droit"]
 PHASES = ["entrée", "milieu", "sortie"]
@@ -141,6 +146,11 @@ class Behavior:
         self.garage_notes = {}                  # problème -> conseil garage (pour la fin de course)
         self.garage_said = -9999.0              # dernière annonce « ça se corrige au garage »
         self.bias_start = None                  # répartition au début du relais (on ne la fait pas dériver sans fin)
+        self.bias_done = False                  # répartition déjà changée sur ce circuit : on n'y retouche plus
+        self.hold_until = 0                     # pas d'annonce avant ce tour (on laisse le temps de juger un changement)
+        self.corner_v = {}                      # virage -> vitesse mini habituelle (m/s), pour virages lents / rapides
+        self.brake_peaks = None                 # [avant, arrière] : pic de température des freins par tour (médiane)
+        self.brake_hist: deque = deque(maxlen=3)
 
     def live_controls(self, track: str) -> dict:
         """Réglages de la voiture lus en piste (pour les reporter dans le fichier de setup)."""
@@ -179,6 +189,8 @@ class Behavior:
         self.bottom = 0
         self.bals = []
         self.over = defaultdict(int)            # virage -> mesures en surbraquage
+        self.vmin = {}                          # virage -> vitesse mini sur ce tour
+        self.bpeak = [0.0, 0.0]                 # pic de température des freins avant / arrière sur ce tour
         self.dirty = False
 
     # ----------------------------------------------------------- virages
@@ -212,7 +224,13 @@ class Behavior:
             f = m["f"]
             a = m["alpha"]
             # freinage : on rattache au virage qui arrive (zone de freinage avant le virage)
-            if m["brk"] > 0.3:
+            bt = m.get("btemp")
+            if bt:
+                self.bpeak[0] = max(self.bpeak[0], bt[0], bt[1])
+                self.bpeak[1] = max(self.bpeak[1], bt[2], bt[3])
+            front_t = [sum(m["temps"][i]) / 3 for i in (0, 1)]
+            cold = min(front_t) < COLD_TYRE or (bt is not None and max(bt[0], bt[1]) < COLD_BRAKE)
+            if m["brk"] > 0.3 and not cold:              # pneus ou freins froids : un blocage ne veut rien dire
                 c = self.corner_at(f, ahead=0.04)
                 if c:
                     for i in range(4):
@@ -225,6 +243,7 @@ class Behavior:
             if abs(m["lat"]) > CORNER_LAT:
                 c = self.corner_at(f, ahead=0.02)
                 if c:
+                    self.vmin[c] = min(self.vmin.get(c, 999.0), m["speed"])
                     phase = 0 if m["brk"] > 0.15 else 2 if m["thr"] > 0.5 else 1
                     bal = (a[0] + a[1]) / 2 - (a[2] + a[3]) / 2
                     self.bals.append(bal)
@@ -266,6 +285,7 @@ class Behavior:
             if self.ctrl_track != self.map.track:
                 self.ctrl, self.ctrl_pending = {}, {}
                 self.ctrl_track = self.map.track
+                self.bias_done, self.corner_v = False, {}
             old = self.ctrl.get(k)
             if old is None:
                 self.ctrl[k] = v
@@ -280,6 +300,9 @@ class Behavior:
                 self.ctrl[k] = v
                 self.ctrl_pending.pop(k, None)
                 self._reset_linked(k)
+                self.hold_until = self.laps_seen + HOLD_LAPS
+                if k == "bias":
+                    self.bias_done = True
                 if self.say:
                     if k == "bias":
                         val = dec(L(f"à {(1 - v) * 100:.1f} % à l'avant", f"{(1 - v) * 100:.1f} % front"))
@@ -316,7 +339,12 @@ class Behavior:
                 found.add(("survirage", c, PHASES[ph]))
         for (c, w), k in self.locks.items():
             if k >= 2:
-                found.add(("blocage", c, WHEEL[w]))
+                found.add(("blocage", c, "avant" if w < 2 else "arrière"))
+        for c, v in self.vmin.items():
+            self.corner_v[c] = v if c not in self.corner_v else 0.7 * self.corner_v[c] + 0.3 * v
+        if min(self.bpeak) > 50:
+            self.brake_hist.append(list(self.bpeak))
+            self.brake_peaks = [sorted(x[i] for x in self.brake_hist)[len(self.brake_hist) // 2] for i in (0, 1)]
         for c, k in self.spins.items():
             if k >= 3:
                 found.add(("patinage", c, ""))
@@ -344,13 +372,19 @@ class Behavior:
         confirmed = [it for it, k in count.items() if k >= 2]
         order = {"blocage": 0, "survirage": 1, "sous-virage": 2, "surbraquage": 3, "patinage": 4}
         confirmed.sort(key=lambda it: (order[it[0]], it[1]))
-        self.issues = [{"kind": k, "corner": c, "where": w, "text": self.describe((k, c, w)), "tip": self.tip((k, c, w))}
+        self.group_n = defaultdict(int)          # (type, phase) -> nombre de virages touchés
+        for k, c, w in confirmed:
+            self.group_n[(k, w)] += 4 if c == 0 else 1
+        self.issues = [{"kind": k, "corner": c, "where": w, "text": self.describe((k, c, w)), "tip": self.tip((k, c, w)),
+                        "fast": self.fast(c), "n": self.group_n[(k, w)]}
                        for k, c, w in confirmed]
         # annonces regroupées ("sous-virage au milieu des virages 4, 5 et 6"), au plus 1 tous les 3 tours
         import alerts   # niveau d'encouragements choisi : « motivant » parle plus souvent
         lvl = alerts.ENCOURAGE
         if not self.say or self.laps_seen - self.last_say < {"discret": 4, "normal": SAY_EVERY, "motivant": 2}[lvl]:
             return
+        if self.laps_seen < self.hold_until:
+            return       # un réglage vient de changer : on lui laisse 3 tours avant de juger
         groups = {}
         for k, c, w in confirmed:
             groups.setdefault((k, w), []).append(c)
@@ -370,7 +404,8 @@ class Behavior:
                 if garage:
                     self.garage_notes[(k, w)] = f"{self.describe_group(k, w, corners)}{L(' : ', ': ')}{garage}"
                 if _in_car(k, w):
-                    self.say(None, L(f"{d}. Conseil : {self.tip((k, corners[0], w))}.", f"{d}. Tip: {self.tip((k, corners[0], w))}."))
+                    tip = self.tip((k, corners[0], w), corners)
+                    self.say(None, L(f"{d}. Conseil : {tip}.", f"{d}. Tip: {tip}."))
                 else:
                     if self.repeats[(k, corners[0], w)] > 1:
                         continue   # problème de garage : dit une seule fois en piste
@@ -453,8 +488,8 @@ class Behavior:
     def describe(it) -> str:
         k, c, w = it
         if c == 0:
-            return L("la voiture est globalement " + ("sous-vireuse" if k == "sous-virage" else "survireuse"),
-                     "the car is " + ("understeering" if k == "sous-virage" else "oversteering") + " overall")
+            return (L("la voiture est globalement sous-vireuse", "the car is understeering overall") if k == "sous-virage"
+                    else L("la voiture est globalement survireuse", "the car is oversteering overall"))
         if k == "blocage":
             return L(f"blocage {w} au freinage du virage {c}", f"{_wheel_en(w)} lock-up braking into turn {c}")
         if k == "patinage":
@@ -465,22 +500,41 @@ class Behavior:
             return L(f"{k} au milieu du virage {c}", f"mid-corner {KIND_EN[k]} at turn {c}")
         return L(f"{k} en {w} du virage {c}", f"{KIND_EN[k]} on {PHASE_EN.get(w, w)} of turn {c}")
 
-    def tip(self, it) -> str:
+    def fast(self, c: int) -> bool:
+        """Virage rapide (vitesse mini habituelle au-dessus de ~150 km/h) : l'aéro y compte plus que la mécanique."""
+        return self.corner_v.get(c, 0.0) > FAST_V
+
+    def tip(self, it, corners: list | None = None) -> str:
         k, c, w = it
         b = self.bias_front
         if k == "blocage":
             front = "avant" in w
-            if b and self.bias_start is not None and abs(b - self.bias_start) >= 0.9:
-                # déjà 1 % de déplacé : on ne fait pas dériver la répartition, c'est le pilotage
-                return L(f"freine un peu moins fort à l'attaque du virage {c}, la répartition a déjà assez bougé",
-                         f"brake a little less hard into turn {c}, the bias has moved enough already")
-            if b:
+            n = len(corners) if corners else getattr(self, "group_n", {}).get((k, w), 1)
+            if n <= LOCK_DRIVING:
+                # un ou deux virages : zone de freinage bosselée, en descente, ou freinage trop appuyé. Pas de réglage.
+                return L("c'est le pilotage plutôt que le réglage, freine un peu moins fort à l'attaque et relâche plus progressivement",
+                         "that's driving rather than setup, brake a little less hard at the start and release more progressively")
+            abs_now = self.ctrl.get("abs")
+            if front and abs_now:
+                a = int(round(abs_now))
+                return L(f"monte l'ABS d'un cran, de {a} à {a + 1}", f"one more click of ABS, from {a} to {a + 1}")
+            if not self.bias_done and b:
                 nb = b - 0.5 if front else b + 0.5
                 return dec(L(f"passe la répartition de freinage de {b:.1f} à {nb:.1f} % à l'avant",
                              f"move the brake bias from {b:.1f} to {nb:.1f} % front"))
-            return _tip("blocage", "avant" if front else "arrière")
+            if front:
+                return L("freine un peu moins fort à l'attaque ; au garage, baisse un peu la pression de freinage",
+                         "brake a little less hard at the start; in the garage, lower the brake pressure a little")
+            return L("au garage, un peu plus de blocage du différentiel au lever de pied pour stabiliser l'arrière",
+                     "in the garage, a bit more diff coast lock to settle the rear")
         if k in ("patinage", "surbraquage"):
             return _tip(k, "")
+        if (k, w) == ("sous-virage", "entrée") and self.bias_done:
+            return L("au garage, barre antiroulis avant plus souple ; la répartition a déjà été réglée",
+                     "in the garage, softer front anti-roll bar; the brake bias is already set")
+        if (k, w) == ("survirage", "entrée") and self.bias_done:
+            return L("au garage, un peu plus de blocage du différentiel au lever de pied ; la répartition a déjà été réglée",
+                     "in the garage, a bit more diff coast lock; the brake bias is already set")
         if (k, w) == ("sous-virage", "entrée"):
             return dec(L(f"recule la répartition de freinage de {b:.1f} à {b - 0.5:.1f} % à l'avant",
                          f"move the brake bias back from {b:.1f} to {b - 0.5:.1f} % front") if b else

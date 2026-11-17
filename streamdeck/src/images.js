@@ -125,9 +125,75 @@ ${text(72, 92, big, fit(big, 54, 118), ink(color))}
 ${sub ? text(72, 122, sub, 20, WHITE, "bold", 0.8) : ""}`, false, "info");
 }
 
+// ---- commandes de la voiture : l'icône change de couleur selon l'état réel dans LMU
+const CAR_ICONS = {
+    lights: "M58 40 a22 22 0 0 0 0 40 h10 v-40 z M80 44 h24 M80 60 h24 M80 76 h24",
+    flash: "M58 40 a22 22 0 0 0 0 40 h10 v-40 z M80 46 l24 -8 M80 60 h24 M80 74 l24 8",
+    ignition: "M48 60 a14 14 0 1 1 0.1 0 z M62 60 h42 M92 60 v12 M102 60 v9",
+    starter: "M72 32 v28 M54 42 a26 26 0 1 0 36 0",
+    limiter: "M38 80 a34 34 0 1 1 68 0 M72 80 l18 -20 M72 80 a4 4 0 1 1 0.1 0",
+    wipers: "M36 86 a40 40 0 0 1 72 0 M72 86 l-22 -38",
+    pit_request: "M50 90 l30 -30 M82 40 a14 14 0 1 0 18 18 l-10 -2 l-2 -10 z",
+    chat: "M40 38 h64 a8 8 0 0 1 8 8 v30 a8 8 0 0 1 -8 8 h-34 l-18 14 v-14 h-12 a8 8 0 0 1 -8 -8 v-30 a8 8 0 0 1 8 -8 z",
+};
+const CAR_T = {
+    fr: { lights: "PHARES", flash: "APPEL", ignition: "CONTACT", starter: "DÉMARRER", limiter: "LIMITEUR", wipers: "ESSUIE",
+          neutral: "NEUTRE", pit_request: "STAND", on: "ALLUMÉS", off: "ÉTEINTS", cut: "COUPÉ", ignOn: "CONTACT", run: "MOTEUR",
+          start: "…", active: "ACTIF", wip: ["ARRÊT", "AUTO", "LENT", "RAPIDE"], nokey: "pas réglé", tc: "TC", tccut: "TC CUT",
+          tcslip: "TC SLIP", abs: "ABS", map: "CARTO", regen: "RÉGÉN", bias: "FREIN", dec: (v) => v.replace(".", ",").replace("%", " %") },
+    en: { lights: "LIGHTS", flash: "FLASH", ignition: "IGNITION", starter: "START", limiter: "LIMITER", wipers: "WIPERS",
+          neutral: "NEUTRAL", pit_request: "PIT", on: "ON", off: "OFF", cut: "OFF", ignOn: "ON", run: "RUNNING",
+          start: "…", active: "ACTIVE", wip: ["OFF", "AUTO", "SLOW", "FAST"], nokey: "not set", tc: "TC", tccut: "TC CUT",
+          tcslip: "TC SLIP", abs: "ABS", map: "MAP", regen: "REGEN", bias: "BIAS", dec: (v) => v },
+};
+
+function carKey(cmd, sd, ct) {
+    const c = (sd && sd.car) || {};
+    const live = !!(sd && sd.on_track && sd.car);
+    const missing = sd && Array.isArray(sd.keys) && !sd.keys.includes(cmd);
+    // réglages + / − : on affiche la valeur actuelle en gros
+    const m = /^(tc|tccut|tcslip|abs|map|regen)_(up|down)$|^bias_(fwd|rear)$/.exec(cmd);
+    if (m) {
+        const what = m[1] || "bias", up = m[2] === "up" || m[3] === "fwd";
+        let val = "—";
+        if (live && what === "bias" && c.bias != null) val = ct.dec(`${c.bias.toFixed(1)}%`);
+        else if (live && c[what] != null) val = String(c[what]);
+        const col = up ? GREEN : PINK;
+        const arrow = up ? "M72 22 l14 14 h-28 z" : "M72 50 l14 -14 h-28 z";
+        return frame(missing ? GREY : col, `<path d="${arrow}" fill="${missing ? GREY : col}"/>
+${text(72, 92, val, fit(val, 46, 112), WHITE)}
+${text(72, 124, missing ? ct.nokey : ct[what], 20, missing ? GREY : WHITE, "bold", 0.85)}`, missing);
+    }
+    let col = CYAN, sub = "";
+    if (cmd === "lights" && live) { col = c.lights ? AMBER : GREY; sub = c.lights ? ct.on : ct.off; }
+    else if (cmd === "ignition" && live) {
+        const run = (c.rpm || 0) > 300;
+        col = run ? GREEN : c.ign ? AMBER : GREY; sub = run ? ct.run : c.ign ? ct.ignOn : ct.cut;
+    } else if (cmd === "starter" && live) {
+        const run = (c.rpm || 0) > 300;
+        col = run ? GREEN : c.ign === 2 ? AMBER : CYAN; sub = run ? ct.run : c.ign === 2 ? ct.start : "";
+    } else if (cmd === "limiter" && live) { col = c.limiter ? AMBER : GREY; sub = c.limiter ? ct.active : ct.off; }
+    else if (cmd === "wipers" && live) { const w = c.wipers || 0; col = w ? GREEN : GREY; sub = ct.wip[w] || ""; }
+    if (missing) { col = GREY; sub = ct.nokey; }
+    const label = ct[cmd] || cmd.toUpperCase();
+    if (cmd === "neutral") return frame(col, `${text(72, 80, "N", 64, ink(col))}${text(72, 120, label, 22, WHITE)}`, col === GREY);
+    return frame(col, `<g transform="translate(72 ${sub ? 46 : 52}) scale(1.1) translate(-72 -60)">${glow(CAR_ICONS[cmd] || CAR_ICONS.pit_request, ink(col))}</g>
+${text(72, sub ? 100 : 112, label, fit(label, 26, 108), WHITE)}
+${sub ? text(72, 124, sub, 18, ink(col)) : ""}`, col === GREY);
+}
+
+function chatKey(st, sd, ct) {
+    const label = (st.label || st.text || "TCHAT").toUpperCase().slice(0, 12);
+    const col = sd ? CYAN : GREY;
+    return frame(col, `<g transform="translate(72 48) scale(1.0) translate(-72 -60)">${glow(CAR_ICONS.chat, ink(col), 8)}</g>
+${text(72, 112, label, fit(label, 26, 112), WHITE)}`, !sd);
+}
+
 export function keyImage(kind, sd, settings) {
     const t = T[sd && sd.lang === "en" ? "en" : "fr"];
     if (kind === "info") return infoKey(settings.what || "pos", sd, t);
+    if (kind === "car") return carKey(settings.cmd || "lights", sd, CAR_T[sd && sd.lang === "en" ? "en" : "fr"]);
+    if (kind === "chat") return chatKey(settings, sd, CAR_T[sd && sd.lang === "en" ? "en" : "fr"]);
     if (!sd) {
         const icon = { radio: "mic" }[kind] || kind;
         return frame(GREY, `${glow(ICONS[icon] || ICONS.ask, GREY)}${text(72, 112, t.offline, 18, GREY)}${text(72, 131, t.offline2, 12, GREY)}`, true);

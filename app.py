@@ -41,7 +41,8 @@ from setups import Workshop
 from incidents import Incidents
 from lmu_probe import Probe
 import phrases
-from alerts import Spotter, Traffic, GapTrend, TrackLimits, Damage, Weather, WarmUp, CarInfo, Places, Morale, car_label, set_encourage
+import lmukeys
+from alerts import Spotter, Traffic, GapTrend, TrackLimits, Damage, Weather, WarmUp, CarInfo, Places, Morale, car_label, set_encourage, PitLane
 import debrief
 from pitmenu import PitCrew
 from radio import save_config
@@ -130,8 +131,8 @@ def make_source(demo: bool):
     if sys.platform != "win32":
         print("La lecture en direct de LMU ne fonctionne que sous Windows. Lance avec --demo pour tester.")
         sys.exit(1)
-    from telemetry import LMUSource
-    return LMUSource()
+    from telemetry import AutoSource
+    return AutoSource()     # Le Mans Ultimate ou Assetto Corsa EVO, selon le jeu lancé
 
 
 def loop(state: State, demo: bool) -> None:
@@ -152,6 +153,7 @@ def loop(state: State, demo: bool) -> None:
     spotter.enabled = state.radio.cfg.get("spotter", True)
     state.spotter = spotter
     traffic, trend, limits, damage = Traffic(beh), GapTrend(), TrackLimits(beh), Damage()
+    pitlane = PitLane()
     warmup, carinfo, places, morale = WarmUp(), CarInfo(), Places(), Morale()
     set_encourage(state.radio.cfg.get("encourage", "normal"))
     phrases.set_tone(state.radio.cfg.get("tone", "radio"))
@@ -174,6 +176,32 @@ def loop(state: State, demo: bool) -> None:
         return apply_now()
 
     questions.REPAIR_SET = set_repair
+
+    def setup_summary(sn) -> str | None:
+        """Fin de session : on annonce exactement ce que l'atelier propose (pas des conseils qu'il ne peut pas appliquer)."""
+        try:
+            ws, tr = state.workshop, sn.track
+            if not ws.state(tr).get("current"):
+                return None
+            prop = ws.propose(tr, state.beh.issues, state.beh.tyre_findings, state.beh.live_controls(tr),
+                              state.fuel.suggest(tr), state.beh.brake_peaks)
+        except Exception:
+            return None
+        if prop.get("error"):
+            return None
+        bal = [c for c in prop["changes"] if not c.get("fuel") and not c.get("live")]
+        if bal:
+            items = [i18n.L(f"{c['label']} de {c['from_disp']} à {c['to_disp']}, pour {c['why']}",
+                       f"{c['label']} from {c['from_disp']} to {c['to_disp']}, for {c['why']}") for c in bal[:3]]
+            return (i18n.L("Pour le setup, je te propose : ", "For the setup, I suggest: ") + " ; ".join(items)
+                    + i18n.L(". C'est coché dans l'atelier setup : clique sur Créer, puis recharge le setup au garage.",
+                        ". It's ticked in the setup workshop: click Create, then reload the setup in the garage."))
+        if state.beh.issues:
+            return i18n.L("J'ai noté des choses à améliorer, mais les réglages qui les corrigent sont déjà au bout de leur plage sur ce setup. "
+                     "Rien de nouveau à changer pour l'instant.",
+                     "I noted things to improve, but the settings that fix them are already at the end of their range on this setup. "
+                     "Nothing new to change for now.")
+        return None
 
     def apply_now() -> bool:
         """Ordre du pilote pour le prochain arrêt : on règle le menu des stands tout de suite (sans attendre l'approche
@@ -214,6 +242,10 @@ def loop(state: State, demo: bool) -> None:
         return apply_now()
 
     questions.CANCEL_SET = cancel_orders
+    questions.RACE_FUEL = lambda: state.fuel.brief(state.snap) if state.snap else None
+    questions.BRIEFING = lambda: state.fuel.briefing(state.snap) if state.snap else None
+    state.fuel.weather = lambda s: questions._forecast_text(Weather.LAST.forecast if Weather.LAST else [], 0.0,
+                                                            s.time_left, i18n.L("Météo", "Weather"))
 
     def setup_sync():
         """Toutes les 15 s : quel setup est chargé dans LMU ? (sélection automatique dans l'atelier)"""
@@ -264,8 +296,16 @@ def loop(state: State, demo: bool) -> None:
         state.workshop = Workshop({**state.radio.cfg, "setups_dir": str(demo_dir), "setup_folder_for": {}})
     else:
         state.workshop = Workshop(state.radio.cfg)
+        # dernière voiture connue : l'atelier montre le bon historique (ELMS / WEC) même jeu fermé
+        state.workshop.car_class = state.radio.cfg.get("last_car_class", "")
+        state.workshop.car = state.radio.cfg.get("last_car", "")
     state.workshop.scan(force=True)
     print(f"  Setups LMU : {state.workshop.dir} ({'trouvé' if state.workshop.ok() else 'introuvable'})")
+    if state.workshop.ok():   # touches LMU du joueur, pour les commandes voiture du Stream Deck
+        try:
+            lmukeys.load(Path(state.workshop.dir).parent.parent)
+        except Exception as e:
+            print(f"  Touches LMU : lecture impossible ({e.__class__.__name__})")
     last_lap_seen = None
 
     def fast_loop():
@@ -306,43 +346,50 @@ def loop(state: State, demo: bool) -> None:
             spotter.session = snap.session
             inc.update(snap)
             traffic.update(snap, plan, say)
+            pitlane.update(snap, say)
             trend.update(snap, say)
             limits.update(snap, say)
             warmup.update(snap, say)
             places.update(snap, say)
             morale.update(snap, say)
             carinfo.update(snap, say)
-            if state.workshop:
+            lmu = getattr(snap, "game", "lmu") == "lmu"   # atelier setup : fichiers LMU seulement
+            if state.workshop and lmu and snap.car_class:   # jeu fermé : on garde la dernière voiture (historique ELMS/WEC)
                 state.workshop.car_class, state.workshop.car = snap.car_class, snap.car
+                if state.radio.cfg.get("last_car_class") != snap.car_class or state.radio.cfg.get("last_car") != snap.car:
+                    state.radio.cfg["last_car_class"], state.radio.cfg["last_car"] = snap.car_class, snap.car
+                    save_config(state.radio.cfg)
             weather.update(snap, say)
             crew.update(snap, plan)
             pen.update(snap, say)
             under.update(snap, plan, say)
             pace.update(snap, eng, say)
-            state.fuel.update(snap, plan, eng)
+            state.fuel.update(snap, plan, eng, say)
             # fin de session (drapeau à damier) : rappel des réglages garage + ouverture de l'atelier
             key = (snap.track, snap.session_code)
             if snap.on_track and snap.done and session_end["key"] != key and snap.laps_done >= 3:
                 session_end["key"] = key
-                msg = beh.end_of_session()
+                msg = (setup_summary(snap) if lmu else None) or beh.end_of_session()
                 if msg:
                     say(None, msg)
                     session_end["prompt"] += 1
-            recorder.update(snap, lt, beh, eng, state.workshop.state(snap.track).get("label") if snap.track else None)
+            recorder.update(snap, lt, beh, eng, state.workshop.state(snap.track).get("label") if snap.track and lmu else None)
             if probe:
                 probe.update(snap)
             state.snap, state.plan = snap, plan
             if snap.track:
                 state.last_track = snap.track
-            if snap.session == "qualif":
+            if snap.session == "qualif" and lmu:
                 state.workshop.set_mode("Qualif")
-            elif snap.session == "course":
+            elif snap.session == "course" and lmu:
                 state.workshop.set_mode("Course")
             L = lt.last
             if L and L.get("lap") != last_lap_seen:
                 last_lap_seen = L.get("lap")
-                if L.get("valid"):
-                    state.workshop.record_lap(snap.track, L["lap"], beh.issues)
+                if L.get("valid") and lmu:
+                    rv = state.workshop.record_lap(snap.track, L["lap"], beh.issues)
+                    if rv:
+                        say(None, rv)
             if demo and isinstance(source, DemoSource) and plan.laps_until_box is not None \
                     and plan.laps_until_box <= 1 and snap.lap_frac > 0.6 and not snap.in_pits:
                 source.request_pit(plan.fuel_to_add or 0, plan.energy_target, bool(plan.change_tyres or plan.tyre_compound))
@@ -358,6 +405,7 @@ def loop(state: State, demo: bool) -> None:
                 "asr": state.radio.cfg.get("asr", "fast"), "asr_loading": bool(getattr(state.radio, "asr_loading", False)),
                 "lmu_mode": state.radio.cfg.get("lmu_mode", "ask"),
                 "autolaunch_lmu": bool(state.radio.cfg.get("autolaunch_lmu")),
+                "game": state.radio.cfg.get("game", "lmu"),
                 "voice": {"on": state.voice.enabled, "engine": state.voice.engine, "volume": state.voice.volume,
                           "quiet": state.voice.quiet, "choice": voices.current_id(), "list": voices.catalog(),
                           "name": voices.engineer_name(),
@@ -365,6 +413,7 @@ def loop(state: State, demo: bool) -> None:
                 "penalty": pen.ui(snap),
                 "phone": PHONE_URL,
                 "lang": i18n.LANG,
+                "langs": i18n.available(),
                 "update": UPD.ui(),
                 "ptt": state.radio.info(),
                 "times": lt.ui(snap),
@@ -442,8 +491,9 @@ def make_handler(state: State):
 
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
-            if self.path.startswith("/api/mics") or self.path.startswith("/api/map"):
-                data = state.radio.mics() if self.path.startswith("/api/mics") else {**state.map.info(), "points": state.map.points()}
+            if self.path.startswith("/api/mics") or self.path.startswith("/api/map") or self.path.startswith("/api/traductions"):
+                data = state.radio.mics() if self.path.startswith("/api/mics") else i18n.catalog() \
+                    if self.path.startswith("/api/traductions") else {**state.map.info(), "points": state.map.points()}
                 body, ctype = json.dumps(data).encode(), "application/json"
                 self.send_response(200)
                 self.send_header("Content-Type", ctype)
@@ -477,7 +527,7 @@ def make_handler(state: State):
                 else:
                     tr = state.track()
                     fuel = state.fuel.suggest(tr)
-                    data = {**ws.propose(tr, beh.issues, beh.tyre_findings, beh.live_controls(tr), fuel),
+                    data = {**ws.propose(tr, beh.issues, beh.tyre_findings, beh.live_controls(tr), fuel, beh.brake_peaks),
                             "folders": ws.folders(), "analysis_laps": beh.laps_seen, "fuel": fuel}
                 body = json.dumps(data, default=lambda o: None).encode()
                 self.send_response(200)
@@ -566,8 +616,21 @@ def make_handler(state: State):
                 n = int(self.headers.get("Content-Length") or 0)
                 target = (json.loads(self.rfile.read(n) or b"{}") if n else {}).get("target", "ptt")
                 state.radio.start_learning(target)
+            elif self.path in ("/api/lmu/key", "/api/lmu/chat"):
+                n = int(self.headers.get("Content-Length") or 0)
+                body = json.loads(self.rfile.read(n) or b"{}") if n else {}
+                ok = lmukeys.press(str(body.get("cmd", ""))) if self.path.endswith("key") else lmukeys.chat(str(body.get("text", "")))
+                if not ok:
+                    self.send_response(409)
+                    self.end_headers()
+                    return
             elif self.path == "/api/lmu/launch":
-                launch_lmu(state.radio.cfg.get("lmu_mode", "ask"))
+                launch_lmu(state.radio.cfg.get("lmu_mode", "ask"), state.radio.cfg.get("game", "lmu"))
+            elif self.path == "/api/game":
+                n = int(self.headers.get("Content-Length") or 0)
+                g = json.loads(self.rfile.read(n) or b"{}").get("game", "lmu")
+                state.radio.cfg["game"] = g if g in GAME_NAMES else "lmu"
+                save_config(state.radio.cfg)
             elif self.path == "/api/lmu/mode":
                 n = int(self.headers.get("Content-Length") or 0)
                 m = json.loads(self.rfile.read(n) or b"{}").get("mode", "ask")
@@ -644,7 +707,7 @@ def make_handler(state: State):
                     out = {"error": None}
                 else:
                     prop = ws.propose(tr, state.beh.issues, state.beh.tyre_findings, state.beh.live_controls(tr),
-                                      state.fuel.suggest(tr))
+                                      state.fuel.suggest(tr), state.beh.brake_peaks)
                     keep = set(req.get("keys") or [])
                     chosen = [c for c in prop["changes"] if f"{c['section']}|{c['key']}" in keep]
                     out = ws.create(tr, chosen)
@@ -792,6 +855,8 @@ class _Tee:
 
 
 LMU_STEAM_ID = 2399420
+ACEVO_STEAM_ID = 3058630   # Assetto Corsa EVO
+GAME_NAMES = {"lmu": "Le Mans Ultimate", "acevo": "Assetto Corsa EVO"}
 
 
 def _steam_exe() -> str | None:
@@ -863,15 +928,18 @@ def sd_state(state) -> dict:
         out.update({"pos": s.class_position or s.position, "cars": s.num_cars, "fuel": round(s.fuel, 1),
                     "fuel_cap": s.fuel_capacity, "energy": s.energy, "gap_ahead": s.gap_class_ahead,
                     "gap_behind": s.gap_class_behind, "last": s.last_lap, "best": s.best_lap,
-                    "in_pits": s.in_pits})
+                    "in_pits": s.in_pits, "car": s.car_state})
+    out["keys"] = lmukeys.available()
     if p:
         out.update({"range_laps": p.range_laps, "box_in": p.laps_until_box, "fuel_per_lap": p.fuel_per_lap})
     return out
 
 
-def launch_lmu(mode: str = "ask") -> bool:
+def launch_lmu(mode: str = "ask", game: str = "lmu") -> bool:
     """Lance Le Mans Ultimate par Steam. mode « ask » : steam.exe -applaunch (Steam propose ses options s'il y en a) ;
     « normal » / « vr » / « openxr » : on demande directement cette option à Steam (steam://launch/<id>/<type>)."""
+    if game == "acevo":
+        return launch_steam_game(ACEVO_STEAM_ID, "Assetto Corsa EVO")
     url = f"steam://rungameid/{LMU_STEAM_ID}"
     try:
         if sys.platform == "win32":
@@ -898,11 +966,32 @@ def launch_lmu(mode: str = "ask") -> bool:
         return False
 
 
+def launch_steam_game(app_id: int, name: str) -> bool:
+    """Lance un jeu Steam (sans option de lancement particulière)."""
+    try:
+        if sys.platform == "win32":
+            exe = _steam_exe()
+            import subprocess
+            if exe:
+                subprocess.Popen([exe, "-applaunch", str(app_id)], close_fds=True,
+                                 creationflags=getattr(subprocess, "DETACHED_PROCESS", 0))
+            else:
+                os.startfile(f"steam://rungameid/{app_id}")
+        else:
+            import webbrowser
+            webbrowser.open(f"steam://rungameid/{app_id}")
+        print(f"  Lancement de {name} par Steam…")
+        return True
+    except Exception as e:
+        print(f"  Impossible de lancer {name} : {e!r}")
+        return False
+
+
 def autolaunch_lmu(state) -> None:
     """Option : si LMU n'est pas déjà lancé quelques secondes après l'ouverture d'Apex, on le démarre."""
     time.sleep(6)
     if state.radio.cfg.get("autolaunch_lmu") and not getattr(state.snap, "connected", False):
-        launch_lmu(state.radio.cfg.get("lmu_mode", "ask"))
+        launch_lmu(state.radio.cfg.get("lmu_mode", "ask"), state.radio.cfg.get("game", "lmu"))
 
 
 def main() -> None:
@@ -941,7 +1030,7 @@ def main() -> None:
     UPD.start()
     url = f"http://localhost:{PORT}"
     print("=" * 56)
-    print(f"  APEX//RADIO {UPD.version} — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate"))
+    print(f"  APEX//RADIO {UPD.version} — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate / Assetto Corsa EVO"))
     print(f"  Tableau de bord : {url}")
     print(f"  Sur téléphone : http://{local_ip()}:{PORT}/tel")
     print(f"  Tes données : {DATA}")

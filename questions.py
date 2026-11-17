@@ -31,7 +31,7 @@ def _laptime(s: float | None) -> str:
     if not s:
         return L("pas encore de temps", "no time yet")
     m, r = divmod(s, 60)
-    return dec(f"{int(m)} minute {r:.1f}") if m else dec(L(f"{r:.1f} secondes", f"{r:.1f} seconds"))
+    return dec(L(f"{int(m)} minute {r:.1f}", f"{int(m)} minute {r:.1f}")) if m else dec(L(f"{r:.1f} secondes", f"{r:.1f} seconds"))
 
 
 def _tyre_names(idx: list[int]) -> str:
@@ -58,7 +58,10 @@ def fuel(s: Snapshot, p: Plan) -> str:
         out += " " + pick("a_fuel3", [("C'est bon pour aller au bout.", "That's enough to the finish."),
                                       ("Largement de quoi finir.", "Plenty to make the finish."),
                                       ("Tu es tranquille jusqu'à l'arrivée.", "You're fine all the way to the flag.")])
-    if p.save_per_lap:
+    if p.save_per_lap and (p.stops_needed or 0) > 1:
+        out += L(f" Si tu économises {_f(p.save_per_lap)} litre par tour, on fait un arrêt de moins.",
+                 f" Save {_f(p.save_per_lap)} litres a lap and we make one stop fewer.")
+    elif p.save_per_lap:
         out += L(f" Si tu économises {_f(p.save_per_lap)} litre par tour, on évite l'arrêt.",
                  f" Save {_f(p.save_per_lap)} litres a lap and we skip the stop.")
     return out
@@ -274,7 +277,9 @@ def _forecast_text(fc: list, now: float, total: float | None, label: str) -> str
     if not wet:
         return L(f"{label} : pas de pluie prévue.", f"{label}: no rain expected.")
     n = max(wet, key=lambda x: x["rain"])
-    sky = (SKY_FR if not i18n.en() else SKY_EN)[n["sky"]] if 0 <= n["sky"] < len(SKY_FR) else ""
+    names = L("dégagé|quelques nuages|nuageux|couvert|très couvert|bruine|pluie légère|pluie|forte pluie|orage|déluge",
+              "clear|few clouds|cloudy|overcast|heavy overcast|drizzle|light rain|rain|heavy rain|storm|downpour").split("|")
+    sky = names[n["sky"]] if 0 <= n["sky"] < len(names) else ""
     when = ""
     if total:
         mins = (n["at"] - now) * total / 60
@@ -678,7 +683,7 @@ def chat(t: str, s: Snapshot, alone: bool = True) -> list[str]:
 # de la phrase (« réparation sans ravitaillement » = on répare !)
 NO_REPAIR = (r"\b(pas|plus|sans|aucune?) (besoin )?(de |d |la |les |des )?repar|"
              r"\b(annule|annuler|enleve|enlever|retire|retirer|supprime|supprimer|oublie|leve|lever) (les |la |des )?repar|"
-             r"\bne (le |la |les )?repar\w* (pas|rien)|\brepar\w* non\b|\bne repare pas|"
+             r"\bne (le |la |les )?repar\w* (pas|rien)|\brepar\w* non\b|\bne repare pas|\brepare (pas|rien)\b|\breparez pas\b|"
              r"don t (fix|repair)|no repairs?\b|skip (the )?repairs?|cancel (the )?repairs?|"
              r"\b(remove|no) (the )?(repairs?|damage)")
 DO_REPAIR = (r"\b(repare|reparer|reparez|reparation|reparations|reparte)\b|\brepart (tout|juste|la carrosserie|seulement)|\bfix (the )?(car|damage)|\brepair")
@@ -708,6 +713,24 @@ def repair_command(t: str) -> str | None:
     if menu:
         out += L(" Je corrige le menu des stands.", " Updating the pit menu.")
     return out
+
+
+RACE_FUEL = None    # fonction() -> réponse à « combien d'essence pour la course ? »
+RACE_FUEL_RX = (r"(essence|carbu\w*|fuel|energie|energy|litres?|plein)\b.*\b(pour (la |cette |toute la )?course|de depart|au depart|"
+                r"for (the |this )?race|to start|at the start)|(starting|race) fuel|(combien|how much).*(mettre|faut|need|put|start).*"
+                r"\b(course|race|depart|start)\b")
+
+
+BRIEFING = None     # fonction() -> briefing d'avant-course
+
+
+def race_fuel_command(t: str, s: Snapshot) -> str | None:
+    if BRIEFING is not None and re.search(r"\bbriefing\b|\bbrief\b|\bbriefe\b", t):
+        return BRIEFING()
+    # pendant la course, « combien d'essence pour finir » garde la réponse habituelle (ce qu'il reste)
+    if RACE_FUEL is None or (s.session == "course" and s.game_phase >= 5) or not re.search(RACE_FUEL_RX, t):
+        return None
+    return RACE_FUEL()
 
 
 CANCEL_SET = None   # fonction(quoi: "tout" | "pneus" | "essence") : on oublie les ordres du pilote ; renvoie True si le menu est re-réglé
@@ -801,8 +824,15 @@ def parse_wheels(t: str):
     return w or None
 
 
-def tyre_command(t: str) -> str | None:
+def tyre_command(t: str, s: Snapshot | None = None) -> str | None:
     w = parse_wheels(t)
+    if w is None and re.search(r"\b(juste|seulement|uniquement|change|changer|changez|remplace|remplacer)\b.*\bpneus?\b|\bpneus? (creve|crevee|crevaison)", t):
+        # « juste le pneu » / « change le pneu crevé » : la ou les roues crevées ; « juste les pneus » : les quatre
+        flat = tuple(i for i, f in enumerate(getattr(s, "flat", None) or []) if f)
+        if re.search(r"\bpneus\b|\bles pneu", t):
+            w = (0, 1, 2, 3)
+        elif flat:
+            w = flat
     if w is None:
         return None
     if TYRES_SET is None:
@@ -867,8 +897,13 @@ def rival(t: str, s: Snapshot) -> str | None:
         if abs(d) < 0.1:
             parts.append(L("Vous tournez dans le même rythme.", "You're lapping at the same pace."))
         else:
-            parts.append(L(f"Il tourne {_f(abs(d))} seconde{'s' if abs(d) >= 2 else ''} {'plus vite' if d < 0 else 'moins vite'} que toi au dernier tour.",
-                           f"He was {_f(abs(d))} s {'quicker' if d < 0 else 'slower'} than you last lap."))
+            sec = f"seconde{'s' if abs(d) >= 2 else ''}"
+            if d < 0:
+                parts.append(L(f"Il tourne {_f(abs(d))} {sec} plus vite que toi au dernier tour.",
+                               f"He was {_f(abs(d))} s quicker than you last lap."))
+            else:
+                parts.append(L(f"Il tourne {_f(abs(d))} {sec} moins vite que toi au dernier tour.",
+                               f"He was {_f(abs(d))} s slower than you last lap."))
     if re.search(r"secteur|perd|plus rapide|plus vite|gagne|sector", t):
         a, b = s.sectors, car.get("sectors")
         if a and b and all(a) and all(b):
@@ -884,6 +919,7 @@ def rival(t: str, s: Snapshot) -> str | None:
 
 def answer(text: str, s: Snapshot, p: Plan) -> str:
     global LAST_TEXT
+    text = i18n.understand(text)   # autres langues : leurs tournures deviennent la question française
     c = command(text)
     if c:
         return c
@@ -894,18 +930,22 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
     # ordres pour le prochain arrêt : réparations et/ou essence (« répare mais sans ravitaillement »)
     f = fuel_command(t)
     r = repair_command(t)
-    w = tyre_command(t)
+    w = tyre_command(t, s)
     orders = [x for x in (r, w, f) if x]
     if orders:
         # « répare, change les avants et pas d'essence » : une seule phrase, « je corrige le menu » une fois à la fin
         tail = [L(" Je corrige le menu des stands.", " Updating the pit menu.")]
         fix = any(tail[0] in o for o in orders)
         body = [o.replace(tail[0], "") for o in orders]
-        body = [body[0]] + [b.replace("C'est noté, ", "Et ").replace("Copy, ", "And ") for b in body[1:]]
+        noted, also = L("C'est noté, ", "Copy, "), L("Et ", "And ")
+        body = [body[0]] + [b.replace(noted, also) for b in body[1:]]
         nxt = (L(" au prochain arrêt", " at the next stop"))
         body = [b.replace(nxt, "") for b in body[:-1]] + body[-1:]
         return " ".join(body) + (tail[0] if fix else "")
     k = cancel_command(t)
+    if k:
+        return k
+    k = race_fuel_command(t, s)
     if k:
         return k
     if not s.on_track:

@@ -59,7 +59,7 @@ def _dixiemes(x: float) -> str:
         return tr("moins d'un dixième", "less than a tenth")
     if d >= 10:
         return dec(tr(f"{abs(x):.1f} seconde{'s' if abs(x) >= 2 else ''}", f"{abs(x):.1f} seconds"))
-    return tr(f"{d} dixième" + ("s" if d > 1 else ""), f"{d} tenth" + ("s" if d > 1 else ""))
+    return tr(f"{d} dixième{'s' if d > 1 else ''}", f"{d} tenth{'s' if d > 1 else ''}")
 
 
 class LapTimes:
@@ -246,8 +246,8 @@ class LapTimes:
                 continue
             q = _dixiemes(x)
             pl = "s" if q.endswith("s") else ""
-            parts.append(tr(f"{q} {'gagné' if x < 0 else 'perdu'}{pl} au secteur {i + 1}",
-                            f"{q} {'gained' if x < 0 else 'lost'} in sector {i + 1}"))
+            parts.append(tr(f"{q} gagné{pl} au secteur {i + 1}", f"{q} gained in sector {i + 1}") if x < 0 else
+                         tr(f"{q} perdu{pl} au secteur {i + 1}", f"{q} lost in sector {i + 1}"))
         return (" " + ", ".join(parts).capitalize() + ".") if parts else ""
 
     def _one(self, deltas: list | None, who: str) -> str | None:
@@ -265,8 +265,8 @@ class LapTimes:
                             f"you gain {_dixiemes(deltas[gain])} in sector {gain + 1}"))
         if not parts:
             return tr(f"Même rythme que {who}.", f"Same pace as {who}.")
-        tot = tr(f"Au total {'tu gagnes' if total < 0 else 'tu perds'} {_dixiemes(total)} au tour.",
-                 f"Overall you {'gain' if total < 0 else 'lose'} {_dixiemes(total)} a lap.")
+        tot = (tr(f"Au total tu gagnes {_dixiemes(total)} au tour.", f"Overall you gain {_dixiemes(total)} a lap.") if total < 0
+               else tr(f"Au total tu perds {_dixiemes(total)} au tour.", f"Overall you lose {_dixiemes(total)} a lap."))
         return tr(f"Sur {who}, ", f"Against {who}, ") + tr(" et ", " and ").join(parts) + ". " + tot
 
     def summary(self, which: str = "both") -> str:

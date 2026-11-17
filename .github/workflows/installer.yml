@@ -29,7 +29,7 @@ jobs:
           # fichiers de l'appli
           $files = Get-ChildItem -File | Where-Object { $_.Name -notin @("Lancer.bat", "Demo.bat", "build_public.py", ".gitignore", ".gitattributes", "CLAUDE.md", "CHANGELOG.md") }
           Copy-Item $files build\app\
-          Copy-Item -Recurse ui, vendor build\app\
+          Copy-Item -Recurse ui, vendor, traductions build\app\
           # lanceur ApexRadio.exe (compilateur C# de .NET Framework, présent sur Windows)
           $csc = "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319\csc.exe"
           & $csc /nologo /codepage:65001 /target:winexe /optimize+ /win32icon:apex.ico /r:System.Windows.Forms.dll /out:build\app\ApexRadio.exe launcher\ApexRadio.cs

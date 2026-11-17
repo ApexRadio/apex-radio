@@ -18,6 +18,7 @@ import random
 import sys
 import threading
 import time
+from collections import deque
 import urllib.request
 
 from i18n import L, dec
@@ -59,7 +60,7 @@ def _dix(x: float) -> str:
     d = round(abs(x) * 10)
     if d >= 10:
         return dec(L(f"{abs(x):.1f} seconde{'s' if abs(x) >= 2 else ''}", f"{abs(x):.1f} seconds"))
-    return L(f"{max(1, d)} dixième" + ("s" if d > 1 else ""), f"{max(1, d)} tenth" + ("s" if d > 1 else ""))
+    return L(f"{max(1, d)} dixième{'s' if d > 1 else ''}", f"{max(1, d)} tenth{'s' if d > 1 else ''}")
 
 
 # ======================================================================= 1. spotter
@@ -139,7 +140,7 @@ class Spotter:
 class Traffic:
     GLOBAL_GAP = 30.0        # s : pas plus d'une annonce de trafic toutes les 30 s
 
-    CATCH_WINDOW = (8.0, 25.0)  # s : on prévient quand on va rattraper une voiture plus lente dans 8 à 25 s
+    CATCH_WINDOW = (18.0, 32.0)  # s : on prévient environ 30 s avant de rattraper une voiture plus lente
 
     def __init__(self, behavior=None) -> None:
         self.beh = behavior
@@ -166,6 +167,7 @@ class Traffic:
         pace = {k: sorted(v)[len(v) // 2] for k, v in bests.items()}
         mine = pace.get(me["c"]) or my_lap
         now = time.monotonic()
+        self._learn_speed(s, me)
         if now - self.last < self.GLOBAL_GAP:
             return
         for c in s.cars:
@@ -187,33 +189,87 @@ class Traffic:
                                 f"{name} coming up behind, {gap:.0f} second{'s' if round(gap) != 1 else ''}, {when}."))
         self._slower_ahead(s, me, pace, mine, speed, now, say)
 
+    NB = 200   # le tour découpé en 200 tronçons : ta vitesse habituelle dans chacun
+
+    def _learn_speed(self, s, me) -> None:
+        """Retient ta vitesse le long du tour (lente en virage, rapide en ligne droite)."""
+        if getattr(self, "vtrack", None) != s.track:
+            self.vtrack, self.vbin = s.track, [0.0] * self.NB
+        v = me.get("spd") or s.speed
+        if v and v > 5:
+            b = int(me["f"] * self.NB) % self.NB
+            self.vbin[b] = v if not self.vbin[b] else 0.7 * self.vbin[b] + 0.3 * v
+
+    def _predict(self, L, f_me, d, ratio):
+        """Où et quand tu rattrapes une voiture à d mètres devant, qui roule `ratio` fois plus lentement que toi
+        (même profil de vitesse que toi, à l'échelle). On fait avancer les deux voitures pas à pas : c'est juste
+        même quand la rencontre a lieu après une grande ligne droite ou une série de virages."""
+        vb = getattr(self, "vbin", None)
+        if not vb or sum(1 for v in vb if v) < 0.8 * self.NB:
+            return None
+        known = [v for v in vb if v]
+        avg = sum(known) / len(known)
+        vel = lambda f: vb[int((f % 1) * self.NB) % self.NB] or avg
+        pm, ps, t, dt = f_me, f_me + d / L, 0.0, 0.2
+        while t < 90:
+            pm += vel(pm) * dt / L
+            ps += vel(ps) / ratio * dt / L
+            t += dt
+            if pm >= ps:
+                return t, ps % 1
+        return None
+
     def _slower_ahead(self, s, me, pace, mine, speed, now, say) -> None:
         """Catégorie plus lente devant : on prévient où tu vas la rattraper, pour anticiper le dépassement.
         Une seule annonce à la fois (la plus proche), pas plus d'une fois toutes les 2 minutes par voiture."""
         L = s.track_len
-        slow = []
+        v_me = L / mine                                  # vitesse MOYENNE sur le tour (pas la vitesse du moment :
+        slow = []                                        # en sortie de virage ou en bout de ligne droite, elle fausse tout)
+        hist = getattr(self, "dist_hist", None)
+        if hist is None:
+            hist = self.dist_hist = {}
         for c in s.cars:
             if c.get("me") or c.get("pits") or c["c"] == me["c"] or c["c"] not in pace:
                 continue
             if pace[c["c"]] - mine <= 0.02 * mine:      # pas nettement plus lente
                 continue
-            gap = ((c["f"] - me["f"]) % 1) * L / speed  # temps pour arriver là où elle est
+            d = ((c["f"] - me["f"]) % 1) * L             # mètres jusqu'à elle
             key = (c["id"], "front")
+            h = hist.setdefault(key, deque(maxlen=40))
+            if h and d > h[-1][1] + 0.3 * L:             # elle vient d'être dépassée / tour bouclé : on repart à zéro
+                h.clear()
+            h.append((now, d))
+            gap = d / v_me                               # secondes pour arriver là où elle est
             prev = self.prev_gap.get(key)
             self.prev_gap[key] = gap
-            if gap < 8:
+            if gap < 20:                                 # au-delà, trop loin pour estimer
                 slow.append((gap, prev, c, key))
         slow.sort(key=lambda x: x[0])
         if now - self.last < self.GLOBAL_GAP:
             return
-        lo, hi = self.CATCH_WINDOW
+        # ~30 s avant sur les grands circuits ; sur un petit (tour de 50 s), 30 s c'est plus d'un demi-tour et trop
+        # d'imprévus (bagarre, arrêt, trafic) : on prévient au plus 40 % d'un tour avant, pour rester juste
+        target = min(30.0, 0.4 * mine)
+        lo, hi = max(8.0, target - 12.0), target + 2.0
         for gap, prev, c, key in slow:
             if prev is None or prev <= gap or now - self.said.get(key, -999) < 120:
                 continue
-            closing = speed - L / pace[c["c"]]           # m/s gagnés sur elle
+            v_slow = L / pace[c["c"]]
+            closing = v_me - v_slow                       # m/s gagnés sur elle, d'après les rythmes au tour
+            h = hist.get(key) or []
+            old = next(((t0, d0) for t0, d0 in h if now - t0 >= 8.0), None)
+            if old and now - old[0] <= 25:                # rapprochement vraiment mesuré ces dernières secondes
+                meas = (old[1] - h[-1][1]) / (now - old[0])
+                if meas > 0:
+                    closing = 0.5 * closing + 0.5 * meas
             if closing <= 0:
                 continue
-            t = gap * speed / closing                     # secondes avant de la rattraper
+            d = gap * v_me
+            t = d / closing                               # secondes avant de la rattraper
+            f_catch = (c["f"] + t * v_slow / L) % 1      # là où SERA la voiture lente quand on la rejoint
+            pr = self._predict(L, me["f"], d, pace[c["c"]] / mine)
+            if pr:                                        # mieux : avec ta vitesse réelle le long du tour
+                t, f_catch = pr
             if not (lo < t < hi):                         # trop tôt (inutile) ou trop tard (déjà dessus)
                 continue
             group = [x for x in slow if x[2]["c"] == c["c"] and 0 <= x[0] - gap < 2.0]
@@ -221,17 +277,35 @@ class Traffic:
                 self.said[x[3]] = now
             self.last = now
             name = class_name(c["cls"])
-            corner = self.beh.corner_at((me["f"] + t * speed / L) % 1) if self.beh else None
-            where = L_(f", tu la rattrapes au virage {corner}", f", you'll catch it at turn {corner}") if corner else ""
-            if gap < 1.0:
-                sec = L_("moins d'une seconde", "less than a second")
+            corner, before = None, False
+            if self.beh:
+                corner = self.beh.corner_at(f_catch)
+                if not corner:
+                    corner = self.beh.corner_at(f_catch, ahead=0.03)   # dans la ligne droite juste avant
+                    before = bool(corner)
+            secs = max(5, int(round(t / 5.0)) * 5)
+            n = len(group)
+            if n > 1:
+                if corner and before:
+                    msg = L_(f"{n} {name} plus lentes devant, tu les rattrapes dans {secs} secondes, avant le virage {corner}.",
+                             f"{n} slower {name} cars ahead, you'll catch them in {secs} seconds, before turn {corner}.")
+                elif corner:
+                    msg = L_(f"{n} {name} plus lentes devant, tu les rattrapes dans {secs} secondes, au virage {corner}.",
+                             f"{n} slower {name} cars ahead, you'll catch them in {secs} seconds, at turn {corner}.")
+                else:
+                    msg = L_(f"{n} {name} plus lentes devant, tu les rattrapes dans {secs} secondes.",
+                             f"{n} slower {name} cars ahead, you'll catch them in {secs} seconds.")
             else:
-                sec = L_(f"{gap:.0f} seconde{'s' if round(gap) > 1 else ''}", f"{gap:.0f} second{'s' if round(gap) != 1 else ''}")
-            if len(group) > 1:
-                where = where.replace("la rattrapes", "les rattrapes").replace("catch it", "catch them")
-                say(None, L_(f"{len(group)} {name} devant, à {sec}{where}.", f"{len(group)} {name} cars ahead, {sec}{where}."))
-            else:
-                say(None, L_(f"{name} plus lente devant, à {sec}{where}.", f"Slower {name} ahead, {sec}{where}."))
+                if corner and before:
+                    msg = L_(f"{name} plus lente devant, tu la rattrapes dans {secs} secondes, avant le virage {corner}.",
+                             f"Slower {name} ahead, you'll catch it in {secs} seconds, before turn {corner}.")
+                elif corner:
+                    msg = L_(f"{name} plus lente devant, tu la rattrapes dans {secs} secondes, au virage {corner}.",
+                             f"Slower {name} ahead, you'll catch it in {secs} seconds, at turn {corner}.")
+                else:
+                    msg = L_(f"{name} plus lente devant, tu la rattrapes dans {secs} secondes.",
+                             f"Slower {name} ahead, you'll catch it in {secs} seconds.")
+            say(None, msg)
             return
 
 
@@ -542,10 +616,11 @@ class Morale:
         lines = []
         if prev and last < prev - 0.3:
             d = prev - last
-            lines.append(var("lap", [(f"Super tour, {d:.1f} seconde de mieux que le précédent !".replace(".", ","),
+            ds = dec(f"{d:.1f}")
+            lines.append(var("lap", [(f"Super tour, {ds} seconde de mieux que le précédent !",
                                       f"Great lap, {d:.1f} seconds quicker than the last one!"),
-                                     (f"Gros tour ! {d:.1f} seconde de mieux.".replace(".", ","), f"Big lap! {d:.1f} seconds quicker."),
-                                     (f"Excellent, tu as gagné {d:.1f} seconde sur ce tour.".replace(".", ","),
+                                     (f"Gros tour ! {ds} seconde de mieux.", f"Big lap! {d:.1f} seconds quicker."),
+                                     (f"Excellent, tu as gagné {ds} seconde sur ce tour.",
                                       f"Excellent, you found {d:.1f} seconds on that lap.")]))
         elif prev and abs(last - prev) < 0.4:
             lines.append(var("reg", [("Belle régularité, continue sur ce rythme.", "Nice and consistent, keep this pace."),
@@ -952,3 +1027,96 @@ class Weather:
             if mins >= -1:
                 out.append({"mins": round(mins), "rain": round(n["rain"] * 100), "sky": L("|".join(SKY_FR), "|".join(SKY_EN)).split("|")[max(0, min(10, n["sky"]))]})
         return out[:4]
+
+
+# ======================================================================= 13. voie des stands
+class PitLane:
+    """Limiteur oublié à l'entrée des stands, et trafic qui arrive quand tu ressors.
+    Le point de sortie de chaque circuit est appris à la première sortie (stands.json)."""
+    LIMIT = 17.0       # m/s (~60 km/h) : au-dessus, le limiteur aurait dû être mis
+
+    def __init__(self) -> None:
+        try:
+            from paths import DATA
+            self.file = DATA / "stands.json"
+            self.exits = json.loads(self.file.read_text(encoding="utf-8"))
+        except Exception:
+            self.file, self.exits = None, {}
+        self.was_in = False
+        self._reset(0.0)
+
+    def _reset(self, now: float) -> None:
+        self.t_in, self.lim1, self.lim2, self.stopped, self.exit_said = now, False, False, False, False
+
+    def _save(self) -> None:
+        if self.file:
+            try:
+                self.file.write_text(json.dumps(self.exits, indent=1, ensure_ascii=False), encoding="utf-8")
+            except Exception:
+                pass
+
+    def update(self, s, say) -> None:
+        if not s.on_track or not s.track or not s.track_len:
+            self.was_in = False
+            return
+        me = next((c for c in s.cars if c.get("me")), None)
+        if not me:
+            return
+        now = time.monotonic()
+        if s.in_pits and not self.was_in:
+            self._reset(now)
+        if not s.in_pits and self.was_in and self.stopped:
+            self.exits[s.track] = round(me["f"], 4)          # fin de la voie des stands : on la retient
+            self._save()
+        self.was_in = s.in_pits
+        if not s.in_pits:
+            return
+        if s.speed < 1.0:
+            self.stopped = True
+        # 1) limiteur
+        if not self.stopped and s.limiter is False and s.speed > self.LIMIT:
+            dt = now - self.t_in
+            if dt > 1.0 and not self.lim1:
+                self.lim1 = True
+                say(None, L("Limiteur !", "Pit limiter!"), urgent=True)
+            elif dt > 5.0 and not self.lim2:
+                self.lim2 = True
+                say(None, L("Limiteur, tu vas prendre une pénalité !", "Pit limiter, you'll get a penalty!"), urgent=True)
+        # 2) sortie des stands
+        if self.stopped and not self.exit_said and s.speed > 5.0 and s.session != "qualif":
+            self._exit(s, me, say)
+
+    def _exit(self, s, me, say) -> None:
+        L_len = s.track_len
+        f_exit = self.exits.get(s.track)
+        threats = []
+        if f_exit is not None:
+            d = ((f_exit - me["f"]) % 1) * L_len
+            if d > 0.3 * L_len:
+                return                                        # pas encore dans la voie de sortie
+            my_eta = d / max(s.speed, 12.0)
+            if my_eta > 8.0:
+                return                                        # on prévient à quelques secondes de la sortie
+            for c in s.cars:
+                if c.get("me") or c.get("pits") or c.get("spd", 0) < 20:
+                    continue
+                eta = ((f_exit - c["f"]) % 1) * L_len / c["spd"]
+                if -1.0 < eta - my_eta < 3.0:
+                    threats.append(c)
+        else:
+            # circuit pas encore connu : on regarde juste ce qui arrive derrière au moment où tu repars
+            for c in s.cars:
+                if c.get("me") or c.get("pits") or c.get("spd", 0) < 20:
+                    continue
+                if ((me["f"] - c["f"]) % 1) * L_len / c["spd"] < 6.0:
+                    threats.append(c)
+        self.exit_said = True
+        if len(threats) == 1:
+            name = class_name(threats[0]["cls"])
+            say(None, L(f"Attention en sortie, {name} qui arrive, reste sur ta ligne.",
+                        f"Careful on exit, {name} coming, hold your line."), urgent=True)
+        elif threats:
+            say(None, L(f"Attention en sortie, {len(threats)} voitures qui arrivent, reste sur ta ligne.",
+                        f"Careful on exit, {len(threats)} cars coming, hold your line."), urgent=True)
+        elif f_exit is not None:
+            say(None, L("Sortie des stands dégagée.", "Pit exit is clear."))

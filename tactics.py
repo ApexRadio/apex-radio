@@ -33,8 +33,8 @@ def _lap(t: float) -> str:
 def _dix(x: float) -> str:
     d = round(abs(x) * 10)
     if d >= 10:
-        return dec(L(f"{abs(x):.1f} seconde" + ("s" if abs(x) >= 2 else ""), f"{abs(x):.1f} seconds"))
-    return L(f"{max(1, d)} dixième" + ("s" if d > 1 else ""), f"{max(1, d)} tenth" + ("s" if d > 1 else ""))
+        return dec(L(f"{abs(x):.1f} seconde{'s' if abs(x) >= 2 else ''}", f"{abs(x):.1f} seconds"))
+    return L(f"{max(1, d)} dixième{'s' if d > 1 else ''}", f"{max(1, d)} tenth{'s' if d > 1 else ''}")
 
 
 # ===================================================================== pénalités
@@ -213,6 +213,7 @@ class FuelBook:
         except Exception:
             self.data = {}
         self._race_key = None
+        self.weather = None      # fonction(s) -> phrase météo pour le briefing (branchée par app.py)
         self._last_save = 0.0
 
     def _save(self) -> None:
@@ -221,13 +222,21 @@ class FuelBook:
         except Exception:
             pass
 
-    def update(self, s, plan, eng) -> None:
+    def update(self, s, plan, eng, say=None) -> None:
+        if say:
+            self.pre_race(s, say)
         if not s.on_track or not s.track or s.in_pits:
             return
         d = self.data.setdefault(s.track, {})
         changed = False
         clean = [l for l in eng.laps if l.time and not l.dirty and l.number > 0]
         if plan.fuel_per_lap and len(clean) >= 3 and s.raining < 0.1:
+            if d.get("class") and s.car_class and d["class"] != s.car_class:
+                d.clear()                                   # autre voiture : sa conso ne vaut rien pour celle-ci
+            if plan.energy_per_lap:
+                d["epl"] = round(plan.energy_per_lap, 4)
+            else:
+                d.pop("epl", None)
             d.update({"fpl": round(plan.fuel_per_lap, 3), "avg": round(plan.avg_lap or 0, 3) or d.get("avg"),
                       "cap": s.fuel_capacity or d.get("cap"), "car": s.car, "class": s.car_class,
                       "date": time.strftime("%d/%m/%Y")})
@@ -238,12 +247,168 @@ class FuelBook:
                 d["race_laps"] = s.max_laps
                 d.pop("race_min", None)
             elif s.time_left:
-                d["race_min"] = int(round((s.elapsed + s.time_left) / 60))
+                # au feu vert, le temps restant = la durée de la course (le temps déjà écoulé compte la grille
+                # et le tour de formation : avec, 30 minutes devenaient 32 et Apex prévoyait 3 tours de trop)
+                d["race_min"] = int(round(s.time_left / 60))
                 d.pop("race_laps", None)
             changed = True
         if changed and time.monotonic() - self._last_save > 30:
             self._last_save = time.monotonic()
             self._save()
+
+    # ------------------------------------------------------- avant le départ
+    def need(self, s) -> dict | None:
+        """Ce qu'il faut pour la course : tours, litres (et énergie). Durée lue dans la session en cours si c'est
+        la course, sinon la dernière course connue sur ce circuit. None si on ne sait pas encore."""
+        d = self._mine(s)
+        fpl, avg = d.get("fpl"), d.get("avg")
+        if not fpl:
+            return None
+        laps = None
+        if s.session == "course" and s.max_laps:
+            laps = s.max_laps
+        elif s.session == "course" and s.time_left and s.time_left >= 300 and avg and s.game_phase < 5:
+            # avant le départ, LMU donne parfois le compte à rebours de la grille (1 min) au lieu de la durée
+            laps = math.ceil(s.time_left / avg)
+        elif d.get("race_laps"):
+            laps = d["race_laps"]
+        elif d.get("race_min") and avg:
+            laps = math.ceil(d["race_min"] * 60 / avg)
+        if not laps:
+            return None
+        cap = s.fuel_capacity or d.get("cap")
+        litres = math.ceil((laps + 1) * fpl)        # + 1 tour : tour de formation et marge
+        stop = bool(cap and litres > cap)
+        energy = None
+        if s.energy is not None and d.get("epl"):
+            e = (laps + 1) * d["epl"]
+            stop = stop or e > 1.0
+            energy = min(1.0, e)
+        return {"laps": laps, "litres": min(litres, int(cap)) if cap else litres, "stop": stop, "cap": cap, "energy": energy}
+
+    def _mine(self, s) -> dict:
+        """Données du circuit, seulement si elles viennent de la même catégorie de voiture."""
+        d = self.data.get(s.track, {}) if s.track else {}
+        if d.get("class") and s.car_class and d["class"] != s.car_class:
+            return {}
+        return d
+
+    def _no_data(self, s) -> str:
+        d = self._mine(s)
+        if not d.get("fpl"):
+            return L("Je ne connais pas encore ta conso sur ce circuit. Fais au moins 3 tours propres, en essais par exemple.",
+                     "I don't know your consumption on this track yet. Do at least 3 clean laps, in practice for example.")
+        return L("Je ne connais pas la durée de la course. Indique-la dans l'Atelier.",
+                 "I don't know the race length. Enter it in the Workshop.")
+
+    def _tank(self, s, n) -> str:
+        """Ce que tu as dans le réservoir par rapport à ce qu'il faut (avant le départ seulement)."""
+        if n["stop"]:
+            return ""
+        pct = n["energy"] is not None
+        have = (s.energy * 100 if s.energy is not None else None) if pct else s.fuel
+        want = n["energy"] * 100 if pct else n["litres"]
+        if not have or s.session != "course" or s.game_phase >= 5:
+            return ""
+        diff = have - want
+        h, x = round(have), round(abs(diff))
+        if diff >= (5 if pct else 3):
+            return (L(f"Tu as {h} % d'énergie, tu peux en enlever {x} %, la voiture sera plus légère.",
+                      f"You have {h} % energy, you can take off {x} %, the car will be lighter.") if pct else
+                    L(f"Tu as {h} litres, tu peux en enlever {x}, la voiture sera plus légère.",
+                      f"You have {h} litres, you can take off {x}, the car will be lighter."))
+        if diff < -1:
+            return (L(f"Attention, tu n'as que {h} % d'énergie, rajoute {x} %.",
+                      f"Careful, you only have {h} % energy, add {x} %.") if pct else
+                    L(f"Attention, tu n'as que {h} litres, rajoute-en {x}.",
+                      f"Careful, you only have {h} litres, add {x}."))
+        return L("Tu as ce qu'il faut, c'est bon.", "You've got what you need, all good.")
+
+    def brief(self, s) -> str:
+        """Réponse à « combien d'essence pour la course ? »."""
+        n = self.need(s)
+        if n is None:
+            return self._no_data(s)
+        laps = n["laps"]
+        if n["stop"]:
+            return L(f"Pour {laps} tours, un plein ne suffit pas : pars le réservoir plein, il faudra un arrêt.",
+                     f"For {laps} laps, one tank isn't enough: start full, you'll need a stop.")
+        if n["energy"] is not None:
+            out = L(f"Pour {laps} tours, il te faut {n['energy'] * 100:.0f} % d'énergie.",
+                    f"For {laps} laps, you need {n['energy'] * 100:.0f} % energy.")
+        else:
+            out = L(f"Pour {laps} tours, il te faut {n['litres']} litres.", f"For {laps} laps, you need {n['litres']} litres.")
+        tank = self._tank(s, n)
+        return out + (" " + tank if tank else "")
+
+    def _stops(self, s, n) -> tuple[int, int] | None:
+        """(arrêts prévus, tour du premier arrêt) en partant le plein fait."""
+        d = self._mine(s)
+        fpl, epl, cap = d.get("fpl"), d.get("epl") if n["energy"] is not None else None, n["cap"]
+        stint = min(cap / fpl if cap and fpl else math.inf, 1.0 / epl if epl else math.inf)
+        if stint == math.inf:
+            return None
+        stops = max(0, math.ceil((n["laps"] + 0.5) / max(stint - 0.5, 1.0)) - 1)
+        return stops, max(1, math.floor(stint - 0.2))
+
+    def briefing(self, s) -> str:
+        """Point avant le départ : durée, arrêts, essence, météo."""
+        n = self.need(s)
+        parts = []
+        mins = round(s.time_left / 60) if (s.session == "course" and s.time_left and s.time_left >= 300
+                                           and not s.max_laps and s.game_phase < 5) else None
+        if mins is None and not s.max_laps:
+            mins = self._mine(s).get("race_min")
+        if n is not None:
+            laps = n["laps"]
+            if s.max_laps or not mins:
+                parts.append(L(f"Briefing : course de {laps} tours.", f"Briefing: {laps}-lap race."))
+            elif mins == 60:
+                parts.append(L(f"Briefing : course d'une heure, environ {laps} tours.", f"Briefing: one-hour race, about {laps} laps."))
+            elif mins % 60 == 0:
+                parts.append(L(f"Briefing : course de {mins // 60} heures, environ {laps} tours.",
+                               f"Briefing: {mins // 60}-hour race, about {laps} laps."))
+            else:
+                parts.append(L(f"Briefing : course de {mins} minutes, environ {laps} tours.",
+                               f"Briefing: {mins}-minute race, about {laps} laps."))
+            st = self._stops(s, n)
+            if st and st[0] == 0:
+                parts.append(L("Pas d'arrêt nécessaire pour l'essence.", "No fuel stop needed."))
+            elif st and st[0] == 1:
+                parts.append(L(f"Un arrêt prévu, vers le tour {st[1]}. Pars le réservoir plein.",
+                               f"One stop planned, around lap {st[1]}. Start with a full tank."))
+            elif st:
+                parts.append(L(f"{st[0]} arrêts prévus, le premier vers le tour {st[1]}. Pars le réservoir plein.",
+                               f"{st[0]} stops planned, the first around lap {st[1]}. Start with a full tank."))
+            if not n["stop"]:
+                if n["energy"] is not None:
+                    parts.append(L(f"Il te faut {n['energy'] * 100:.0f} % d'énergie au départ.",
+                                   f"You need {n['energy'] * 100:.0f} % energy at the start."))
+                else:
+                    parts.append(L(f"Il te faut {n['litres']} litres au départ.", f"You need {n['litres']} litres at the start."))
+                tank = self._tank(s, n)
+                if tank:
+                    parts.append(tank)
+        else:
+            parts.append(L("Briefing.", "Briefing.") + " " + self._no_data(s))
+        if self.weather:
+            try:
+                w = self.weather(s)
+            except Exception:
+                w = ""
+            if w:
+                parts.append(w)
+        return " ".join(parts)
+
+    def pre_race(self, s, say) -> None:
+        """Une fois par course, avant le départ : le briefing (durée, arrêts, essence, météo)."""
+        if s.session != "course" or s.game_phase >= 5 or not s.on_track or not s.track or not s.fuel:
+            return
+        key = (s.track, s.session_code, "depart")
+        if getattr(self, "_pre_key", None) == key:
+            return
+        self._pre_key = key
+        say(None, self.briefing(s))
 
     def set_race(self, track: str, minutes: int | None, laps: int | None = None) -> None:
         d = self.data.setdefault(track, {})

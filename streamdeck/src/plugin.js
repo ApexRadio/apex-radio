@@ -140,7 +140,29 @@ class Ask extends ApexAction {
     }
 }
 
+// Commande de la voiture (phares, contact, TC +…) : Apex appuie sur la touche réglée dans LMU par le joueur.
+class Car extends ApexAction {
+    constructor() { super("car"); }
+    onKeyDown(ev) {
+        const cmd = (settingsOf.get(ev.action.id) || {}).cmd || "lights";
+        return this.press(ev, "/api/lmu/key", { cmd });
+    }
+}
+
+// Message rapide dans le tchat de LMU (texte réglable sous la touche).
+class Chat extends ApexAction {
+    constructor() { super("chat"); }
+    async onKeyDown(ev) {
+        const text = ((settingsOf.get(ev.action.id) || {}).text || "").trim();
+        if (!text) return ev.action.showAlert();
+        if (await post("/api/lmu/chat", { text })) await ev.action.showOk();
+        else await ev.action.showAlert();
+    }
+}
+
 const ALL = [
+    new Car(),
+    new Chat(),
     new Radio(),
     new Toggle("spotter", "/api/spotter/toggle"),
     new Toggle("quiet", "/api/voice/quiet"),
@@ -165,7 +187,7 @@ async function refresh() {
 }
 
 streamDeck.connect();
-// une fois par seconde (4 fois par seconde pendant que la radio écoute, pour que la touche réagisse vite)
+// 4 fois par seconde en piste (phares, contact… réagissent vite) ou pendant que la radio écoute, sinon 1 fois par seconde
 (function loop() {
-    refresh().finally(() => setTimeout(loop, sd && sd.radio === "écoute" ? 250 : 1000));
+    refresh().finally(() => setTimeout(loop, sd && (sd.radio === "écoute" || sd.on_track) ? 250 : 1000));
 })();

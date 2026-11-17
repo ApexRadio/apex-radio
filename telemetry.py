@@ -25,6 +25,7 @@ WHEELS = ("AVG", "AVD", "ARG", "ARD")  # avant gauche, avant droit, arrière gau
 @dataclass
 class Snapshot:
     connected: bool = False          # le jeu est-il lancé
+    game: str = "lmu"                # jeu lu : "lmu" (Le Mans Ultimate) ou "acevo" (Assetto Corsa EVO)
     on_track: bool = False           # le joueur est-il dans une voiture
     track: str = ""
     car: str = ""
@@ -52,6 +53,7 @@ class Snapshot:
     tyre_surface_temp: list = field(default_factory=lambda: [0.0] * 4)   # °C (surface, varie très vite)
     tyre_carcass_temp: list = field(default_factory=lambda: [0.0] * 4)   # °C (carcasse, la plus stable)
     tyre_inner_temp: list = field(default_factory=lambda: [0.0] * 4)     # °C (couche intérieure de la gomme)
+    car_state: dict = field(default_factory=dict)   # phares, contact, limiteur, essuie-glaces, TC, ABS… (Stream Deck)
     tyre_opt: float = 0.0                                        # température idéale des pneus (°C)
     brake_temp: list = field(default_factory=lambda: [0.0] * 4)  # °C
     tyre_pressure: list = field(default_factory=lambda: [0.0] * 4)  # kPa
@@ -87,6 +89,8 @@ class Snapshot:
     driver: str = ""
     lap_time: float | None = None    # temps écoulé dans le tour en cours (s)
     penalties: int = 0               # pénalités à purger (drive-through / stop-go)
+    limiter: bool | None = None      # limiteur de vitesse des stands (None : pas de limiteur sur cette voiture)
+    speed: float = 0.0               # ta vitesse (m/s)
 
     @property
     def done(self) -> bool:
@@ -126,6 +130,7 @@ def dynamics_sample(tel, sc, info) -> dict:
         "opt": tel.mWheels[0].mOptimalTemp, "ride": [tel.mFrontRideHeight, tel.mRearRideHeight],
         "tc": tel.mTC, "abs": tel.mABS, "bias": tel.mRearBrakeBias,
         "farb": tel.mFrontAntiSway, "rarb": tel.mRearAntiSway,
+        "btemp": [w.mBrakeTemp - 273.15 for w in tel.mWheels],
     }
 
 
@@ -335,7 +340,18 @@ class LMUSource:
         s.gap_ahead = tel.mTimeGapCarAhead if tel.mTimeGapCarAhead > 0 else None
         s.gap_behind = tel.mTimeGapCarBehind if tel.mTimeGapCarBehind > 0 else None
 
+        s.limiter = bool(tel.mSpeedLimiter) if getattr(tel, "mSpeedLimiterAvailable", 1) else None
+        s.speed = math.sqrt(tel.mLocalVel.x ** 2 + tel.mLocalVel.y ** 2 + tel.mLocalVel.z ** 2)
+
         s.fuel = tel.mFuel
+        try:
+            s.car_state = {"lights": bool(tel.mHeadlights), "ign": int(tel.mIgnitionStarter), "rpm": int(tel.mEngineRPM), "limiter": bool(tel.mSpeedLimiter),
+                     "wipers": int(tel.mWiperState), "tc": int(tel.mTC), "tc_max": int(tel.mTCMax),
+                     "tcslip": int(tel.mTCSlip), "tccut": int(tel.mTCCut), "abs": int(tel.mABS), "abs_max": int(tel.mABSMax),
+                     "map": int(tel.mMotorMap), "map_max": int(tel.mMotorMapMax),
+                     "bias": round(100 * (1 - tel.mRearBrakeBias), 1) if 0 < tel.mRearBrakeBias < 1 else None}
+        except (AttributeError, ValueError):
+            s.car_state = {}
         s.fuel_capacity = tel.mFuelCapacity
         s.energy = tel.mVirtualEnergy if tel.mVirtualEnergy > 0 else None
 
@@ -374,6 +390,46 @@ class LMUSource:
             y -= 256
         s.yellow = 1 <= y <= 6 or s.game_phase == 6
         return s
+
+
+class AutoSource:
+    """Choisit tout seul le jeu lancé : Assetto Corsa EVO s'il tourne, sinon Le Mans Ultimate."""
+
+    def __init__(self) -> None:
+        from acevo import ACEvoSource
+        self.lmu = LMUSource()
+        self.acevo = ACEvoSource()
+        self.cur = self.lmu
+        self._check = 0.0
+
+    def _pick(self):
+        now = time.time()
+        if now - self._check > 2:
+            self._check = now
+            try:
+                new = self.acevo if self.acevo.alive() else self.lmu
+            except Exception:
+                new = self.lmu
+            if new is not self.cur:
+                print(f"  Jeu détecté : {'Assetto Corsa EVO' if new is self.acevo else 'Le Mans Ultimate'}")
+                self.cur = new
+        return self.cur
+
+    def read(self) -> Snapshot:
+        return self._pick().read()
+
+    def fast_sample(self) -> dict | None:
+        return self.cur.fast_sample()
+
+    def spot_sample(self) -> dict | None:
+        return self.cur.spot_sample()
+
+    def close(self) -> None:
+        for src in (self.lmu, self.acevo):
+            try:
+                src.close()
+            except Exception:
+                pass
 
 
 def demo_track(f: float) -> tuple[float, float]:

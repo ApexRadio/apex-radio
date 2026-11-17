@@ -10,11 +10,11 @@ from pathlib import Path
 VERSION = "1.0.0"
 HERE = Path(__file__).parent
 OUT = HERE.parent / "ApexRadio-public"
-FILES = ["app.py", "alerts.py", "behavior.py", "debrief.py", "i18n.py", "incidents.py", "laptimes.py", "lmu_probe.py",
+FILES = ["app.py", "alerts.py", "behavior.py", "debrief.py", "i18n.py", "incidents.py", "laptimes.py", "lmu_probe.py", "lmukeys.py",
          "phrases.py", "pitmenu.py", "questions.py", "radio.py", "setups.py", "strategy.py", "tactics.py", "telemetry.py", "trackmap.py",
          "voice.py", "requirements.txt", "Lancer.bat", "Demo.bat", "apex.ico", "LICENSE", "README.md",
          "THIRD_PARTY_LICENSES.txt", "LISEZMOI.txt"]
-DIRS = ["ui", "vendor"]
+DIRS = ["ui", "vendor", "traductions"]
 
 if OUT.exists():
     shutil.rmtree(OUT)

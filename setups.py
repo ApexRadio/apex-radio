@@ -22,7 +22,7 @@ import time
 import unicodedata
 from pathlib import Path
 
-from i18n import L
+from i18n import L, dec
 
 HERE = Path(__file__).parent
 from paths import DATA, LOCAL  # noqa: E402
@@ -64,6 +64,8 @@ LABELS = {
     "TractionControlMapSetting": "Contrôle de traction", "DiffPowerSetting": "Différentiel (accélération)",
     "DiffCoastSetting": "Différentiel (lever de pied)", "CamberSetting": "Carrossage", "PressureSetting": "Pression",
     "RideHeightSetting": "Hauteur de caisse", "AntilockBrakeSystemMapSetting": "ABS",
+    "BrakePressureSetting": "Pression de freinage", "BrakeDuctSetting": "Écopes de frein avant",
+    "BrakeDuctRearSetting": "Écopes de frein arrière",
 }
 SECTION_FR = {"FRONTLEFT": "AVG", "FRONTRIGHT": "AVD", "REARLEFT": "ARG", "REARRIGHT": "ARD"}
 LABELS_EN = {
@@ -72,6 +74,8 @@ LABELS_EN = {
     "TractionControlMapSetting": "Traction control", "DiffPowerSetting": "Diff (power)",
     "DiffCoastSetting": "Diff (coast)", "CamberSetting": "Camber", "PressureSetting": "Pressure",
     "RideHeightSetting": "Ride height", "AntilockBrakeSystemMapSetting": "ABS",
+    "BrakePressureSetting": "Brake pressure", "BrakeDuctSetting": "Front brake ducts",
+    "BrakeDuctRearSetting": "Rear brake ducts",
 }
 SECTION_EN = {"FRONTLEFT": "FL", "FRONTRIGHT": "FR", "REARLEFT": "RL", "REARRIGHT": "RR"}
 
@@ -118,7 +122,7 @@ class Setup:
                     break
         for c in changes:
             idx, disp, n = self.values[(c["section"], c["key"])]
-            shown = c["to_disp"] if not str(c["to_disp"]).startswith("cran") else f"APEX (avant : {c['from_disp']})"
+            shown = c["to_disp"] if not (str(c["to_disp"]).startswith("cran") or c.get("est")) else f"APEX (avant : {c['from_disp']})"
             lines[n] = f"{c['key']}={c['to']}//{shown}"
         for i, line in enumerate(lines):
             if line.startswith("Notes="):
@@ -227,6 +231,9 @@ def find_settings_dir() -> str:
 
 
 # ===================================================================== atelier
+MAX_BALANCE = 3     # au plus 3 changements d'équilibre à la fois : on doit pouvoir savoir lequel a aidé
+
+
 class Workshop:
     def __init__(self, cfg: dict) -> None:
         self.cfg = cfg
@@ -373,6 +380,14 @@ class Workshop:
                 "apex_label": h.get("apex_label"), "versions": h.get("versions", []), "results": h.get("results", {}),
                 "factory": self.factory, "series": self.tag(), "mismatch": self.mismatch}
 
+    def state_full(self, track: str) -> dict:
+        st = self.state(track)
+        try:
+            st["review"] = self.review(track)
+        except Exception:
+            st["review"] = None
+        return st
+
     @staticmethod
     def _label(h: dict) -> str | None:
         """Nom de la version en cours : le nom du fichier, ou "v3" pour le fichier APEX."""
@@ -391,19 +406,74 @@ class Workshop:
     def _save(self) -> None:
         HISTORY.write_text(json.dumps(self.history, indent=2, ensure_ascii=False), encoding="utf-8")
 
-    def record_lap(self, track: str, lap: float, issues: list) -> None:
+    def record_lap(self, track: str, lap: float, issues: list) -> str | None:
         """Note le tour valide dans les résultats du setup en cours."""
         st = self.state(track)
         if not st["folder"] or not st["current"]:
-            return
+            return None
         if not st["label"]:
-            return
+            return None
         r = self.history.setdefault(self._hkey(st["folder"]), {"versions": [], "results": {}}).setdefault("results", {}).setdefault(st["label"], {"best": None, "laps": 0})
         r["laps"] += 1
         if r["best"] is None or lap < r["best"]:
             r["best"] = lap
         r["issues"] = [i["text"] for i in issues[:4]]
         self._save()
+        if r["laps"] == 3 and not r.get("reviewed"):        # assez de tours avec ce setup : on fait le bilan
+            rv = self.review(track)
+            if rv:
+                r["reviewed"] = True
+                self._save()
+                return rv["text"]
+        return None
+
+    def review(self, track: str) -> dict | None:
+        """Bilan de la version en cours comparée à celle dont elle vient : chrono et problèmes disparus / apparus."""
+        st = self.state(track)
+        h = self.history.get(self._hkey(st["folder"]), {})
+        label, res = st["label"], h.get("results", {})
+        ver = next((v for v in h.get("versions", []) if v["label"] == label), None)
+        cur = res.get(label) or {}
+        if not ver or ver.get("origin") or cur.get("laps", 0) < 3 or not cur.get("best"):
+            return None
+        base_label = ver.get("base")
+        base = res.get(base_label) or {}
+        if not base.get("best"):
+            return None
+        delta = cur["best"] - base["best"]
+        fixed = [i for i in base.get("issues", []) if i not in cur.get("issues", [])]
+        new = [i for i in cur.get("issues", []) if i not in base.get("issues", [])]
+        base_ver = next((v["version"] for v in h.get("versions", []) if v["label"] == base_label), None)
+        if delta <= -0.1 or (abs(delta) < 0.1 and len(fixed) > len(new)):
+            verdict = "better"
+        elif delta >= 0.2 or (0 < delta < 0.2 and len(new) > len(fixed)):
+            verdict = "worse"
+        else:
+            verdict = "same"
+        a = abs(delta)
+        if a < 1:
+            t = max(1, round(a * 10))
+            gap = L(f"{t} dixième{'s' if t > 1 else ''}", f"{t} tenth{'s' if t > 1 else ''}")
+        else:
+            gap = dec(L(f"{a:.1f} seconde{'s' if a >= 2 else ''}", f"{a:.1f} second{'s' if a >= 2 else ''}"))
+        if verdict == "better":
+            txt = L(f"Bilan du setup {label} : {gap} plus rapide que {base_label}", f"Setup {label} review: {gap} faster than {base_label}") \
+                if delta < 0 else L(f"Bilan du setup {label} : même chrono que {base_label}", f"Setup {label} review: same lap time as {base_label}")
+            if fixed:
+                txt += L(f", et ce problème a disparu : {fixed[0]}", f", and this problem is gone: {fixed[0]}")
+            txt += L(". On le garde.", ". We keep it.")
+        elif verdict == "worse":
+            txt = L(f"Bilan du setup {label} : {gap} plus lent que {base_label}", f"Setup {label} review: {gap} slower than {base_label}") \
+                if delta > 0 else L(f"Bilan du setup {label} : même chrono que {base_label}", f"Setup {label} review: same lap time as {base_label}")
+            if new:
+                txt += L(f", et un nouveau problème : {new[0]}", f", and a new problem: {new[0]}")
+            txt += L(f". Je te conseille de revenir à {base_label}, c'est un bouton dans l'atelier.",
+                     f". I'd go back to {base_label}, there's a button in the workshop.")
+        else:
+            txt = L(f"Bilan du setup {label} : pas de vraie différence avec {base_label}. Garde celui où tu te sens le mieux.",
+                    f"Setup {label} review: no real difference from {base_label}. Keep the one you feel best in.")
+        return {"verdict": verdict, "delta": round(delta, 3), "label": label, "base": base_label, "base_version": base_ver,
+                "fixed": fixed, "new": new, "text": txt}
 
     def sync_active(self, track: str) -> str | None:
         """Lit dans LMU le setup chargé ("Paulricard\\Nom") et le sélectionne tout seul. Renvoie son nom s'il a changé."""
@@ -450,10 +520,55 @@ class Workshop:
         new = idx + delta
         if new < 0:
             return None
+        lim = getattr(self, "_limits", {}).get(f"{section}|{key}")
+        if lim and (new - lim["at"]) * lim["block"] > 0:
+            return None   # LMU n'accepte pas d'aller plus loin sur cette voiture
         if known and new > max(known) + 3:
             return None
+        to_disp, est = known.get(new), False
+        if to_disp is None:
+            # pas encore vu dans tes fichiers : on l'estime à partir des valeurs connues (crans réguliers), sinon on dit « 1 cran de plus / de moins »
+            pts = sorted((i, _num(d)) for i, d in known.items() if _num(d) is not None)
+            unit = re.sub(r"^[\s\-+\d.,]+", "", disp or "").strip()
+            if len(pts) >= 2 and pts[-1][0] != pts[0][0]:
+                step = (pts[-1][1] - pts[0][1]) / (pts[-1][0] - pts[0][0])
+                v = pts[0][1] + (new - pts[0][0]) * step
+                to_disp = f"≈ {v:.{max(0, min(2, len(str(step).split('.')[-1]) if '.' in str(round(step, 2)) else 0))}f} {unit}".strip()
+            else:
+                n = abs(delta)
+                to_disp = L(f"{'+' if delta > 0 else '−'}{n} cran{'s' if n > 1 else ''} (depuis {disp})",
+                            f"{'+' if delta > 0 else '−'}{n} click{'s' if n > 1 else ''} (from {disp})")
+            est = True
         return {"section": section, "key": key, "label": label(section, key), "from": idx, "to": new, "from_disp": disp,
-                "to_disp": known.get(new, f"cran {new}")}
+                "to_disp": to_disp, "est": est}
+
+    def _learn_limits(self, st: dict, s: Setup) -> dict:
+        """Si LMU a remis un réglage à son ancienne valeur, c'est qu'Apex avait dépassé la plage permise sur cette voiture
+        (ex. carrossage avant déjà au minimum) : on retient la butée pour ne plus le reproposer."""
+        h = self.history.get(self._hkey(st["folder"]), {})
+        # les butées sont celles de la voiture : valables sur tous les circuits
+        lim = self.history.setdefault("_limits", {}).setdefault(s.vehicle or "?", {})
+        vers = [v for v in h.get("versions", []) if v.get("backup")]
+        if vers:
+            try:
+                b = Setup(Path(vers[-1]["backup"]))
+            except Exception:
+                b = None
+            changed = False
+            for (sec, key), (bi, bd, _) in (b.values.items() if b else []):
+                m = re.match(r"APEX \(avant : (.*)\)$", bd or "")
+                cur = s.get(sec, key)
+                if not m or not cur or cur[1].startswith("APEX") or cur[0] == bi or cur[1].strip() != m.group(1).strip():
+                    continue
+                k = f"{sec}|{key}"
+                new = {"block": 1 if bi > cur[0] else -1, "at": cur[0]}
+                if lim.get(k) != new:
+                    lim[k] = new
+                    changed = True
+                    print(f"  Atelier : {key} ({sec}) remis par LMU à {cur[1]} : butée retenue")
+            if changed:
+                self._save()
+        return lim
 
     def _direction(self, setup: Setup, section: str, key: str, default: int) -> int:
         """+1 si monter l'index fait monter la valeur affichée, -1 sinon (appris de tes fichiers)."""
@@ -488,7 +603,7 @@ class Workshop:
                         from_disp = known.get(idx, disp)
                         out.append({"section": "CONTROLS", "key": "RearBrakeSetting", "label": label("CONTROLS", "RearBrakeSetting"),
                                     "from": idx, "to": new, "from_disp": from_disp, "to_disp": to_disp, "live": True,
-                                    "why": L(f"{why} ({bf:.1f} % à l'avant)".replace(".", ","), f"{why} ({bf:.1f} % front)")})
+                                    "why": L(f"{why} ({dec(f'{bf:.1f}')} % à l'avant)", f"{why} ({bf:.1f} % front)")})
         for k, key in (("tc", "TractionControlMapSetting"), ("abs", "AntilockBrakeSystemMapSetting")):
             v, cur = live.get(k), s.get("CONTROLS", key)
             if not v or not cur:
@@ -528,9 +643,9 @@ class Workshop:
                 "why": L("essence pour la course : ", "fuel for the race: ") + fuel.get("why", "")}
 
     def propose(self, track: str, issues: list, findings: list, live: dict | None = None,
-                fuel: dict | None = None) -> dict:
+                fuel: dict | None = None, brakes: list | None = None) -> dict:
         self.scan()
-        st = self.state(track)
+        st = self.state_full(track)
         if self.factory:
             return {**st, "changes": [], "error": FACTORY_MSG()}
         if not st["folder"] or not st["current"]:
@@ -539,6 +654,7 @@ class Workshop:
         if not path.exists():
             return {**st, "changes": [], "error": L("Fichier introuvable.", "File not found.")}
         s = Setup(path)
+        self._limits = self._learn_limits(st, s)
         changes, used, conflict = [], set(), {}
         for ch in self._live(s, live or {}):      # ce que tu as réglé toi-même en piste passe en premier
             changes.append(ch)
@@ -565,35 +681,80 @@ class Workshop:
         # répartition de freinage : on raisonne en "% à l'avant"
         bias_dir = self._direction(s, "CONTROLS", "RearBrakeSetting", -1)   # index↑ = moins d'avant (Oreca)
 
-        def bias(towards_front: bool, why: str):
-            add("CONTROLS", "RearBrakeSetting", bias_dir if towards_front else -bias_dir, why)
 
+        # 1) on regroupe par problème (« sous-virage au milieu » dans 4 virages = un seul problème, plus grave),
+        #    on traite d'abord ce qui touche le plus de virages, et au plus MAX_BALANCE changements à la fois :
+        #    sinon impossible de savoir lequel a aidé.
+        groups = {}
         for it in issues:
-            k, w, why = it["kind"], it["where"], it["text"]
+            g = groups.setdefault((it["kind"], it["where"]), {"n": 0, "fast": 0, "why": it["text"], "corners": []})
+            g["n"] += 4 if it["corner"] == 0 else 1
+            g["fast"] += 1 if it.get("fast") else 0
+            g["corners"].append(it["corner"])
+        prio = {"blocage": 0, "survirage": 1, "sous-virage": 2, "patinage": 3, "surbraquage": 9}
+        coast, power = +1, +1     # différentiel : index↑ = plus de blocage (affichage pas fiable pour le deviner)
+        less_pressure = -self._direction(s, "CONTROLS", "BrakePressureSetting", +1)
+        balance = 0
+        for (k, w), g in sorted(groups.items(), key=lambda kv: (-kv[1]["n"], prio.get(kv[0][0], 5))):
+            if balance >= MAX_BALANCE:
+                break
+            n = g["n"]
+            clicks = 2 if n >= 4 else 1
+            fast = g["fast"] * 2 > len(g["corners"])
+            why = g["why"] if len(g["corners"]) == 1 else L(f"{g['why']} (et {len(g['corners']) - 1} autre{'s' if len(g['corners']) > 2 else ''})",
+                                                             f"{g['why']} (and {len(g['corners']) - 1} more)")
+            cands = []      # (section, clé, sens) : on prend le premier qui existe sur cette voiture
             if k == "blocage":
-                bias(towards_front="arrière" in w, why=why)
+                if n <= 2:
+                    continue                          # 1 ou 2 virages : c'est le pilotage, pas le setup
+                if "avant" in w:
+                    cands = [("CONTROLS", "AntilockBrakeSystemMapSetting", +1), ("CONTROLS", "BrakePressureSetting", less_pressure),
+                             ("CONTROLS", "RearBrakeSetting", -bias_dir)]
+                else:
+                    cands = [("DRIVELINE", "DiffCoastSetting", coast), ("CONTROLS", "RearBrakeSetting", bias_dir)]
+                clicks = 1
             elif k == "patinage":
-                add("CONTROLS", "TractionControlMapSetting", +1, why)
+                cands = [("CONTROLS", "TractionControlMapSetting", +1), ("DRIVELINE", "DiffPowerSetting", -power)]
             elif k == "sous-virage":
                 if w == "entrée":
-                    bias(False, why)
-                    add("SUSPENSION", "FrontAntiSwaySetting", -1, why)
+                    cands = [("SUSPENSION", "FrontAntiSwaySetting", -1), ("DRIVELINE", "DiffCoastSetting", -coast),
+                             ("SUSPENSION", "RearAntiSwaySetting", +1), ("CONTROLS", "RearBrakeSetting", -bias_dir)]
                 elif w == "milieu":
-                    add("SUSPENSION", "FrontAntiSwaySetting", -1, why)
-                    add("FRONTWING", "FWSetting", +1, why)
+                    cands = ([("FRONTWING", "FWSetting", +1), ("SUSPENSION", "FrontAntiSwaySetting", -1)] if fast else
+                             [("SUSPENSION", "FrontAntiSwaySetting", -1), ("FRONTWING", "FWSetting", +1)])
+                    cands += [("SUSPENSION", "RearAntiSwaySetting", +1), ("REARWING", "RWSetting", -1)]
                 else:
-                    add("DRIVELINE", "DiffPowerSetting", -1, why)
-                    add("SUSPENSION", "FrontAntiSwaySetting", -1, why)
+                    cands = [("DRIVELINE", "DiffPowerSetting", -power), ("SUSPENSION", "FrontAntiSwaySetting", -1),
+                             ("SUSPENSION", "RearAntiSwaySetting", +1)]
             elif k == "survirage":
                 if w == "entrée":
-                    bias(True, why)
-                    add("DRIVELINE", "DiffCoastSetting", +1, why)
+                    cands = [("DRIVELINE", "DiffCoastSetting", coast), ("CONTROLS", "RearBrakeSetting", bias_dir)]
                 elif w == "milieu":
-                    add("SUSPENSION", "RearAntiSwaySetting", -1, why)
-                    add("REARWING", "RWSetting", +1, why)
+                    cands = ([("REARWING", "RWSetting", +1), ("SUSPENSION", "RearAntiSwaySetting", -1)] if fast else
+                             [("SUSPENSION", "RearAntiSwaySetting", -1), ("REARWING", "RWSetting", +1)])
+                    cands += [("SUSPENSION", "FrontAntiSwaySetting", +1)]
                 else:
-                    add("CONTROLS", "TractionControlMapSetting", +1, why)
-                    add("SUSPENSION", "RearAntiSwaySetting", -1, why)
+                    cands = [("CONTROLS", "TractionControlMapSetting", +1), ("SUSPENSION", "RearAntiSwaySetting", -1),
+                             ("DRIVELINE", "DiffPowerSetting", -power), ("SUSPENSION", "FrontAntiSwaySetting", +1)]
+            for sec, key, d in cands:
+                before = len(changes)
+                add(sec, key, d * clicks, why)
+                if len(changes) == before and clicks > 1:
+                    add(sec, key, d, why)             # pas de 2e cran possible : on en met un
+                if len(changes) > before:
+                    balance += 1
+                    break
+
+        # 2) freins : écopes selon la température (trop chauds = on ouvre, trop froids = on ferme)
+        if brakes:
+            carbon = any(c in (self.car_class or "").upper() for c in ("HYPER", "LMH", "LMDH", "LMP2", "LMP3"))
+            hot, cold = (950.0, 400.0) if carbon else (750.0, 350.0)
+            for i, (sec_key, axle) in enumerate((("BrakeDuctSetting", L("avant", "front")), ("BrakeDuctRearSetting", L("arrière", "rear")))):
+                t = brakes[i]
+                if t > hot:
+                    add("BODYAERO", sec_key, -1, L(f"freins {axle} trop chauds ({t:.0f} °C)", f"{axle} brakes too hot ({t:.0f} °C)"))
+                elif 0 < t < cold:
+                    add("BODYAERO", sec_key, +1, L(f"freins {axle} trop froids ({t:.0f} °C)", f"{axle} brakes too cold ({t:.0f} °C)"))
 
         sym = (s.get("GENERAL", "Symmetric") or (0,))[0] == 1
         names = L("avant gauche|avant droit|arrière gauche|arrière droit", "front left|front right|rear left|rear right").split("|")
@@ -660,7 +821,8 @@ class Workshop:
         shutil.copyfile(apex, bdir / f"v{n}.svm")
         h["versions"].append({"version": n, "label": f"v{n}", "base": from_label, "date": time.strftime("%d/%m/%Y %H:%M"),
                               "backup": str(bdir / f"v{n}.svm"),
-                              "changes": [{k: c[k] for k in ("label", "key", "section", "from_disp", "to_disp", "why")} for c in changes]})
+                              "changes": [{k: c[k] for k in ("label", "key", "section", "from", "to", "from_disp", "to_disp", "why") if k in c}
+                                          for c in changes]})
         h["current"], h["apex_file"], h["apex_label"] = name, name, f"v{n}"
         self._save()
         self.scan(force=True)

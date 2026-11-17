@@ -1,6 +1,14 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.2.14
+- 🇫🇷 Nouveau : Apex Radio fonctionne aussi avec **Assetto Corsa EVO** ! Le jeu lancé est reconnu tout seul. Dans AC EVO : briefing et plan d'essence, positions gagnées/perdues, chronos et records, temps restant, spotter, carte du circuit, écarts devant/derrière, pneus et freins froids, dégâts, limiteur et drapeaux. Pas encore dans AC EVO : le menu des stands automatique, l'atelier setup et l'analyse du pilotage.
+- 🇬🇧 New: Apex Radio now also works with **Assetto Corsa EVO**! The running game is detected automatically. In AC EVO: briefing and fuel plan, places gained/lost, lap times and records, time left, spotter, track map, gaps ahead/behind, cold tyres and brakes, damage, pit limiter and flags. Not yet in AC EVO: automatic pit menu, setup workshop and driving analysis.
+- 🇫🇷 Réglages → Jeu : choisis « Mon jeu » (Le Mans Ultimate ou Assetto Corsa EVO) pour le bouton de lancement et le lancement automatique.
+- 🇬🇧 Settings → Game: pick "My game" (Le Mans Ultimate or Assetto Corsa EVO) for the launch button and auto-launch.
+- 🇫🇷 Records : un menu permet de choisir le jeu (tous, LMU ou AC EVO).
+- 🇬🇧 Records: a menu lets you pick the game (all, LMU or AC EVO).
+- 🇫🇷 Corrigé : l'atelier n'affichait plus l'historique des versions (et le bouton « Revenir à ») une fois le jeu fermé pour les setups ELMS/WEC, et le bilan setup de fin de course ne s'affichait pas.
+- 🇬🇧 Fixed: the workshop no longer showed the version history (and the "Go back to" button) for ELMS/WEC setups once the game was closed, and the end-of-race setup summary didn't show.
 - 🇫🇷 Voitures plus lentes devant : l'annonce arrive environ 30 secondes avant de les rattraper (au lieu de 2 secondes d'écart), avec le virage où tu vas les doubler (« GT3 plus lente devant, tu la rattrapes dans 30 secondes, au virage 7 »).
 - 🇬🇧 Slower cars ahead: the call now comes about 30 seconds before you catch them (instead of a 2-second gap), with the turn where you'll pass them ("Slower GT3 ahead, you'll catch it in 30 seconds, at turn 7").
 - 🇫🇷 Briefing d'avant-course : avant le départ, l'ingénieur fait le point (durée, nombre de tours, arrêts prévus, essence ou énergie à mettre, météo). Il te prévient si tu pars avec trop ou pas assez d'essence (« Il te faut 42 litres au départ. Tu as 70 litres, tu peux en enlever 28 »). Questions : « combien d'essence pour la course ? », « briefing ».

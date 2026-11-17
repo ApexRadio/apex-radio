@@ -191,13 +191,13 @@ def loop(state: State, demo: bool) -> None:
             return None
         bal = [c for c in prop["changes"] if not c.get("fuel") and not c.get("live")]
         if bal:
-            items = [L(f"{c['label']} de {c['from_disp']} à {c['to_disp']}, pour {c['why']}",
+            items = [i18n.L(f"{c['label']} de {c['from_disp']} à {c['to_disp']}, pour {c['why']}",
                        f"{c['label']} from {c['from_disp']} to {c['to_disp']}, for {c['why']}") for c in bal[:3]]
-            return (L("Pour le setup, je te propose : ", "For the setup, I suggest: ") + " ; ".join(items)
-                    + L(". C'est coché dans l'atelier setup : clique sur Créer, puis recharge le setup au garage.",
+            return (i18n.L("Pour le setup, je te propose : ", "For the setup, I suggest: ") + " ; ".join(items)
+                    + i18n.L(". C'est coché dans l'atelier setup : clique sur Créer, puis recharge le setup au garage.",
                         ". It's ticked in the setup workshop: click Create, then reload the setup in the garage."))
         if state.beh.issues:
-            return L("J'ai noté des choses à améliorer, mais les réglages qui les corrigent sont déjà au bout de leur plage sur ce setup. "
+            return i18n.L("J'ai noté des choses à améliorer, mais les réglages qui les corrigent sont déjà au bout de leur plage sur ce setup. "
                      "Rien de nouveau à changer pour l'instant.",
                      "I noted things to improve, but the settings that fix them are already at the end of their range on this setup. "
                      "Nothing new to change for now.")
@@ -296,6 +296,9 @@ def loop(state: State, demo: bool) -> None:
         state.workshop = Workshop({**state.radio.cfg, "setups_dir": str(demo_dir), "setup_folder_for": {}})
     else:
         state.workshop = Workshop(state.radio.cfg)
+        # dernière voiture connue : l'atelier montre le bon historique (ELMS / WEC) même jeu fermé
+        state.workshop.car_class = state.radio.cfg.get("last_car_class", "")
+        state.workshop.car = state.radio.cfg.get("last_car", "")
     state.workshop.scan(force=True)
     print(f"  Setups LMU : {state.workshop.dir} ({'trouvé' if state.workshop.ok() else 'introuvable'})")
     if state.workshop.ok():   # touches LMU du joueur, pour les commandes voiture du Stream Deck
@@ -351,8 +354,11 @@ def loop(state: State, demo: bool) -> None:
             morale.update(snap, say)
             carinfo.update(snap, say)
             lmu = getattr(snap, "game", "lmu") == "lmu"   # atelier setup : fichiers LMU seulement
-            if state.workshop and lmu:
+            if state.workshop and lmu and snap.car_class:   # jeu fermé : on garde la dernière voiture (historique ELMS/WEC)
                 state.workshop.car_class, state.workshop.car = snap.car_class, snap.car
+                if state.radio.cfg.get("last_car_class") != snap.car_class or state.radio.cfg.get("last_car") != snap.car:
+                    state.radio.cfg["last_car_class"], state.radio.cfg["last_car"] = snap.car_class, snap.car
+                    save_config(state.radio.cfg)
             weather.update(snap, say)
             crew.update(snap, plan)
             pen.update(snap, say)

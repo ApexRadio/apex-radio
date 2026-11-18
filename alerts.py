@@ -67,7 +67,11 @@ def _dix(x: float) -> str:
 class Spotter:
     CAR_LEN = 4.8      # m : chevauchement avant/arrière (vraiment côte à côte)
     SIDE_MIN, SIDE_MAX = 0.8, 4.0
-    CLEAR_DELAY = 1.0  # s : voie libre depuis 1 s avant de dire « dégagé »
+    # une fois annoncée, la voiture reste « à côté » un peu plus longtemps : les positions sont celles du CENTRE
+    # des voitures (5 m de long en Hypercar), lues 25 fois/s ; à 4,8 m on disait « dégagé » alors que l'arrière
+    # de l'autre voiture était encore au niveau de ta roue arrière
+    CAR_LEN_KEEP, SIDE_MAX_KEEP = 7.0, 5.0
+    CLEAR_DELAY = 1.2  # s : voie libre depuis 1,2 s avant de dire « dégagé »
     CONFIRM = 0.35     # s : la voiture doit rester à côté un instant (pas un dépassement éclair)
     SAME_SIDE_GAP = 4.0  # s : on ne répète pas le même côté trop vite
 
@@ -106,7 +110,10 @@ class Spotter:
             ddx, ddz = ox - x, oz - z
             along = ddx * fx + ddz * fz
             side = ddx * lx + ddz * lz
-            if abs(along) < self.CAR_LEN and self.SIDE_MIN < abs(side) < self.SIDE_MAX:
+            keep = self.left if side > 0 else self.right
+            clen = self.CAR_LEN_KEEP if keep else self.CAR_LEN
+            smax = self.SIDE_MAX_KEEP if keep else self.SIDE_MAX
+            if abs(along) < clen and self.SIDE_MIN < abs(side) < smax:
                 if side > 0:
                     left = True
                 else:

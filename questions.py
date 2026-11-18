@@ -365,8 +365,20 @@ def pit_command(s: Snapshot, p: Plan) -> str:
     return L("Je règle le menu des stands.", "Setting up the pit menu.")
 
 
+QUESTION_TEXT = ""
+# le pilote décrit ce qu'il ressent : on le croit, même si les mesures ne le montrent pas (encore)
+FEEL_OVER = r"glisse.{0,20}arriere|arriere.{0,15}(glisse|decroche|part|chasse|instable|lache)|chass|decroch|instable|nerveuse|survir|sur virage|tete a queue|loose|oversteer|snap|rear (is )?(sliding|stepping|unstable)"
+FEEL_UNDER = r"sous vir|sousvir|tourne pas|pousse|elargi|understeer|won t turn|doesn t turn|plows"
+
+
 def behavior(s: Snapshot, p: Plan) -> str:
-    return BEHAVIOR.summary() if BEHAVIOR else L("Analyse du comportement indisponible.", "Handling analysis unavailable.")
+    if not BEHAVIOR:
+        return L("Analyse du comportement indisponible.", "Handling analysis unavailable.")
+    t = QUESTION_TEXT or ""
+    kind = "survirage" if re.search(FEEL_OVER, t) else "sous-virage" if re.search(FEEL_UNDER, t) else None
+    if kind:
+        return BEHAVIOR.driver_report(kind)
+    return BEHAVIOR.summary()
 
 
 def record(s: Snapshot, p: Plan) -> str:
@@ -964,6 +976,8 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
     rv = rival(t, s)
     if rv:
         return rv
+    global QUESTION_TEXT
+    QUESTION_TEXT = t
     said = chat(t, s, alone=not any(re.search(pattern, t) for pattern, _ in TOPICS))
     replies = []
     for pattern, fn in TOPICS:

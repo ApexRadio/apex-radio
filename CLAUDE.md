@@ -65,6 +65,11 @@ Créateur : Laurent (pseudo lolotuner), francophone : **réponds-lui en françai
 - Reste à faire : course de test de Laurent (touches Voiture/Aides/Tchat, pneus à la voix, freins), durée du démarreur (1,5 s),
   dossier Caméras du profil. Puis fusion de `test-1.2.13` sur main (1.2.13), puis du plugin.
 
+## Versions de test données en zip (iRacing…)
+- Fichier `TEST` (name, build, branch, channel) seulement sur la branche de test : l'appli affiche « 1.2.14 · test iRacing v3 »
+  et regarde `raw.githubusercontent.com/ApexRadio/apex-radio/<branch>/TEST` : build plus grand = bandeau « nouvelle version
+  de test dans #infos-iracing ». Nouveau zip = augmenter `build`, pousser la branche. **Retirer `TEST` avant de fusionner sur main.**
+
 ## Idées / à faire
 - Vidéo de démo (Reel/Short) : question essence → réponse, spotter, « box box » + menu des stands réglé.
 - Option de repli si la mise à jour échoue ; signature de code un jour (message SmartScreen).

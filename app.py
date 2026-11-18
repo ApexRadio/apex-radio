@@ -1054,7 +1054,7 @@ def main() -> None:
     UPD.start()
     url = f"http://localhost:{PORT}"
     print("=" * 56)
-    print(f"  APEX//RADIO {UPD.version} — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate / Assetto Corsa EVO"))
+    print(f"  APEX//RADIO {UPD.label()} — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate / Assetto Corsa EVO / iRacing"))
     print(f"  Tableau de bord : {url}")
     print(f"  Sur téléphone : http://{local_ip()}:{PORT}/tel")
     print(f"  Tes données : {DATA}")

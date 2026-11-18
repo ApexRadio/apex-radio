@@ -27,6 +27,24 @@ def _num(v: str) -> tuple[int, ...]:
     return tuple(int(x) for x in re.findall(r"\d+", v)[:3]) or (0,)
 
 
+DISCORD = "https://discord.gg/ZHg4qXd26g"
+
+
+def test_info() -> dict | None:
+    """Version de test (fichier TEST à côté de app.py, seulement dans les zips de test) : nom, numéro, branche."""
+    try:
+        txt = (HERE / "TEST").read_text(encoding="utf-8")
+    except OSError:
+        return None
+    d = dict(l.split("=", 1) for l in txt.splitlines() if "=" in l)
+    d = {k.strip(): v.strip() for k, v in d.items()}
+    try:
+        d["build"] = int(d.get("build", "0"))
+    except ValueError:
+        d["build"] = 0
+    return d if d.get("branch") else None
+
+
 def current() -> str:
     try:
         return (HERE / "VERSION").read_text(encoding="utf-8").strip() or "0"
@@ -40,6 +58,25 @@ class Updates:
         self.latest: str | None = None
         self.url = PAGE
         self.previous: dict | None = None   # version stable juste avant celle installée (pour revenir en arrière)
+        self.test = test_info()             # version de test (zip donné aux testeurs) ou None
+        self.test_new: int | None = None    # numéro de la nouvelle version de test publiée sur GitHub
+
+    def check_test(self) -> None:
+        """Version de test : on regarde le fichier TEST de sa branche sur GitHub. Numéro plus grand = nouveau zip."""
+        if not self.test:
+            return
+        url = f"https://raw.githubusercontent.com/{REPO}/{self.test['branch']}/TEST"
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "ApexRadio/" + self.version})
+            with urllib.request.urlopen(req, timeout=8) as r:
+                txt = r.read().decode("utf-8", "replace")
+            m = re.search(r"build\s*=\s*(\d+)", txt)
+            n = int(m.group(1)) if m else 0
+            self.test_new = n if n > self.test["build"] else None
+            if self.test_new:
+                print(f"  Nouvelle version de test {self.test.get('name', '')} : v{n} (installée : v{self.test['build']})")
+        except Exception:
+            pass
 
     def check(self) -> None:
         try:
@@ -82,9 +119,21 @@ class Updates:
             while True:
                 self.check()
                 self.check_previous()
+                self.check_test()
                 time.sleep(6 * 3600)
         threading.Thread(target=run, daemon=True).start()
 
+    def label(self) -> str:
+        if self.test:
+            return f"{self.version} · test {self.test.get('name', '')} v{self.test['build']}"
+        return self.version
+
     def ui(self) -> dict:
-        return {"version": self.version, "latest": self.latest if self.available() else None, "url": self.url,
-                "previous": self.previous, "all": ALL}
+        out = {"version": self.label(), "latest": self.latest if self.available() else None, "url": self.url,
+               "previous": self.previous, "all": ALL}
+        if self.test:
+            # version de test : pas de bandeau « télécharge la version officielle » (elle effacerait la version de test)
+            out["test"] = {"name": self.test.get("name", ""), "build": self.test["build"], "new": self.test_new,
+                           "channel": self.test.get("channel", ""), "official": out["latest"], "discord": DISCORD}
+            out["latest"], out["previous"] = None, None
+        return out

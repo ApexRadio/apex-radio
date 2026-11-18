@@ -542,8 +542,22 @@ function render(d) {
     $("verprev").href = up.previous.url;
   }
   let hid = null; try { hid = localStorage.getItem("apex-upd-hide"); } catch (e) {}
+  const tst = up.test;
+  if (tst) {   // version de test : bandeau pour le testeur (nouveau zip, ou version officielle à ne pas installer)
+    const key = tst.new ? "test" + tst.new : tst.official ? "off" + tst.official : null;
+    $("upd").style.display = key && hid !== key ? "flex" : "none";
+    if (key) {
+      $("updtxt").textContent = tst.new
+        ? T(`Nouvelle version de test ${tst.name} v${tst.new} disponible (tu as la v${tst.build}) : récupère-la dans ${tst.channel} sur Discord.`,
+            `New ${tst.name} test version v${tst.new} available (you have v${tst.build}): get it in ${tst.channel} on Discord.`)
+        : T(`Version officielle ${tst.official} sortie : ne l'installe pas tout de suite, sinon ${tst.name} disparaît. Attends la prochaine version de test dans ${tst.channel}.`,
+            `Official version ${tst.official} is out: don't install it yet or ${tst.name} will disappear. Wait for the next test version in ${tst.channel}.`);
+      $("updlink").textContent = "DISCORD"; $("updlink").href = tst.discord;
+      $("updx").onclick = () => { try { localStorage.setItem("apex-upd-hide", key); } catch (e) {} $("upd").style.display = "none"; };
+    }
+  } else
   $("upd").style.display = up.latest && hid !== up.latest ? "flex" : "none";
-  if (up.latest) {
+  if (up.latest && !tst) {
     $("updtxt").textContent = T(`Nouvelle version ${up.latest} disponible (tu as la ${up.version})`, `New version ${up.latest} available (you have ${up.version})`);
     $("updlink").textContent = T("TÉLÉCHARGER", "DOWNLOAD"); $("updlink").href = up.url;
     $("updx").onclick = () => { try { localStorage.setItem("apex-upd-hide", up.latest); } catch (e) {} $("upd").style.display = "none"; };

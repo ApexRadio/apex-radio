@@ -164,8 +164,8 @@ class Traffic:
         my_lap = plan.avg_lap or s.last_lap or s.best_lap
         if not my_lap:
             return
-        L = s.track_len
-        speed = L / my_lap
+        Lm = s.track_len                         # (pas « L » : c'est la fonction des traductions)
+        speed = Lm / my_lap
         # rythme de chaque catégorie (médiane des meilleurs tours)
         bests = {}
         for c in s.cars:
@@ -183,7 +183,7 @@ class Traffic:
             delta = pace[c["c"]] - mine          # < 0 : catégorie plus rapide
             name = class_name(c["cls"])
             if delta < -0.02 * mine:             # plus rapide : on regarde derrière
-                gap = ((me["f"] - c["f"]) % 1) * L / speed
+                gap = ((me["f"] - c["f"]) % 1) * Lm / speed
                 key = (c["id"], "back")
                 prev = self.prev_gap.get(key)
                 self.prev_gap[key] = gap

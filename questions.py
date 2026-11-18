@@ -353,6 +353,7 @@ TOPICS = [
 
 LAPTIMES = None  # branché par app.py
 BEHAVIOR = None
+REFLAP = None
 PIT_ACTION = None   # fonction appelée pour régler le menu des stands
 REPAIR_SET = None   # fonction(True/False) : réparer ou pas au prochain arrêt ; renvoie True si le menu est re-réglé
 LAST_TEXT = ""      # dernière question (normalisée), pour savoir si on parle de devant ou de derrière
@@ -385,7 +386,13 @@ def record(s: Snapshot, p: Plan) -> str:
     return LAPTIMES.record_text(s) if LAPTIMES else L("Pas de chronos enregistrés.", "No lap times recorded.")
 
 
+def reference(s: Snapshot, p: Plan) -> str:
+    return REFLAP.report() if REFLAP else L("Pas de tour de référence.", "No reference lap.")
+
+
 def sectors(s: Snapshot, p: Plan) -> str:
+    if REFLAP and REFLAP.ref and REFLAP.last_cmp:     # « où je perds du temps » : d'abord face à ton meilleur tour
+        return REFLAP.report()
     if not LAPTIMES or not LAPTIMES.last:
         return L("Il me faut un tour complet et valide pour comparer les secteurs.", "I need a full valid lap to compare sectors.")
     t = LAPTIMES.summary()
@@ -558,6 +565,7 @@ def pace_rank(s: Snapshot, p: Plan) -> str:
 
 
 TOPICS[:0] = [
+    (r"reference|par rapport a (mon|ton) meilleur|compare (a|avec) mon meilleur|best lap reference|my best lap", reference),
     (r"\bfreins?\b(?! a main)|\bdisques? de frein|\bbrakes?\b", brakes),
     (r"limites? de (la )?piste|avertissements?|track limits?|\bwarnings?\b", track_limits),
     (r"(mon |ce |le )?(tour|chrono) (est |il est )?(valide|invalide|compte)|tour valid|valid lap|lap (valid|invalid|count)", lap_valid),

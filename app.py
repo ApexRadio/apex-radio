@@ -42,6 +42,7 @@ from incidents import Incidents
 from lmu_probe import Probe
 import phrases
 import lmukeys
+from reflap import RefLap
 from alerts import Spotter, Traffic, GapTrend, TrackLimits, Damage, Weather, WarmUp, CarInfo, Places, Morale, car_label, set_encourage, PitLane
 import debrief
 from pitmenu import PitCrew
@@ -146,6 +147,8 @@ def loop(state: State, demo: bool) -> None:
     beh = Behavior(state.map)
     beh.say = lambda key, text, **kw: eng.say(key, text, elapsed=state.snap.elapsed)
     questions.BEHAVIOR = beh
+    reflap = RefLap(beh)
+    questions.REFLAP = reflap
     state.beh = beh
     probe = Probe() if not demo else None
     say = lambda key, text, urgent=False: eng.say(key, text, urgent=urgent, elapsed=state.snap.elapsed)
@@ -327,6 +330,7 @@ def loop(state: State, demo: bool) -> None:
                               f" · carcasse {r(sn.tyre_carcass_temp)} · idéal {sn.tyre_opt:.0f}")
                     n_ok, t_rate = 0, time.monotonic()
                 beh.feed(m)
+                reflap.feed(m, state.snap, say)
                 k += 1
                 if k % 2 == 0:
                     spotter.feed(source.spot_sample())

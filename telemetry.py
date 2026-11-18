@@ -25,7 +25,7 @@ WHEELS = ("AVG", "AVD", "ARG", "ARD")  # avant gauche, avant droit, arrière gau
 @dataclass
 class Snapshot:
     connected: bool = False          # le jeu est-il lancé
-    game: str = "lmu"                # jeu lu : "lmu" (Le Mans Ultimate) ou "acevo" (Assetto Corsa EVO)
+    game: str = "lmu"                # jeu lu : "lmu" (Le Mans Ultimate), "acevo" (Assetto Corsa EVO), "iracing"
     on_track: bool = False           # le joueur est-il dans une voiture
     track: str = ""
     car: str = ""
@@ -393,12 +393,14 @@ class LMUSource:
 
 
 class AutoSource:
-    """Choisit tout seul le jeu lancé : Assetto Corsa EVO s'il tourne, sinon Le Mans Ultimate."""
+    """Choisit tout seul le jeu lancé : Assetto Corsa EVO ou iRacing s'ils tournent, sinon Le Mans Ultimate."""
 
     def __init__(self) -> None:
         from acevo import ACEvoSource
+        from iracing import IRacingSource
         self.lmu = LMUSource()
         self.acevo = ACEvoSource()
+        self.iracing = IRacingSource()
         self.cur = self.lmu
         self._check = 0.0
 
@@ -407,11 +409,12 @@ class AutoSource:
         if now - self._check > 2:
             self._check = now
             try:
-                new = self.acevo if self.acevo.alive() else self.lmu
+                new = self.acevo if self.acevo.alive() else self.iracing if self.iracing.alive() else self.lmu
             except Exception:
                 new = self.lmu
             if new is not self.cur:
-                print(f"  Jeu détecté : {'Assetto Corsa EVO' if new is self.acevo else 'Le Mans Ultimate'}")
+                names = {id(self.acevo): "Assetto Corsa EVO", id(self.iracing): "iRacing"}
+                print(f"  Jeu détecté : {names.get(id(new), 'Le Mans Ultimate')}")
                 self.cur = new
         return self.cur
 
@@ -425,7 +428,7 @@ class AutoSource:
         return self.cur.spot_sample()
 
     def close(self) -> None:
-        for src in (self.lmu, self.acevo):
+        for src in (self.lmu, self.acevo, self.iracing):
             try:
                 src.close()
             except Exception:

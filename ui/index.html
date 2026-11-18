@@ -347,7 +347,7 @@
           </details>
     </section>
     <section class="setsec"><h2>🏁 <span data-en="Game">Jeu</span></h2>
-      <div class="setrow"><span data-en="My game">Mon jeu</span><div class="setctl"><select id="gamesel" aria-label="Jeu" style="max-width:none;border:0;padding:2px 4px"><option value="lmu">Le Mans Ultimate</option><option value="acevo">Assetto Corsa EVO</option></select></div></div>
+      <div class="setrow"><span data-en="My game">Mon jeu</span><div class="setctl"><select id="gamesel" aria-label="Jeu" style="max-width:none;border:0;padding:2px 4px"><option value="lmu">Le Mans Ultimate</option><option value="acevo">Assetto Corsa EVO</option><option value="iracing">iRacing</option></select></div></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Used for the launch buttons. Apex Radio recognises the running game by itself either way.">Sert pour les boutons de lancement. De toute façon, Apex Radio reconnaît tout seul le jeu lancé.</div>
       <div class="setrow"><label for="autolmu" data-en="Launch my game when Apex opens">Lancer mon jeu à l'ouverture d'Apex</label><div class="setctl"><input type="checkbox" id="autolmu"></div></div>
       <div class="setrow" id="lmumoderow"><span data-en="Launch mode">Mode de lancement</span><div class="setctl"><select id="lmumode" aria-label="Mode de lancement" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
@@ -975,7 +975,7 @@ $("obx").onclick = () => { try { localStorage.setItem("apex_onboard", "done"); }
 $("vtest").addEventListener("click", () => { OB.voiceTested = true; try { localStorage.setItem("apex_vtested", "1"); } catch (e) {} });
 // ---- lancer Le Mans Ultimate (par Steam)
 let lmuClicked = 0, GAME = "lmu";
-const GAME_SHORT = { lmu: "LMU", acevo: "AC EVO" }, GAME_LONG = { lmu: "Le Mans Ultimate", acevo: "Assetto Corsa EVO" };
+const GAME_SHORT = { lmu: "LMU", acevo: "AC EVO", iracing: "iRacing" }, GAME_LONG = { lmu: "Le Mans Ultimate", acevo: "Assetto Corsa EVO", iracing: "iRacing" };
 $("gamesel").onchange = e => { GAME = e.target.value; fetch("/api/game", { method: "POST", body: JSON.stringify({ game: GAME }) }); };
 function launchLMU() { lmuClicked = Date.now(); fetch("/api/lmu/launch", { method: "POST" }); $("lmulaunch").textContent = T("⏳ Lancement…", "⏳ Launching…"); }
 $("lmulaunch").onclick = launchLMU; $("lmulaunch2").onclick = launchLMU;

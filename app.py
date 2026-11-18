@@ -860,7 +860,7 @@ class _Tee:
 
 LMU_STEAM_ID = 2399420
 ACEVO_STEAM_ID = 3058630   # Assetto Corsa EVO
-GAME_NAMES = {"lmu": "Le Mans Ultimate", "acevo": "Assetto Corsa EVO"}
+GAME_NAMES = {"lmu": "Le Mans Ultimate", "acevo": "Assetto Corsa EVO", "iracing": "iRacing"}
 
 
 def _steam_exe() -> str | None:
@@ -939,11 +939,31 @@ def sd_state(state) -> dict:
     return out
 
 
+def launch_iracing() -> bool:
+    """Ouvre l'interface d'iRacing (installée hors Steam en général)."""
+    if sys.platform != "win32":
+        return False
+    import subprocess
+    for root in (os.environ.get("ProgramFiles(x86)"), os.environ.get("ProgramFiles"), "C:\\Program Files (x86)"):
+        if not root:
+            continue
+        exe = Path(root) / "iRacing" / "ui" / "iRacingUI.exe"
+        if exe.exists():
+            try:
+                subprocess.Popen([str(exe)], close_fds=True, creationflags=getattr(subprocess, "DETACHED_PROCESS", 0))
+                return True
+            except Exception:
+                pass
+    return False
+
+
 def launch_lmu(mode: str = "ask", game: str = "lmu") -> bool:
     """Lance Le Mans Ultimate par Steam. mode « ask » : steam.exe -applaunch (Steam propose ses options s'il y en a) ;
     « normal » / « vr » / « openxr » : on demande directement cette option à Steam (steam://launch/<id>/<type>)."""
     if game == "acevo":
         return launch_steam_game(ACEVO_STEAM_ID, "Assetto Corsa EVO")
+    if game == "iracing":
+        return launch_iracing()
     url = f"steam://rungameid/{LMU_STEAM_ID}"
     try:
         if sys.platform == "win32":

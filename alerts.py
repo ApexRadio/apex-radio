@@ -85,6 +85,14 @@ class Spotter:
         if not m or not self.enabled or getattr(self, "session", "") == "qualif":
             return   # en qualif tu es seul en piste : pas de spotter
         now = time.monotonic()
+        if "lr" in m:          # iRacing dit directement s'il y a une voiture à gauche / à droite
+            lr = m["lr"]
+            if m.get("speed", 99) < 8:
+                self._set(False, False, now, quiet=True)
+                return
+            left, right = lr in (2, 4, 5), lr in (3, 4, 6)
+            self._sides(left, right, now)
+            return
         x, z = m["me"]
         self.hist.append((now, x, z))
         # 0,35 s d'historique pour connaître ta direction ; si les lectures arrivent espacées (PC chargé),
@@ -111,6 +119,9 @@ class Spotter:
                     left = True
                 else:
                     right = True
+        self._sides(left, right, now)
+
+    def _sides(self, left: bool, right: bool, now: float) -> None:
         for side, here in (("left", left), ("right", right)):
             if here:
                 self.last_seen[side] = now

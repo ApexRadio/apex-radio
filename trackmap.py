@@ -64,7 +64,7 @@ class TrackMap:
             return
         changed = False
         for c in s.cars:
-            if c["pits"] or not (0 <= c["f"] < 1):
+            if c["pits"] or c.get("nomap") or not (0 <= c["f"] < 1):
                 continue
             i = min(BINS - 1, int(c["f"] * BINS))
             if self.count[i] >= SAMPLES:

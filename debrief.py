@@ -291,7 +291,7 @@ def records_page() -> str:
                  + (f"  ({' · '.join(f'S{i + 1} {x:.3f}' for i, x in enumerate(sec))})" if sec else "")
                  + (f"\n🎯 {L('Tour idéal', 'Ideal lap')} {fmt(ideal)}" if ideal else "")
                  + f"\n📅 {r.get('date', '')} · Apex Radio")
-        game = "acevo" if track.endswith("(AC EVO)") else "lmu"
+        game = "acevo" if track.endswith("(AC EVO)") else "iracing" if track.endswith("(iRacing)") else "lmu"
         rows.append(f"""<div class="rec" data-game="{game}">{_thumb(track)}
   <div class="info"><div class="tr">{html.escape(track)}</div>
     <div class="muted">{html.escape(class_name(cls))} · {html.escape(r.get('car', ''))} · {html.escape(r.get('date', ''))}</div>
@@ -332,7 +332,7 @@ document.addEventListener("click", async e => {
     picker = (f"<p><label class='muted' for='recgame'>{L('Jeu', 'Game')} </label>"
               f"<select id='recgame' style='font:inherit;padding:4px 8px;border-radius:8px;background:var(--panel);color:inherit;border:1px solid var(--line)'>"
               f"<option value='all'>{L('Tous les jeux', 'All games')}</option><option value='lmu'>Le Mans Ultimate</option>"
-              f"<option value='acevo'>Assetto Corsa EVO</option></select></p>"
+              f"<option value='acevo'>Assetto Corsa EVO</option><option value='iracing'>iRacing</option></select></p>"
               f"<p class='muted' id='recnone' hidden>{L('Pas encore de record sur ce jeu.', 'No record on this game yet.')}</p>")
     body = css + L("<h1>MEILLEURS TOURS</h1><p class='muted'>Ton record sur chaque circuit, par catégorie (tours valides uniquement).</p>",
                    "<h1>BEST LAPS</h1><p class='muted'>Your record on each track, by class (valid laps only).</p>") + picker + \

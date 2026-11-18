@@ -142,6 +142,8 @@ def tyres(s: Snapshot, p: Plan) -> str:
     if flats:
         out.append(L(f"Crevaison {_tyre_names(flats)} ! Rentre au stand doucement.", f"Puncture {_tyre_names(flats)}! Bring it in slowly."))
     wear = [w * 100 for w in s.tyre_wear]          # LMU : 100 % = pneu neuf
+    if getattr(s, "game", "lmu") == "iracing":
+        out.append(L("iRacing ne donne l'état des pneus qu'au stand.", "iRacing only gives tyre condition in the pits."))
     if any(wear):
         avg = sum(wear) / 4
         worst = min(range(4), key=lambda i: wear[i])
@@ -360,6 +362,10 @@ LAST_TEXT = ""      # dernière question (normalisée), pour savoir si on parle 
 
 
 def pit_command(s: Snapshot, p: Plan) -> str:
+    if getattr(s, "game", "lmu") != "lmu":
+        out = L("Je ne peux pas régler le menu des stands dans ce jeu, fais-le dans le jeu. ",
+                "I can't set the pit menu in this game, do it in the game. ")
+        return out + pit(s, p)
     if PIT_ACTION is None:
         return L("Je ne peux pas régler le stand pour l'instant.", "I can't set the pit menu right now.")
     PIT_ACTION()

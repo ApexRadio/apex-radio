@@ -369,7 +369,7 @@ class IRacingSource:
         elif 0 <= rem < 7 * 24 * 3600:
             s.time_left = rem
 
-        s.laps_done = int(d.get("LapCompleted") or 0)
+        s.laps_done = max(0, int(d.get("LapCompleted") or 0))      # -1 avant le départ
         s.lap_frac = float(d.get("LapDistPct") or 0) % 1
         lt = float(d.get("LapLastLapTime") or 0)
         bt = float(d.get("LapBestLapTime") or 0)
@@ -473,6 +473,11 @@ class IRacingSource:
             if drv.get("CarClassID") == my_class:
                 same.append((int(cpos[i]) if i < len(cpos) and cpos[i] > 0 else 999, i, drv))
         s.num_cars = len(s.cars)
+        if not s.position:              # avant le départ iRacing donne 0 : on classe d'après la piste
+            order = sorted((c for c in s.cars), key=lambda c: -((int(laps[c["id"]]) if c["id"] < len(laps) else 0) + c["f"]))
+            s.position = next((k + 1 for k, c in enumerate(order) if c["me"]), 0)
+        if not s.class_position:
+            s.class_position = s.position
 
         # écarts : temps estimé pour arriver là où est chaque voiture (CarIdxEstTime), même principe que LMU
         lap_ref = s.best_lap or s.last_lap or _num(di.get("DriverCarEstLapTime"), 0) or None

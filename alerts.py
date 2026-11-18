@@ -223,8 +223,8 @@ class Traffic:
         """Catégorie plus lente devant : on prévient où tu vas la rattraper, pour anticiper le dépassement.
         Une seule annonce à la fois (la plus proche), pas plus d'une fois toutes les 2 minutes par voiture."""
         L = s.track_len
-        v_me = L / mine                                  # vitesse MOYENNE sur le tour (pas la vitesse du moment :
-        slow = []                                        # en sortie de virage ou en bout de ligne droite, elle fausse tout)
+        v_me = speed                                     # TA vitesse moyenne réelle en course (ton tour moyen), pas le
+        slow = []                                        # meilleur tour médian de ta catégorie : trop optimiste
         hist = getattr(self, "dist_hist", None)
         if hist is None:
             hist = self.dist_hist = {}
@@ -235,8 +235,8 @@ class Traffic:
                 continue
             d = ((c["f"] - me["f"]) % 1) * L             # mètres jusqu'à elle
             key = (c["id"], "front")
-            h = hist.setdefault(key, deque(maxlen=40))
-            if h and d > h[-1][1] + 0.3 * L:             # elle vient d'être dépassée / tour bouclé : on repart à zéro
+            h = hist.setdefault(key, deque(maxlen=250))  # ~50 s d'historique (5 mesures / s)
+            if h and (d > h[-1][1] + 0.3 * L or now - h[-1][0] > 5):   # dépassée / tour bouclé / trou : on repart à zéro
                 h.clear()
             h.append((now, d))
             gap = d / v_me                               # secondes pour arriver là où elle est
@@ -249,25 +249,30 @@ class Traffic:
             return
         # ~30 s avant sur les grands circuits ; sur un petit (tour de 50 s), 30 s c'est plus d'un demi-tour et trop
         # d'imprévus (bagarre, arrêt, trafic) : on prévient au plus 40 % d'un tour avant, pour rester juste
-        target = min(30.0, 0.4 * mine)
+        target = min(30.0, 0.4 * L / v_me)
         lo, hi = max(8.0, target - 12.0), target + 2.0
         for gap, prev, c, key in slow:
             if prev is None or prev <= gap or now - self.said.get(key, -999) < 120:
                 continue
-            v_slow = L / pace[c["c"]]
-            closing = v_me - v_slow                       # m/s gagnés sur elle, d'après les rythmes au tour
+            # Rapprochement MESURÉ sur 15 à 45 s (un morceau de tour entier : virages et lignes droites se compensent).
+            # Sans mesure fiable, on se tait : les rythmes au tour seuls se trompent (voiture plus rapide que sa
+            # catégorie, toi plus lent qu'en qualif) et on annonçait des voitures qu'on ne rattrapait qu'un tour après.
             h = hist.get(key) or []
-            old = next(((t0, d0) for t0, d0 in h if now - t0 >= 8.0), None)
-            if old and now - old[0] <= 25:                # rapprochement vraiment mesuré ces dernières secondes
-                meas = (old[1] - h[-1][1]) / (now - old[0])
-                if meas > 0:
-                    closing = 0.5 * closing + 0.5 * meas
-            if closing <= 0:
+            old = next(((t0, d0) for t0, d0 in h if now - t0 <= 45), None)
+            if not old or now - old[0] < 15:
                 continue
+            meas = (old[1] - h[-1][1]) / (now - old[0])  # m/s gagnés sur elle
+            if meas < 0.5:                                # tu ne reviens pas vraiment
+                continue
+            v_slow = L / (c.get("best") or pace[c["c"]])  # SA vitesse (son meilleur tour), pas celle de sa catégorie
+            by_pace = v_me - v_slow
+            closing = meas if by_pace <= 0 else min(1.3 * meas, 0.7 * meas + 0.3 * by_pace)
             d = gap * v_me
             t = d / closing                               # secondes avant de la rattraper
-            f_catch = (c["f"] + t * v_slow / L) % 1      # là où SERA la voiture lente quand on la rejoint
-            pr = self._predict(L, me["f"], d, pace[c["c"]] / mine)
+            if t > 45:
+                continue
+            f_catch = (c["f"] + t * (v_me - closing) / L) % 1   # là où SERA la voiture lente quand on la rejoint
+            pr = self._predict(L, me["f"], d, v_me / max(1.0, v_me - closing))
             if pr:                                        # mieux : avec ta vitesse réelle le long du tour
                 t, f_catch = pr
             if not (lo < t < hi):                         # trop tôt (inutile) ou trop tard (déjà dessus)

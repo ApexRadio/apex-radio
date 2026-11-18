@@ -153,6 +153,9 @@ class Behavior:
         self.brake_hist: deque = deque(maxlen=3)
         self.sgn = {1: 0, -1: 0}                # sens habituel volant / virage (pour repérer le contre-braquage)
         self.driver_issue = None                # ce que le pilote a signalé lui-même (« l'arrière glisse »)
+        self.trail: deque = deque()             # 5 dernières secondes (heure, vitesse, position, l'arrière glisse ?)
+        self.spin_t = -99.0
+        self.spin_corners = defaultdict(int)    # virage -> tête-à-queue sur la séance (pas besoin de 2 tours pour y croire)
 
     def live_controls(self, track: str) -> dict:
         """Réglages de la voiture lus en piste (pour les reporter dans le fichier de setup)."""
@@ -176,6 +179,7 @@ class Behavior:
             self.tyre_findings = []
             self.laps_seen = 0
             self.driver_issue = None
+            self.spin_corners.clear()
             self.base = None
             self.base_hist.clear()
             self.group_said.clear()
@@ -222,7 +226,9 @@ class Behavior:
             self._controls(m)
             if m["pits"]:
                 self.dirty = True
+                self.trail.clear()
                 return
+            self._spin_watch(m)
             if m["speed"] < MIN_SPEED:
                 return
             f = m["f"]
@@ -280,6 +286,32 @@ class Behavior:
                 self.temps_n += 1
                 if min(m["ride"]) < 0.002:
                     self.bottom += 1
+
+    def _spin_watch(self, m: dict) -> None:
+        """Tête-à-queue : la voiture glissait de l'arrière (contre-braquage ou arrière qui dérape plus que l'avant)
+        puis la vitesse s'effondre en quelques secondes. Un seul suffit : c'est le signe le plus clair d'un arrière instable."""
+        now = time.monotonic()
+        a = m.get("alpha") or [0.0] * 4
+        st, lat = m.get("steer") or 0.0, m.get("lat") or 0.0
+        norm = 1 if self.sgn[1] >= self.sgn[-1] else -1
+        cs = sum(self.sgn.values()) > 300 and abs(st) > 0.03 and abs(lat) > 3 and (1 if st * lat > 0 else -1) != norm
+        slide = cs or ((a[2] + a[3]) / 2 - (a[0] + a[1]) / 2 > 0.08)
+        tr = self.trail
+        tr.append((now, m["speed"], m["f"], slide))
+        while tr and now - tr[0][0] > 5:
+            tr.popleft()
+        if m["speed"] >= 8 or now - self.spin_t < 20:
+            return
+        fast = [x for x in tr if x[1] > 25]
+        if not fast or not any(x[3] for x in tr if x[0] >= fast[0][0]):
+            return
+        self.spin_t = now
+        f0 = next((x[2] for x in tr if x[3] and x[0] >= fast[0][0]), fast[-1][2])
+        c = self.corner_at(f0, ahead=0.02) or self.corner_at((f0 - 0.02) % 1)
+        tr.clear()
+        if c:
+            self.spin_corners[c] += 1
+            self._confirm()
 
     # ----------------------------------------------------------- fin de tour
     def _controls(self, m: dict) -> None:
@@ -388,6 +420,9 @@ class Behavior:
             for it in lap:
                 count[it] += 1
         confirmed = [it for it, k in count.items() if k >= 2]
+        for c in self.spin_corners:              # un tête-à-queue = arrière instable dans ce virage, tout de suite
+            if not any(k == "survirage" and cc == c for k, cc, _ in confirmed):
+                confirmed.append(("survirage", c, "milieu"))
         order = {"blocage": 0, "survirage": 1, "sous-virage": 2, "surbraquage": 3, "patinage": 4}
         confirmed.sort(key=lambda it: (order[it[0]], it[1]))
         self.group_n = defaultdict(int)          # (type, phase) -> nombre de virages touchés

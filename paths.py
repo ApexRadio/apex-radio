@@ -21,7 +21,7 @@ from pathlib import Path
 APP = Path(__file__).resolve().parent
 
 USER_FILES = ["config.json", "records.json", "fuelbook.json", "setups_history.json"]
-USER_DIRS = ["debriefs", "traces", "maps", "setup_backups"]
+USER_DIRS = ["debriefs", "traces", "maps", "setup_backups", "references"]
 LOCAL_DIRS = ["models"]
 
 

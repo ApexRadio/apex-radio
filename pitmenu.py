@@ -245,6 +245,10 @@ class PitCrew:
         keep = self.no_fuel_for == s.pit_stops or unplanned
         fuel_total = 0.0 if keep else getattr(p, "fuel_total", None)
         energy_total = None if keep else getattr(p, "energy_target", None)
+        if energy_total is None and not keep and fuel_total and s.energy and s.fuel and s.fuel > 0.5:
+            # voiture à énergie virtuelle sans objectif calculé : on convertit l'essence voulue en énergie,
+            # sinon le menu reste sur le plein complet
+            energy_total = min(1.0, fuel_total * s.energy / s.fuel)
         tyres = "Wet" if p.tyre_compound == "pluie" else "dry" if p.tyre_compound == "slicks" else \
             "same" if p.change_tyres else "keep" if p.change_tyres is False else None
         if self.tyres_for and self.tyres_for[0] == s.pit_stops and not p.tyre_compound:

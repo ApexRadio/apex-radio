@@ -151,6 +151,11 @@ class Behavior:
         self.corner_v = {}                      # virage -> vitesse mini habituelle (m/s), pour virages lents / rapides
         self.brake_peaks = None                 # [avant, arrière] : pic de température des freins par tour (médiane)
         self.brake_hist: deque = deque(maxlen=3)
+        self.sgn = {1: 0, -1: 0}                # sens habituel volant / virage (pour repérer le contre-braquage)
+        self.driver_issue = None                # ce que le pilote a signalé lui-même (« l'arrière glisse »)
+        self.trail: deque = deque()             # 5 dernières secondes (heure, vitesse, position, l'arrière glisse ?)
+        self.spin_t = -99.0
+        self.spin_corners = defaultdict(int)    # virage -> tête-à-queue sur la séance (pas besoin de 2 tours pour y croire)
 
     def live_controls(self, track: str) -> dict:
         """Réglages de la voiture lus en piste (pour les reporter dans le fichier de setup)."""
@@ -173,6 +178,8 @@ class Behavior:
             self.tyre_tips = []
             self.tyre_findings = []
             self.laps_seen = 0
+            self.driver_issue = None
+            self.spin_corners.clear()
             self.base = None
             self.base_hist.clear()
             self.group_said.clear()
@@ -191,6 +198,7 @@ class Behavior:
         self.over = defaultdict(int)            # virage -> mesures en surbraquage
         self.vmin = {}                          # virage -> vitesse mini sur ce tour
         self.bpeak = [0.0, 0.0]                 # pic de température des freins avant / arrière sur ce tour
+        self.csteer = defaultdict(int)          # (virage, phase) -> mesures en contre-braquage (l'arrière décroche)
         self.dirty = False
 
     # ----------------------------------------------------------- virages
@@ -218,7 +226,9 @@ class Behavior:
             self._controls(m)
             if m["pits"]:
                 self.dirty = True
+                self.trail.clear()
                 return
+            self._spin_watch(m)
             if m["speed"] < MIN_SPEED:
                 return
             f = m["f"]
@@ -242,6 +252,17 @@ class Behavior:
                     self.spins[c] += 1
             if abs(m["lat"]) > CORNER_LAT:
                 c = self.corner_at(f, ahead=0.02)
+                # contre-braquage : le volant tourné à l'opposé du virage = l'arrière décroche. Le sens normal
+                # (volant / accélération latérale) est appris sur la séance, pour ne pas dépendre des conventions du jeu.
+                st = m.get("steer") or 0.0
+                if abs(st) > 0.03:
+                    sg = 1 if st * m["lat"] > 0 else -1
+                    if abs(st) > 0.06 and abs(m["lat"]) > CORNER_LAT * 1.3:
+                        self.sgn[sg] += 1
+                    norm = 1 if self.sgn[1] >= self.sgn[-1] else -1
+                    if c and sum(self.sgn.values()) > 300 and sg != norm:
+                        ph = 0 if m["brk"] > 0.15 else 2 if m["thr"] > 0.5 else 1
+                        self.csteer[(c, ph)] += 1
                 if c:
                     self.vmin[c] = min(self.vmin.get(c, 999.0), m["speed"])
                     phase = 0 if m["brk"] > 0.15 else 2 if m["thr"] > 0.5 else 1
@@ -265,6 +286,32 @@ class Behavior:
                 self.temps_n += 1
                 if min(m["ride"]) < 0.002:
                     self.bottom += 1
+
+    def _spin_watch(self, m: dict) -> None:
+        """Tête-à-queue : la voiture glissait de l'arrière (contre-braquage ou arrière qui dérape plus que l'avant)
+        puis la vitesse s'effondre en quelques secondes. Un seul suffit : c'est le signe le plus clair d'un arrière instable."""
+        now = time.monotonic()
+        a = m.get("alpha") or [0.0] * 4
+        st, lat = m.get("steer") or 0.0, m.get("lat") or 0.0
+        norm = 1 if self.sgn[1] >= self.sgn[-1] else -1
+        cs = sum(self.sgn.values()) > 300 and abs(st) > 0.03 and abs(lat) > 3 and (1 if st * lat > 0 else -1) != norm
+        slide = cs or ((a[2] + a[3]) / 2 - (a[0] + a[1]) / 2 > 0.08)
+        tr = self.trail
+        tr.append((now, m["speed"], m["f"], slide))
+        while tr and now - tr[0][0] > 5:
+            tr.popleft()
+        if m["speed"] >= 8 or now - self.spin_t < 20:
+            return
+        fast = [x for x in tr if x[1] > 25]
+        if not fast or not any(x[3] for x in tr if x[0] >= fast[0][0]):
+            return
+        self.spin_t = now
+        f0 = next((x[2] for x in tr if x[3] and x[0] >= fast[0][0]), fast[-1][2])
+        c = self.corner_at(f0, ahead=0.02) or self.corner_at((f0 - 0.02) % 1)
+        tr.clear()
+        if c:
+            self.spin_corners[c] += 1
+            self._confirm()
 
     # ----------------------------------------------------------- fin de tour
     def _controls(self, m: dict) -> None:
@@ -348,6 +395,9 @@ class Behavior:
         for c, k in self.spins.items():
             if k >= 3:
                 found.add(("patinage", c, ""))
+        for (c, ph), k in self.csteer.items():
+            if k >= 8:          # ~0,15 s de contre-braquage dans ce virage : l'arrière a décroché
+                found.add(("survirage", c, PHASES[ph]))
         for c, k in self.over.items():
             if k >= 4:
                 found.add(("surbraquage", c, ""))
@@ -370,6 +420,9 @@ class Behavior:
             for it in lap:
                 count[it] += 1
         confirmed = [it for it, k in count.items() if k >= 2]
+        for c in self.spin_corners:              # un tête-à-queue = arrière instable dans ce virage, tout de suite
+            if not any(k == "survirage" and cc == c for k, cc, _ in confirmed):
+                confirmed.append(("survirage", c, "milieu"))
         order = {"blocage": 0, "survirage": 1, "sous-virage": 2, "surbraquage": 3, "patinage": 4}
         confirmed.sort(key=lambda it: (order[it[0]], it[1]))
         self.group_n = defaultdict(int)          # (type, phase) -> nombre de virages touchés
@@ -378,6 +431,8 @@ class Behavior:
         self.issues = [{"kind": k, "corner": c, "where": w, "text": self.describe((k, c, w)), "tip": self.tip((k, c, w)),
                         "fast": self.fast(c), "n": self.group_n[(k, w)]}
                        for k, c, w in confirmed]
+        if self.driver_issue and not any(i["kind"] == self.driver_issue["kind"] for i in self.issues):
+            self.issues.append(dict(self.driver_issue))
         # annonces regroupées ("sous-virage au milieu des virages 4, 5 et 6"), au plus 1 tous les 3 tours
         import alerts   # niveau d'encouragements choisi : « motivant » parle plus souvent
         lvl = alerts.ENCOURAGE
@@ -563,6 +618,39 @@ class Behavior:
             return None
         return L("Pour le setup, voici ce que je changerais : ", "For the setup, here's what I'd change: ") + " ; ".join(notes[:4]) \
             + L(". J'ouvre l'atelier setup avec mes propositions.", ". I'm opening the setup workshop with my suggestions.")
+
+    def driver_report(self, kind: str) -> str:
+        """Le pilote dit ce qu'il ressent (« l'arrière glisse », « elle ne tourne pas ») : on le note et on conseille,
+        même si les mesures ne le montrent pas encore. Repris dans les propositions de setup."""
+        with self.lock:
+            seen = [i for i in self.issues if i["kind"] == kind and not i.get("driver")]
+            w = "milieu"
+            if kind == "survirage":
+                txt = L("arrière instable, signalé par toi", "unstable rear, reported by you")
+                tip_now = L("un cran de contrôle de traction en plus, freine un peu plus tôt pour arriver moins vite en entrée, et accélère plus progressivement",
+                            "one more click of traction control, brake a bit earlier to carry less entry speed, and be smoother on the throttle")
+            else:
+                txt = L("sous-virage, signalé par toi", "understeer, reported by you")
+                tip_now = L("freine un peu plus tôt et en ligne droite, attends que l'avant morde avant de remettre les gaz",
+                            "brake a bit earlier and in a straight line, wait for the front to bite before getting on the throttle")
+            garage = _garage(kind, w)
+            self.driver_issue = {"kind": kind, "corner": 0, "where": w, "text": txt, "tip": tip_now,
+                                 "fast": False, "n": 4, "driver": True}
+            self.issues = [i for i in self.issues if not i.get("driver")]
+            if not any(i["kind"] == kind for i in self.issues):
+                self.issues.append(dict(self.driver_issue))
+            for k in [k for k in self.garage_notes if isinstance(k, tuple) and k[0] == "pilote"]:
+                del self.garage_notes[k]
+            self.garage_notes[("pilote", kind)] = f"{txt}{L(' : ', ': ')}{garage}" if garage else txt
+        if seen:
+            where = ", ".join(sorted({str(i["corner"]) for i in seen if i["corner"]}))
+            head = L(f"Bien reçu, je le vois aussi dans les mesures{(' : virages ' + where) if where else ''}. ",
+                     f"Copy, I see it in the data too{(' : turns ' + where) if where else ''}. ")
+        else:
+            head = L("Bien reçu, je te crois : les mesures ne le montrent pas encore clairement, je le note et je surveille. ",
+                     "Copy, I believe you: the data doesn't show it clearly yet, I'm noting it and watching. ")
+        tail = L(f" Au garage, je proposerai : {garage}." if garage else "", f" In the garage I'll suggest: {garage}." if garage else "")
+        return head + L("En attendant : ", "Meanwhile: ") + tip_now + "." + tail
 
     def summary(self) -> str:
         with self.lock:

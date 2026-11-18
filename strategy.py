@@ -178,6 +178,9 @@ class Engineer:
 
         fpl = self._per_lap("fuel")
         epl = self._per_lap("energy") if s.energy is not None else None
+        if not epl and fpl and s.energy and s.fuel and s.fuel > 0.5:
+            # énergie virtuelle pas encore mesurée : on la déduit de l'essence (le rapport essence/énergie est fixe)
+            epl = fpl * s.energy / s.fuel
         avg = self._avg_lap() or s.last_lap or s.best_lap
         p.fuel_per_lap, p.energy_per_lap, p.avg_lap = fpl, epl, avg
 

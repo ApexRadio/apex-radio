@@ -710,7 +710,9 @@ class WarmUp:
     def limits(s) -> tuple[float, float]:
         opt = s.tyre_opt if 40 <= (s.tyre_opt or 0) <= 150 else 80.0
         c = (s.car_class or "").upper()
-        brake = 250.0 if any(k in c for k in CARBON) else 180.0
+        # bas de la plage de fonctionnement : carbone ~400-800 °C, acier (GT3, LMP3) ~300-600 °C.
+        # (avant : 250 / 180, et l'ingénieur disait « freins chauds » à 250 °C en Hypercar)
+        brake = 400.0 if any(k in c for k in CARBON) else 300.0
         return min(opt - 20.0, 55.0), brake   # LMU vise ~90 °C mais roule vers 70 : froid = sous 55 °C
 
     def cold(self, s) -> tuple[bool, bool]:
@@ -762,6 +764,9 @@ class WarmUp:
             return
         if not tc and not bc:
             self.watch = None
+            if not any(b > -50 for b in s.brake_temp[:2]):      # jeu sans température de freins
+                say(None, L("Pneus en température. Tu peux attaquer !", "Tyres are up to temperature. You can push now!"))
+                return
             say(None, var("warm", [("Pneus et freins en température. Vas-y, tu peux attaquer !",
                                     "Tyres and brakes are up to temperature. Go on, you can push now!"),
                                    ("Tout est chaud, pneus et freins. À toi de jouer !", "Everything's warm, tyres and brakes. Over to you!"),

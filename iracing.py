@@ -440,6 +440,7 @@ class IRacingSource:
         s.pit_stops = self._stops
         cf = d.get("CarIdxSessionFlags") or []
         s.penalties = 1 if me < len(cf) and int(cf[me]) & F_BLACK else 0
+        s.blue = bool(me < len(cf) and int(cf[me]) & 0x0020)        # drapeau bleu montré à ta voiture
 
         # météo
         s.air_temp = float(d.get("AirTemp") or 0)

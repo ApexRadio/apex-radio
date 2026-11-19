@@ -11,6 +11,8 @@
 - 🇬🇧 Assetto Corsa EVO: driving analysis and damage; announced position fixed.
 - 🇫🇷 Menus déroulants visibles dans tes vidéos ; « GT3 » bien prononcé.
 - 🇬🇧 Drop-down menus visible in your videos; "GT3" pronounced properly.
+- 🇫🇷 Drapeau bleu annoncé (course et essais) ; Apex se met en attente si le serveur plante.
+- 🇬🇧 Blue flag called (race and practice); Apex goes on standby if the server crashes.
 - 🇫🇷 Correctifs : voitures plus rapides derrière (l'annonce plantait en multiclasse), plein d'énergie des Hypercars au stand.
 - 🇬🇧 Fixes: faster cars behind (the warning crashed in multiclass), Hypercar energy refill at the pits.
 

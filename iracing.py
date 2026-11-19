@@ -351,6 +351,14 @@ class IRacingSource:
         sessions = {int(_num(x.get("SessionNum"), -1)): x for x in info.get("SessionInfo", {}).get("_Sessions", [])}
         sess = sessions.get(snum, {})
         s.session, s.session_code = _session(sess.get("SessionType", ""))
+        # durée de la course du week-end, connue dès les essais (pour le briefing essence)
+        race = next((x for x in sessions.values() if "race" in x.get("SessionType", "").lower()), None)
+        if race:
+            sl, st = race.get("SessionLaps", ""), race.get("SessionTime", "")
+            if sl.isdigit() and int(sl) > 0:
+                s.race_laps_known = int(sl)
+            elif "sec" in st and _num(st) > 0:
+                s.race_min_known = int(round(_num(st) / 60))
         key = (s.track, snum, wk.get("SessionID"), wk.get("SubSessionID"))
         if key != self._sess:
             self._sess, self._stops, self._done_lap = key, 0, None

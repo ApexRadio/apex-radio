@@ -222,7 +222,7 @@ a{{color:var(--accent)}} .back{{text-decoration:none}}
 @media(max-width:700px){{.row{{grid-template-columns:1fr 1fr}}}}
 </style></head><body>
 <nav class="nav"><a class="home" href="/">← {L('TABLEAU DE BORD', 'DASHBOARD')}</a><a class="nrec" href="/records">RECORDS</a><a href="/debriefs">{L('DÉBRIEFS', 'DEBRIEFS')}</a></nav>
-{body}</body></html>"""
+{body}<script src="/fsel.js"></script></body></html>"""
 
 
 # ------------------------------------------------------------------- records par circuit

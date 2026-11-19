@@ -547,6 +547,8 @@ def make_handler(state: State):
                 with state.lock:
                     body = state.payload
                 ctype = "application/json"
+            elif self.path.split("?")[0] == "/fsel.js":          # menus déroulants visibles dans les vidéos
+                body, ctype = (HERE / "ui" / "fsel.js").read_bytes(), "text/javascript; charset=utf-8"
             elif self.path == "/favicon.ico":
                 body, ctype = (HERE / "apex.ico").read_bytes(), "image/x-icon"
             elif self.path.rstrip("/") in ("/tel", "/phone"):

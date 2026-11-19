@@ -37,6 +37,10 @@ class Snapshot:
     max_laps: int | None = None      # course au nombre de tours
     race_laps_known: int | None = None   # durée de la course du week-end donnée par le jeu dès les essais (iRacing)
     race_min_known: int | None = None
+    fixed_setup: bool = False        # setup imposé (iRacing : ARCA, rookies…) : pas de conseils de réglages
+    oval: bool = False               # circuit ovale
+    pit_limit: float | None = None   # vitesse limite dans la voie des stands (m/s), si le jeu la donne
+    pits_open: bool | None = None    # stands ouverts (sous caution en NASCAR), si le jeu le donne
     elapsed: float = 0.0
     laps_done: int = 0
     lap_frac: float = 0.0            # progression dans le tour en cours (0..1)

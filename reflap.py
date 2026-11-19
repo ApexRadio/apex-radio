@@ -123,7 +123,8 @@ class RefLap:
             if 0.4 < m["f"] < 0.6:
                 self.mid_last = s.last_lap      # chrono du tour PRÉCÉDENT : il changera quand ce tour-ci sera fini
             self.trace.append((m["f"], m["speed"], m.get("brk") or 0.0, m.get("thr") or 0.0))
-            calm = not s.yellow and s.game_phase != 6 and not (s.session == "course" and s.laps_done < 1)
+            calm = not s.yellow and s.game_phase != 6 and not (s.session == "course" and s.laps_done < 1) \
+                and not getattr(s, "oval", False)          # ovale : l'aspiration fausse tout, on ne compare pas
             if self.ref and self.clean and calm:
                 self._compare(m["f"], s, say)
 

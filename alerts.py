@@ -95,6 +95,7 @@ class Spotter:
                 self._set(False, False, now, quiet=True)
                 return
             left, right = lr in (2, 4, 5), lr in (3, 4, 6)
+            self.two = "left" if lr == 5 else "right" if lr == 6 else None
             self._sides(left, right, now)
             return
         x, z = m["me"]
@@ -144,14 +145,75 @@ class Spotter:
 
     def _set(self, left: bool, right: bool, now: float, quiet: bool = False) -> None:
         state = "both" if left and right else "left" if left else "right" if right else "clear"
+        two = getattr(self, "two", None)
+        if two and state == two:
+            state += "2"                       # iRacing : deux voitures du même côté
         if state != self.state and not quiet:
             msg = {"both": L("Des deux côtés !", "Three wide!"), "left": L("À gauche !", "Car left!"),
-                   "right": L("À droite !", "Car right!"), "clear": L("Dégagé.", "Clear.")}[state]
+                   "right": L("À droite !", "Car right!"), "clear": L("Dégagé.", "Clear."),
+                   "left2": L("Deux à gauche !", "Two cars left!"), "right2": L("Deux à droite !", "Two cars right!")}[state]
             # pas deux fois la même annonce en quelques secondes ; « dégagé » seulement après une vraie annonce
             if now - self.last_said.get(state, -99) >= self.SAME_SIDE_GAP and (state != "clear" or self.state != "clear"):
                 self.last_said[state] = now
                 self.voice.say(msg, spot=True)
         self.state, self.left, self.right = state, left, right
+
+
+class Caution:
+    """Neutralisation (caution NASCAR, FCY) en course : un point stratégie automatique.
+    Stands ouverts ou non (si le jeu le dit), essence jusqu'à l'arrivée, tours restants, puis combien rentrent."""
+
+    def __init__(self) -> None:
+        self.on = False
+
+    def update(self, s, plan, say) -> None:
+        if s.session != "course" or not s.on_track or s.done:
+            self.on = False
+            return
+        now = time.monotonic()
+        if s.game_phase != 6:
+            self.on = False
+            return
+        if not self.on:
+            self.on, self.t, self.said, self.open_t, self.counted = True, now, False, None, False
+            self.open_said = False
+        if not self.said and now - self.t > 4:
+            self.said = True
+            parts = [L("Caution, on fait le point.", "Caution, here's the picture.")]
+            if s.pits_open is not None:
+                parts.append(L("Stands ouverts.", "Pits are open.") if s.pits_open else L("Stands fermés pour l'instant.", "Pits closed for now."))
+                self.open_said = bool(s.pits_open)
+            parts.append(self._fuel(s, plan))
+            if plan.laps_to_finish:
+                n = math.ceil(plan.laps_to_finish)
+                parts.append(L(f"Il reste environ {n} tour{'s' if n > 1 else ''}.", f"About {n} lap{'s' if n > 1 else ''} to go."))
+            say(None, " ".join(x for x in parts if x))
+            return
+        if self.said and s.pits_open and self.open_t is None:
+            self.open_t = now
+            if not self.open_said:
+                say(None, L("Les stands sont ouverts. ", "Pits are open. ") + self._fuel(s, plan))
+        if self.open_t and not self.counted and now - self.open_t > 25:
+            self.counted = True
+            n = sum(1 for c in s.cars if c.get("pits") and not c.get("me"))
+            if n:
+                say(None, L(f"{n} voiture{'s' if n > 1 else ''} au stand pendant la caution.",
+                            f"{n} car{'s' if n > 1 else ''} pitting under the caution."))
+
+    @staticmethod
+    def _fuel(s, plan) -> str:
+        if not plan.ready:
+            return ""
+        if plan.stops_needed == 0:
+            return L("L'essence suffit jusqu'à l'arrivée.", "Fuel is good to the end.")
+        if plan.fuel_to_add:
+            litres = math.ceil(plan.fuel_to_add)
+            if s.pits_open:
+                return L(f"Il te faut {litres} litres pour finir : c'est le moment de rentrer.",
+                         f"You need {litres} litres to finish: this is the time to pit.")
+            return L(f"Il te faudra {litres} litres pour finir, prépare-toi à rentrer.",
+                     f"You'll need {litres} litres to finish, get ready to pit.")
+        return ""
 
 
 # ======================================================================= 2. trafic
@@ -1096,8 +1158,20 @@ class PitLane:
             return
         if s.speed < 1.0:
             self.stopped = True
-        # 1) limiteur
-        if not self.stopped and s.limiter is False and s.speed > self.LIMIT:
+        # 1) vitesse : limite réelle du circuit si le jeu la donne (iRacing), sinon le limiteur
+        lim = getattr(s, "pit_limit", None)
+        if lim:
+            dt = now - self.t_in
+            if s.speed > lim + 0.8 and dt > 1.5:          # ~3 km/h de marge, et le temps de finir de freiner
+                if not self.lim1:
+                    self.lim1 = True
+                    say(None, L(f"Trop vite dans les stands ! Limite {round(lim * 3.6)} kilomètres heure.",
+                                f"Too fast in the pit lane! Limit {round(lim * 3.6)} k p h."), urgent=True)
+                elif dt > 5.0 and not self.lim2 and s.speed > lim + 1.5:
+                    self.lim2 = True
+                    say(None, L("Toujours trop vite, tu vas prendre une pénalité !", "Still too fast, you'll get a penalty!"),
+                        urgent=True)
+        elif not self.stopped and s.limiter is False and s.speed > self.LIMIT:
             dt = now - self.t_in
             if dt > 1.0 and not self.lim1:
                 self.lim1 = True

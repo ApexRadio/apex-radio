@@ -145,6 +145,7 @@ class Behavior:
         self.bias_front = None
         self.garage_notes = {}                  # problème -> conseil garage (pour la fin de course)
         self.garage_said = -9999.0              # dernière annonce « ça se corrige au garage »
+        self.fixed_setup = False                # setup imposé (iRacing) : pas de conseils de réglages
         self.bias_start = None                  # répartition au début du relais (on ne la fait pas dériver sans fin)
         self.bias_done = False                  # répartition déjà changée sur ce circuit : on n'y retouche plus
         self.hold_until = 0                     # pas d'annonce avant ce tour (on laisse le temps de juger un changement)
@@ -458,8 +459,11 @@ class Behavior:
                 garage = _garage(k, w)
                 if garage:
                     self.garage_notes[(k, w)] = f"{self.describe_group(k, w, corners)}{L(' : ', ': ')}{garage}"
-                if _in_car(k, w):
-                    tip = self.tip((k, corners[0], w), corners)
+                if _in_car(k, w) or self.fixed_setup:
+                    try:
+                        tip = _tip(k, w) if self.fixed_setup and not _in_car(k, w) else self.tip((k, corners[0], w), corners)
+                    except KeyError:
+                        continue
                     self.say(None, L(f"{d}. Conseil : {tip}.", f"{d}. Tip: {tip}."))
                 else:
                     if self.repeats[(k, corners[0], w)] > 1:
@@ -607,6 +611,8 @@ class Behavior:
 
     def end_of_session(self) -> str | None:
         """Résumé des changements à faire au garage, dit une fois la session terminée."""
+        if self.fixed_setup:
+            return None                       # setup imposé : rien à régler au garage
         with self.lock:
             notes = list(self.garage_notes.values())
             for i in self.issues:

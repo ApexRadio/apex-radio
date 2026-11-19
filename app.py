@@ -43,6 +43,7 @@ from lmu_probe import Probe
 import phrases
 import lmukeys
 from reflap import RefLap
+from alerts import Caution
 from alerts import Spotter, Traffic, GapTrend, TrackLimits, Damage, Weather, WarmUp, CarInfo, Places, Morale, car_label, set_encourage, PitLane
 import debrief
 from pitmenu import PitCrew
@@ -156,6 +157,7 @@ def loop(state: State, demo: bool) -> None:
     spotter.enabled = state.radio.cfg.get("spotter", True)
     state.spotter = spotter
     traffic, trend, limits, damage = Traffic(beh), GapTrend(), TrackLimits(beh), Damage()
+    caution = Caution()
     pitlane = PitLane()
     warmup, carinfo, places, morale = WarmUp(), CarInfo(), Places(), Morale()
     set_encourage(state.radio.cfg.get("encourage", "normal"))
@@ -350,6 +352,8 @@ def loop(state: State, demo: bool) -> None:
             spotter.session = snap.session
             inc.update(snap)
             traffic.update(snap, plan, say)
+            caution.update(snap, plan, say)
+            beh.fixed_setup = bool(getattr(snap, "fixed_setup", False))
             pitlane.update(snap, say)
             trend.update(snap, say)
             limits.update(snap, say)

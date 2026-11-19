@@ -71,6 +71,10 @@ def parse_session(text: str) -> dict:
             item = None
             last_list = m.group(1)
             continue
+        m = re.match(r"^  (\w+):\s*(.*)$", line)          # sous-bloc (WeekendOptions…) : mis à plat
+        if m and item is None:
+            out[sec].setdefault(m.group(1), m.group(2).strip().strip('"'))
+            continue
         m = re.match(r"^ - (\w+):\s*(.*)$", line)
         if m:
             item = {m.group(1): m.group(2).strip().strip('"')}
@@ -338,6 +342,12 @@ class IRacingSource:
         cfg = wk.get("TrackConfigName", "")
         s.track = name + (f" {cfg}" if cfg and cfg.lower() not in ("full course", "grand prix", "gp", "") else "") + " (iRacing)"
         s.track_len = _num(wk.get("TrackLength")) * 1000
+        s.oval = "oval" in (wk.get("TrackType", "") + " " + wk.get("Category", "")).lower()
+        s.fixed_setup = wk.get("IsFixedSetup", "0").strip() == "1"
+        lim = wk.get("TrackPitSpeedLimit", "")
+        if _num(lim) > 0:
+            v = _num(lim)
+            s.pit_limit = v / 3.6 if "kph" in lim.lower() else v * 0.44704 if "mph" in lim.lower() else v / 3.6
 
         di = info.get("DriverInfo", {})
         drivers = {int(_num(x.get("CarIdx"), -1)): x for x in di.get("_Drivers", [])}
@@ -420,6 +430,8 @@ class IRacingSource:
 
         # stands
         s.in_pits = bool(d.get("OnPitRoad"))
+        if "PitsOpen" in d:
+            s.pits_open = bool(d.get("PitsOpen"))
         stall = bool(d.get("PlayerCarInPitStall"))
         s.pit_state = 3 if stall else 2 if s.in_pits else 0
         if stall and not self._was_stall:

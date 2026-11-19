@@ -106,7 +106,7 @@ class Engineer:
                 self.current.time = s.last_lap
                 self.laps.append(self.current)
             self.current = _Lap(s.laps_done, s.fuel, s.energy, list(s.tyre_wear))
-        if s.in_pits or s.yellow:
+        if s.in_pits or s.yellow or s.game_phase == 6:     # 6 = neutralisation (caution) : conso faussée
             self.current.dirty = True
 
     def _per_lap(self, attr: str, safe: bool = False) -> float | None:

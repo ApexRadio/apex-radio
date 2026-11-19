@@ -270,6 +270,10 @@ class FuelBook:
         elif s.session == "course" and s.time_left and s.time_left >= 300 and avg and s.game_phase < 5:
             # avant le départ, LMU donne parfois le compte à rebours de la grille (1 min) au lieu de la durée
             laps = math.ceil(s.time_left / avg)
+        elif getattr(s, "race_laps_known", None):        # le jeu donne la course du week-end (iRacing)
+            laps = s.race_laps_known
+        elif getattr(s, "race_min_known", None) and avg:
+            laps = math.ceil(s.race_min_known * 60 / avg)
         elif d.get("race_laps"):
             laps = d["race_laps"]
         elif d.get("race_min") and avg:

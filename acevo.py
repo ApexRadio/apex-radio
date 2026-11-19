@@ -405,9 +405,10 @@ class ACEvoSource:
         s.best_lap = g.bestLapMs / 1000 if 0 < g.bestLapMs < 3_600_000 else None
         lt = g.currentLapTimeMs / 1000
         s.lap_time = lt if 0 <= lt < 3600 else None
-        s.position = int(g.position)
-        s.class_position = int(g.position)
         s.num_cars = int(g.activeCars or g.totalDrivers)
+        # AC EVO compte la place à partir de 0 (le leader est 0) : 4e annoncé « P3 » au test du 19/11
+        s.position = min(int(g.position) + 1, max(1, s.num_cars))
+        s.class_position = s.position
         s.lap_invalid = not bool(g.validLap)
         s.driver = (_txt(g.driverName) + " " + _txt(g.driverSurname)).strip()
         s.finish_status = 1 if s.game_phase == 8 or (g.flag == 8 and s.session == "course") else 0

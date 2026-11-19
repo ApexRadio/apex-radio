@@ -425,7 +425,11 @@ class Engineer:
                 ("Vert, vert, vert ! On repart à l'attaque.", "Green, green, green! Back to racing."),
                 ("C'est reparti, la piste est libre. Remets les pneus en température.", "We're back on, track is clear. Get the heat back in the tyres.")]), elapsed=s.elapsed)
         self._was_yellow = s.yellow
-        if s.done:
+        if s.done and s.session != "course":
+            self.say("once:finish", pick("finish_session", [
+                ("Drapeau à damier, séance terminée.", "Chequered flag, session over."),
+                ("Damier ! Fin de la séance, rentre tranquillement.", "Chequered flag! Session done, bring it in easy.")]), elapsed=s.elapsed)
+        elif s.done:
             self.say("once:finish", pick("finish", [
                 ("Drapeau à damier ! Bien joué.", "Chequered flag! Well done."),
                 ("Et c'est le drapeau à damier ! Superbe course, merci pour le boulot.", "And that's the chequered flag! Great race, thanks for the work."),

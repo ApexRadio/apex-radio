@@ -339,7 +339,7 @@ class GapTrend:
         return None if rate is None else (rate, gap, place)
 
     def update(self, s, say) -> None:
-        if not s.on_track or s.session != "course":
+        if not s.on_track or s.session != "course" or s.done:     # course finie : plus de « va le chercher »
             return
         if self.laps is None or s.laps_done < self.laps:
             self.laps = s.laps_done

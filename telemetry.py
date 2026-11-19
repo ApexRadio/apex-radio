@@ -35,6 +35,8 @@ class Snapshot:
     finish_status: int = 0           # pour TA voiture : 0 = en course, 1 = arrivée, 2 = abandon, 3 = disqualifié
     time_left: float | None = None   # secondes restantes (course au temps)
     max_laps: int | None = None      # course au nombre de tours
+    race_laps_known: int | None = None   # durée de la course du week-end donnée par le jeu dès les essais (iRacing)
+    race_min_known: int | None = None
     elapsed: float = 0.0
     laps_done: int = 0
     lap_frac: float = 0.0            # progression dans le tour en cours (0..1)

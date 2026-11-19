@@ -132,7 +132,9 @@ _SPELL = [
     (re.compile(r"\bsetups\b", re.I), "sétups"), (re.compile(r"\bsetup\b", re.I), "sétup"),
     (re.compile(r"\bELMS\b"), "E L M S"),
     (re.compile(r"\bHypercars?\b", re.I), "Hyper car"),
-    (re.compile(r"\b(LM)?GT(\d)\b"), r"GT \2"), (re.compile(r"\b(LM)?GTE\b"), "L M GTE"),
+    # « GT 3 » était lu « gé 3 » par la voix : on épelle
+    (re.compile(r"\b(LM)?GT(\d)\b"), r"gé té \2"), (re.compile(r"\b(LM)?GTE\b"), "gé té é"),
+    (re.compile(r"\bLMP(\d)\b"), r"L M P \1"),
     (re.compile(r"\bLMDh\b", re.I), "L M D H"), (re.compile(r"\bLMH\b"), "L M H"),
 ]
 

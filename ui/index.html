@@ -365,6 +365,13 @@
         <a id="verall" class="pill" href="https://github.com/ApexRadio/apex-radio/releases" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none" data-en="All versions">Toutes les versions</a>
       </div>
     </section>
+    <section class="setsec"><h2>🧰 <span data-en="Troubleshooting">Dépannage</span></h2>
+      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="A problem during your session? Click the button: your log is copied, then paste it (Ctrl+V) on Discord, in #bugs. The last 20 logs are also kept in Documents\Apex Radio\journaux.">Un souci pendant ta séance ? Clique sur le bouton : ton journal est copié, colle-le (Ctrl+V) sur Discord, dans #bugs. Les 20 derniers journaux sont aussi gardés dans Documents\Apex Radio\journaux.</div>
+      <div class="row" style="gap:10px;flex-wrap:wrap;justify-content:flex-start;align-items:center">
+        <button id="logsend" class="act" style="border-radius:999px" data-en="📋 Copy my log">📋 Copier mon journal</button>
+        <span id="logmsg" class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0"></span>
+      </div>
+    </section>
     <section class="setsec"><h2>❤️ <span data-en="Support Apex Radio">Soutenir Apex Radio</span></h2>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Apex Radio is free and will stay free. If it helps you, you can buy me a coffee or support it every month.">Apex Radio est gratuit et le restera. S'il t'aide, tu peux m'offrir un café ou le soutenir chaque mois.</div>
       <div class="row" style="gap:8px;flex-wrap:wrap;justify-content:flex-start">
@@ -1012,6 +1019,17 @@ $("wscreate").onclick = async () => {
   wsLoad(false);
 };
 tick();
+</script>
+<script>
+$("logsend").onclick = async () => {
+  const m = $("logmsg"); m.textContent = "…";
+  try {
+    const j = await (await fetch("/api/journal", { method: "POST" })).json();
+    m.textContent = !j.ok ? T("Impossible de copier le journal.", "Couldn't copy the log.")
+      : j.clip ? T("Journal copié ! Colle-le (Ctrl+V) dans Discord, salon #bugs.", "Log copied! Paste it (Ctrl+V) on Discord, in #bugs.")
+      : T("Journal enregistré : glisse le fichier ouvert dans l'Explorateur sur Discord.", "Log saved: drag the file shown in Explorer onto Discord.");
+  } catch (e) { m.textContent = T("Impossible de copier le journal.", "Couldn't copy the log."); }
+};
 </script>
 <script src="/fsel.js"></script>
 </body>

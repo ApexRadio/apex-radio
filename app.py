@@ -18,6 +18,7 @@ import json
 import socket
 import sys
 import threading
+import shutil
 import time
 import traceback
 from dataclasses import asdict
@@ -684,6 +685,11 @@ def make_handler(state: State):
                 self.send_response(200); self.send_header("Content-Type", "application/json")
                 self.send_header("Content-Length", str(len(body))); self.end_headers(); self.wfile.write(body)
                 return
+            elif self.path == "/api/journal":
+                body = json.dumps(send_journal()).encode()
+                self.send_response(200); self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body))); self.end_headers(); self.wfile.write(body)
+                return
             elif self.path == "/api/accent":
                 n = int(self.headers.get("Content-Length") or 0)
                 a = json.loads(self.rfile.read(n) or b"{}").get("accent", "bleu")
@@ -1026,7 +1032,69 @@ def autolaunch_lmu(state) -> None:
         launch_lmu(state.radio.cfg.get("lmu_mode", "ask"), state.radio.cfg.get("game", "lmu"))
 
 
+JOURNAUX = DATA / "journaux"      # copies du journal : une par lancement + celles faites avec le bouton
+
+
+def _prune_journaux(keep: int = 20) -> None:
+    try:
+        files = sorted(JOURNAUX.glob("journal Apex *.txt"), key=lambda p: p.stat().st_mtime)
+        for p in files[:-keep]:
+            p.unlink()
+    except OSError:
+        pass
+
+
+def keep_previous_journal() -> None:
+    """Au lancement, le journal précédent est gardé dans Documents/Apex Radio/journaux (avant, il était effacé :
+    il fallait l'envoyer avant de relancer Apex)."""
+    src = LOCAL / "journal.txt"
+    try:
+        if src.exists() and src.stat().st_size > 200:
+            JOURNAUX.mkdir(parents=True, exist_ok=True)
+            stamp = time.strftime("%Y-%m-%d %Hh%M", time.localtime(src.stat().st_mtime))
+            shutil.copyfile(src, JOURNAUX / f"journal Apex {stamp}.txt")
+            _prune_journaux()
+    except OSError:
+        pass
+
+
+def send_journal() -> dict:
+    """Bouton « Copier mon journal » : copie le journal du moment dans Documents/Apex Radio/journaux, le met dans le
+    presse-papiers (Ctrl+V dans Discord le colle comme un fichier) et l'affiche dans l'Explorateur."""
+    sys.stdout.flush()
+    src = LOCAL / "journal.txt"
+    try:
+        JOURNAUX.mkdir(parents=True, exist_ok=True)
+        dst = JOURNAUX / f"journal Apex {time.strftime('%Y-%m-%d %Hh%M')}.txt"
+        shutil.copyfile(src, dst)
+        _prune_journaux()
+    except OSError as e:
+        return {"ok": False, "error": e.__class__.__name__}
+    clip = False
+    if sys.platform == "win32":
+        import subprocess
+        flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+        try:
+            p = str(dst).replace("'", "''")
+            r = subprocess.run(["powershell", "-NoProfile", "-Command", f"Set-Clipboard -LiteralPath '{p}'"],
+                               creationflags=flags, timeout=15)
+            clip = r.returncode == 0
+        except Exception:
+            pass
+        try:
+            subprocess.Popen(["explorer", "/select,", str(dst)], creationflags=flags)
+        except Exception:
+            pass
+    return {"ok": True, "clip": clip, "path": str(dst)}
+
+
 def main() -> None:
+    # une 2e fenêtre lancée pendant qu'Apex tourne ne doit pas effacer le journal de celui qui tourne
+    if already_running() and "--demo" not in sys.argv:
+        print("\n  Apex Radio tourne déjà : j'ouvre le tableau de bord existant.")
+        desktop.show_existing(f"http://localhost:{PORT}")
+        sys.exit(0)
+    keep_previous_journal()
     log = open(LOCAL / "journal.txt", "w", encoding="utf-8")
     sys.stdout = _Tee(sys.stdout, log)
     sys.stderr = _Tee(sys.stderr, log)

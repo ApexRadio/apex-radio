@@ -17,6 +17,8 @@
 - 🇬🇧 Voice: "GT3" and "LMP2" pronounced properly; "session over" at the chequered flag in practice and qualifying.
 - 🇫🇷 Drapeau bleu : « Drapeau bleu, voiture plus rapide derrière, laisse-la passer » (en course comme en essais).
 - 🇬🇧 Blue flag: "Blue flag, faster car behind, let it through" (in races and practice).
+- 🇫🇷 Réglages → Dépannage : bouton « Copier mon journal » (il se colle avec Ctrl+V sur Discord). Le journal n'est plus effacé au lancement : les 20 derniers sont gardés dans Documents\Apex Radio\journaux, et relancer Apex pendant qu'il tourne n'efface plus celui en cours.
+- 🇬🇧 Settings → Troubleshooting: "Copy my log" button (paste it with Ctrl+V on Discord). The log is no longer wiped at launch: the last 20 are kept in Documents\Apex Radio\journaux, and starting Apex while it's running no longer wipes the current one.
 - 🇫🇷 Freins : « en température » seulement dans leur vraie plage (environ 400 °C pour les freins carbone, 300 °C pour l'acier), au lieu de 250 °C.
 - 🇬🇧 Brakes: "up to temperature" only in their real window (about 400 °C for carbon brakes, 300 °C for steel), instead of 250 °C.
 - 🇫🇷 Si le serveur plante ou que tu es éjecté de la session, Apex se met en attente au lieu de répéter les dernières alertes.

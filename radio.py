@@ -10,6 +10,7 @@ Bouton radio + micro + reconnaissance vocale (étape 3).
 
 from __future__ import annotations
 
+import re
 import json
 import os
 import sys
@@ -96,6 +97,11 @@ def key_name(vk: int) -> str:
 
 SHORTCUTS = ("spotter", "radio", "quiet")   # raccourcis : couper/allumer le spotter, la radio, le mode silence
 
+
+# Phrases que Whisper « entend » dans un silence ou un bruit (apprises sur des sous-titres de vidéos) :
+# « Sous-titres réalisés par la communauté d'Amara.org » arrivait en question au lieu d'un « je n'ai rien entendu ».
+HALLU = re.compile(r"amara\.org|sous-titr|sous titr|merci d'avoir regard|abonnez-vous|subtitles by|thanks for watching|"
+                   r"untertitel|sottotitoli|ondertitel|legendas pela", re.I)
 
 class Radio:
     """Gère le bouton, l'écoute et la transcription. Appelle on_question(texte),
@@ -213,6 +219,9 @@ class Radio:
                                            condition_on_previous_text=False, vad_filter=False)
         text = " ".join(s.text.strip() for s in segs).strip()
         self._keep_clip(audio, text)
+        if HALLU.search(text):
+            print(f"  (phrase inventée par la reconnaissance sur un bruit, ignorée : {text})")
+            return ""
         return text
 
     def _keep_clip(self, audio, text: str) -> None:

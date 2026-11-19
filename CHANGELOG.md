@@ -1,5 +1,23 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.2.15
+- 🇫🇷 Nouveau : **tour de référence**. Apex garde ton meilleur tour propre pour chaque voiture et chaque circuit (freinage, vitesse mini, remise des gaz, virage par virage) et te dit en roulant quand tu t'en éloignes (« Virage 3 : tu freines 20 mètres plus tôt qu'à ton meilleur tour »). Questions : « où je peux gagner du temps ? », « analyse mon pilotage ».
+- 🇬🇧 New: **reference lap**. Apex keeps your best clean lap for each car and track (braking point, minimum speed, throttle point, corner by corner) and tells you on track when you drift away from it ("Turn 3: you're braking 20 metres earlier than on your best lap"). Questions: "where can I gain time?", "analyse my driving".
+- 🇫🇷 Arrière instable mieux détecté : contre-braquage et tête-à-queue sont repérés (un seul tête-à-queue suffit), et si tu dis « l'arrière glisse » ou « elle ne tourne pas », l'ingénieur te croit, te conseille et le reprend au garage.
+- 🇬🇧 Unstable rear detected better: countersteer and spins are picked up (a single spin is enough), and if you say "the rear is sliding" or "it won't turn", the engineer believes you, gives a tip and takes it into the garage.
+- 🇫🇷 Voitures plus lentes devant : l'annonce se base sur le rapprochement réellement mesuré et ton vrai rythme de course ; fini les voitures annoncées « dans 30 secondes » qu'on rattrapait un tour plus tard.
+- 🇬🇧 Slower cars ahead: the call now uses the closing speed actually measured and your real race pace; no more cars called "in 30 seconds" that you only caught a lap later.
+- 🇫🇷 Spotter : « dégagé » seulement quand la voiture est vraiment passée.
+- 🇬🇧 Spotter: "clear" only once the car has really gone by.
+- 🇫🇷 Assetto Corsa EVO : analyse du pilotage (blocages, patinage, sous/survirage), dégâts carrosserie ; corrigé : la place annoncée avait un rang d'avance.
+- 🇬🇧 Assetto Corsa EVO: driving analysis (lock-ups, wheelspin, under/oversteer), bodywork damage; fixed: the announced position was one place too high.
+- 🇫🇷 Menus déroulants redessinés : ils apparaissent maintenant dans tes vidéos (OBS, barre de jeu).
+- 🇬🇧 Redesigned drop-down menus: they now show up in your videos (OBS, Game Bar).
+- 🇫🇷 Voix : « GT3 » et « LMP2 » bien prononcés ; « séance terminée » au damier des essais et qualifs.
+- 🇬🇧 Voice: "GT3" and "LMP2" pronounced properly; "session over" at the chequered flag in practice and qualifying.
+- 🇫🇷 Corrigé : l'annonce des voitures plus rapides qui arrivent derrière plantait en multiclasse ; en Hypercar, le menu des stands refaisait parfois le plein d'énergie complet ; plus d'annonce « va le chercher » une fois ta course finie.
+- 🇬🇧 Fixed: the faster-car-behind warning crashed in multiclass; in a Hypercar, the pit menu sometimes did a full energy refill; no more "go get him" once your race is over.
+
 ## 1.2.14
 - 🇫🇷 Nouveau : Apex Radio fonctionne aussi avec **Assetto Corsa EVO** ! Le jeu lancé est reconnu tout seul. Dans AC EVO : briefing et plan d'essence, positions gagnées/perdues, chronos et records, temps restant, spotter, carte du circuit, écarts devant/derrière, pneus et freins froids, dégâts, limiteur et drapeaux. Pas encore dans AC EVO : le menu des stands automatique, l'atelier setup et l'analyse du pilotage.
 - 🇬🇧 New: Apex Radio now also works with **Assetto Corsa EVO**! The running game is detected automatically. In AC EVO: briefing and fuel plan, places gained/lost, lap times and records, time left, spotter, track map, gaps ahead/behind, cold tyres and brakes, damage, pit limiter and flags. Not yet in AC EVO: automatic pit menu, setup workshop and driving analysis.

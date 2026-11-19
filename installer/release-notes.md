@@ -13,6 +13,8 @@
 - 🇬🇧 Drop-down menus visible in your videos; "GT3" pronounced properly.
 - 🇫🇷 Drapeau bleu annoncé (course et essais) ; Apex se met en attente si le serveur plante.
 - 🇬🇧 Blue flag called (race and practice); Apex goes on standby if the server crashes.
+- 🇫🇷 Bouton « Copier mon journal » (Réglages → Dépannage) pour nous envoyer un souci en un clic sur Discord.
+- 🇬🇧 "Copy my log" button (Settings → Troubleshooting) to send us a problem on Discord in one click.
 - 🇫🇷 Correctifs : voitures plus rapides derrière (l'annonce plantait en multiclasse), plein d'énergie des Hypercars au stand.
 - 🇬🇧 Fixes: faster cars behind (the warning crashed in multiclass), Hypercar energy refill at the pits.
 

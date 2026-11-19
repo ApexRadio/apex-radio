@@ -192,11 +192,11 @@ def gaps(s: Snapshot, p: Plan) -> str:
     ga = s.gap_class_ahead if s.gap_class_ahead is not None else s.gap_ahead
     gb = s.gap_class_behind if s.gap_class_behind is not None else s.gap_behind
     t = LAST_TEXT
-    front = bool(re.search(r"devant|ahead|in front|attaque|premier|leader|tete", t))
+    front = bool(re.search(r"devant|ahead|in front|attaque|premier|leader|tete|rattrap", t))
     back = bool(re.search(r"derriere|behind|revient|catching|suit", t))
     leader = s.ahead is None and (s.class_position or s.position) == 1
     # « il revient / il remonte / je reprends du temps ? » : on répond avec l'évolution de l'écart
-    if re.search(r"remont|revien|rapproch|mont(e|ent|ant)? fort|fond(s)? sur|reprend|recoll|s eloign|echapp|lache|creuse|catching|closing|pulling", t):
+    if re.search(r"rattrap|remont|revien|rapproch|mont(e|ent|ant)? fort|fond(s)? sur|reprend|recoll|s eloign|echapp|lache|creuse|catching|closing|pulling", t):
         try:
             from alerts import GapTrend, _dix
             tr = GapTrend.LAST
@@ -343,7 +343,7 @@ TOPICS = [
     (r"energie|batterie|virtuel|energy|battery|virtual", energy),
     (r"stand|\bbox|arret|rentr|\bpit|ravitaill|strateg|\bstop\b|come in", pit),
     (r"pneu|pner|peneu|pneumatique|gomme|usure|pression|crev|\betat d(u|e|es)\b(?!.*(voiture|caisse|carrosserie|course|jeu de la))|\btyre|\btire|rubber|\bwear|\bpressure", tyres),
-    (r"ecart|devant|derriere|\bgap|attaque|revient|remont|rapproch|monte fort|montant fort|ahead|behind|in front|catching|closing", gaps),
+    (r"ecart|devant|derriere|\bgap|attaque|rattrap|revient|remont|rapproch|monte fort|montant fort|ahead|behind|in front|catching|closing", gaps),
     (r"repar|degat|degare|dommage|abime|casse|etat de (la|ma) (voiture|caisse|bagnole)|damage|repair", repairs),
     (r"position|place|classement|placement|cassement|quelle p\b|combien ?t?i?eme|combien siam|combien.*(je suis|suis je)|je suis ou\b|where am i|what p\b", position),
     (r"meteo|pluie|pleut|pleuvoir|mouill|humid|sec\b|temperature (de la piste|piste|de l air|exterieur)|nuage|quel temps|temps qu il fait|temps il fait|sous la pluie|a la pluie|qualif|calif|weather|\brain|\bwet\b|\bdry\b|cloud", weather),
@@ -390,6 +390,17 @@ def behavior(s: Snapshot, p: Plan) -> str:
 
 def record(s: Snapshot, p: Plan) -> str:
     return LAPTIMES.record_text(s) if LAPTIMES else L("Pas de chronos enregistrés.", "No lap times recorded.")
+
+
+def coaching(s: Snapshot, p: Plan) -> str:
+    """« Où je peux gagner du temps ? », « analyse mon pilotage »."""
+    parts = []
+    if REFLAP and REFLAP.ref and REFLAP.last_cmp:
+        parts.append(REFLAP.report())
+    if BEHAVIOR:
+        parts.append(BEHAVIOR.summary())
+    return " ".join(x for x in parts if x) or L("Fais quelques tours propres, je te dirai ensuite où tu peux gagner du temps.",
+                                               "Do a few clean laps, then I'll tell you where you can gain time.")
 
 
 def reference(s: Snapshot, p: Plan) -> str:
@@ -571,6 +582,7 @@ def pace_rank(s: Snapshot, p: Plan) -> str:
 
 
 TOPICS[:0] = [
+    (r"gagner du temps|gagner des dixiemes|ou (est ce que )?je (peux |pourrais |peut )?(gagner|perds|perdre|aller plus vite)|analys.{0,20}(pilotage|conduite)|comment (je pilote|je conduis|est mon pilotage)|ameliorer mon pilotage|where can i (gain|find) time|analy[sz]e my driving", coaching),
     (r"reference|par rapport a (mon|ton) meilleur|compare (a|avec) mon meilleur|best lap reference|my best lap", reference),
     (r"\bfreins?\b(?! a main)|\bdisques? de frein|\bbrakes?\b", brakes),
     (r"limites? de (la )?piste|avertissements?|track limits?|\bwarnings?\b", track_limits),

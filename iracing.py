@@ -378,7 +378,8 @@ class IRacingSource:
         state = int(d.get("SessionState") or 0)   # 1 dans la voiture, 2 chauffe, 3 tour de formation, 4 course, 5 damier, 6 fin
         flags = int(d.get("SessionFlags") or 0)
         s.game_phase = 8 if state >= 5 else 4 if state in (1, 2, 3) else 6 if flags & (F_CAUTION | F_CAUTION_WAVING) else 5
-        s.yellow = bool(flags & (F_YELLOW | F_YELLOW_WAVING))
+        s.yellow = bool(flags & (F_YELLOW | F_YELLOW_WAVING | F_CAUTION | F_CAUTION_WAVING))   # caution = drapeau jaune
+        s.one_to_green = bool(flags & 0x0200)
         s.elapsed = float(d.get("SessionTime") or 0)
         rem = float(d.get("SessionTimeRemain") or -1)
         total_laps = int(d.get("SessionLapsTotal") or 32767)
@@ -494,7 +495,13 @@ class IRacingSource:
             if drv.get("CarClassID") == my_class:
                 same.append((int(cpos[i]) if i < len(cpos) and cpos[i] > 0 else 999, i, drv))
         s.num_cars = len(s.cars)
+        if not s.position and s.session == "course":    # grille : résultat des qualifs (0 = pole)
+            for r in info.get("QualifyResultsInfo", {}).get("_Results", []):
+                if int(_num(r.get("CarIdx"), -1)) == me:
+                    s.position = int(_num(r.get("Position"), -1)) + 1
+                    s.class_position = int(_num(r.get("ClassPosition"), -1)) + 1 or s.position
         if not s.position:              # avant le départ iRacing donne 0 : on classe d'après la piste
+            s.pos_guess = True
             order = sorted((c for c in s.cars), key=lambda c: -((int(laps[c["id"]]) if c["id"] < len(laps) else 0) + c["f"]))
             s.position = next((k + 1 for k, c in enumerate(order) if c["me"]), 0)
         if not s.class_position:
@@ -554,6 +561,17 @@ class IRacingSource:
             if g is None:
                 continue
             (ahead_t if g < lap_ref / 2 else behind_t).append(g if g < lap_ref / 2 else lap_ref - g)
+        # rangement derrière la pace car (départ, caution) : ta file et la voiture à suivre
+        prow, pline, pfl = d.get("CarIdxPaceRow") or [], d.get("CarIdxPaceLine") or [], d.get("CarIdxPaceFlags") or []
+        if me < len(prow) and prow[me] >= 0 and me < len(pline) and pline[me] >= 0:
+            row, line = int(prow[me]), int(pline[me])
+            follow = "pace"
+            if row > 0:
+                for i in range(min(len(prow), len(pline))):
+                    if i != me and int(prow[i]) == row - 1 and int(pline[i]) == line:
+                        follow = drivers.get(i, {}).get("CarNumber", "") or "?"
+                        break
+            s.pace = {"row": row, "line": line, "flags": int(pfl[me]) if me < len(pfl) else 0, "follow": follow}
         s.gap_ahead = min(ahead_t) if ahead_t else None
         s.gap_behind = min(behind_t) if behind_t else None
         return s

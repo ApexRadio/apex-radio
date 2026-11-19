@@ -171,9 +171,16 @@ class Caution:
             self.on = False
             return
         now = time.monotonic()
+        if s.pit_state == 3:                       # arrêt au stand : nouveaux pneus
+            self.stint_lap = s.laps_done
         if s.game_phase != 6:
-            self.on = False
+            if self.on and now - getattr(self, "green_t", now) > 20:   # vraie fin (pas un battement du drapeau)
+                self.on = False
+            self.green_t = getattr(self, "green_t", now) if self.on else now
+            if not self.on:
+                return
             return
+        self.green_t = now
         if not self.on:
             self.on, self.t, self.said, self.open_t, self.counted = True, now, False, None, False
             self.open_said = False
@@ -184,6 +191,7 @@ class Caution:
                 parts.append(L("Stands ouverts.", "Pits are open.") if s.pits_open else L("Stands fermés pour l'instant.", "Pits closed for now."))
                 self.open_said = bool(s.pits_open)
             parts.append(self._fuel(s, plan))
+            parts.append(self._tyres(s, plan))
             if plan.laps_to_finish:
                 n = math.ceil(plan.laps_to_finish)
                 parts.append(L(f"Il reste environ {n} tour{'s' if n > 1 else ''}.", f"About {n} lap{'s' if n > 1 else ''} to go."))
@@ -200,6 +208,21 @@ class Caution:
                 say(None, L(f"{n} voiture{'s' if n > 1 else ''} au stand pendant la caution.",
                             f"{n} car{'s' if n > 1 else ''} pitting under the caution."))
 
+    def _tyres(self, s, plan) -> str:
+        """Âge des pneus (tours depuis le dernier arrêt) et règle simple : essence OK + pneus de plus de 10 tours
+        + encore de la course = pneus neufs possibles."""
+        age = s.laps_done - getattr(self, "stint_lap", 0)
+        if age < 3:
+            return ""
+        txt = L(f"Tes pneus ont {age} tours.", f"Your tyres have {age} laps.")
+        fuel_ok = plan.ready and plan.stops_needed == 0
+        if fuel_ok and age >= 10 and (plan.laps_to_finish or 0) > 10:
+            txt += L(" Essence bonne : rentre pour des pneus neufs si tu veux, sinon reste dehors pour garder ta place.",
+                     " Fuel is fine: pit for fresh tyres if you want, otherwise stay out to keep track position.")
+        elif fuel_ok:
+            txt += L(" Reste dehors.", " Stay out.")
+        return txt
+
     @staticmethod
     def _fuel(s, plan) -> str:
         if not plan.ready:
@@ -214,6 +237,57 @@ class Caution:
             return L(f"Il te faudra {litres} litres pour finir, prépare-toi à rentrer.",
                      f"You'll need {litres} litres to finish, get ready to pit.")
         return ""
+
+
+class PaceCar:
+    """Départ et cautions derrière la pace car (iRacing) : file et voiture à suivre, free pass, wave-around,
+    pace car qui rentre, vert."""
+
+    def __init__(self) -> None:
+        self.last = None
+        self.cand = None
+        self.flags = 0
+        self.otg = False
+        self.phase = None
+
+    def update(self, s, say) -> None:
+        if s.session != "course" or not s.on_track or s.done:
+            self.last, self.phase = None, s.game_phase
+            return
+        now = time.monotonic()
+        p = s.pace if s.game_phase in (4, 6) else None
+        if p:
+            key = (p["line"], p["follow"])
+            if key != self.last:
+                if self.cand != key:
+                    self.cand, self.cand_t = key, now
+                elif now - self.cand_t > 2.0:          # stable 2 s : on annonce
+                    self.last = key
+                    print(f"  Pace car : rang {p['row']} file {p['line']} derrière {p['follow']} (drapeaux {p['flags']})")
+                    side = L("intérieure", "inside") if p["line"] == 0 else L("extérieure", "outside")
+                    who = L("la pace car", "the pace car") if p["follow"] == "pace" else L(f"la {p['follow']}", f"the number {p['follow']}")
+                    say(None, L(f"File {side}, derrière {who}.", f"{side.capitalize()} line, behind {who}."))
+            new = p["flags"] & ~self.flags
+            if new & 0x02:
+                say(None, L("Tu as le free pass : tu récupères ton tour.", "You got the free pass: you get your lap back."), urgent=True)
+            if new & 0x04:
+                say(None, L("Wave around : tu passes la pace car et tu repars en fin de file.",
+                            "Wave around: go past the pace car and join the end of the line."), urgent=True)
+            if new & 0x01:
+                say(None, L("Tu pars en fin de file.", "You start at the end of the line."))
+            self.flags = p["flags"]
+        else:
+            self.flags = 0
+        if s.one_to_green and not self.otg and s.game_phase in (4, 6):
+            say(None, L("La pace car rentre à la fin de ce tour, prépare la relance.",
+                        "Pace car is in this lap, get ready for the restart."))
+        self.otg = s.one_to_green
+        if self.phase == 4 and s.game_phase == 5:      # départ donné
+            say(None, L("Vert, vert, vert ! C'est parti !", "Green, green, green! Go!"), urgent=True)
+            self.last = None
+        if s.game_phase == 5:
+            self.last = None
+        self.phase = s.game_phase
 
 
 # ======================================================================= 2. trafic
@@ -414,6 +488,8 @@ class GapTrend:
     def update(self, s, say) -> None:
         if not s.on_track or s.session != "course" or s.done:     # course finie : plus de « va le chercher »
             return
+        if s.yellow or s.game_phase == 6 or s.laps_done < 2:     # caution ou départ : pas d'écarts
+            return
         if self.laps is None or s.laps_done < self.laps:
             self.laps = s.laps_done
             self.ahead, self.behind = [], []
@@ -599,8 +675,13 @@ class Places:
             self.pit_t = s.elapsed
         if self.start is None:
             if s.laps_done == 0:
-                self.start = pos
-            return
+                if not getattr(s, "pos_guess", False):
+                    self.start = pos
+                return
+            if s.laps_done > 2:
+                return                  # arrivé en cours de course
+            self.start = -1             # place de départ inconnue
+
         if not self.told_start:
             if s.laps_done >= 1:
                 self.told_start = True
@@ -637,6 +718,9 @@ class Places:
                                  L("Respire, la course est longue.", "Breathe, it's a long race.")]))
 
     def _start_msg(self, pos, say) -> None:
+        if self.start < 0:
+            say(None, L(f"Premier tour bouclé, tu es P{pos}.", f"First lap done, you're P{pos}."))
+            return
         d = self.start - pos
         disc = ENCOURAGE == "discret"
         if d > 0:
@@ -676,6 +760,8 @@ class Morale:
 
     def update(self, s, say) -> None:
         if ENCOURAGE == "discret" or not s.on_track or s.session != "course" or s.done:
+            return
+        if s.yellow or s.game_phase == 6:          # sous caution on ne commente pas le rythme
             return
         key = (s.track, s.session_code)
         if key != self.key:

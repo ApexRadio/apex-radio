@@ -146,6 +146,7 @@ class Behavior:
         self.garage_notes = {}                  # problème -> conseil garage (pour la fin de course)
         self.garage_said = -9999.0              # dernière annonce « ça se corrige au garage »
         self.fixed_setup = False                # setup imposé (iRacing) : pas de conseils de réglages
+        self.quiet_race = False                 # en course (iRacing) : on note, mais on ne dit rien en piste
         self.bias_start = None                  # répartition au début du relais (on ne la fait pas dériver sans fin)
         self.bias_done = False                  # répartition déjà changée sur ce circuit : on n'y retouche plus
         self.hold_until = 0                     # pas d'annonce avant ce tour (on laisse le temps de juger un changement)
@@ -459,6 +460,8 @@ class Behavior:
                 garage = _garage(k, w)
                 if garage:
                     self.garage_notes[(k, w)] = f"{self.describe_group(k, w, corners)}{L(' : ', ': ')}{garage}"
+                if self.quiet_race:
+                    break        # course : pas de conseils de réglage en piste (rappel après la course)
                 if _in_car(k, w) or self.fixed_setup:
                     try:
                         tip = _tip(k, w) if self.fixed_setup and not _in_car(k, w) else self.tip((k, corners[0], w), corners)

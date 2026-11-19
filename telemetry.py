@@ -41,6 +41,9 @@ class Snapshot:
     oval: bool = False               # circuit ovale
     pit_limit: float | None = None   # vitesse limite dans la voie des stands (m/s), si le jeu la donne
     pits_open: bool | None = None    # stands ouverts (sous caution en NASCAR), si le jeu le donne
+    pace: dict | None = None         # rangement derrière la pace car (iRacing) : row, line, flags, follow
+    one_to_green: bool = False       # la pace car rentre à la fin de ce tour
+    pos_guess: bool = False          # place devinée (avant le départ, le jeu ne la donne pas encore)
     elapsed: float = 0.0
     laps_done: int = 0
     lap_frac: float = 0.0            # progression dans le tour en cours (0..1)

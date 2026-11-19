@@ -17,6 +17,8 @@
 - 🇬🇧 Voice: "GT3" and "LMP2" pronounced properly; "session over" at the chequered flag in practice and qualifying.
 - 🇫🇷 Drapeau bleu : « Drapeau bleu, voiture plus rapide derrière, laisse-la passer » (en course comme en essais).
 - 🇬🇧 Blue flag: "Blue flag, faster car behind, let it through" (in races and practice).
+- 🇫🇷 Freins : « en température » seulement dans leur vraie plage (environ 400 °C pour les freins carbone, 300 °C pour l'acier), au lieu de 250 °C.
+- 🇬🇧 Brakes: "up to temperature" only in their real window (about 400 °C for carbon brakes, 300 °C for steel), instead of 250 °C.
 - 🇫🇷 Si le serveur plante ou que tu es éjecté de la session, Apex se met en attente au lieu de répéter les dernières alertes.
 - 🇬🇧 If the server crashes or you're kicked from the session, Apex goes on standby instead of repeating the last warnings.
 - 🇫🇷 Corrigé : l'annonce des voitures plus rapides qui arrivent derrière plantait en multiclasse ; en Hypercar, le menu des stands refaisait parfois le plein d'énergie complet ; plus d'annonce « va le chercher » une fois ta course finie.

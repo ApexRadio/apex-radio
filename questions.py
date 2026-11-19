@@ -453,8 +453,8 @@ def brakes(s: Snapshot, p: Plan) -> str:
     bt = [b for b in (s.brake_temp or []) if b and b > 0]
     if len(bt) < 4:
         return L("Je n'ai pas la température des freins.", "No brake temperature data.")
-    carbon = any(k in (s.car_class or "") for k in ("Hypercar", "LMP2"))
-    cold, hot = (250, 1000) if carbon else (150, 750)
+    carbon = any(k in (s.car_class or "").upper() for k in ("HYPER", "LMH", "LMDH", "LMP2", "GTE"))
+    cold, hot = (400, 1000) if carbon else (300, 750)     # bas de la plage : carbone ~400 °C, acier ~300 °C
     front, rear = (bt[0] + bt[1]) / 2, (bt[2] + bt[3]) / 2
     txt = L(f"Freins à {front:.0f} degrés devant et {rear:.0f} derrière.",
             f"Brakes at {front:.0f} degrees front and {rear:.0f} rear.")

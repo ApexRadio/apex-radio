@@ -333,6 +333,8 @@
     <section class="setsec"><h2>💬 <span data-en="Engineer">Ingénieur</span></h2>
       <div class="setrow"><span data-en="Encouragement">Encouragements</span><div class="setctl"><select id="encourage" aria-label="Encouragements" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><span data-en="Radio tone">Ton de la radio</span><div class="setctl"><select id="tone" aria-label="Ton de la radio" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
+      <div class="setrow"><span data-en="Your first name">Ton prénom</span><div class="setctl"><input id="drvname" maxlength="24" placeholder="ex. Laurent" data-en-placeholder="e.g. Laurent" aria-label="Ton prénom" style="max-width:160px"></div></div>
+      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="The engineer calls you by your first name now and then. Leave empty if you don't want it.">L'ingénieur t'appelle de temps en temps par ton prénom. Laisse vide si tu ne veux pas.</div>
     </section>
     <section class="setsec"><h2>🎮 <span data-en="Radio &amp; wheel">Radio et volant</span></h2>
       <div class="setrow" style="align-items:center"><span data-en="Mic">Micro</span><select id="mic" aria-label="Micro"></select></div>
@@ -585,6 +587,7 @@ function render(d) {
   renderOnboard(d);
   if (d.encourage && document.activeElement !== $("encourage")) $("encourage").value = d.encourage;
   if (d.tone && document.activeElement !== $("tone")) $("tone").value = d.tone;
+  if (d.driver_name !== undefined && document.activeElement !== $("drvname")) $("drvname").value = d.driver_name;
   if (d.ptt_mode && document.activeElement !== $("pttmode")) $("pttmode").value = d.ptt_mode;
   if (d.asr && document.activeElement !== $("asr")) $("asr").value = d.asr;
   if (d.asr_loading) $("asrnote").textContent = T("Chargement de la reconnaissance vocale… (l'ancienne reste active en attendant)", "Loading speech recognition… (the previous one stays active meanwhile)");
@@ -822,6 +825,7 @@ $("pttmode").onchange = e => fetch("/api/pttmode", { method: "POST", body: JSON.
 $("tone").innerHTML = [["sobre", "Sobre (juste l'info)", "Plain (just the info)"], ["radio", "Radio d'équipe", "Team radio"],
   ["detente", "Détendu", "Laid-back"]].map(e => `<option value="${e[0]}">${T(e[1], e[2])}</option>`).join("");
 $("tone").onchange = e => fetch("/api/tone", { method: "POST", body: JSON.stringify({ tone: e.target.value }) });
+$("drvname").onchange = e => fetch("/api/driver", { method: "POST", body: JSON.stringify({ name: e.target.value.trim() }) });
 $("encourage").onchange = e => fetch("/api/encourage", { method: "POST", body: JSON.stringify({ level: e.target.value }) });
 
 // ---- raccourcis : spotter, radio, mode silence

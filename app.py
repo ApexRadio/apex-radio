@@ -161,6 +161,7 @@ def loop(state: State, demo: bool) -> None:
     warmup, carinfo, places, morale = WarmUp(), CarInfo(), Places(), Morale()
     set_encourage(state.radio.cfg.get("encourage", "normal"))
     phrases.set_tone(state.radio.cfg.get("tone", "radio"))
+    phrases.set_driver(state.radio.cfg.get("driver_name", ""))
     weather = Weather(demo)
     recorder = debrief.Recorder()
     session_end = {"key": None, "prompt": 0}
@@ -406,6 +407,7 @@ def loop(state: State, demo: bool) -> None:
                 "accent": state.radio.cfg.get("accent", "bleu"),
                 "encourage": state.radio.cfg.get("encourage", "normal"),
                 "tone": state.radio.cfg.get("tone", "radio"),
+                "driver_name": state.radio.cfg.get("driver_name", ""),
                 "ptt_mode": state.radio.cfg.get("ptt_mode", "hold"),
                 "asr": state.radio.cfg.get("asr", "fast"), "asr_loading": bool(getattr(state.radio, "asr_loading", False)),
                 "lmu_mode": state.radio.cfg.get("lmu_mode", "ask"),
@@ -679,6 +681,14 @@ def make_handler(state: State):
                 self.send_response(200); self.send_header("Content-Type", "application/json")
                 self.send_header("Content-Length", str(len(body))); self.end_headers(); self.wfile.write(body)
                 return
+            elif self.path == "/api/driver":
+                n = int(self.headers.get("Content-Length") or 0)
+                nm = str(json.loads(self.rfile.read(n) or b"{}").get("name", "")).strip()[:24]
+                state.radio.cfg["driver_name"] = nm
+                save_config(state.radio.cfg)
+                phrases.set_driver(nm)
+                if nm:
+                    v.say(L(f"Bien reçu, {nm}.", f"Copy that, {nm}."))
             elif self.path == "/api/journal":
                 body = json.dumps(send_journal()).encode()
                 self.send_response(200); self.send_header("Content-Type", "application/json")

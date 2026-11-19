@@ -21,6 +21,31 @@ def set_tone(tone: str) -> None:
     TONE = tone if tone in TONES else "radio"
 
 
+DRIVER = ""            # prénom du pilote (Réglages → Ingénieur) : l'ingénieur l'appelle parfois par son prénom
+_name_t = 0.0
+
+
+def set_driver(name: str) -> None:
+    global DRIVER
+    DRIVER = (name or "").strip()[:24]
+
+
+def with_name(text: str, answer: bool = False) -> str:
+    """« Laurent, 2 places de plus… » : de temps en temps, pas plus d'une fois par minute et demie."""
+    global _name_t
+    import time as _t
+    if not DRIVER or not text or TONE == "sobre":
+        return text
+    now = _t.monotonic()
+    if now - _name_t < 90 or random.random() > (0.35 if answer else 0.2):
+        return text
+    _name_t = now
+    t = text.strip()
+    first = t.split(" ", 1)[0]
+    keep = len(first) > 1 and (first[1].isupper() or first[1].isdigit() or first[0].isdigit())   # « P3 », « GT3 », « 2 places »
+    return f"{DRIVER}, {t if keep else t[:1].lower() + t[1:]}"
+
+
 # ------------------------------------------------------------------ variantes
 _HIST: dict[str, deque] = {}
 
@@ -72,6 +97,9 @@ def dress(text: str, answer: bool = False, urgent: bool = False) -> str:
     """Ajoute parfois une ouverture (« Reçu. », « Info radio. ») et une fin (« À toi. ») selon le ton."""
     if TONE == "sobre" or urgent or not text:
         return text
+    named = with_name(text, answer)
+    if named != text:
+        return named
     low = text.strip().lower()
     if len(low.split()) < 4 or low.startswith(_ALREADY) or "!" in text:
         return text

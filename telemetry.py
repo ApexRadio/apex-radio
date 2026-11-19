@@ -69,6 +69,7 @@ class Snapshot:
     air_temp: float = 0.0
     track_temp: float = 0.0
     yellow: bool = False
+    blue: bool = False               # drapeau bleu montré à ta voiture (plus rapide derrière qui va te doubler)
     lap_invalid: bool = False        # tour en cours invalidé (limites de piste…)
     sectors: list | None = None      # [S1, S2, S3] du dernier tour
     ahead: dict | None = None        # voiture devant dans ta catégorie
@@ -259,6 +260,7 @@ class LMUSource:
         s.last_lap = sc.mLastLapTime if sc.mLastLapTime > 0 else None
         s.best_lap = sc.mBestLapTime if sc.mBestLapTime > 0 else None
         s.position = sc.mPlace
+        s.blue = int(getattr(sc, "mFlag", 0) or 0) == 6
         s.num_cars = n
 
         # position dans la catégorie
@@ -417,14 +419,30 @@ class AutoSource:
                 self.cur = new
         return self.cur
 
+    STALE_S = 6.0      # s sans que le temps de séance avance (en piste) = données figées
+
     def read(self) -> Snapshot:
-        return self._pick().read()
+        s = self._pick().read()
+        # serveur planté / éjecté de la session : le jeu laisse la dernière image en mémoire, et Apex
+        # répétait « voiture arrêtée avant le virage 5 » pendant 7 minutes (19/11). Temps figé = plus en piste.
+        now = time.monotonic()
+        if s.on_track and s.elapsed and s.elapsed == getattr(self, "_el", None):
+            if now - self._el_t > self.STALE_S:
+                if not getattr(self, "stale", False):
+                    print("  Données du jeu figées (session quittée, serveur planté ou pause) : Apex se met en attente")
+                self.stale = True
+                s.on_track, s.cars = False, []
+        else:
+            if getattr(self, "stale", False) and s.on_track:
+                print("  Données du jeu reprises")
+            self._el, self._el_t, self.stale = s.elapsed, now, False
+        return s
 
     def fast_sample(self) -> dict | None:
-        return self.cur.fast_sample()
+        return None if getattr(self, "stale", False) else self.cur.fast_sample()
 
     def spot_sample(self) -> dict | None:
-        return self.cur.spot_sample()
+        return None if getattr(self, "stale", False) else self.cur.spot_sample()
 
     def close(self) -> None:
         for src in (self.lmu, self.acevo):

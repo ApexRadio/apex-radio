@@ -15,6 +15,10 @@
 - 🇬🇧 Redesigned drop-down menus: they now show up in your videos (OBS, Game Bar).
 - 🇫🇷 Voix : « GT3 » et « LMP2 » bien prononcés ; « séance terminée » au damier des essais et qualifs.
 - 🇬🇧 Voice: "GT3" and "LMP2" pronounced properly; "session over" at the chequered flag in practice and qualifying.
+- 🇫🇷 Drapeau bleu : « Drapeau bleu, voiture plus rapide derrière, laisse-la passer » (en course comme en essais).
+- 🇬🇧 Blue flag: "Blue flag, faster car behind, let it through" (in races and practice).
+- 🇫🇷 Si le serveur plante ou que tu es éjecté de la session, Apex se met en attente au lieu de répéter les dernières alertes.
+- 🇬🇧 If the server crashes or you're kicked from the session, Apex goes on standby instead of repeating the last warnings.
 - 🇫🇷 Corrigé : l'annonce des voitures plus rapides qui arrivent derrière plantait en multiclasse ; en Hypercar, le menu des stands refaisait parfois le plein d'énergie complet ; plus d'annonce « va le chercher » une fois ta course finie.
 - 🇬🇧 Fixed: the faster-car-behind warning crashed in multiclass; in a Hypercar, the pit menu sometimes did a full energy refill; no more "go get him" once your race is over.
 

@@ -425,6 +425,14 @@ class Engineer:
                 ("Vert, vert, vert ! On repart à l'attaque.", "Green, green, green! Back to racing."),
                 ("C'est reparti, la piste est libre. Remets les pneus en température.", "We're back on, track is clear. Get the heat back in the tyres.")]), elapsed=s.elapsed)
         self._was_yellow = s.yellow
+        blue = bool(getattr(s, "blue", False)) and s.on_track and not s.in_pits and not s.done
+        if blue and not getattr(self, "_was_blue", False) and s.elapsed - getattr(self, "_blue_t", -999) > 30:
+            self._blue_t = s.elapsed
+            self.say(None, pick("blue", [
+                ("Drapeau bleu, voiture plus rapide derrière. Laisse-la passer.", "Blue flag, faster car behind. Let it through."),
+                ("Bleu ! Une voiture plus rapide arrive, garde ta ligne et laisse passer.", "Blue flag! Faster car coming, hold your line and let it by.")]),
+                urgent=True, elapsed=s.elapsed)
+        self._was_blue = blue
         if s.done and s.session != "course":
             self.say("once:finish", pick("finish_session", [
                 ("Drapeau à damier, séance terminée.", "Chequered flag, session over."),

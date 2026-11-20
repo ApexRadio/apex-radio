@@ -69,6 +69,7 @@ class Snapshot:
     air_temp: float = 0.0
     track_temp: float = 0.0
     yellow: bool = False
+    yellow_sectors: list = field(default_factory=list)   # drapeaux jaunes locaux : numéros de secteur (1, 2, 3)
     blue: bool = False               # drapeau bleu montré à ta voiture (plus rapide derrière qui va te doubler)
     lap_invalid: bool = False        # tour en cours invalidé (limites de piste…)
     sectors: list | None = None      # [S1, S2, S3] du dernier tour
@@ -396,6 +397,15 @@ class LMUSource:
         if y > 127:
             y -= 256
         s.yellow = 1 <= y <= 6 or s.game_phase == 6
+        # jaunes locaux par secteur (même ordre que mSector : case 0 = secteur 3)
+        try:
+            raw = [int(v) for v in info.mSectorFlag]
+            s.yellow_sectors = sorted(sector_index(i) + 1 for i, v in enumerate(raw) if v == 1)
+            if raw != getattr(self, "_sf_raw", raw):
+                print(f"  Drapeaux de secteur LMU : {raw}")
+            self._sf_raw = raw
+        except Exception:
+            pass
         return s
 
 

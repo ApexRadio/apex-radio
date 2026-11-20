@@ -39,7 +39,39 @@ class Incidents:
             return L(f"avant le virage {nxt['id']}", f"before turn {nxt['id']}") if nxt else L("sur la piste", "on track")
         return L(f"au virage {c}", f"at turn {c}") if c else L("sur la piste", "on track")
 
+    def yellows(self, s) -> None:
+        """Drapeaux jaunes locaux : « Drapeau jaune secteur 2, voiture arrêtée au virage 7 ! »."""
+        secs = set(getattr(s, "yellow_sectors", []) or [])
+        if not s.on_track or s.yellow or s.in_pits or not self.say:
+            self._ysecs = secs
+            return
+        old = getattr(self, "_ysecs", set())
+        now = time.monotonic()
+        new = [x for x in sorted(secs - old) if now - self.said.get(f"y{x}", -99) > 15]
+        me = next((c for c in s.cars if c.get("me")), None)
+        for sec in new:
+            self.said[f"y{sec}"] = now
+            where = ""
+            stopped = [c for c in s.cars if not c.get("me") and not c.get("pits") and c.get("s") == sec - 1
+                       and c.get("spd", 99) < SLOW]
+            if stopped and self.beh:
+                if me:
+                    stopped.sort(key=lambda c: (c["f"] - me["f"]) % 1)
+                w = self._where(stopped[0]["f"])
+                self.said[w] = now            # l'annonce « voiture arrêtée » ne se répète pas juste après
+                where = L(f", voiture arrêtée {w}", f", car stopped {w}")
+            mine = me.get("s") if me else None
+            ahead = mine is not None and (sec - 1 - mine) % 3 in (0, 1)
+            tail = L(" C'est devant toi, pas de dépassement.", " It's ahead of you, no overtaking.") if ahead else ""
+            self.say(None, L(f"Drapeau jaune secteur {sec}{where} !{tail}", f"Yellow flag sector {sec}{where}!{tail}"),
+                     urgent=ahead)
+        if old and not secs and now - self.said.get("yclear", -99) > 15:
+            self.said["yclear"] = now
+            self.say(None, L("Drapeaux jaunes levés, la piste est dégagée.", "Yellows cleared, the track is clear."))
+        self._ysecs = secs
+
     def update(self, s) -> None:
+        self.yellows(s)
         if not s.on_track or s.game_phase not in (5, 6) or s.in_pits or s.session == "qualif":
             self.since.clear()
             self.active = []

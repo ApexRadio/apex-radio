@@ -455,6 +455,10 @@ class ACEvoSource:
         # 7 = noir et blanc (avertissement conduite)
         s.penalties = 1 if g.flag == 6 else 0
         s.pen_warning = g.flag == 7
+        # 9 = drapeau noir à rond orange (voiture trop abîmée : réparer au stand)
+        s.meatball = g.flag == 9
+        # temps gagné en coupant la piste : à rendre (lever le pied) avant une échéance, sinon pénalité
+        s.cut_gain_ms = max(0, int(g.raceCutGainedMs))
         # pour comprendre les pénalités d'AC EVO : on note dans le journal quand ces valeurs changent
         sig = (int(g.flag), int(g.globalFlag), int(g.raceCutGainedMs), round(float(g.raceCutDelta), 1))
         if sig != getattr(self, "_pen_sig", None):

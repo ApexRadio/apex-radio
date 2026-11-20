@@ -8,6 +8,10 @@
 - 🇫🇷 Bouton 📱 : QR code à scanner pour ouvrir Apex sur ton téléphone (même Wi-Fi), avec l'aide si ça ne s'ouvre pas (pare-feu Windows).
 - 🇬🇧 📱 button: QR code to open Apex on your phone (same Wi-Fi), with help if it doesn't open (Windows firewall).
 
+## Prochaine version (AC EVO)
+- 🇫🇷 Assetto Corsa EVO : quand tu gagnes du temps en coupant la piste, l'ingénieur te dit de lever le pied pour le rendre (sinon pénalité), puis confirme quand c'est rendu. Drapeau noir à rond orange (voiture trop abîmée) annoncé.
+- 🇬🇧 Assetto Corsa EVO: when you gain time cutting the track, the engineer tells you to lift to give it back (or it's a penalty), then confirms when it's done. Black and orange flag (car too damaged) called out.
+
 ## 1.3.1
 - 🇫🇷 Micro : si le fichier de reconnaissance vocale (dossier whisper) a été mal téléchargé, Apex le retélécharge tout seul au lieu de rester sans micro.
 - 🇬🇧 Mic: if the speech recognition file (whisper folder) was badly downloaded, Apex downloads it again by itself instead of staying without a mic.

@@ -1,10 +1,16 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
-## 🆕 1.3.1
-- 🇫🇷 Micro : si le fichier de reconnaissance vocale (dossier whisper) a été mal téléchargé, Apex le retélécharge tout seul au lieu de rester sans micro.
-- 🇬🇧 Mic: if the speech recognition file (whisper folder) was badly downloaded, Apex downloads it again by itself instead of staying without a mic.
-- 🇫🇷 Si Apex s'arrête au démarrage, la fenêtre d'erreur montre la cause (aussi enregistrée dans demarrage.txt) : envoie-la sur Discord.
-- 🇬🇧 If Apex stops at startup, the error window shows the cause (also saved in demarrage.txt): send it on Discord.
+## 🆕 1.4.0
+- 🇫🇷 Nouveau : **planning des relais** pour l'endurance en équipe (bouton RELAIS) : pilotes, relais en nombre de pleins ou en durée, pneus neufs au changement de pilote. En course, l'ingénieur annonce le changement au bon arrêt et recalcule si un relais change. Question : « qui roule après ? ».
+- 🇬🇧 New: **stint planner** for team endurance (STINTS button): drivers, stints as a number of tanks or a length of time, new tyres at each driver change. In the race, the engineer calls the change at the right stop and recalculates if a stint changes. Question: "who's driving next?".
+- 🇫🇷 **Vue téléphone refaite** (écarts, chronos, essence en tours, 4 pneus, drapeaux, 3 derniers messages, relais) et bouton 📱 avec un **QR code** à scanner (même Wi-Fi).
+- 🇬🇧 **Phone view redone** (gaps, lap times, fuel in laps, 4 tyres, flags, last 3 messages, stints) and 📱 button with a **QR code** to scan (same Wi-Fi).
+- 🇫🇷 Drapeaux jaunes locaux annoncés avec le secteur et le virage (LMU).
+- 🇬🇧 Local yellow flags called with the sector and the corner (LMU).
+- 🇫🇷 Assetto Corsa EVO : classement complet en course (« où est P1 ? »), coupes de piste à rendre, drapeau noir à rond orange, bonne température des pneus, piste qui se refroidit ou chauffe.
+- 🇬🇧 Assetto Corsa EVO: full race order ("where is P1?"), track cuts to give back, black and orange flag, right tyre temperature, track cooling down or heating up.
+- 🇫🇷 Bouton ⏻ : une vraie fenêtre « Fermer Apex Radio ? ». Corrections : vieilles infos de la séance précédente ignorées au lancement, prononciation de « C'est le moment d'attaquer ».
+- 🇬🇧 ⏻ button: a proper "Close Apex Radio?" window. Fixes: old info from the previous session ignored at startup, pronunciation of "time to attack".
 
 ## 🇫🇷 Installation
 Télécharge **ApexRadio-Setup.exe** ci-dessous, lance-le, clique sur Suivant. C'est tout : Python et tous les composants sont inclus.

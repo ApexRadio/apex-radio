@@ -1,6 +1,6 @@
 # Apex Radio — historique des versions / changelog
 
-## Prochaine version (en test)
+## 1.4.0
 - 🇫🇷 Nouveau : **planning des relais** (bouton RELAIS) pour l'endurance en équipe : pilotes, durée de course, relais en nombre de pleins (ex. 2 pleins chacun) ou en durée, pneus neufs au changement de pilote. En course, Apex annonce les changements de pilote au bon arrêt et recalcule le plan si un relais dure plus ou moins longtemps. Question : « qui roule après ? ».
 - 🇬🇧 New: **stint planner** (STINTS button) for team endurance: drivers, race length, stints as a number of tanks (e.g. 2 each) or a length of time, new tyres at each driver change. In the race, Apex calls driver changes at the right stop and recalculates the plan if a stint runs longer or shorter. Question: "who's driving next?".
 - 🇫🇷 Relais visibles sur le tableau de bord et sur la vue téléphone.
@@ -12,7 +12,6 @@
 - 🇫🇷 Bouton 📱 : QR code à scanner pour ouvrir Apex sur ton téléphone (même Wi-Fi), avec l'aide si ça ne s'ouvre pas (pare-feu Windows).
 - 🇬🇧 📱 button: QR code to open Apex on your phone (same Wi-Fi), with help if it doesn't open (Windows firewall).
 
-## Prochaine version (AC EVO)
 - 🇫🇷 Assetto Corsa EVO : quand tu gagnes du temps en coupant la piste, l'ingénieur te dit de lever le pied pour le rendre (sinon pénalité), puis confirme quand c'est rendu. Drapeau noir à rond orange (voiture trop abîmée) annoncé.
 - 🇫🇷 Assetto Corsa EVO : classement complet en course (« où est P1 ? », écart avec le leader…), température idéale des pneus selon le type de pneu (pneus froids / trop chauds), annonces quand la piste se refroidit ou chauffe.
 - 🇬🇧 Assetto Corsa EVO: full race order ("where is P1?", gap to the leader…), ideal tyre temperature by tyre type (cold / too hot tyres), calls when the track cools down or heats up.

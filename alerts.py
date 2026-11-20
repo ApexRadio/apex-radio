@@ -781,7 +781,7 @@ class WarmUp:
             if not any(b > -50 for b in s.brake_temp[:2]):      # jeu sans température de freins
                 say(None, L("Pneus en température. Tu peux attaquer !", "Tyres are up to temperature. You can push now!"))
                 return
-            say(None, var("warm", [("Pneus et freins en température. Vas-y, tu peux attaquer !",
+            say(None, var("warm", [("Pneus et freins en température. C'est le moment d'attaquer !",
                                     "Tyres and brakes are up to temperature. Go on, you can push now!"),
                                    ("Tout est chaud, pneus et freins. À toi de jouer !", "Everything's warm, tyres and brakes. Over to you!"),
                                    ("C'est bon, pneus et freins sont prêts. Tu peux pousser !", "All good, tyres and brakes are ready. You can push!")]))

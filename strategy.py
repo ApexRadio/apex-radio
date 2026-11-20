@@ -164,6 +164,7 @@ class Engineer:
         if not s.on_track:
             return self.plan
         self._done = s.done
+        self._game = getattr(s, "game", "lmu")
         self._track_laps(s)
         et = s.elapsed
         p = Plan()
@@ -351,9 +352,15 @@ class Engineer:
         et = s.elapsed
         if p.laps_until_box is None or s.in_pits or s.game_phase == 8:   # 8 = drapeau à damier : plus d'arrêt
             return
+        # hors LMU, Apex ne peut pas régler le menu des stands : c'est le pilote qui le fait
+        hand = getattr(self, "_game", "lmu") != "lmu"
         if p.laps_until_box <= 1:
             sv = self._pit_service(p)
-            self.say("stint:box", pick("box", [
+            if hand:
+                self.say("stint:box", L(f"Box, box ce tour ! Vérifie ton menu des stands : {sv}.",
+                                        f"Box, box this lap! Check your pit menu: {sv}."), urgent=True, elapsed=et)
+            else:
+              self.say("stint:box", pick("box", [
                 (f"Box, box ce tour ! On met {sv}.", f"Box, box this lap! {sv}."),
                 (f"Tu rentres à la fin de ce tour, box box ! On met {sv}.", f"Pit at the end of this lap, box box! {sv}."),
                 (f"Box box box ! L'équipe est prête : {sv}.", f"Box box box! The crew is ready: {sv}."),
@@ -362,7 +369,11 @@ class Engineer:
                  f"Box this time! Watch the pit speed limit. {sv}.")]), urgent=True, elapsed=et)
         elif p.laps_until_box <= 3:
             n, sv = p.laps_until_box, self._pit_service(p)
-            self.say("stint:box3", pick("box3", [
+            if hand:
+                self.say("stint:box3", L(f"Arrêt dans {n} tours. Règle le menu des stands dans le volant : {sv}.",
+                                         f"Pit stop in {n} laps. Set the pit menu on your wheel: {sv}."), elapsed=et)
+            else:
+              self.say("stint:box3", pick("box3", [
                 (f"Arrêt dans {n} tours. Prévu : {sv}.", f"Pit stop in {n} laps. Plan: {sv}."),
                 (f"On s'arrête dans {n} tours. L'équipe prépare {sv}.", f"We stop in {n} laps. The crew is getting {sv} ready."),
                 (f"Encore {n} tours et on rentre. Au menu : {sv}.", f"{n} more laps and we pit. On the menu: {sv}."),

@@ -360,6 +360,10 @@ LAST_TEXT = ""      # dernière question (normalisée), pour savoir si on parle 
 
 
 def pit_command(s: Snapshot, p: Plan) -> str:
+    if getattr(s, "game", "lmu") != "lmu":
+        out = L("Je ne peux pas régler le menu des stands dans ce jeu, fais-le dans le jeu. ",
+                "I can't set the pit menu in this game, do it in the game. ")
+        return out + pit(s, p)
     if PIT_ACTION is None:
         return L("Je ne peux pas régler le stand pour l'instant.", "I can't set the pit menu right now.")
     PIT_ACTION()

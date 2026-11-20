@@ -382,7 +382,8 @@ def loop(state: State, demo: bool) -> None:
                 msg = (setup_summary(snap) if lmu else None) or beh.end_of_session()
                 if msg:
                     say(None, msg)
-                    session_end["prompt"] += 1
+                    if lmu:   # l'atelier setup ne sert qu'à LMU : on ne l'ouvre pas pour AC EVO / iRacing
+                        session_end["prompt"] += 1
             recorder.update(snap, lt, beh, eng, state.workshop.state(snap.track).get("label") if snap.track and lmu else None)
             if probe:
                 probe.update(snap)

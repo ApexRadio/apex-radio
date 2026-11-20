@@ -429,6 +429,16 @@ class AutoSource:
         # serveur planté / éjecté de la session : le jeu laisse la dernière image en mémoire, et Apex
         # répétait « voiture arrêtée avant le virage 5 » pendant 7 minutes (19/11). Temps figé = plus en piste.
         now = time.monotonic()
+        # au lancement d'Apex (ou au changement de jeu), la mémoire peut contenir la séance d'avant :
+        # tant que le temps de séance n'a pas bougé une fois, on ne fait rien (pas de vieux drapeau ni de vieux tour invalidé)
+        if self.cur is not getattr(self, "_moved_src", None):
+            self._moved_src, self._moved, self._el0 = self.cur, False, s.elapsed
+        if not self._moved:
+            if s.elapsed and s.elapsed != self._el0:
+                self._moved = True
+            else:
+                s.on_track, s.cars = False, []
+                return s
         if s.on_track and s.elapsed and s.elapsed == getattr(self, "_el", None):
             if now - self._el_t > self.STALE_S:
                 if not getattr(self, "stale", False):

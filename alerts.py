@@ -351,8 +351,8 @@ class GapTrend:
         self.count += 1
         # on suit la voiture par son pilote (pas par sa place, qui change à chaque dépassement)
         a, b = s.ahead or {}, s.behind or {}
-        self.ahead.append((a.get("name") or a.get("place"), s.gap_class_ahead, a.get("place")))
-        self.behind.append((b.get("name") or b.get("place"), s.gap_class_behind, b.get("place")))
+        self.ahead.append((a.get("name") or a.get("place"), s.gap_class_ahead, a.get("cpos") or a.get("place")))
+        self.behind.append((b.get("name") or b.get("place"), s.gap_class_behind, b.get("cpos") or b.get("place")))
         self.ahead, self.behind = self.ahead[-4:], self.behind[-4:]
         if s.in_pits or s.laps_done < 2:
             return
@@ -382,7 +382,14 @@ class GapTrend:
         tail = tail[-3:]
         if len(tail) < 2:
             return None, None, None   # pas assez de tours, ou ce n'est plus la même voiture
-        return (tail[-1][1] - tail[0][1]) / (len(tail) - 1), tail[-1][1], tail[-1][2]
+        # tour par tour : un seul tour raté (tête-à-queue, trafic) ne fait pas une tendance.
+        # on prend le plus petit écart des tours s'ils vont tous dans le même sens, sinon « stable »
+        d = [b[1] - a[1] for a, b in zip(tail, tail[1:])]
+        if all(x > 0 for x in d) or all(x < 0 for x in d):
+            rate = min(d, key=abs)
+        else:
+            rate = 0.0
+        return rate, tail[-1][1], tail[-1][2]
 
     def _point(self, s):
         """« P12 à 2,3 secondes devant, P14 à 1,1 seconde derrière. »"""
@@ -853,7 +860,12 @@ class Damage:
             self._apply(s)
             return
         # carrosserie
-        if sum(s.dents) > sum(self.dents):
+        if sum(s.dents) > sum(self.dents) and time.monotonic() - getattr(self, "_contact_t", -1e9) < 10:
+            self._contact_t = time.monotonic()   # même accident (plusieurs chocs à la suite) : on l'a déjà dit
+            if max(s.dents) >= 2:
+                self.repair = True
+        elif sum(s.dents) > sum(self.dents):
+            self._contact_t = time.monotonic()
             worst = max(s.dents)
             say(None, L("Contact ! ", "Contact! ")
                 + (L("Gros dégâts à la carrosserie.", "Heavy body damage.") if worst >= 2 else L("Dégâts légers à la carrosserie.", "Light body damage."))

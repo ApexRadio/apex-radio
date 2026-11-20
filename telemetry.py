@@ -99,6 +99,7 @@ class Snapshot:
     driver: str = ""
     lap_time: float | None = None    # temps écoulé dans le tour en cours (s)
     penalties: int = 0               # pénalités à purger (drive-through / stop-go)
+    pen_warning: bool = False        # avertissement de la direction de course (AC EVO : drapeau noir et blanc)
     limiter: bool | None = None      # limiteur de vitesse des stands (None : pas de limiteur sur cette voiture)
     speed: float = 0.0               # ta vitesse (m/s)
 

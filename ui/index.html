@@ -561,6 +561,7 @@ function render(d) {
     if ($("vchoice").innerHTML !== opts) $("vchoice").innerHTML = opts;
   }
   if (d.voice) { $("quiet").classList.toggle("on", !!d.voice.quiet); $("quiet").setAttribute("aria-pressed", !!d.voice.quiet); }
+  if (d.phone) phoneUrl = d.phone;
   if (d.phone) $("phone").title = T(`Affichage téléphone : ${d.phone} (même Wi-Fi que le PC)`, `Phone view: ${d.phone} (same Wi-Fi as the PC)`);
   const tmD = d.times || {}, dlt = tmD.delta;
   $("delta").hidden = !(s.on_track && dlt != null);
@@ -658,7 +659,6 @@ function render(d) {
     const tyres = p.tyre_compound === "pluie" ? T("pneus pluie", "wets") : p.tyre_compound === "slicks" ? "slicks" : p.change_tyres ? T("4 pneus", "4 tyres") : p.change_tyres === false ? T("on garde les pneus", "keep tyres") : "";
     info = [p.fuel_to_add != null ? `+${n(p.fuel_to_add, 0)} L` : "", p.energy_target != null ? `${T("én.", "en.")} ${n(p.energy_target * 100, 0)} %` : "", tyres, T(`${p.stops_needed} arrêt${p.stops_needed > 1 ? "s" : ""}`, `${p.stops_needed} stop${p.stops_needed > 1 ? "s" : ""}`)].filter(Boolean).join(" · ");
   }
-  if (d.phone) phoneUrl = d.phone;
   if (d.setup_prompt !== undefined) {
     if (setupPrompt !== null && d.setup_prompt > setupPrompt) $("wsopen").click();   // fin de session : on ouvre l'atelier
     setupPrompt = d.setup_prompt;
@@ -1030,7 +1030,8 @@ $("autolmu").onchange = e => fetch("/api/lmu/autolaunch", { method: "POST", body
 $("setopen").onclick = () => { $("set").hidden = false; };
 // ---- vue téléphone : QR code + adresse sur le réseau local
 let phoneUrl = "";
-$("phone").onclick = () => {
+$("phone").onclick = async () => {
+  try { phoneUrl = (await (await fetch("/api/phone")).json()).url || phoneUrl; } catch (e) {}
   const url = phoneUrl || (location.origin + "/tel");
   $("phoneurl").textContent = url;
   try {

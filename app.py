@@ -571,6 +571,8 @@ def make_handler(state: State):
                 with state.lock:
                     body = state.payload
                 ctype = "application/json"
+            elif self.path.startswith("/api/phone"):         # adresse de la vue téléphone (pour le QR code)
+                body, ctype = json.dumps({"url": PHONE_URL}).encode(), "application/json"
             elif self.path.split("?")[0] == "/qrcode.js":       # QR code de la vue téléphone (MIT, Kazuhiko Arase)
                 body, ctype = (HERE / "ui" / "qrcode.js").read_bytes(), "text/javascript; charset=utf-8"
             elif self.path.split("?")[0] == "/fsel.js":          # menus déroulants visibles dans les vidéos

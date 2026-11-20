@@ -162,6 +162,32 @@ class LapTimes:
             return None
         return d
 
+    def _now_invalid(self, s: Snapshot, say) -> None:
+        """Tour invalidé : on le dit tout de suite (au virage où c'est arrivé), pas en passant la ligne."""
+        tl = getattr(s, "tl_steps", 0) or 0
+        if tl != getattr(self, "_tl", tl):
+            self._tl_t = time.monotonic()          # avertissement « limites de piste » du jeu : déjà annoncé
+        self._tl = tl
+        if not s.lap_invalid or self._invalid or s.in_pits or getattr(self, "_told", False):
+            return
+        now = time.monotonic()
+        if now - getattr(self, "_lap_t0", 0.0) < 2.0:   # début de tour : l'info du tour d'avant traîne parfois
+            return
+        self._told = True
+        if now - getattr(self, "_tl_t", -1e9) < 4.0:
+            return
+        where = ""
+        beh = getattr(self, "beh", None)
+        me = next((c for c in s.cars if c.get("me")), None)
+        try:
+            c = (beh.corner_at(me["f"], ahead=0.01) or beh.corner_at((me["f"] - 0.015) % 1)) if beh and me else None
+        except Exception:
+            c = None
+        if c:
+            where = tr(f" au virage {c}", f" at turn {c}")
+        say(None, tr(f"Tour invalidé{where}. Attention aux limites de piste.",
+                     f"Lap invalidated{where}. Watch the track limits."))
+
     def update(self, s: Snapshot, say) -> None:
         if not s.on_track:
             return
@@ -173,12 +199,15 @@ class LapTimes:
             self.trace = [None] * BINS
             return
         if s.laps_done == self._laps_seen:
+            self._now_invalid(s, say)
             self._invalid |= s.lap_invalid
             self._in_pits |= s.in_pits
             return
 
         # un tour vient d'être bouclé
         invalid, in_pits = self._invalid, self._in_pits
+        told, self._told = getattr(self, "_told", False), False
+        self._lap_t0 = time.monotonic()
         self._laps_seen = s.laps_done
         self._invalid = s.lap_invalid
         self._in_pits = s.in_pits
@@ -224,7 +253,7 @@ class LapTimes:
                      "ahead_name": (s.ahead or {}).get("name"), "behind_name": (s.behind or {}).get("name"),
                      "vs_record": [a - b for a, b in zip(sec, rec["sectors"])] if (sec and rec and rec.get("sectors")) else None}
 
-        if invalid and not in_pits:
+        if invalid and not in_pits and not told:
             say(None, tr("Tour invalidé, attention aux limites de piste.", "Lap invalidated, watch the track limits."), elapsed=et)
         elif valid and s.session in ("qualif", "essais") and rec0 and lap >= rec0["lap"] and vs_old:
             # qualif / essais : où tu as gagné et perdu par rapport à ton record

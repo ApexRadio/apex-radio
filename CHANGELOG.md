@@ -1,6 +1,6 @@
 # Apex Radio — historique des versions / changelog
 
-## 1.2.15
+## 1.3.0
 - 🇫🇷 Nouveau : **tour de référence**. Apex garde ton meilleur tour propre pour chaque voiture et chaque circuit (freinage, vitesse mini, remise des gaz, virage par virage) et te dit en roulant quand tu t'en éloignes (« Virage 3 : tu freines 20 mètres plus tôt qu'à ton meilleur tour »). Questions : « où je peux gagner du temps ? », « analyse mon pilotage ».
 - 🇬🇧 New: **reference lap**. Apex keeps your best clean lap for each car and track (braking point, minimum speed, throttle point, corner by corner) and tells you on track when you drift away from it ("Turn 3: you're braking 20 metres earlier than on your best lap"). Questions: "where can I gain time?", "analyse my driving".
 - 🇫🇷 Arrière instable mieux détecté : contre-braquage et tête-à-queue sont repérés (un seul tête-à-queue suffit), et si tu dis « l'arrière glisse » ou « elle ne tourne pas », l'ingénieur te croit, te conseille et le reprend au garage.

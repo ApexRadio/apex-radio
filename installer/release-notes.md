@@ -1,6 +1,6 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
-## 🆕 1.2.15
+## 🆕 1.3.0
 - 🇫🇷 Nouveau : **tour de référence** : Apex compare chaque virage à ton meilleur tour et te dit où tu perds du temps (« Virage 3 : tu freines 20 mètres plus tôt »). Demande « où je peux gagner du temps ? ».
 - 🇬🇧 New: **reference lap**: Apex compares each corner with your best lap and tells you where you lose time ("Turn 3: you're braking 20 metres earlier"). Ask "where can I gain time?".
 - 🇫🇷 Arrière instable mieux détecté (contre-braquage, tête-à-queue), et ce que tu ressens (« l'arrière glisse ») est pris en compte.
@@ -9,10 +9,12 @@
 - 🇬🇧 Slower cars called at the right time, spotter says "clear" only once the car has gone by.
 - 🇫🇷 Nouveau réglage : « Conseils de pilotage en piste », à décocher si tu préfères rouler sans conseils.
 - 🇬🇧 New setting: "Driving tips on track", untick it if you'd rather drive without tips.
-- 🇫🇷 Assetto Corsa EVO : durée de course juste, plus de fausse météo ni de « Contact ! » répété, P1/P3 répondent avec l'écart.
-- 🇬🇧 Assetto Corsa EVO: correct race length, no more fake weather or repeated "Contact!", P1/P3 answered with the gap.
-- 🇫🇷 Assetto Corsa EVO : analyse du pilotage et dégâts ; place annoncée corrigée.
-- 🇬🇧 Assetto Corsa EVO: driving analysis and damage; announced position fixed.
+- 🇫🇷 Tour invalidé annoncé tout de suite, avec le virage. Course multiclasse : moins de conseils dans le trafic, écarts plus fiables.
+- 🇬🇧 Lap invalidated called straight away, with the corner. Multiclass racing: fewer tips in traffic, more reliable gaps.
+- 🇫🇷 Assetto Corsa EVO : analyse du pilotage, dégâts, pénalités et avertissements, durée de course et place justes, l'ingénieur te dit quoi régler au stand.
+- 🇬🇧 Assetto Corsa EVO: driving analysis, damage, penalties and warnings, correct race length and position, the engineer tells you what to set for pit stops.
+- 🇫🇷 Tableau de bord lisible sur un petit écran ou un 2e écran.
+- 🇬🇧 Dashboard readable on a small or second screen.
 - 🇫🇷 Menus déroulants visibles dans tes vidéos ; « GT3 » bien prononcé.
 - 🇬🇧 Drop-down menus visible in your videos; "GT3" pronounced properly.
 - 🇫🇷 Drapeau bleu annoncé (course et essais) ; Apex se met en attente si le serveur plante.

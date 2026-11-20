@@ -1,6 +1,6 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
-## 🆕 1.2.15
+## 🆕 1.3.0
 - 🇫🇷 Nouveau : **tour de référence** : Apex compare chaque virage à ton meilleur tour et te dit où tu perds du temps (« Virage 3 : tu freines 20 mètres plus tôt »). Demande « où je peux gagner du temps ? ».
 - 🇬🇧 New: **reference lap**: Apex compares each corner with your best lap and tells you where you lose time ("Turn 3: you're braking 20 metres earlier"). Ask "where can I gain time?".
 - 🇫🇷 Arrière instable mieux détecté (contre-braquage, tête-à-queue), et ce que tu ressens (« l'arrière glisse ») est pris en compte.

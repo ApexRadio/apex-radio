@@ -571,6 +571,8 @@ def make_handler(state: State):
                 with state.lock:
                     body = state.payload
                 ctype = "application/json"
+            elif self.path.split("?")[0] == "/qrcode.js":       # QR code de la vue téléphone (MIT, Kazuhiko Arase)
+                body, ctype = (HERE / "ui" / "qrcode.js").read_bytes(), "text/javascript; charset=utf-8"
             elif self.path.split("?")[0] == "/fsel.js":          # menus déroulants visibles dans les vidéos
                 body, ctype = (HERE / "ui" / "fsel.js").read_bytes(), "text/javascript; charset=utf-8"
             elif self.path == "/favicon.ico":
@@ -1162,7 +1164,7 @@ def main() -> None:
     print("=" * 56)
     print(f"  APEX//RADIO {UPD.version} — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate / Assetto Corsa EVO"))
     print(f"  Tableau de bord : {url}")
-    print(f"  Sur téléphone : http://{local_ip()}:{PORT}/tel")
+    print(f"  Sur téléphone : {PHONE_URL}")
     print(f"  Tes données : {DATA}")
     if MIGRATED:
         print(f"  Données reprises de l'ancien dossier : {', '.join(MIGRATED)}")

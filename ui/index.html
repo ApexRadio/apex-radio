@@ -131,6 +131,12 @@
   .bub.k-pep { border-left: 3px solid var(--good); }
   .bub.k-info { border-left: 3px solid var(--line, #2a3242); }
   .pitrow[hidden] { display: none !important; }
+  #phonebox { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 12; display: flex; align-items: center; justify-content: center; }
+  #phonebox[hidden] { display: none; }
+  .phonecard { background: var(--bg); border: 1px solid var(--accent); border-radius: 16px; padding: 18px 20px; width: min(420px, 92vw); box-shadow: 0 0 40px rgba(var(--accent-rgb),.25); }
+  #qr { background: #fff; border-radius: 12px; padding: 12px; width: 220px; height: 220px; margin: 6px auto 0; }
+  #qr svg { width: 100%; height: 100%; display: block; }
+  .phonesteps { padding-left: 20px; margin: 8px 0; font-size: 14px; } .phonesteps li { margin: 4px 0; }
   #set { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 11; display: flex; justify-content: flex-end; }
   #set[hidden] { display: none; }
   .setbox { width: min(460px, 100%); }
@@ -216,7 +222,7 @@
       <a id="relais" class="pill" href="/relais" style="color:var(--text);text-decoration:none" data-en="STINTS">RELAIS</a>
       <a id="debriefs" class="pill" href="/debriefs" style="color:var(--text);text-decoration:none" data-en="DEBRIEFS">DÉBRIEFS</a>
       <button id="setopen" title="Réglages" data-en-title="Settings" aria-label="Réglages">⚙️</button>
-      <a id="phone" class="pill" href="/tel" target="_blank" style="color:var(--text);text-decoration:none" title="Affichage téléphone" data-en-title="Phone view">📱</a>
+      <button id="phone" title="Afficher Apex sur ton téléphone" data-en-title="Show Apex on your phone" aria-label="Téléphone">📱</button>
       <button id="quit" title="Fermer Apex Radio" aria-label="Fermer Apex Radio" data-en-title="Close Apex Radio">⏻</button>
     </div>
   </header>
@@ -325,6 +331,21 @@
 </div>
 
 <div id="listen" aria-live="polite" hidden><span class="ldot"></span><b id="listentxt">J'ÉCOUTE…</b></div>
+<div id="phonebox" hidden>
+  <div class="phonecard">
+    <button id="phoneclose" style="float:right" aria-label="Fermer">✕</button>
+    <h2 style="margin-top:0" data-en="Apex on your phone">Apex sur ton téléphone</h2>
+    <div id="qr"></div>
+    <div class="mono" id="phoneurl" style="margin:10px 0;color:var(--accent);word-break:break-all"></div>
+    <ol class="phonesteps">
+      <li data-en="Connect your phone to the same Wi-Fi as this PC.">Connecte ton téléphone au même Wi-Fi que ce PC.</li>
+      <li data-en="Scan the QR code with the camera (or type the address in the browser).">Scanne le QR code avec l'appareil photo (ou tape l'adresse dans le navigateur).</li>
+      <li data-en="Tip: in the browser menu, « Add to home screen » makes it an app icon.">Astuce : dans le menu du navigateur, « Ajouter à l'écran d'accueil » en fait une icône comme une appli.</li>
+    </ol>
+    <div class="sub" style="font-family:inherit" data-en="Doesn't open? The first time, Windows may ask to allow Apex Radio on the network: answer « Allow » (private network).">Ça ne s'ouvre pas ? La première fois, Windows peut demander d'autoriser Apex Radio sur le réseau : réponds « Autoriser » (réseau privé).</div>
+    <a href="/tel" target="_blank" class="pill" style="display:inline-block;margin-top:10px;color:var(--text);text-decoration:none" data-en="Open the phone view on this PC">Ouvrir la vue téléphone sur ce PC</a>
+  </div>
+</div>
 <div id="set" hidden>
   <div class="wsbox setbox">
     <div class="row" style="align-items:center"><div class="logo" style="font-size:20px" data-en="SETTINGS">RÉGLAGES</div><button id="setclose" aria-label="Fermer">✕</button></div>
@@ -637,6 +658,7 @@ function render(d) {
     const tyres = p.tyre_compound === "pluie" ? T("pneus pluie", "wets") : p.tyre_compound === "slicks" ? "slicks" : p.change_tyres ? T("4 pneus", "4 tyres") : p.change_tyres === false ? T("on garde les pneus", "keep tyres") : "";
     info = [p.fuel_to_add != null ? `+${n(p.fuel_to_add, 0)} L` : "", p.energy_target != null ? `${T("én.", "en.")} ${n(p.energy_target * 100, 0)} %` : "", tyres, T(`${p.stops_needed} arrêt${p.stops_needed > 1 ? "s" : ""}`, `${p.stops_needed} stop${p.stops_needed > 1 ? "s" : ""}`)].filter(Boolean).join(" · ");
   }
+  if (d.phone) phoneUrl = d.phone;
   if (d.setup_prompt !== undefined) {
     if (setupPrompt !== null && d.setup_prompt > setupPrompt) $("wsopen").click();   // fin de session : on ouvre l'atelier
     setupPrompt = d.setup_prompt;
@@ -1006,6 +1028,19 @@ function launchLMU() { lmuClicked = Date.now(); fetch("/api/lmu/launch", { metho
 $("lmulaunch").onclick = launchLMU; $("lmulaunch2").onclick = launchLMU;
 $("autolmu").onchange = e => fetch("/api/lmu/autolaunch", { method: "POST", body: JSON.stringify({ on: e.target.checked }) });
 $("setopen").onclick = () => { $("set").hidden = false; };
+// ---- vue téléphone : QR code + adresse sur le réseau local
+let phoneUrl = "";
+$("phone").onclick = () => {
+  const url = phoneUrl || (location.origin + "/tel");
+  $("phoneurl").textContent = url;
+  try {
+    const q = qrcode(0, "M"); q.addData(url); q.make();
+    $("qr").innerHTML = q.createSvgTag({ cellSize: 6, margin: 0, scalable: true });
+  } catch (e) { $("qr").textContent = ""; }
+  $("phonebox").hidden = false;
+};
+$("phoneclose").onclick = () => { $("phonebox").hidden = true; };
+$("phonebox").onclick = e => { if (e.target === $("phonebox")) $("phonebox").hidden = true; };
 $("setclose").onclick = () => { $("set").hidden = true; };
 $("set").onclick = e => { if (e.target.id === "set") $("set").hidden = true; };
 $("wsopen").onclick = () => { $("ws").hidden = false; $("wsresult").textContent = ""; wsLoad(false); clearInterval(wsTimer); wsTimer = setInterval(() => wsLoad(true), 3000); };
@@ -1035,6 +1070,7 @@ $("logsend").onclick = async () => {
   } catch (e) { m.textContent = T("Impossible de copier le journal.", "Couldn't copy the log."); }
 };
 </script>
+<script src="/qrcode.js"></script>
 <script src="/fsel.js"></script>
 </body>
 </html>

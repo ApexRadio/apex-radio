@@ -147,6 +147,7 @@ def loop(state: State, demo: bool) -> None:
     lt = LapTimes()
     questions.LAPTIMES = lt
     beh = Behavior(state.map)
+    lt.beh = beh   # pour dire dans quel virage le tour a été invalidé
     beh.say = lambda key, text, **kw: eng.say(key, text, elapsed=state.snap.elapsed)
     questions.BEHAVIOR = beh
     reflap = RefLap(beh)

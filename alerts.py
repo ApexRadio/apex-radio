@@ -804,7 +804,9 @@ class Morale:
                 L("On a eu un coup dur, mais tu remontes. Continue comme ça !", "We had a tough moment, but you're coming back. Keep it up!"),
                 L("Oublie l'incident, regarde devant, tu vas plus vite qu'eux.", "Forget the incident, look ahead, you're quicker than them."),
                 L("Belle réaction après le pépin, je sens que tu vas remonter.", "Great reaction after the trouble, I can feel you climbing back.")]))
-        if pos and pos <= 3:
+        if pos == 1:
+            lines.append(L("Tu es en tête, garde la tête froide !", "You're leading, stay cool!"))
+        elif pos and pos <= 3:
             lines.append(L(f"P{pos}, tu es sur le podium, garde la tête froide !", f"P{pos}, you're on the podium, stay cool!"))
         if not lines:
             lines = [L("Tu fais du bon boulot, reste concentré.", "You're doing a good job, stay focused."),

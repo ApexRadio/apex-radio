@@ -157,7 +157,8 @@
   .ver { border-top: 1px solid var(--line); padding: 8px 0; }
 
   /* ---- Tout sur un écran (PC) : rien ne défile, la radio et la carte s'adaptent ---- */
-  @media (min-width: 1100px) {
+  /* écran bas (portable, 2e écran, zoom Windows 150 %) : on garde la page qui défile, sinon les pneus et la carte sont écrasés */
+  @media (min-width: 1100px) and (min-height: 720px) {
     html, body { height: 100%; overflow: hidden; }
     .wrap { height: 100vh; padding: 12px 20px; gap: 12px; }
     header .logo { font-size: 24px; }
@@ -186,7 +187,7 @@
     .chrono { flex: 0 0 auto; }
     th { padding: 2px 4px; } td { padding: 4px 4px; }
   }
-  @media (min-width: 1100px) and (max-height: 800px) {
+  @media (min-width: 1100px) and (min-height: 720px) and (max-height: 800px) {
     .press { display: none; }
     #fc span:nth-child(n+2), #fc br { display: none; }
     #behav .it:nth-child(n+2) { display: none; }

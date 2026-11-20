@@ -23,6 +23,8 @@
 - 🇬🇧 Lap invalidated: called straight away, with the corner ("Lap invalidated at turn 4"), instead of waiting for the finish line.
 - 🇫🇷 Course multiclasse : les conseils du tour de référence ne se déclenchent plus quand tu es dans le trafic ; les écarts « il revient de 5 secondes par tour » ne s'emballent plus sur un seul tour raté, et les places annoncées sont celles de ta catégorie ; un accident avec plusieurs chocs ne fait plus répéter « Contact ! ».
 - 🇬🇧 Multiclass racing: reference-lap tips no longer fire when you're in traffic; "he's closing by 5 seconds a lap" no longer overreacts to a single bad lap, and positions are your class positions; a crash with several hits no longer repeats "Contact!".
+- 🇫🇷 Tableau de bord sur un écran peu haut (2e écran, portable, zoom Windows 125-150 %) : les pneus et la carte ne sont plus écrasés, la page défile.
+- 🇬🇧 Dashboard on a short screen (second screen, laptop, Windows zoom 125-150 %): tyres and map are no longer squashed, the page scrolls.
 - 🇫🇷 Tour de référence : en course, pas de conseil avant le 3e tour et au plus un toutes les 2 minutes.
 - 🇬🇧 Reference lap: in races, no tips before lap 3 and at most one every 2 minutes.
 - 🇫🇷 Menus déroulants redessinés : ils apparaissent maintenant dans tes vidéos (OBS, barre de jeu).

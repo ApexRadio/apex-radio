@@ -158,6 +158,10 @@ class RefLap:
             if not (ln + EXIT + 0.005 < r < ln + EXIT + 0.05):
                 continue
             self.done.add(cid)
+            # une voiture juste devant (ou qui te colle) dans ce virage : on ne compare pas, le trafic fausse tout
+            if any(not o.get("me") and ((o.get("f", 0) - f) % 1 < 0.025 or (f - o.get("f", 0)) % 1 < 0.01)
+                   for o in s.cars):
+                continue
             ref = self.ref["corners"].get(cid)
             if not ref or abs(_rel(ref["s"], c["start"])) > 0.01:    # carte du circuit changée : on ne compare pas
                 continue

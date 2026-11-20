@@ -21,6 +21,8 @@
 - 🇬🇧 Assetto Corsa EVO and iRacing: Apex can't set these games' pit menu, so it tells you what to set ("Pit stop in 3 laps. Set the pit menu on your wheel: 18 litres, four new tyres").
 - 🇫🇷 Tour invalidé : annoncé tout de suite, avec le virage (« Tour invalidé au virage 4 »), au lieu d'attendre la ligne d'arrivée.
 - 🇬🇧 Lap invalidated: called straight away, with the corner ("Lap invalidated at turn 4"), instead of waiting for the finish line.
+- 🇫🇷 Course multiclasse : les conseils du tour de référence ne se déclenchent plus quand tu es dans le trafic ; les écarts « il revient de 5 secondes par tour » ne s'emballent plus sur un seul tour raté, et les places annoncées sont celles de ta catégorie ; un accident avec plusieurs chocs ne fait plus répéter « Contact ! ».
+- 🇬🇧 Multiclass racing: reference-lap tips no longer fire when you're in traffic; "he's closing by 5 seconds a lap" no longer overreacts to a single bad lap, and positions are your class positions; a crash with several hits no longer repeats "Contact!".
 - 🇫🇷 Tour de référence : en course, pas de conseil avant le 3e tour et au plus un toutes les 2 minutes.
 - 🇬🇧 Reference lap: in races, no tips before lap 3 and at most one every 2 minutes.
 - 🇫🇷 Menus déroulants redessinés : ils apparaissent maintenant dans tes vidéos (OBS, barre de jeu).

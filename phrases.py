@@ -109,6 +109,6 @@ def dress(text: str, answer: bool = False, urgent: bool = False) -> str:
     out = text.strip()
     if random.random() < p_open:
         out = pick(f"open:{TONE}:{'answer' if answer else 'info'}", _OPEN[TONE]["answer" if answer else "info"]) + " " + out
-    if random.random() < p_close and out.endswith("."):
+    if random.random() < p_close and out.endswith(".") and not any(w in low for w in ("concentr", "continu", "surveill", "à toi")):
         out = out + " " + pick(f"close:{TONE}", _CLOSE[TONE])
     return out

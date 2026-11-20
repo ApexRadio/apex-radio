@@ -307,8 +307,8 @@ class LMUSource:
                 o["best"] = v.mBestLapTime if v.mBestLapTime > 0 else None
                 s.rivals.append(o)
         if me is not None:
-            s.ahead = other(same[me - 1]) if me > 0 else None
-            s.behind = other(same[me + 1]) if me + 1 < len(same) else None
+            s.ahead = dict(other(same[me - 1]), cpos=me) if me > 0 else None
+            s.behind = dict(other(same[me + 1]), cpos=me + 2) if me + 1 < len(same) else None
             if s.ahead:
                 s.gap_class_ahead = gap(same[me - 1], sc)
             if s.behind:

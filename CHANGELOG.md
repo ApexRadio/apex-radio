@@ -2,6 +2,8 @@
 
 ## Prochaine version (AC EVO)
 - 🇫🇷 Assetto Corsa EVO : quand tu gagnes du temps en coupant la piste, l'ingénieur te dit de lever le pied pour le rendre (sinon pénalité), puis confirme quand c'est rendu. Drapeau noir à rond orange (voiture trop abîmée) annoncé.
+- 🇫🇷 Assetto Corsa EVO : classement complet en course (« où est P1 ? », écart avec le leader…), température idéale des pneus selon le type de pneu (pneus froids / trop chauds), annonces quand la piste se refroidit ou chauffe.
+- 🇬🇧 Assetto Corsa EVO: full race order ("where is P1?", gap to the leader…), ideal tyre temperature by tyre type (cold / too hot tyres), calls when the track cools down or heats up.
 - 🇬🇧 Assetto Corsa EVO: when you gain time cutting the track, the engineer tells you to lift to give it back (or it's a penalty), then confirms when it's done. Black and orange flag (car too damaged) called out.
 
 ## 1.3.1

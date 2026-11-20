@@ -315,6 +315,11 @@ def forecast_answer(t: str, s: Snapshot) -> str:
 def weather(s: Snapshot, p: Plan) -> str:
     out = L(f"{p.weather or 'Sec'}. Air {_f(s.air_temp, 0)} degrés, piste {_f(s.track_temp, 0)}.",
             f"{p.weather or 'Dry'}. Air {_f(s.air_temp, 0)} degrees, track {_f(s.track_temp, 0)}.")
+    if getattr(s, "game", "lmu") != "lmu":
+        if re.search(r"pleuv|pluie|prevu|prevision|va (faire|y avoir)|forecast|later|rain", LAST_TEXT):
+            out += L(" Dans ce jeu, je n'ai pas les prévisions de pluie, mais je te préviens si la piste change de température.",
+                     " In this game I don't get the rain forecast, but I'll tell you if the track temperature changes.")
+        return out
     if re.search(r"pleuv|pluie|prevu|prevision|va (faire|y avoir)|course|qualif|calif|tout a l heure|plus tard|forecast|later|rain|qualy", LAST_TEXT):
         fc = forecast_answer(LAST_TEXT, s)
         if fc:
@@ -928,8 +933,8 @@ def rival(t: str, s: Snapshot) -> str | None:
     car = next((r for r in s.rivals if r.get("place") == n), None) or next((r for r in s.rivals if r.get("cpos") == n), None)
     if car is None:
         return L(f"Je ne vois pas de P{n} dans ta catégorie.", f"I can't see a P{n} in your class.")
-    name = (car.get("name") or "").split(" ")[-1] or L("ce pilote", "that driver")
-    who = f"P{n}, {name},"
+    name = (car.get("name") or "").split(" ")[-1]
+    who = f"P{n}, {name}," if name else f"P{n}"
     parts = []
     g = car.get("gap")
     if car.get("in_pits"):

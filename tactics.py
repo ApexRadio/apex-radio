@@ -57,6 +57,24 @@ class Penalties:
             say(None, L("Avertissement de la direction de course, drapeau noir et blanc. Attention, la prochaine fois c'est la pénalité.",
                         "Warning from race control, black and white flag. Careful, next time it's a penalty."), urgent=True)
         self._warn = warn
+        mb = bool(getattr(s, "meatball", False))
+        if mb and not getattr(self, "_mb", False):
+            say(None, L("Drapeau noir à rond orange : la voiture est trop abîmée, rentre au stand pour réparer.",
+                        "Black and orange flag: the car is too damaged, box to repair."), urgent=True)
+        self._mb = mb
+        # AC EVO : temps gagné en coupant la piste. On le dit une fois (s'il vaut le coup), puis quand il est rendu
+        cut = int(getattr(s, "cut_gain_ms", 0) or 0)
+        told = getattr(self, "_cut_told", False)
+        if cut >= 250 and not told:
+            self._cut_told = True
+            t = round(cut / 1000, 1)
+            t = int(t) if t == int(t) else t
+            say(None, L(f"Tu as gagné {str(t).replace('.', ',')} seconde{'s' if t >= 2 else ''} en coupant la piste : lève le pied pour la rendre, sinon pénalité.",
+                        f"You gained {t} seconds cutting the track: lift to give it back, or it's a penalty."), urgent=True)
+        elif cut == 0 and told:
+            self._cut_told = False
+            if not s.penalties:
+                say(None, L("C'est bon, l'avantage est rendu.", "Good, the advantage is given back."))
         n = s.penalties
         if n > self.count:
             self.given_lap = self.said_lap = s.laps_done

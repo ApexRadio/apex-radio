@@ -317,6 +317,8 @@ class Engineer:
             p.change_tyres = (p.tyre_laps_left - laps_driven_before) < stint_after
         else:
             p.change_tyres = None
+        if getattr(self, "relay_tyres", False) and not p.tyre_compound and p.tyre_wheels is None:
+            p.change_tyres = True      # planning des relais : pneus neufs au changement de pilote
 
         self._pit_calls(s, p)
         self.plan = p

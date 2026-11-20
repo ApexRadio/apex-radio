@@ -153,6 +153,7 @@ def loop(state: State, demo: bool) -> None:
     questions.REFLAP = reflap
     import relais
     relay = relais.Relay()
+    relay.eng = eng   # pneus neufs au changement de pilote
     state.relay = relay
     state.beh = beh
     probe = Probe() if not demo else None

@@ -17,6 +17,8 @@
 - 🇬🇧 Settings → Engineer: "Driving tips on track", untick it if you don't want tips while driving (the engineer still answers if you ask).
 - 🇫🇷 Assetto Corsa EVO : après le 1er tour, il donne ta place sans parler de places gagnées ou perdues (le jeu ne donne pas la place sur la grille).
 - 🇬🇧 Assetto Corsa EVO: after lap 1 it gives your position without talking about places gained or lost (the game doesn't give the grid position).
+- 🇫🇷 Assetto Corsa EVO et iRacing : Apex ne peut pas régler le menu des stands de ces jeux, il te dit donc quoi mettre (« Arrêt dans 3 tours. Règle le menu des stands dans le volant : 18 litres, 4 pneus neufs »).
+- 🇬🇧 Assetto Corsa EVO and iRacing: Apex can't set these games' pit menu, so it tells you what to set ("Pit stop in 3 laps. Set the pit menu on your wheel: 18 litres, four new tyres").
 - 🇫🇷 Tour de référence : en course, pas de conseil avant le 3e tour et au plus un toutes les 2 minutes.
 - 🇬🇧 Reference lap: in races, no tips before lap 3 and at most one every 2 minutes.
 - 🇫🇷 Menus déroulants redessinés : ils apparaissent maintenant dans tes vidéos (OBS, barre de jeu).

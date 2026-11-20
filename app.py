@@ -329,7 +329,7 @@ def loop(state: State, demo: bool) -> None:
                     if sn.on_track and not sn.in_pits:   # pour vérifier les températures pneus face au jeu
                         r = lambda v: "/".join(f"{x:.0f}" for x in v)
                         print(f"  Pneus °C (AVG/AVD/ARG/ARD) surface {r(sn.tyre_surface_temp)} · couche {r(sn.tyre_inner_temp)}"
-                              f" · carcasse {r(sn.tyre_carcass_temp)} · idéal {sn.tyre_opt:.0f}")
+                              f" · carcasse {r(sn.tyre_carcass_temp)} · idéal {sn.tyre_opt:.0f} · freins {r(sn.brake_temp)}")
                     n_ok, t_rate = 0, time.monotonic()
                 beh.feed(m)
                 reflap.feed(m, state.snap, say)
@@ -352,6 +352,7 @@ def loop(state: State, demo: bool) -> None:
             spotter.session = snap.session
             inc.update(snap)
             traffic.update(snap, plan, say)
+            beh.game = getattr(snap, "game", "lmu")
             pitlane.update(snap, say)
             trend.update(snap, say)
             limits.update(snap, say)

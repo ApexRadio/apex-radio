@@ -854,7 +854,7 @@ class Damage:
             if worst >= 2:
                 self.repair = True
             self._last_fetch = 0   # on relit l'interface de LMU tout de suite
-        self.dents = list(s.dents)
+        self.dents = [max(a, b) for a, b in zip(self.dents, s.dents)]   # pire niveau vu : pas de 2e alerte si ça oscille
         # crevaisons, roues
         for i in range(4):
             if s.flat[i] and not self.flat[i]:
@@ -951,6 +951,9 @@ class Weather:
 
     def update(self, s, say) -> None:
         if not s.on_track:
+            return
+        if getattr(s, "game", "lmu") != "lmu":          # prévisions lues dans LMU seulement
+            self.forecast = []
             return
         if self.demo and not self.forecast:
             self.forecast = [{"at": 0.0, "rain": 0.0, "sky": 1, "temp": 21}, {"at": 0.25, "rain": 0.3, "sky": 3, "temp": 20},

@@ -21,7 +21,7 @@ REFS = DATA / "references"
 
 APPROACH = 0.06      # on cherche le freinage jusqu'à 6 % de tour avant le virage
 EXIT = 0.04          # et la remise des gaz jusqu'à 4 % après
-GAP = {"course": 75.0}   # s entre deux conseils (en course on parle moins)
+GAP = {"course": 120.0}   # s entre deux conseils (en course on parle moins)
 GAP_DEFAULT = 25.0
 
 
@@ -123,7 +123,7 @@ class RefLap:
             if 0.4 < m["f"] < 0.6:
                 self.mid_last = s.last_lap      # chrono du tour PRÉCÉDENT : il changera quand ce tour-ci sera fini
             self.trace.append((m["f"], m["speed"], m.get("brk") or 0.0, m.get("thr") or 0.0))
-            calm = not s.yellow and s.game_phase != 6 and not (s.session == "course" and s.laps_done < 1)
+            calm = not s.yellow and s.game_phase != 6 and not (s.session == "course" and s.laps_done < 2)
             if self.ref and self.clean and calm:
                 self._compare(m["f"], s, say)
 

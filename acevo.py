@@ -391,7 +391,10 @@ class ACEvoSource:
         s.elapsed = time.monotonic() - self._t0
 
         ms = g.session.timeLeftMs
-        if st.timedRace or s.session != "course":
+        if s.session == "course" and g.session.totalLap > 0:
+            # course de 4 tours annoncée « 12 minutes, environ 6 tours » (20/11) : timedRace était vrai
+            s.max_laps = int(g.session.totalLap)
+        elif st.timedRace or s.session != "course":
             if "overtime" in phase_name.lower():
                 s.time_left = 0.0
             elif ms > 0:

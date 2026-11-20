@@ -7,6 +7,8 @@
 - 🇬🇧 Unstable rear detected better (countersteer, spins), and what you feel ("the rear is sliding") is taken into account.
 - 🇫🇷 Voitures plus lentes annoncées au bon moment, spotter qui dit « dégagé » seulement quand la voiture est passée.
 - 🇬🇧 Slower cars called at the right time, spotter says "clear" only once the car has gone by.
+- 🇫🇷 Assetto Corsa EVO : durée de course juste, plus de fausse météo ni de « Contact ! » répété, P1/P3 répondent avec l'écart.
+- 🇬🇧 Assetto Corsa EVO: correct race length, no more fake weather or repeated "Contact!", P1/P3 answered with the gap.
 - 🇫🇷 Assetto Corsa EVO : analyse du pilotage et dégâts ; place annoncée corrigée.
 - 🇬🇧 Assetto Corsa EVO: driving analysis and damage; announced position fixed.
 - 🇫🇷 Menus déroulants visibles dans tes vidéos ; « GT3 » bien prononcé.

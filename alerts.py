@@ -973,6 +973,7 @@ class Weather:
             return
         if getattr(s, "game", "lmu") != "lmu":          # prévisions lues dans LMU seulement
             self.forecast = []
+            self._track_temp(s, say)
             return
         if self.demo and not self.forecast:
             self.forecast = [{"at": 0.0, "rain": 0.0, "sky": 1, "temp": 21}, {"at": 0.25, "rain": 0.3, "sky": 3, "temp": 20},
@@ -983,6 +984,29 @@ class Weather:
             self._fetching = True
             threading.Thread(target=self._fetch, args=(s.session_code,), daemon=True).start()
         self._announce(s, say)
+
+    def _track_temp(self, s, say) -> None:
+        """Jeux sans prévisions (AC EVO) : on suit la température de la piste, qui change le grip."""
+        tt = getattr(s, "track_temp", None)
+        if not tt or tt < -20 or tt > 80:
+            return
+        key = (s.track, s.session_code)
+        if getattr(self, "_tt_key", None) != key:
+            self._tt_key, self._tt_ref, self._tt_t0 = key, None, time.monotonic()
+            return
+        if self._tt_ref is None:
+            if time.monotonic() - self._tt_t0 > 60:     # la valeur se stabilise au début de la séance
+                self._tt_ref = tt
+            return
+        d = tt - self._tt_ref
+        if abs(d) >= 5:
+            self._tt_ref = tt
+            if d < 0:
+                say(None, L(f"La piste se refroidit : {tt:.0f} degrés, {abs(d):.0f} de moins. Un peu moins de grip, attention aux freinages.",
+                            f"The track is cooling down: {tt:.0f} degrees, {abs(d):.0f} less. A bit less grip, careful under braking."))
+            else:
+                say(None, L(f"La piste chauffe : {tt:.0f} degrés, {d:.0f} de plus. Surveille tes pneus.",
+                            f"The track is heating up: {tt:.0f} degrees, {d:.0f} more. Keep an eye on your tyres."))
 
     def _fetch(self, code: int) -> None:
         try:

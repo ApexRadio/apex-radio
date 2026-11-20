@@ -317,6 +317,28 @@ class Relay:
 
     eng_plan_last_stop = False
 
+    def ui(self, p=None) -> dict | None:
+        """Résumé pour le tableau de bord et la vue téléphone : « Relais 2 · Fred → Laurent au prochain arrêt »."""
+        if not self.cfg["on"] or self.stint_start is None:
+            return None
+        d = names(self.cfg)
+        nxt = d[(self.cur + 1) % len(d)]
+        if self.cfg["mode"] == "pleins":
+            if self.eng_plan_last_stop and not self.pending:
+                when = L("jusqu'au bout", "to the end")
+                nxt = None
+            else:
+                k = self.cfg["tanks"] - ((self.last_stops or 0) - self.stops0)
+                when = L("au prochain arrêt", "at the next stop") if k <= 1 else L(f"dans {k} arrêts", f"in {k} stops")
+        else:
+            if self.n - self.done <= 1:
+                when, nxt = L("jusqu'au bout", "to the end"), None
+            else:
+                when = L(f"dans {max(0, round(((self.target or 0) - self.driven) / 60))} min",
+                         f"in {max(0, round(((self.target or 0) - self.driven) / 60))} min")
+        of = f" / {self.n}" if self.cfg["mode"] == "temps" else ""
+        return {"stint": f"{self.done + 1}{of}", "driver": d[self.cur], "next": nxt, "when": when, "soon": self.pending}
+
     def info(self, p=None, snap=None) -> dict:
         full_min = None
         if p is not None and snap is not None and p.fuel_per_lap and p.avg_lap and getattr(snap, "fuel_capacity", 0):

@@ -441,6 +441,7 @@ def loop(state: State, demo: bool) -> None:
                 "forecast": weather.ui(snap),
                 "spotter": {"on": spotter.enabled, "state": spotter.state},
                 "pit": {"mode": crew.mode, "status": crew.status},
+                "relay": relay.ui(plan),
                 "setup_prompt": session_end["prompt"],
                 "ts": time.time(),
             }

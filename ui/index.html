@@ -277,6 +277,7 @@
             <div style="font-family:var(--title);font-weight:700;font-size:32px;margin-top:4px" id="box">–</div>
             <div class="sub" id="boxinfo">–</div>
             <div class="sub" id="pitstatus" style="margin-top:4px"></div>
+            <div class="sub" id="relayline" style="margin-top:4px" hidden></div>
             <div class="pitrow" style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;align-items:center">
               <span class="sub" style="margin:0" data-en="Pit:">Stand :</span>
               <button class="pitm" data-m="auto">AUTO</button><button class="pitm" data-m="demande" data-en="ON REQUEST">À LA DEMANDE</button><button class="pitm" data-m="off">OFF</button>
@@ -639,6 +640,13 @@ function render(d) {
   if (d.setup_prompt !== undefined) {
     if (setupPrompt !== null && d.setup_prompt > setupPrompt) $("wsopen").click();   // fin de session : on ouvre l'atelier
     setupPrompt = d.setup_prompt;
+  }
+  const rl = d.relay;
+  $("relayline").hidden = !rl;
+  if (rl) {
+    const e = s => String(s).replace(/</g, "&lt;");
+    $("relayline").innerHTML = `🔁 ${T("Relais", "Stint")} ${e(rl.stint)} · <b>${e(rl.driver)}</b>` + (rl.next ? ` → ${e(rl.next)} ${e(rl.when)}` : ` · ${e(rl.when)}`);
+    $("relayline").style.color = rl.soon ? "var(--warn)" : "";
   }
   if (d.pit) {
     document.querySelectorAll(".pitm").forEach(b => b.classList.toggle("on", b.dataset.m === d.pit.mode));

@@ -25,6 +25,16 @@ OVER = -0.025          # rad : arrière glisse plus -> survirage
 REL = 0.025            # rad : écart à l'équilibre habituel de LA voiture, virage par virage
 GLOBAL_UNDER = 0.04    # équilibre moyen au-delà duquel la voiture est "globalement sous-vireuse"
 GLOBAL_OVER = -0.025
+# Réglages → Ingénieur : « Conseils de pilotage en piste » (décoché = il ne donne plus de conseils de pilotage
+# en roulant ; il répond toujours si tu demandes et garde les réglages pour la fin de séance)
+COACH = True
+
+
+def set_coach(on) -> None:
+    global COACH
+    COACH = bool(on)
+
+
 SAY_EVERY = 3          # au plus une annonce de comportement tous les 3 tours
 LOCK = -0.18           # taux de glissement : roue bloquée
 FAST_V = 42.0          # m/s (~150 km/h) : vitesse mini au-delà de laquelle un virage est « rapide » (l'aéro compte plus)
@@ -437,6 +447,8 @@ class Behavior:
         # annonces regroupées ("sous-virage au milieu des virages 4, 5 et 6"), au plus 1 tous les 3 tours
         import alerts   # niveau d'encouragements choisi : « motivant » parle plus souvent
         lvl = alerts.ENCOURAGE
+        if not COACH:
+            return
         if not self.say or self.laps_seen - self.last_say < {"discret": 4, "normal": SAY_EVERY, "motivant": 2}[lvl]:
             return
         if self.laps_seen < self.hold_until:

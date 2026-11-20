@@ -124,7 +124,8 @@ class RefLap:
                 self.mid_last = s.last_lap      # chrono du tour PRÉCÉDENT : il changera quand ce tour-ci sera fini
             self.trace.append((m["f"], m["speed"], m.get("brk") or 0.0, m.get("thr") or 0.0))
             calm = not s.yellow and s.game_phase != 6 and not (s.session == "course" and s.laps_done < 2)
-            if self.ref and self.clean and calm:
+            import behavior
+            if self.ref and self.clean and calm and behavior.COACH:
                 self._compare(m["f"], s, say)
 
     def _resolve(self, s) -> None:

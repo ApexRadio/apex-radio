@@ -162,6 +162,8 @@ def loop(state: State, demo: bool) -> None:
     pitlane = PitLane()
     warmup, carinfo, places, morale = WarmUp(), CarInfo(), Places(), Morale()
     set_encourage(state.radio.cfg.get("encourage", "normal"))
+    import behavior as _bh
+    _bh.set_coach(state.radio.cfg.get("coaching", True))
     phrases.set_tone(state.radio.cfg.get("tone", "radio"))
     phrases.set_driver(state.radio.cfg.get("driver_name", ""))
     weather = Weather(demo)
@@ -413,6 +415,7 @@ def loop(state: State, demo: bool) -> None:
                 "radio": list(eng.radio),
                 "accent": state.radio.cfg.get("accent", "bleu"),
                 "encourage": state.radio.cfg.get("encourage", "normal"),
+                "coaching": state.radio.cfg.get("coaching", True),
                 "tone": state.radio.cfg.get("tone", "radio"),
                 "driver_name": state.radio.cfg.get("driver_name", ""),
                 "ptt_mode": state.radio.cfg.get("ptt_mode", "hold"),
@@ -664,6 +667,13 @@ def make_handler(state: State):
                 m = json.loads(self.rfile.read(n) or b"{}").get("mode", "hold")
                 state.radio.cfg["ptt_mode"] = "toggle" if m == "toggle" else "hold"
                 save_config(state.radio.cfg)
+            elif self.path == "/api/coaching":
+                n = int(self.headers.get("Content-Length") or 0)
+                on = bool(json.loads(self.rfile.read(n) or b"{}").get("on", True))
+                state.radio.cfg["coaching"] = on
+                save_config(state.radio.cfg)
+                import behavior as _bh
+                _bh.set_coach(on)
             elif self.path == "/api/encourage":
                 n = int(self.headers.get("Content-Length") or 0)
                 lv = json.loads(self.rfile.read(n) or b"{}").get("level", "normal")

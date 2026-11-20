@@ -675,7 +675,9 @@ class Places:
             self.pit_t = s.elapsed
         if self.start is None:
             if s.laps_done == 0:
-                if not getattr(s, "pos_guess", False):
+                if getattr(s, "game", "lmu") == "acevo":
+                    self.start = -1         # AC EVO ne donne pas la place sur la grille
+                elif not getattr(s, "pos_guess", False):
                     self.start = pos
                 return
             if s.laps_done > 2:
@@ -718,7 +720,7 @@ class Places:
                                  L("Respire, la course est longue.", "Breathe, it's a long race.")]))
 
     def _start_msg(self, pos, say) -> None:
-        if self.start < 0:
+        if not self.start or self.start < 0:
             say(None, L(f"Premier tour bouclé, tu es P{pos}.", f"First lap done, you're P{pos}."))
             return
         d = self.start - pos

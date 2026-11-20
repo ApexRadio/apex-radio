@@ -13,6 +13,10 @@
 - 🇬🇧 Assetto Corsa EVO: driving analysis (lock-ups, wheelspin, under/oversteer), bodywork damage; fixed: the announced position was one place too high.
 - 🇫🇷 Assetto Corsa EVO, corrigé : durée des courses au nombre de tours (une course de 4 tours n'est plus annoncée « 12 minutes, 6 tours »), plus de message d'essence après l'arrivée, plus de fausse météo LMU, plus de « Contact ! » répété, plus d'« atelier setup » (il n'existe que pour LMU). « À quelle distance est P1 ? » répond avec l'écart devant ou derrière.
 - 🇬🇧 Assetto Corsa EVO, fixed: race length by lap count (a 4-lap race is no longer announced as "12 minutes, 6 laps"), no more fuel message after the finish, no more fake LMU weather, no more repeated "Contact!", no more "setup workshop" (LMU only). "How far is P1?" answers with the gap ahead or behind.
+- 🇫🇷 Réglages → Ingénieur : « Conseils de pilotage en piste », à décocher si tu ne veux pas de conseils en roulant (l'ingénieur répond toujours si tu demandes).
+- 🇬🇧 Settings → Engineer: "Driving tips on track", untick it if you don't want tips while driving (the engineer still answers if you ask).
+- 🇫🇷 Assetto Corsa EVO : après le 1er tour, il donne ta place sans parler de places gagnées ou perdues (le jeu ne donne pas la place sur la grille).
+- 🇬🇧 Assetto Corsa EVO: after lap 1 it gives your position without talking about places gained or lost (the game doesn't give the grid position).
 - 🇫🇷 Tour de référence : en course, pas de conseil avant le 3e tour et au plus un toutes les 2 minutes.
 - 🇬🇧 Reference lap: in races, no tips before lap 3 and at most one every 2 minutes.
 - 🇫🇷 Menus déroulants redessinés : ils apparaissent maintenant dans tes vidéos (OBS, barre de jeu).

@@ -39,8 +39,16 @@ static class ApexRadio
         psi.WorkingDirectory = dir;
         psi.UseShellExecute = false;
         psi.CreateNoWindow = true;
+        // erreurs Python gardées : si l'appli plante avant d'avoir ouvert son journal, on les montre et on les enregistre
+        psi.RedirectStandardError = true;
+        StringBuilder err = new StringBuilder();
         Process p;
-        try { p = Process.Start(psi); }
+        try
+        {
+            p = Process.Start(psi);
+            p.ErrorDataReceived += (s, e) => { if (e.Data != null) lock (err) { if (err.Length < 20000) err.AppendLine(e.Data); } };
+            p.BeginErrorReadLine();
+        }
         catch (Exception e)
         {
             MessageBox.Show("Impossible de lancer Apex Radio / Cannot start Apex Radio:\n" + e.Message,
@@ -53,6 +61,18 @@ static class ApexRadio
         {
             if (p != null && p.WaitForExit(20000) && p.ExitCode != 0)
             {
+                p.WaitForExit();
+                string detail = "";
+                lock (err) { detail = err.ToString().Trim(); }
+                string logDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Apex Radio");
+                try
+                {
+                    Directory.CreateDirectory(logDir);
+                    File.WriteAllText(Path.Combine(logDir, "demarrage.txt"),
+                        DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "  code " + p.ExitCode + "\r\n" + py + "\r\n\r\n" + detail, Encoding.UTF8);
+                }
+                catch (Exception) { }
+                string tail = detail.Length > 900 ? "…" + detail.Substring(detail.Length - 900) : detail;
                 DialogResult r = MessageBox.Show(
                     "Apex Radio s'est arrêté au démarrage.\n\n" +
                     "Tu peux réinstaller la version précédente par-dessus : tes réglages, records et setups sont gardés.\n" +
@@ -60,7 +80,8 @@ static class ApexRadio
                     "Apex Radio stopped while starting.\n" +
                     "You can install the previous version over this one: your settings, records and setups are kept.\n" +
                     "Open the versions page?\n\n" +
-                    "(journal.txt : %LOCALAPPDATA%\\Apex Radio)",
+                    "(journal.txt / demarrage.txt : %LOCALAPPDATA%\\Apex Radio)" +
+                    (tail.Length > 0 ? "\n\n" + tail : ""),
                     "Apex Radio", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (r == DialogResult.Yes)
                     Process.Start(new ProcessStartInfo(RELEASES) { UseShellExecute = true });

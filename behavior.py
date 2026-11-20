@@ -155,6 +155,7 @@ class Behavior:
         self.brake_hist: deque = deque(maxlen=3)
         self.sgn = {1: 0, -1: 0}                # sens habituel volant / virage (pour repérer le contre-braquage)
         self.driver_issue = None                # ce que le pilote a signalé lui-même (« l'arrière glisse »)
+        self.game = "lmu"                       # l'atelier setup n'existe que pour LMU
         self.trail: deque = deque()             # 5 dernières secondes (heure, vitesse, position, l'arrière glisse ?)
         self.spin_t = -99.0
         self.spin_corners = defaultdict(int)    # virage -> tête-à-queue sur la séance (pas besoin de 2 tours pour y croire)
@@ -626,7 +627,8 @@ class Behavior:
         if not notes:
             return None
         return L("Pour le setup, voici ce que je changerais : ", "For the setup, here's what I'd change: ") + " ; ".join(notes[:4]) \
-            + L(". J'ouvre l'atelier setup avec mes propositions.", ". I'm opening the setup workshop with my suggestions.")
+            + (L(". J'ouvre l'atelier setup avec mes propositions.", ". I'm opening the setup workshop with my suggestions.")
+               if self.game == "lmu" else ".")
 
     def driver_report(self, kind: str) -> str:
         """Le pilote dit ce qu'il ressent (« l'arrière glisse », « elle ne tourne pas ») : on le note et on conseille,

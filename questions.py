@@ -906,12 +906,24 @@ def _wanted_place(t: str) -> int | None:
 
 def rival(t: str, s: Snapshot) -> str | None:
     """Question sur une voiture précise : « où est P6 ? », « P2 roule plus vite ? », « dans quel secteur P6 est plus rapide ? »."""
-    if not s.rivals or re.search(r"\b(je suis|suis je|ma position|ma place)\b", t):
+    if re.search(r"\b(je suis|suis je|ma position|ma place)\b", t):
         return None
     n = _wanted_place(t)
     if n is None:
         return None
     me_pos = s.class_position or s.position
+    if not s.rivals:
+        # AC EVO : pas de liste des autres voitures, seulement l'écart devant / derrière
+        if not me_pos:
+            return None
+        if n == me_pos:
+            return L(f"P{n}, c'est toi !", f"P{n}, that's you!")
+        if n == me_pos - 1 and s.gap_ahead is not None:
+            return L(f"P{n} est {_sec(s.gap_ahead)} devant toi.", f"P{n} is {_sec(s.gap_ahead)} ahead of you.")
+        if n == me_pos + 1 and s.gap_behind is not None:
+            return L(f"P{n} est {_sec(s.gap_behind)} derrière toi.", f"P{n} is {_sec(s.gap_behind)} behind you.")
+        return L(f"Dans ce jeu, je ne vois que la voiture juste devant et juste derrière toi, pas P{n}.",
+                 f"In this game I can only see the car just ahead and just behind you, not P{n}.")
     if n == me_pos and not any(r.get("place") == n for r in s.rivals):
         return L(f"P{n}, c'est toi !", f"P{n}, that's you!")
     # P = position générale si une voiture de ta catégorie l'occupe, sinon position dans ta catégorie

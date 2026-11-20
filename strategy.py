@@ -77,6 +77,9 @@ class Engineer:
 
     # ------------------------------------------------------------------ radio
     def say(self, key: str | None, text: str, urgent: bool = False, elapsed: float = 0.0) -> None:
+        if key is not None and getattr(self, "_done", False) and key.split(":")[0] in ("stint", "once", "plan", "save") \
+                and key != "once:finish":
+            return          # course finie : plus de stratégie essence (« pas besoin de rentrer » après le damier, 20/11)
         if key is not None:
             if key in self._said:
                 return
@@ -160,6 +163,7 @@ class Engineer:
     def update(self, s: Snapshot) -> Plan:
         if not s.on_track:
             return self.plan
+        self._done = s.done
         self._track_laps(s)
         et = s.elapsed
         p = Plan()

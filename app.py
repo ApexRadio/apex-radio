@@ -331,7 +331,7 @@ def loop(state: State, demo: bool) -> None:
                     if sn.on_track and not sn.in_pits and max(sn.tyre_surface_temp or [0]) > -50:   # pour vérifier les températures pneus face au jeu
                         r = lambda v: "/".join(f"{x:.0f}" for x in v)
                         print(f"  Pneus °C (AVG/AVD/ARG/ARD) surface {r(sn.tyre_surface_temp)} · couche {r(sn.tyre_inner_temp)}"
-                              f" · carcasse {r(sn.tyre_carcass_temp)} · idéal {sn.tyre_opt:.0f}")
+                              f" · carcasse {r(sn.tyre_carcass_temp)} · idéal {sn.tyre_opt:.0f} · freins {r(sn.brake_temp)}")
                     n_ok, t_rate = 0, time.monotonic()
                 beh.feed(m)
                 reflap.feed(m, state.snap, say)
@@ -358,6 +358,7 @@ def loop(state: State, demo: bool) -> None:
             pacecar.update(snap, say)
             beh.fixed_setup = bool(getattr(snap, "fixed_setup", False))
             beh.quiet_race = snap.session == "course" and getattr(snap, "game", "lmu") == "iracing"
+            beh.game = getattr(snap, "game", "lmu")
             pitlane.update(snap, say)
             trend.update(snap, say)
             limits.update(snap, say)

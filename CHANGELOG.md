@@ -5,6 +5,8 @@
 - 🇬🇧 New: **stint planner** (STINTS button) for team endurance: drivers, race length, stints as a number of tanks (e.g. 2 each) or a length of time, new tyres at each driver change. In the race, Apex calls driver changes at the right stop and recalculates the plan if a stint runs longer or shorter. Question: "who's driving next?".
 - 🇫🇷 Relais visibles sur le tableau de bord et sur la vue téléphone.
 - 🇬🇧 Stints shown on the dashboard and the phone view.
+- 🇫🇷 Bouton ⏻ : une vraie fenêtre « Fermer Apex Radio ? » (Annuler / Fermer) au lieu du double clic.
+- 🇬🇧 ⏻ button: a proper "Close Apex Radio?" window (Cancel / Close) instead of the double click.
 - 🇫🇷 Vue téléphone refaite, plus complète et lisible : écarts avec les noms, chronos (dernier, meilleur, record), essence en tours et prochain arrêt, températures et usure des 4 pneus, drapeaux jaune et bleu, 3 derniers messages.
 - 🇬🇧 Phone view redone, fuller and easier to read: gaps with names, lap times (last, best, record), fuel in laps and next stop, temperature and wear of all 4 tyres, yellow and blue flags, last 3 messages.
 - 🇫🇷 Bouton 📱 : QR code à scanner pour ouvrir Apex sur ton téléphone (même Wi-Fi), avec l'aide si ça ne s'ouvre pas (pare-feu Windows).

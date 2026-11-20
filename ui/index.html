@@ -131,6 +131,17 @@
   .bub.k-pep { border-left: 3px solid var(--good); }
   .bub.k-info { border-left: 3px solid var(--line, #2a3242); }
   .pitrow[hidden] { display: none !important; }
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 13; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
+  .modal[hidden] { display: none; }
+  .quitcard { background: var(--bg); border: 1px solid var(--line); border-radius: 18px; padding: 22px 24px; width: min(360px, 90vw); text-align: center; box-shadow: 0 10px 50px rgba(0,0,0,.6); animation: pop .15s ease-out; }
+  .quitcard h2 { margin: 6px 0 4px; font-size: 20px; }
+  .quiticon { width: 54px; height: 54px; margin: 0 auto; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; color: var(--alert); background: rgba(255,46,136,.12); border: 1px solid rgba(255,46,136,.4); }
+  .quitbtns { display: flex; gap: 10px; margin-top: 18px; } .quitbtns button { flex: 1; padding: 10px; font-size: 15px; border-radius: 12px; }
+  .quitbtns .danger { background: var(--alert); border-color: var(--alert); color: #06070B; font-weight: 700; }
+  @keyframes pop { from { transform: scale(.94); opacity: 0; } to { transform: none; opacity: 1; } }
+  .byebye { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 20px; }
+  .byelogo { font-family: Orbitron, sans-serif; font-weight: 900; font-size: 34px; letter-spacing: .12em; color: var(--accent); text-shadow: 0 0 18px rgba(var(--accent-rgb),.6); }
+  .byetxt { font-size: 22px; font-weight: 600; } .byesub { color: var(--muted); }
   #phonebox { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 12; display: flex; align-items: center; justify-content: center; }
   #phonebox[hidden] { display: none; }
   .phonecard { max-height: 92vh; overflow-y: auto; background: var(--bg); border: 1px solid var(--accent); border-radius: 16px; padding: 18px 20px; width: min(420px, 92vw); box-shadow: 0 0 40px rgba(var(--accent-rgb),.25); }
@@ -332,6 +343,17 @@
 </div>
 
 <div id="listen" aria-live="polite" hidden><span class="ldot"></span><b id="listentxt">J'ÉCOUTE…</b></div>
+<div id="quitbox" class="modal" hidden>
+  <div class="quitcard" role="dialog" aria-modal="true" aria-labelledby="quittitle">
+    <div class="quiticon">⏻</div>
+    <h2 id="quittitle" data-en="Close Apex Radio?">Fermer Apex Radio ?</h2>
+    <p class="sub" style="font-family:inherit" data-en="The engineer will stop talking until you start Apex again.">L'ingénieur ne te parlera plus jusqu'au prochain lancement d'Apex.</p>
+    <div class="quitbtns">
+      <button id="quitno" data-en="Cancel">Annuler</button>
+      <button id="quityes" class="danger" data-en="Close">Fermer</button>
+    </div>
+  </div>
+</div>
 <div id="phonebox" hidden>
   <div class="phonecard">
     <button id="phoneclose" style="float:right" aria-label="Fermer">✕</button>
@@ -895,8 +917,19 @@ $("askform").onsubmit = e => { e.preventDefault(); const q = $("ask").value.trim
 document.querySelectorAll(".pitm").forEach(b => b.onclick = () => fetch("/api/pit/mode", { method: "POST", body: JSON.stringify({ mode: b.dataset.m }) }));
 $("pitnow").onclick = () => fetch("/api/pit/now", { method: "POST" });
 $("spot").onclick = () => fetch("/api/spotter/toggle", { method: "POST" });
-$("quit").onclick = () => { if (confirmQuit()) fetch("/api/quit", { method: "POST" }).then(() => { document.body.innerHTML = "<p style='padding:40px;font-size:18px'>" + T("Apex Radio est fermé. Tu peux fermer cet onglet.", "Apex Radio is closed. You can close this tab.") + "</p>"; }); };
-function confirmQuit() { const b = $("quit"); if (b.dataset.armed) return true; b.dataset.armed = 1; b.textContent = T("Fermer ?", "Close?"); setTimeout(() => { delete b.dataset.armed; b.textContent = "⏻"; }, 3000); return false; }
+// ---- fermer Apex : petite fenêtre de confirmation
+$("quit").onclick = () => { $("quitbox").hidden = false; setTimeout(() => $("quitno").focus(), 50); };
+$("quitno").onclick = () => { $("quitbox").hidden = true; };
+$("quitbox").onclick = e => { if (e.target === $("quitbox")) $("quitbox").hidden = true; };
+document.addEventListener("keydown", e => { if (e.key === "Escape") { $("quitbox").hidden = true; $("phonebox").hidden = true; } });
+$("quityes").onclick = () => {
+  $("quityes").disabled = true;
+  fetch("/api/quit", { method: "POST" }).catch(() => {}).finally(() => {
+    document.body.innerHTML = `<div class="byebye"><div class="byelogo">APEX//RADIO</div>
+      <div class="byetxt">${T("À bientôt sur la piste ! 🏁", "See you on track! 🏁")}</div>
+      <div class="byesub">${T("Apex Radio est fermé. Tu peux fermer cette fenêtre.", "Apex Radio is closed. You can close this window.")}</div></div>`;
+  });
+};
 $("vol").onchange = () => fetch("/api/voice/volume", { method: "POST", body: JSON.stringify({ v: Number($("vol").value) }) });
 $("vtoggle").onclick = () => fetch("/api/voice/toggle", { method: "POST" });
 $("quiet").onclick = () => fetch("/api/voice/quiet", { method: "POST" });

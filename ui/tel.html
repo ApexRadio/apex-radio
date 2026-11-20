@@ -17,21 +17,32 @@
   .top { display: flex; justify-content: space-between; align-items: center; }
   .logo { font-family: var(--title); font-weight: 900; color: var(--accent); letter-spacing: .1em; text-shadow: 0 0 12px rgba(var(--accent-rgb),.6); font-size: 16px; }
   .muted { color: var(--muted); font-size: 12px; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; min-width: 0; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 9px 12px; min-width: 0; }
+  .full { grid-column: 1 / -1; }
   .lab { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
-  .val { font-family: var(--mono); font-weight: 700; font-size: clamp(34px, 12vw, 64px); line-height: 1.05; }
+  .val { font-family: var(--mono); font-weight: 700; font-size: clamp(30px, 10vw, 54px); line-height: 1.05; white-space: nowrap; overflow: hidden; }
   .sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .row { display: flex; justify-content: space-between; gap: 8px; font-family: var(--mono); font-size: 15px; margin-top: 3px; }
+  .row b { font-weight: 700; color: var(--text); } .row span:first-child { color: var(--muted); font-family: Inter, sans-serif; font-size: 13px; }
+  .row .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%; }
   #lap { color: var(--yellow); text-shadow: 0 0 14px rgba(255,229,0,.5); }
-  #delta.fast { color: var(--good); } #delta.slow { color: var(--alert); }
-  #call { grid-column: 1 / -1; text-align: center; }
-  #call .val { font-family: var(--title); color: var(--accent); font-size: clamp(30px, 10vw, 56px); }
-  #call.alert { border-color: var(--alert); box-shadow: 0 0 28px rgba(255,46,136,.3); }
-  #call.alert .val { color: var(--alert); }
-  #pen { display: none; grid-column: 1 / -1; background: var(--alert); color: #06070B; font-weight: 700; text-align: center;
+  .fast { color: var(--good) !important; } .slow { color: var(--alert) !important; }
+  #call { text-align: center; padding: 8px 12px; }
+  #call .val { font-family: var(--title); color: var(--accent); font-size: clamp(22px, 7vw, 36px); }
+  #call.alert { border-color: var(--alert); box-shadow: 0 0 28px rgba(255,46,136,.3); } #call.alert .val { color: var(--alert); }
+  #call.yel { border-color: var(--yellow); } #call.yel .val { color: var(--yellow); }
+  #call.blu { border-color: #3D8BFF; } #call.blu .val { color: #3D8BFF; }
+  #pen { display: none; background: var(--alert); color: #06070B; font-weight: 700; text-align: center;
          border-radius: 12px; padding: 10px; letter-spacing: .06em; animation: flash 1s steps(2) infinite; }
   @keyframes flash { 50% { opacity: .55; } }
-  #msg { grid-column: 1 / -1; font-size: 16px; }
+  .tyres { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
+  .ty { border-radius: 10px; padding: 5px 6px; text-align: center; background: #06070B; border: 1px solid var(--line); }
+  .ty .tt { font-family: var(--mono); font-weight: 700; font-size: 20px; } .ty .tw { font-size: 11px; color: var(--muted); }
+  .ty.cold .tt { color: #4FA8FF; } .ty.ok .tt { color: var(--good); } .ty.hot .tt { color: var(--alert); }
+  #msglist div { padding: 5px 0; border-top: 1px solid var(--line); font-size: 16px; } #msglist div:first-child { border-top: 0; }
+  #msglist div.old { color: var(--muted); font-size: 13px; }
+  .val small { font-size: .4em; color: var(--muted); font-family: Inter, sans-serif; font-weight: 600; }
   #upd { display: none; text-align: center; border: 1px solid var(--accent); border-radius: 12px; padding: 8px; font-size: 13px; color: var(--accent); }
   #wait { text-align: center; margin-top: 30vh; color: var(--muted); }
   nav { margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding-bottom: env(safe-area-inset-bottom); }
@@ -45,14 +56,22 @@
   <div id="upd" role="status"></div>
   <div id="wait" data-en="Waiting for the game…">En attente du jeu…</div>
   <div class="grid" id="dash" hidden>
-    <div id="pen" role="alert"></div>
-    <div class="card" id="call"><div class="lab" data-en="Call">Consigne</div><div class="val" id="calltitle">–</div><div class="sub" id="calltext"></div></div>
-    <div class="card"><div class="lab">Position</div><div class="val" id="pos">–</div><div class="sub" id="gaps"></div></div>
+    <div id="pen" class="full" role="alert"></div>
+    <div class="card full" id="call"><div class="val" id="calltitle">–</div><div class="sub" id="calltext"></div></div>
+    <div class="card"><div class="lab">Position</div><div class="val" id="pos">–</div><div class="sub" id="possub"></div></div>
     <div class="card"><div class="lab" data-en="Lap">Tour</div><div class="val" id="lap">–</div><div class="sub" id="lapsub"></div></div>
+    <div class="card full" id="gapcard"><div class="lab" data-en="Gaps">Écarts</div>
+      <div class="row"><span class="nm" id="aheadnm" data-en="Ahead">Devant</span><b id="ahead">–</b></div>
+      <div class="row"><span class="nm" id="behindnm" data-en="Behind">Derrière</span><b id="behind">–</b></div></div>
     <div class="card"><div class="lab">Delta</div><div class="val" id="delta">–</div><div class="sub" id="deltasub"></div></div>
+    <div class="card"><div class="lab" data-en="Times">Chronos</div>
+      <div class="row"><span data-en="Last">Dernier</span><b id="tlast">–</b></div>
+      <div class="row"><span data-en="Best">Meilleur</span><b id="tbest">–</b></div>
+      <div class="row"><span>Record</span><b id="trec">–</b></div></div>
     <div class="card"><div class="lab" data-en="Fuel">Essence</div><div class="val" id="fuel">–</div><div class="sub" id="fuelsub"></div></div>
-    <div class="card" id="relay" style="grid-column:1/-1" hidden><div class="lab" data-en="Stint">Relais</div><div class="val" id="relaydrv" style="font-size:30px">–</div><div class="sub" id="relaysub"></div></div>
-    <div class="card" id="msg"><div class="lab" id="engname">Jessica</div><div id="last">–</div></div>
+    <div class="card"><div class="lab" data-en="Tyres">Pneus</div><div class="tyres" id="tyres"></div></div>
+    <div class="card full" id="relay" hidden><div class="lab" data-en="Stint">Relais</div><div class="val" id="relaydrv" style="font-size:26px">–</div><div class="sub" id="relaysub"></div></div>
+    <div class="card full msgs" id="msg"><div class="lab" id="engname">Jessica</div><div id="msglist">–</div></div>
   </div>
   <nav>
     <a class="rec" href="/records">RECORDS</a>
@@ -125,23 +144,41 @@ function render(d) {
   $("wait").hidden = !!s.on_track; $("dash").hidden = !s.on_track;
   $("sess").textContent = s.on_track ? `${s.track} · ${T(s.session, SESSION_EN[s.session] || s.session)}` : (s.connected ? T("jeu détecté", "game detected") : T("en attente du jeu", "waiting for the game"));
   if (!s.on_track) return;
-  const last = radio.find(m => !m.me);
-  let title = T("EN PISTE", "ON TRACK"), text = "", alert = false;
-  if (s.yellow) { title = T("DRAPEAU JAUNE", "YELLOW"); alert = true; }
-  else if (p.ready && p.stops_needed > 0 && p.laps_until_box <= 1) { title = "BOX BOX"; alert = true; text = T("Rentre ce tour", "Pit this lap"); }
+  const lt = x => { if (x == null || x <= 0) return "–"; const m = Math.floor(x / 60), r = x - m * 60; return `${m}:${r.toFixed(3).padStart(6, "0")}`; };
+  const gs = g => g == null ? "–" : `${g.toFixed(1)} s`;
+  let title = T("EN PISTE", "ON TRACK"), text = "", cls = "";
+  if (s.yellow) { title = T("DRAPEAU JAUNE", "YELLOW FLAG"); text = T("Pas de dépassement", "No overtaking"); cls = " yel"; }
+  else if (s.blue) { title = T("DRAPEAU BLEU", "BLUE FLAG"); text = T("Laisse passer", "Let them by"); cls = " blu"; }
+  else if (p.ready && p.stops_needed > 0 && p.laps_until_box <= 1) { title = "BOX BOX"; cls = " alert"; text = T("Rentre ce tour", "Pit this lap"); }
   else if (p.ready && p.stops_needed > 0 && p.laps_until_box <= 3) { title = T(`BOX DANS ${p.laps_until_box}`, `BOX IN ${p.laps_until_box}`); text = T(`fin du tour ${p.box_lap}`, `end of lap ${p.box_lap}`); }
   else if (s.game_phase === 8) title = T("DAMIER", "CHEQUERED");
-  $("calltitle").textContent = title; $("calltext").textContent = text; $("call").className = "card" + (alert ? " alert" : "");
+  else if (s.lap_invalid) { title = T("TOUR INVALIDÉ", "LAP INVALID"); cls = " yel"; }
+  $("calltitle").textContent = title; $("calltext").textContent = text; $("call").className = "card full" + cls;
   $("pos").textContent = `P${s.class_position || s.position || "–"}`;
-  $("gaps").textContent = [s.gap_class_ahead != null ? `${T("devant", "ahead")} ${s.gap_class_ahead.toFixed(1)} s` : "", s.gap_class_behind != null ? `${T("derrière", "behind")} ${s.gap_class_behind.toFixed(1)} s` : ""].filter(Boolean).join(" · ");
+  $("possub").textContent = s.num_cars ? T(`sur ${s.num_cars} voitures`, `of ${s.num_cars} cars`) : "";
+  const ga = s.gap_class_ahead != null ? s.gap_class_ahead : s.gap_ahead, gb = s.gap_class_behind != null ? s.gap_class_behind : s.gap_behind;
+  $("ahead").textContent = gs(ga); $("behind").textContent = gs(gb);
+  $("aheadnm").textContent = T("Devant", "Ahead") + (s.ahead && s.ahead.name ? ` · ${s.ahead.name}` : "");
+  $("behindnm").textContent = T("Derrière", "Behind") + (s.behind && s.behind.name ? ` · ${s.behind.name}` : "");
+  $("gapcard").hidden = ga == null && gb == null;
   const total = s.max_laps || (p.laps_to_finish != null ? Math.round(s.laps_done + s.lap_frac + p.laps_to_finish) : null);
   $("lap").textContent = `${s.laps_done + 1}${total ? "/" + total : ""}`;
   $("lapsub").textContent = s.time_left != null ? `${T("reste", "left")} ${fmtTime(s.time_left)}` : "";
   const t = d.times || {}, dl = t.delta;
-  $("delta").textContent = dl == null ? "–" : `${dl > 0 ? "+" : dl < 0 ? "−" : "±"}${Math.abs(dl).toFixed(2)}`;
+  $("delta").textContent = dl == null ? "–" : `${dl > 0 ? "+" : dl < 0 ? "−" : "±"}${Math.abs(dl) >= 10 ? Math.abs(dl).toFixed(1) : Math.abs(dl).toFixed(2)}`;
   $("delta").className = "val" + (dl == null ? "" : dl < -0.02 ? " fast" : dl > 0.02 ? " slow" : "");
   $("deltasub").textContent = dl == null ? T("pas de référence", "no reference") : `vs ${t.delta_ref === "record" ? "record" : T("meilleur tour", "best lap")}`;
-  $("fuel").textContent = p.range_laps != null ? `${p.range_laps.toFixed(1)}` : `${(s.fuel || 0).toFixed(0)} L`;
+  $("tlast").textContent = lt(s.last_lap); $("tbest").textContent = lt(s.best_lap); $("trec").textContent = lt(t.record);
+  $("tbest").className = s.best_lap && t.record && s.best_lap <= t.record + 0.001 ? "fast" : "";
+  $("fuel").innerHTML = p.range_laps != null ? `${p.range_laps.toFixed(1)}<small> ${T("tours", "laps")}</small>` : `${(s.fuel || 0).toFixed(0)}<small> L</small>`;
+  const stop = !p.ready ? "" : p.stops_needed > 0 ? T(`Arrêt fin du tour ${p.box_lap}`, `Stop end of lap ${p.box_lap}`) : T("Va au bout sans arrêt", "No stop needed");
+  $("fuelsub").innerHTML = [p.range_laps != null ? `${(s.fuel || 0).toFixed(1)} L` : "", p.fuel_per_lap ? `${p.fuel_per_lap.toFixed(2)} L/${T("tour", "lap")}` : ""].filter(Boolean).join(" · ") + (stop ? `<br>${stop}` : "");
+  const temps = (s.tyre_temp || []).some(x => x > 1) ? s.tyre_temp : (s.tyre_surface_temp || []), opt = s.tyre_opt || 0;
+  $("tyres").innerHTML = [0, 1, 2, 3].map(i => {
+    const tt = temps[i] || 0, w = (s.tyre_wear || [])[i];
+    const c = !tt ? "" : opt ? (tt < opt - 15 ? "cold" : tt > opt + 12 ? "hot" : "ok") : (tt < 60 ? "cold" : tt > 105 ? "hot" : "ok");
+    return `<div class="ty ${c}"><div class="tt">${tt ? Math.round(tt) + "°" : "–"}</div><div class="tw">${w != null ? Math.round(w * 100) + " %" : ""}</div></div>`;
+  }).join("");
   const rl = d.relay;
   $("relay").hidden = !rl;
   if (rl) {
@@ -149,11 +186,12 @@ function render(d) {
     $("relaysub").textContent = rl.next ? `→ ${rl.next} ${rl.when}` : rl.when;
     $("relaydrv").style.color = rl.soon ? "#FFB547" : "";
   }
-  $("fuelsub").textContent = p.range_laps != null ? `${T("tours", "laps")} · ${(s.fuel || 0).toFixed(1)} L` : "";
   const pn = d.penalty || {};
   $("pen").style.display = pn.count ? "block" : "none";
   if (pn.count) $("pen").textContent = `${T("PÉNALITÉ À PURGER", "PENALTY TO SERVE")}${pn.laps_left != null ? ` · ${pn.laps_left} ${T("TOUR", "LAP")}${pn.laps_left > 1 ? "S" : ""}` : ""}`;
-  $("last").textContent = last ? last.text : "–";
+  const msgs = radio.filter(m => !m.me).slice(0, 3);
+  const esc = x => String(x).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  $("msglist").innerHTML = msgs.length ? msgs.map((m, i) => `<div class="${i ? "old" : ""}">${esc(m.text)}</div>`).join("") : "–";
 }
 async function tick() {
   try { render(await (await fetch("/api/state", { cache: "no-store" })).json()); }

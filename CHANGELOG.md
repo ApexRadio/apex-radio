@@ -8,6 +8,12 @@
 - 🇫🇷 Bouton 📱 : QR code à scanner pour ouvrir Apex sur ton téléphone (même Wi-Fi), avec l'aide si ça ne s'ouvre pas (pare-feu Windows).
 - 🇬🇧 📱 button: QR code to open Apex on your phone (same Wi-Fi), with help if it doesn't open (Windows firewall).
 
+## 1.3.1
+- 🇫🇷 Micro : si le fichier de reconnaissance vocale (dossier whisper) a été mal téléchargé, Apex le retélécharge tout seul au lieu de rester sans micro.
+- 🇬🇧 Mic: if the speech recognition file (whisper folder) was badly downloaded, Apex downloads it again by itself instead of staying without a mic.
+- 🇫🇷 Si Apex s'arrête au démarrage, la fenêtre d'erreur montre la cause (aussi enregistrée dans demarrage.txt) : envoie-la sur Discord.
+- 🇬🇧 If Apex stops at startup, the error window shows the cause (also saved in demarrage.txt): send it on Discord.
+
 ## 1.3.0
 - 🇫🇷 Nouveau : **tour de référence**. Apex garde ton meilleur tour propre pour chaque voiture et chaque circuit (freinage, vitesse mini, remise des gaz, virage par virage) et te dit en roulant quand tu t'en éloignes (« Virage 3 : tu freines 20 mètres plus tôt qu'à ton meilleur tour »). Questions : « où je peux gagner du temps ? », « analyse mon pilotage ».
 - 🇬🇧 New: **reference lap**. Apex keeps your best clean lap for each car and track (braking point, minimum speed, throttle point, corner by corner) and tells you on track when you drift away from it ("Turn 3: you're braking 20 metres earlier than on your best lap"). Questions: "where can I gain time?", "analyse my driving".

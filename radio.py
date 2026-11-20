@@ -187,8 +187,19 @@ class Radio:
             self.asr_loading = True
             print(f"  Reconnaissance vocale ({'précise' if model == 'medium' else 'rapide'}) : chargement "
                   f"(la 1re fois télécharge ~{'1,5 Go' if model == 'medium' else '480 Mo'})…")
-            w = WhisperModel(model, device="cpu", compute_type="int8", cpu_threads=min(4, os.cpu_count() or 4),
-                             download_root=str(LOCAL / "models" / "whisper"))
+            root = LOCAL / "models" / "whisper"
+            try:
+                w = WhisperModel(model, device="cpu", compute_type="int8", cpu_threads=min(4, os.cpu_count() or 4),
+                                 download_root=str(root))
+            except Exception as first:
+                # téléchargement coupé ou fichier abîmé (souvent : connexion coupée, antivirus, disque plein) :
+                # on efface le dossier du modèle et on retélécharge une fois, au lieu de rester sans micro
+                print(f"  Reconnaissance vocale : modèle abîmé ({first!r}), je le retélécharge…")
+                import shutil
+                for d in root.glob(f"models--Systran--faster-whisper-{model}*"):
+                    shutil.rmtree(d, ignore_errors=True)
+                w = WhisperModel(model, device="cpu", compute_type="int8", cpu_threads=min(4, os.cpu_count() or 4),
+                                 download_root=str(root))
             self._whisper = w
             self.asr_model = model
             print("  Reconnaissance vocale : prête")

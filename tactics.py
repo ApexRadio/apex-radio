@@ -52,6 +52,11 @@ class Penalties:
         if key != self.key:
             self.key, self.count, self.given_lap = key, s.penalties, (s.laps_done if s.penalties else None)
             return
+        warn = bool(getattr(s, "pen_warning", False))
+        if warn and not getattr(self, "_warn", False):
+            say(None, L("Avertissement de la direction de course, drapeau noir et blanc. Attention, la prochaine fois c'est la pénalité.",
+                        "Warning from race control, black and white flag. Careful, next time it's a penalty."), urgent=True)
+        self._warn = warn
         n = s.penalties
         if n > self.count:
             self.given_lap = self.said_lap = s.laps_done

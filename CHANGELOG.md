@@ -25,6 +25,8 @@
 - 🇬🇧 Multiclass racing: reference-lap tips no longer fire when you're in traffic; "he's closing by 5 seconds a lap" no longer overreacts to a single bad lap, and positions are your class positions; a crash with several hits no longer repeats "Contact!".
 - 🇫🇷 Tableau de bord sur un écran peu haut (2e écran, portable, zoom Windows 125-150 %) : les pneus et la carte ne sont plus écrasés, la page défile.
 - 🇬🇧 Dashboard on a short screen (second screen, laptop, Windows zoom 125-150 %): tyres and map are no longer squashed, the page scrolls.
+- 🇫🇷 Assetto Corsa EVO : pénalité (drapeau noir) et avertissement de la direction de course (drapeau noir et blanc) annoncés.
+- 🇬🇧 Assetto Corsa EVO: penalty (black flag) and race-control warning (black and white flag) are called out.
 - 🇫🇷 Tour de référence : en course, pas de conseil avant le 3e tour et au plus un toutes les 2 minutes.
 - 🇬🇧 Reference lap: in races, no tips before lap 3 and at most one every 2 minutes.
 - 🇫🇷 Menus déroulants redessinés : ils apparaissent maintenant dans tes vidéos (OBS, barre de jeu).

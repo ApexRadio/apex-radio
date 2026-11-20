@@ -451,6 +451,17 @@ class ACEvoSource:
         s.air_temp = float(p.airTemp)
         s.track_temp = float(p.roadTemp)
         s.yellow = g.flag == 5 or g.globalFlag == 5
+        # drapeaux de la direction de course (doc AC EVO) : 6 = noir (pénalité, passer au stand),
+        # 7 = noir et blanc (avertissement conduite)
+        s.penalties = 1 if g.flag == 6 else 0
+        s.pen_warning = g.flag == 7
+        # pour comprendre les pénalités d'AC EVO : on note dans le journal quand ces valeurs changent
+        sig = (int(g.flag), int(g.globalFlag), int(g.raceCutGainedMs), round(float(g.raceCutDelta), 1))
+        if sig != getattr(self, "_pen_sig", None):
+            if getattr(self, "_pen_sig", None) is not None:
+                print(f"  AC EVO drapeau={sig[0]} global={sig[1]} coupe gagnée={sig[2]} ms delta={sig[3]} "
+                      f"échéance={int(g.distanceToDeadline)}")
+            self._pen_sig = sig
         s.track_len = float(st.trackLengthM) or (g.session.lapLengthKm * 1000)
 
         # dégâts carrosserie : AC EVO donne 0..1 par zone, Apex attend 0/1/2 sur 8 zones

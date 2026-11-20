@@ -221,7 +221,7 @@ a{{color:var(--accent)}} .back{{text-decoration:none}}
 .nav a:hover{{border-color:var(--accent)}} .nav a.home{{color:#06070B;background:var(--accent);border-color:var(--accent)}} .nav a.nrec{{color:#FFE500}}
 @media(max-width:700px){{.row{{grid-template-columns:1fr 1fr}}}}
 </style></head><body>
-<nav class="nav"><a class="home" href="/">← {L('TABLEAU DE BORD', 'DASHBOARD')}</a><a class="nrec" href="/records">RECORDS</a><a href="/debriefs">{L('DÉBRIEFS', 'DEBRIEFS')}</a></nav>
+<nav class="nav"><a class="home" href="/">← {L('TABLEAU DE BORD', 'DASHBOARD')}</a><a class="nrec" href="/records">RECORDS</a><a href="/debriefs">{L('DÉBRIEFS', 'DEBRIEFS')}</a><a href="/relais">{L('RELAIS', 'STINTS')}</a></nav>
 {body}<script src="/fsel.js"></script></body></html>"""
 
 

@@ -579,7 +579,18 @@ def pace_rank(s: Snapshot, p: Plan) -> str:
              f"{_f(mine - best, 1 if mine - best >= 0.1 else 2)} s quicker.")
 
 
+def stints(s: Snapshot, p: Plan) -> str:
+    try:
+        from relais import Relay
+    except Exception:
+        Relay = None
+    if Relay is None or Relay.LAST is None:
+        return L("Le planning de relais n'est pas disponible.", "The stint planner isn't available.")
+    return Relay.LAST.answer()
+
+
 TOPICS[:0] = [
+    (r"\brelais\b|changement de pilote|change(ment|r) de pilote|qui (roule|conduit|prend le volant) (apres|ensuite)|c est qui apres|\bstints?\b|driver (change|swap)|who s (driving )?next", stints),
     (r"gagner du temps|gagner des dixiemes|ou (est ce que )?je (peux |pourrais |peut )?(gagner|perds|perdre|aller plus vite)|analys.{0,20}(pilotage|conduite)|comment (je pilote|je conduis|est mon pilotage)|ameliorer mon pilotage|where can i (gain|find) time|analy[sz]e my driving", coaching),
     (r"reference|par rapport a (mon|ton) meilleur|compare (a|avec) mon meilleur|best lap reference|my best lap", reference),
     (r"\bfreins?\b(?! a main)|\bdisques? de frein|\bbrakes?\b", brakes),

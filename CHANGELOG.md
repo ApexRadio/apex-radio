@@ -1,5 +1,9 @@
 # Apex Radio — historique des versions / changelog
 
+## Prochaine version (en test)
+- 🇫🇷 Nouveau : **planning des relais** (bouton RELAIS) pour l'endurance en équipe : pilotes, durée de course et de relais. En course, Apex annonce les changements de pilote au bon arrêt et recalcule le plan si un relais dure plus ou moins longtemps. Question : « qui roule après ? ».
+- 🇬🇧 New: **stint planner** (STINTS button) for team endurance: drivers, race and stint length. In the race, Apex calls driver changes at the right stop and recalculates the plan if a stint runs longer or shorter. Question: "who's driving next?".
+
 ## 1.3.0
 - 🇫🇷 Nouveau : **tour de référence**. Apex garde ton meilleur tour propre pour chaque voiture et chaque circuit (freinage, vitesse mini, remise des gaz, virage par virage) et te dit en roulant quand tu t'en éloignes (« Virage 3 : tu freines 20 mètres plus tôt qu'à ton meilleur tour »). Questions : « où je peux gagner du temps ? », « analyse mon pilotage ».
 - 🇬🇧 New: **reference lap**. Apex keeps your best clean lap for each car and track (braking point, minimum speed, throttle point, corner by corner) and tells you on track when you drift away from it ("Turn 3: you're braking 20 metres earlier than on your best lap"). Questions: "where can I gain time?", "analyse my driving".

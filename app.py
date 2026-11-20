@@ -151,6 +151,9 @@ def loop(state: State, demo: bool) -> None:
     questions.BEHAVIOR = beh
     reflap = RefLap(beh)
     questions.REFLAP = reflap
+    import relais
+    relay = relais.Relay()
+    state.relay = relay
     state.beh = beh
     probe = Probe() if not demo else None
     say = lambda key, text, urgent=False: eng.say(key, text, urgent=urgent, elapsed=state.snap.elapsed)
@@ -350,6 +353,7 @@ def loop(state: State, demo: bool) -> None:
             snap = source.read()
             damage.update(snap, say)
             plan = eng.update(snap)
+            relay.update(snap, plan, say)
             lt.update(snap, eng.say)
             state.map.update(snap)
             spotter.session = snap.session
@@ -514,8 +518,11 @@ def make_handler(state: State):
                 self.end_headers()
                 self.wfile.write(body)
                 return
-            if self.path.startswith("/debrief") or self.path.rstrip("/") == "/records":
-                if self.path.rstrip("/") == "/records":
+            if self.path.startswith("/debrief") or self.path.rstrip("/") in ("/records", "/relais"):
+                if self.path.rstrip("/") == "/relais":
+                    import relais
+                    body = relais.page().encode()
+                elif self.path.rstrip("/") == "/records":
                     body = debrief.records_page().encode()
                 elif self.path.rstrip("/") == "/debriefs":
                     body = debrief.index_page().encode()
@@ -549,7 +556,13 @@ def make_handler(state: State):
                 self.end_headers()
                 self.wfile.write(body)
                 return
-            if self.path.startswith("/api/sd"):
+            if self.path.startswith("/api/relais"):
+                rl = getattr(state, "relay", None)
+                import relais
+                data = rl.info(state.plan, state.snap) if rl else {"cfg": relais.load(), "plan": relais.plan(relais.load()),
+                                                                    "fuel_stint_min": None, "live": None}
+                body, ctype = json.dumps(data, default=lambda o: None).encode(), "application/json"
+            elif self.path.startswith("/api/sd"):
                 # état résumé pour le plugin Stream Deck (léger, interrogé chaque seconde)
                 body, ctype = json.dumps(sd_state(state), default=lambda o: None).encode(), "application/json"
             elif self.path.startswith("/api/state"):
@@ -663,6 +676,24 @@ def make_handler(state: State):
                 m = json.loads(self.rfile.read(n) or b"{}").get("mode", "hold")
                 state.radio.cfg["ptt_mode"] = "toggle" if m == "toggle" else "hold"
                 save_config(state.radio.cfg)
+            elif self.path == "/api/relais":
+                n = int(self.headers.get("Content-Length") or 0)
+                cfg = json.loads(self.rfile.read(n) or b"{}")
+                rl = getattr(state, "relay", None)
+                import relais
+                if rl:
+                    rl.reload(cfg)
+                    data = rl.info(state.plan, state.snap)
+                else:
+                    c = relais.save(cfg)
+                    data = {"cfg": c, "plan": relais.plan(c), "fuel_stint_min": None, "live": None}
+                body = json.dumps(data, default=lambda o: None).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+                return
             elif self.path == "/api/coaching":
                 n = int(self.headers.get("Content-Length") or 0)
                 on = bool(json.loads(self.rfile.read(n) or b"{}").get("on", True))

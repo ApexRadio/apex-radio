@@ -81,6 +81,7 @@ class Snapshot:
     track_len: float = 0.0           # longueur du tour (m)
     tl_steps: int = 0                # limites de piste : avertissements cumulés
     tl_per_penalty: int = 0          # ... avant pénalité
+    tl_per_point: int = 1            # pas par point de limites de piste (pour parler en points)
     dents: list = field(default_factory=lambda: [0] * 8)   # dégâts carrosserie (0, 1, 2) sur 8 zones
     flat: list = field(default_factory=lambda: [False] * 4)
     wheel_off: list = field(default_factory=lambda: [False] * 4)
@@ -336,6 +337,7 @@ class LMUSource:
         s.track_len = info.mLapDist
         s.tl_steps = tel.mTrackLimitsSteps
         s.tl_per_penalty = info.mTrackLimitsStepsPerPenalty
+        s.tl_per_point = max(1, int(getattr(info, "mTrackLimitsStepsPerPoint", 1) or 1))
         s.dents = list(tel.mDentSeverity)
         s.flat = [bool(w.mFlat) for w in tel.mWheels]
         s.wheel_off = [bool(w.mDetached) for w in tel.mWheels]

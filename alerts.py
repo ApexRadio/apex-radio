@@ -711,18 +711,25 @@ class TrackLimits:
             me = next((c for c in s.cars if c.get("me")), None)
             c = self.beh.corner_at(me["f"], ahead=0.01) if me and self.beh else None
             where = L(f" au virage {c}", f" at turn {c}") if c else ""
+            k = max(1, int(getattr(s, "tl_per_point", 1) or 1))
+            pts, mx = s.tl_steps / k, s.tl_per_penalty / k
+            f = lambda x: (str(int(x)) if x == int(x) else str(x).replace(".", ","))
+            fe = lambda x: (str(int(x)) if x == int(x) else str(x))
+            pl = "s" if pts >= 2 else ""
+            if s.tl_per_penalty and s.tl_steps >= s.tl_per_penalty:
+                return       # c'est la pénalité : annoncée par tactics.Penalties
             if s.tl_per_penalty:
-                left = s.tl_per_penalty - s.tl_steps
+                left = mx - pts
                 if left > 3:
-                    say(None, L(f"Limites de piste{where}, avertissement {s.tl_steps} sur {s.tl_per_penalty}.",
-                                f"Track limits{where}, warning {s.tl_steps} of {s.tl_per_penalty}."))
+                    say(None, L(f"Limites de piste{where} : {f(pts)} point{pl} sur {f(mx)}.",
+                                f"Track limits{where}: {fe(pts)} of {fe(mx)} points."))
                     return
                 tail = L("la prochaine, c'est la pénalité !", "next one is a penalty!") if left <= 1 else \
-                    L(f"encore {left} avant la pénalité.", f"{left} more before a penalty.")
-                say(None, L(f"Limites de piste{where}, avertissement {s.tl_steps} sur {s.tl_per_penalty}, {tail}",
-                            f"Track limits{where}, warning {s.tl_steps} of {s.tl_per_penalty}, {tail}"), urgent=left <= 1)
+                    L(f"encore {f(left)} point{'s' if left >= 2 else ''} avant la pénalité.", f"{fe(left)} more points before a penalty.")
+                say(None, L(f"Limites de piste{where} : {f(pts)} point{pl} sur {f(mx)}, {tail}",
+                            f"Track limits{where}: {fe(pts)} of {fe(mx)} points, {tail}"), urgent=left <= 1)
             else:
-                say(None, L(f"Limites de piste{where}, avertissement numéro {s.tl_steps}.", f"Track limits{where}, warning number {s.tl_steps}."))
+                say(None, L(f"Limites de piste{where} : {f(pts)} point{pl}.", f"Track limits{where}: {fe(pts)} point{'s' if pts != 1 else ''}."))
 
 
 # ======================================================================= 9. pneus et freins froids

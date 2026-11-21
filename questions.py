@@ -474,15 +474,17 @@ def brakes(s: Snapshot, p: Plan) -> str:
 
 
 def track_limits(s: Snapshot, p: Plan) -> str:
+    k = max(1, int(getattr(s, "tl_per_point", 1) or 1))
+    pts, mx = s.tl_steps / k, s.tl_per_penalty / k
+    f = lambda x: (str(int(x)) if x == int(x) else str(x).replace(".", ","))
+    fe = lambda x: (str(int(x)) if x == int(x) else str(x))
     if not s.tl_per_penalty:
-        return L(f"{s.tl_steps} avertissement{'s' if s.tl_steps > 1 else ''} pour limites de piste."
-                 if s.tl_steps else "Aucun avertissement pour limites de piste.",
-                 f"{s.tl_steps} track limit warning{'s' if s.tl_steps != 1 else ''}." if s.tl_steps else "No track limit warnings.")
-    left = s.tl_per_penalty - s.tl_steps
-    txt = L(f"Limites de piste : {s.tl_steps} avertissement{'s' if s.tl_steps > 1 else ''} sur {s.tl_per_penalty}.",
-            f"Track limits: {s.tl_steps} warning{'s' if s.tl_steps != 1 else ''} of {s.tl_per_penalty}.")
-    if 0 < left <= 1:
-        txt += " " + L("Encore un et c'est la pénalité, reste bien dans les lignes.", "One more and it's a penalty, stay inside the lines.")
+        return L(f"{f(pts)} point{'s' if pts >= 2 else ''} de limites de piste." if s.tl_steps else "Aucun avertissement pour limites de piste.",
+                 f"{fe(pts)} track limit point{'s' if pts != 1 else ''}." if s.tl_steps else "No track limit warnings.")
+    txt = L(f"Limites de piste : {f(pts)} point{'s' if pts >= 2 else ''} sur {f(mx)}.",
+            f"Track limits: {fe(pts)} of {fe(mx)} points.")
+    if 0 < mx - pts <= 1:
+        txt += " " + L("Encore une sortie et c'est la pénalité, reste bien dans les lignes.", "One more and it's a penalty, stay inside the lines.")
     return txt
 
 

@@ -188,9 +188,13 @@ class Radio:
             print(f"  Reconnaissance vocale ({'précise' if model == 'medium' else 'rapide'}) : chargement "
                   f"(la 1re fois télécharge ~{'1,5 Go' if model == 'medium' else '480 Mo'})…")
             root = LOCAL / "models" / "whisper"
+            plain_mb = root / f"faster-whisper-{model}" / "model.bin"
             try:
-                w = WhisperModel(model, device="cpu", compute_type="int8", cpu_threads=min(4, os.cpu_count() or 4),
-                                 download_root=str(root))
+                if plain_mb.exists() and plain_mb.stat().st_size > 50_000_000:   # déjà réparé une fois : dossier simple
+                    w = WhisperModel(str(plain_mb.parent), device="cpu", compute_type="int8", cpu_threads=min(4, os.cpu_count() or 4))
+                else:
+                    w = WhisperModel(model, device="cpu", compute_type="int8", cpu_threads=min(4, os.cpu_count() or 4),
+                                     download_root=str(root))
             except Exception as first:
                 # téléchargement coupé ou fichier abîmé (souvent : connexion coupée, antivirus, disque plein) :
                 # on efface le dossier du modèle et on retélécharge une fois, au lieu de rester sans micro
@@ -198,8 +202,21 @@ class Radio:
                 import shutil
                 for d in root.glob(f"models--Systran--faster-whisper-{model}*"):
                     shutil.rmtree(d, ignore_errors=True)
-                w = WhisperModel(model, device="cpu", compute_type="int8", cpu_threads=min(4, os.cpu_count() or 4),
-                                 download_root=str(root))
+                # 2e essai : fichiers « normaux » dans un dossier simple (pas le cache Hugging Face avec ses liens,
+                # qui casse sur certains PC Windows), puis on vérifie que model.bin est bien là
+                from faster_whisper.utils import download_model
+                plain = root / f"faster-whisper-{model}"
+                mb = plain / "model.bin"
+                if not (mb.exists() and mb.stat().st_size > 50_000_000):
+                    shutil.rmtree(plain, ignore_errors=True)
+                    download_model(model, output_dir=str(plain))
+                if not (mb.exists() and mb.stat().st_size > 50_000_000):
+                    raise RuntimeError(L(
+                        f"le fichier model.bin n'arrive pas dans {plain}. Souvent l'antivirus le bloque ou le met en "
+                        "quarantaine : autorise ce dossier dans l'antivirus, vérifie la place sur le disque, puis relance Apex.",
+                        f"model.bin never arrives in {plain}. Often the antivirus blocks or quarantines it: allow this "
+                        "folder in your antivirus, check disk space, then restart Apex."))
+                w = WhisperModel(str(plain), device="cpu", compute_type="int8", cpu_threads=min(4, os.cpu_count() or 4))
             self._whisper = w
             self.asr_model = model
             print("  Reconnaissance vocale : prête")

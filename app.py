@@ -651,6 +651,11 @@ def make_handler(state: State):
                 state.toggle_spotter()
             elif self.path == "/api/show":
                 desktop.open_window(f"http://localhost:{PORT}")
+            elif self.path == "/api/update/install":
+                ok = UPD.install()
+                self.send_response(204 if ok else 409)
+                self.end_headers()
+                return
             elif self.path == "/api/quit":
                 self.send_response(204)
                 self.end_headers()

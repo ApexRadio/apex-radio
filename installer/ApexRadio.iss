@@ -48,6 +48,8 @@ Name: "{autodesktop}\Apex Radio"; Filename: "{app}\ApexRadio.exe"; WorkingDir: "
 
 [Run]
 Filename: "{app}\ApexRadio.exe"; WorkingDir: "{app}"; Description: "{cm:LaunchProgram,Apex Radio}"; Flags: nowait postinstall skipifsilent unchecked
+; mise à jour lancée depuis Apex (mode silencieux) : on relance Apex tout seul à la fin
+Filename: "{app}\ApexRadio.exe"; WorkingDir: "{app}"; Flags: nowait runasoriginaluser; Check: WizardSilent
 
 [UninstallDelete]
 Type: files; Name: "{app}\versions-precedentes.url"

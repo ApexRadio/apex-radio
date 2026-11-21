@@ -1,5 +1,9 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.4.2 (en préparation)
+- 🇫🇷 Mises à jour : la nouvelle version se télécharge toute seule dans Apex, puis un bouton INSTALLER suffit. Apex se ferme, s'installe et se rouvre tout seul (rien ne s'installe sans ce clic). Le lien TÉLÉCHARGER reste là en secours.
+- 🇬🇧 Updates: the new version downloads by itself inside Apex, then one INSTALL button is enough. Apex closes, installs and reopens by itself (nothing installs without that click). The DOWNLOAD link stays as a fallback.
+
 ## 1.4.1
 - 🇫🇷 Micro : si la reconnaissance vocale n'arrive pas à ouvrir son fichier (« Unable to open file 'model.bin' »), Apex la retélécharge dans un dossier simple au lieu du cache Hugging Face, et explique quoi faire si l'antivirus la bloque.
 - 🇬🇧 Mic: if speech recognition can't open its file ("Unable to open file 'model.bin'"), Apex downloads it again into a plain folder instead of the Hugging Face cache, and explains what to do if the antivirus blocks it.

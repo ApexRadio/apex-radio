@@ -203,6 +203,8 @@ class PitCrew:
         self.done_for = None                        # n° d'arrêt déjà préparé
         self.no_fuel_for = None                     # n° d'arrêt pour lequel le pilote a dit « pas d'essence »
         self.tyres_for = None                       # (n° d'arrêt, roues) : « change juste les deux avant »
+        self.amount_for = None                      # (n° d'arrêt, litres|None, énergie|None) : « énergie à 100 % »
+        self.compound_for = None                    # (n° d'arrêt, "Wet"|"dry") : « mets les pneus pluie »
         self.status = ""                            # pour le tableau de bord
         self.busy = False
         self.say = None
@@ -253,6 +255,16 @@ class PitCrew:
             "same" if p.change_tyres else "keep" if p.change_tyres is False else None
         if self.tyres_for and self.tyres_for[0] == s.pit_stops and not p.tyre_compound:
             tyres = tuple(self.tyres_for[1])   # l'ordre du pilote passe avant le calcul
+        if self.compound_for and self.compound_for[0] == s.pit_stops:
+            tyres = self.compound_for[1]       # « mets les pneus pluie » : le pilote décide
+        if self.amount_for and self.amount_for[0] == s.pit_stops and self.no_fuel_for != s.pit_stops:
+            _, litres, energy = self.amount_for   # « énergie à 100 % » / « fais le plein » : le pilote décide
+            if energy is not None:
+                energy_total = energy
+                fuel_total = litres if litres else (s.fuel_capacity * energy if s.fuel_capacity else fuel_total)
+            elif litres:
+                fuel_total = litres
+                energy_total = min(1.0, litres * s.energy / s.fuel) if s.energy and s.fuel and s.fuel > 0.5 else None
         self.busy = True
         threading.Thread(target=self._run, args=(fuel_total, energy_total, s.energy, tyres, s.compound,
                                                        ("all" if getattr(p, "repair_all", False) else "body") if getattr(p, "repair", False)

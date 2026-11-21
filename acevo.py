@@ -282,6 +282,7 @@ class ACEvoSource:
         self._stops = 0
         self._was_box = False
         self._last_spd = {}
+        self._prog = {}          # course : progression cumulée de chaque voiture (tours + fraction), pour le classement
 
     def _open(self) -> bool:
         return sys.platform == "win32" and all(p.open() for p in self.pages.values())
@@ -386,6 +387,8 @@ class ACEvoSource:
             self._t0 = time.monotonic()
             self._stops = 0
             self._prev.clear()
+            self._prog.clear()
+            self._opt_said = False
             if self.line.track != track:
                 self.line.reset(track)
         s.elapsed = time.monotonic() - self._t0
@@ -436,7 +439,10 @@ class ACEvoSource:
         s.compound = _txt(g.tyreLF.compoundFront) or _txt(g.tyreLF.compoundRear)
         low = s.compound.lower()
         s.wet_tyres = any(k in low for k in ("wet", "rain", "pluie", "inter"))
-        s.tyre_opt = 0.0                              # inconnu : les alertes prennent leur valeur par défaut
+        s.tyre_opt = _tyre_opt(tyres, core, s.compound, s.wet_tyres)
+        if s.tyre_opt and not getattr(self, "_opt_said", False):
+            self._opt_said = True
+            print(f"  AC EVO pneus « {s.compound} » : température idéale retenue {s.tyre_opt:.0f} °C")
 
         # stands
         loc = int(g.carLocation)
@@ -455,6 +461,10 @@ class ACEvoSource:
         # 7 = noir et blanc (avertissement conduite)
         s.penalties = 1 if g.flag == 6 else 0
         s.pen_warning = g.flag == 7
+        # 9 = drapeau noir à rond orange (voiture trop abîmée : réparer au stand)
+        s.meatball = g.flag == 9
+        # temps gagné en coupant la piste : à rendre (lever le pied) avant une échéance, sinon pénalité
+        s.cut_gain_ms = max(0, int(g.raceCutGainedMs))
         # pour comprendre les pénalités d'AC EVO : on note dans le journal quand ces valeurs changent
         sig = (int(g.flag), int(g.globalFlag), int(g.raceCutGainedMs), round(float(g.raceCutDelta), 1))
         if sig != getattr(self, "_pen_sig", None):
@@ -512,4 +522,76 @@ class ACEvoSource:
         if self.line.ready():
             s.gap_ahead = min(gaps_ahead) if gaps_ahead else None
             s.gap_behind = min(gaps_behind) if gaps_behind else None
+            if s.session == "course":
+                self._field(g, s, pi, n, now, ref)
         return s
+
+    def _field(self, g, s, pi, n, now, ref) -> None:
+        """Classement complet en course : AC EVO ne donne que les coordonnées des voitures. On suit la progression
+        de chacune (tours + fraction du tour) pour connaître la place et l'écart de tout le monde."""
+        mine = s.laps_done + s.lap_frac
+        seen = set()
+        for c in s.cars:
+            i = c["id"]
+            key = (g.carIds[i][0], g.carIds[i][1]) if i < 60 else i
+            seen.add(key)
+            f = s.lap_frac if c["me"] else (None if c["pits"] else c["f"])
+            st = self._prog.get(key)
+            if f is None:
+                if st:
+                    st["pits"] = True
+                continue
+            if st is None:
+                # 1re fois qu'on la voit : on la place à moins d'un demi-tour de toi
+                laps = round(mine - f)
+                st = self._prog[key] = {"laps": laps, "f": f, "t": None, "last": None, "pits": False}
+            else:
+                if st["f"] > 0.8 and f < 0.2:
+                    st["laps"] += 1
+                    if st["t"] is not None and ref and 0.7 * ref < now - st["t"] < 2.5 * ref:
+                        st["last"] = now - st["t"]
+                    st["t"] = now
+                elif st["f"] < 0.2 and f > 0.8:
+                    st["laps"] -= 1
+                st["f"], st["pits"] = f, False
+            if c["me"]:
+                st["laps"], st["f"] = s.laps_done, s.lap_frac
+            c["prog"] = st["laps"] + st["f"]
+        for k in list(self._prog):
+            if k not in seen:
+                del self._prog[k]
+        cars = [c for c in s.cars if "prog" in c]
+        me = next((c for c in cars if c["me"]), None)
+        if not me or not ref or len(cars) < 2:
+            return
+        order = sorted(cars, key=lambda c: -c["prog"])
+        my_place = order.index(me) + 1
+        # on ne s'en sert que si notre classement colle à celui du jeu (sinon un départ raté fausse tout)
+        if my_place != s.position:
+            return
+        for place, c in enumerate(order, 1):
+            c["p"] = place
+            if c["me"]:
+                continue
+            d = c["prog"] - me["prog"]
+            st = self._prog.get((g.carIds[c["id"]][0], g.carIds[c["id"]][1]))
+            s.rivals.append({"place": place, "cpos": place, "name": "", "gap": d * ref if abs(d) < 1 else None,
+                             "laps_diff": int(d) if abs(d) >= 1 else 0, "in_pits": bool(st and st["pits"]),
+                             "last_lap": st["last"] if st else None, "id": c["id"]})
+
+
+def _tyre_opt(tyres, core, compound: str, wet: bool) -> float:
+    """Température idéale des pneus. AC EVO donne la température « normalisée » (1,0 = idéale ?) : si elle est
+    cohérente sur les 4 roues, on en déduit la vraie valeur ; sinon on prend une valeur connue selon le type de pneu."""
+    try:
+        est = [c / t.normTempCore for c, t in zip(core, tyres) if c > 40 and 0.3 < t.normTempCore < 2.5]
+        if len(est) == 4 and max(est) - min(est) < 8 and 55 < sum(est) / 4 < 120:
+            return round(sum(est) / 4)
+    except Exception:
+        pass
+    low = (compound or "").lower()
+    if wet:
+        return 60.0
+    if any(k in low for k in ("street", "road", "eco", "touring", "pilot sport 4", "ps4", "p zero ", "semi", "cup 2", "trofeo", "r888")):
+        return 75.0
+    return 85.0

@@ -123,6 +123,13 @@ class RefLap:
             if 0.4 < m["f"] < 0.6:
                 self.mid_last = s.last_lap      # chrono du tour PRÉCÉDENT : il changera quand ce tour-ci sera fini
             self.trace.append((m["f"], m["speed"], m.get("brk") or 0.0, m.get("thr") or 0.0))
+            # bataille / trafic : une voiture à moins de ~150 m devant ou ~100 m derrière. On le retient quelques
+            # secondes pour ne pas comparer un virage pris en défense, en attaque ou côte à côte.
+            L_m, f = s.track_len, m["f"]
+            if any(not o.get("me") and not o.get("pits") and o.get("spd", 0) > 5 and
+                   (((o.get("f", 0) - f) % 1) * L_m < 150 or ((f - o.get("f", 0)) % 1) * L_m < 100)
+                   for o in (s.cars or [])):
+                self.close_t = time.monotonic()
             calm = not s.yellow and s.game_phase != 6 and not (s.session == "course" and s.laps_done < 2) \
                 and not getattr(s, "oval", False)          # ovale : l'aspiration fausse tout, on ne compare pas
             import behavior
@@ -158,9 +165,8 @@ class RefLap:
             if not (ln + EXIT + 0.005 < r < ln + EXIT + 0.05):
                 continue
             self.done.add(cid)
-            # une voiture juste devant (ou qui te colle) dans ce virage : on ne compare pas, le trafic fausse tout
-            if any(not o.get("me") and ((o.get("f", 0) - f) % 1 < 0.025 or (f - o.get("f", 0)) % 1 < 0.01)
-                   for o in s.cars):
+            # une voiture proche pendant ce virage (ou dans les 10 s avant) : on ne compare pas, le trafic fausse tout
+            if time.monotonic() - getattr(self, "close_t", -1e9) < 10:
                 continue
             ref = self.ref["corners"].get(cid)
             if not ref or abs(_rel(ref["s"], c["start"])) > 0.01:    # carte du circuit changée : on ne compare pas

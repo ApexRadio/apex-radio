@@ -1,5 +1,48 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.4.0
+- 🇫🇷 Nouveau : **planning des relais** (bouton RELAIS) pour l'endurance en équipe : pilotes, durée de course, relais en nombre de pleins (ex. 2 pleins chacun) ou en durée, pneus neufs au changement de pilote. En course, Apex annonce les changements de pilote au bon arrêt et recalcule le plan si un relais dure plus ou moins longtemps. Question : « qui roule après ? ».
+- 🇬🇧 New: **stint planner** (STINTS button) for team endurance: drivers, race length, stints as a number of tanks (e.g. 2 each) or a length of time, new tyres at each driver change. In the race, Apex calls driver changes at the right stop and recalculates the plan if a stint runs longer or shorter. Question: "who's driving next?".
+- 🇫🇷 Relais visibles sur le tableau de bord et sur la vue téléphone.
+- 🇬🇧 Stints shown on the dashboard and the phone view.
+- 🇫🇷 Bouton ⏻ : une vraie fenêtre « Fermer Apex Radio ? » (Annuler / Fermer) au lieu du double clic.
+- 🇬🇧 ⏻ button: a proper "Close Apex Radio?" window (Cancel / Close) instead of the double click.
+- 🇫🇷 Vue téléphone refaite, plus complète et lisible : écarts avec les noms, chronos (dernier, meilleur, record), essence en tours et prochain arrêt, températures et usure des 4 pneus, drapeaux jaune et bleu, 3 derniers messages.
+- 🇬🇧 Phone view redone, fuller and easier to read: gaps with names, lap times (last, best, record), fuel in laps and next stop, temperature and wear of all 4 tyres, yellow and blue flags, last 3 messages.
+- 🇫🇷 Bouton 📱 : QR code à scanner pour ouvrir Apex sur ton téléphone (même Wi-Fi), avec l'aide si ça ne s'ouvre pas (pare-feu Windows).
+- 🇬🇧 📱 button: QR code to open Apex on your phone (same Wi-Fi), with help if it doesn't open (Windows firewall).
+
+- 🇫🇷 Assetto Corsa EVO : quand tu gagnes du temps en coupant la piste, l'ingénieur te dit de lever le pied pour le rendre (sinon pénalité), puis confirme quand c'est rendu. Drapeau noir à rond orange (voiture trop abîmée) annoncé.
+- 🇫🇷 Assetto Corsa EVO : classement complet en course (« où est P1 ? », écart avec le leader…), température idéale des pneus selon le type de pneu (pneus froids / trop chauds), annonces quand la piste se refroidit ou chauffe.
+- 🇬🇧 Assetto Corsa EVO: full race order ("where is P1?", gap to the leader…), ideal tyre temperature by tyre type (cold / too hot tyres), calls when the track cools down or heats up.
+- 🇫🇷 LMU : drapeaux jaunes locaux annoncés avec le secteur et le virage (« Drapeau jaune secteur 2, voiture arrêtée au virage 7 ! C'est devant toi, pas de dépassement. »), puis « Drapeaux jaunes levés ».
+- 🇬🇧 LMU: local yellow flags called with the sector and the corner ("Yellow flag sector 2, car stopped at turn 7! It's ahead of you, no overtaking."), then "Yellows cleared".
+- 🇬🇧 Assetto Corsa EVO: when you gain time cutting the track, the engineer tells you to lift to give it back (or it's a penalty), then confirms when it's done. Black and orange flag (car too damaged) called out.
+- 🇫🇷 Le pilote reprend la parole : appuyer sur le bouton radio coupe l'ingénieur au milieu de sa phrase.
+- 🇬🇧 Talk over the engineer: pressing the radio button cuts him off mid-sentence.
+- 🇫🇷 Stands à la voix : « mets l'énergie virtuelle à 100 % au prochain arrêt », « fais le plein », « mets 40 litres » et « mets les pneus pluie » sont maintenant appliqués au menu des stands (avant : énergie calculée selon la conso et slicks).
+- 🇬🇧 Pit orders by voice: "set virtual energy to 100% at the next stop", "fill it up", "put 40 litres" and "put the wet tyres on" are now applied to the pit menu (before: energy from consumption and slicks).
+- 🇫🇷 LMU : changements de patinage TC (slip), coupure TC (cut) et cartographie moteur annoncés, comme le TC et la répartition de freinage.
+- 🇬🇧 LMU: TC slip, TC cut and motor map changes called out, like TC and brake bias.
+- 🇫🇷 « Pneus en température » annoncé même quand les freins restent un peu froids (Hypercar sur circuit peu freineur), et avertissement si les pneus n'arrivent pas à chauffer.
+- 🇬🇧 "Tyres up to temperature" called even when the brakes stay a bit cold (Hypercar on a light-braking track), and a warning if the tyres can't warm up.
+- 🇫🇷 Points écarts avec le nom du pilote : « P5 Dupont à 1,2 seconde devant ».
+- 🇬🇧 Gap updates with the driver's name: "P5 Dupont 1.2 seconds ahead".
+- 🇫🇷 La fenêtre radio affiche le nom de la voix choisie (Pierre, Jessica…).
+- 🇬🇧 The radio window shows the chosen voice's name (Pierre, Jessica…).
+- 🇫🇷 Dégâts : après un contact léger, l'ingénieur vérifie les vrais dégâts (aéro, suspensions) avant de parler : « Contact léger, rien de grave » au lieu d'annoncer des dégâts et de demander une réparation pour rien.
+- 🇬🇧 Damage: after a light contact, the engineer checks the real damage (aero, suspension) before speaking: "Light contact, nothing serious" instead of calling damage and asking for a repair for nothing.
+- 🇫🇷 Tour de référence : plus de remarque « tu freines plus tôt / moins vite au virage X » quand tu es en bagarre (voiture à moins de ~150 m devant ou ~100 m derrière pendant le virage ou juste avant).
+- 🇬🇧 Reference lap: no more "you're braking earlier / slower in turn X" remarks while you're battling (a car within ~150 m ahead or ~100 m behind during or just before the corner).
+- 🇫🇷 Énergie virtuelle / essence : quand il reste plusieurs arrêts, Apex ne met plus le plein complet à chaque fois. Il répartit ce qu'il reste à rouler sur les relais à venir (voiture plus légère, arrêts plus courts, même nombre d'arrêts).
+- 🇬🇧 Virtual energy / fuel: with several stops left, Apex no longer fills to 100% every time. It splits what's left to drive over the coming stints (lighter car, shorter stops, same number of stops).
+- 🇫🇷 Réglages ⚙ : choix du mode du menu des stands (Auto / À la demande / Off), sans devoir être en piste.
+- 🇬🇧 Settings ⚙: pit menu mode (Auto / On request / Off), without having to be on track.
+- 🇫🇷 Pénalités LMU : « Pénalité pour les limites de piste ! » quand la pénalité tombe (même si le jeu ne la compte pas tout de suite), et limites de piste annoncées en points comme dans le jeu (« 2 points sur 4 »).
+- 🇬🇧 LMU penalties: "Track limits penalty!" when the penalty is given (even if the game doesn't count it right away), and track limits called in points like in the game ("2 of 4 points").
+- 🇫🇷 Nouvelles icônes pour les boutons Réglages, Téléphone et Fermer.
+- 🇬🇧 New icons for the Settings, Phone and Close buttons.
+
 ## 1.3.1
 - 🇫🇷 Micro : si le fichier de reconnaissance vocale (dossier whisper) a été mal téléchargé, Apex le retélécharge tout seul au lieu de rester sans micro.
 - 🇬🇧 Mic: if the speech recognition file (whisper folder) was badly downloaded, Apex downloads it again by itself instead of staying without a mic.

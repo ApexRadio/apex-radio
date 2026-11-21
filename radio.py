@@ -512,6 +512,9 @@ class Radio:
                         continue
                 if (edge if toggle else (now and not pressed)) and self.state in ("prêt", "erreur"):
                     try:
+                        hush = getattr(self, "on_press", None)
+                        if hush:
+                            hush()          # l'ingé se tait quand le pilote prend la parole
                         self._start_rec()
                         self._rec_t0 = time.time()
                         if toggle:

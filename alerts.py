@@ -48,6 +48,27 @@ def class_name(c: str) -> str:
     return c or L("voiture", "car")
 
 
+NAMES = True   # dire le nom du pilote avec sa place (« P5 Dupont ») dans les points écarts
+
+
+def _driver(name) -> str:
+    """Nom prononçable : le nom de famille (« Jean Dupont » → « Dupont »), pseudo nettoyé, rien si illisible."""
+    import re as _re
+    n = _re.sub(r"[#_*|\[\]{}<>\d]+", " ", str(name or "")).strip()
+    words = [w for w in n.split() if len(w) > 1]
+    if not words:
+        return ""
+    last = words[-1]
+    return last if len(last) <= 18 else ""
+
+
+def _tag(car: dict):
+    """« 5 Dupont » : utilisé dans les phrases sous la forme P{tag} → « P5 Dupont »."""
+    place = car.get("cpos") or car.get("place")
+    who = _driver(car.get("name")) if NAMES and place is not None else ""
+    return f"{place} {who}" if who else place
+
+
 def _sec(x: float, en: bool = False) -> str:
     """2,3 secondes / 0,8 seconde"""
     v = abs(x)
@@ -500,8 +521,8 @@ class GapTrend:
         self.count += 1
         # on suit la voiture par son pilote (pas par sa place, qui change à chaque dépassement)
         a, b = s.ahead or {}, s.behind or {}
-        self.ahead.append((a.get("name") or a.get("place"), s.gap_class_ahead, a.get("cpos") or a.get("place")))
-        self.behind.append((b.get("name") or b.get("place"), s.gap_class_behind, b.get("cpos") or b.get("place")))
+        self.ahead.append((a.get("name") or a.get("place"), s.gap_class_ahead, _tag(a)))
+        self.behind.append((b.get("name") or b.get("place"), s.gap_class_behind, _tag(b)))
         self.ahead, self.behind = self.ahead[-4:], self.behind[-4:]
         if s.in_pits or s.laps_done < 2:
             return
@@ -846,18 +867,25 @@ class TrackLimits:
             me = next((c for c in s.cars if c.get("me")), None)
             c = self.beh.corner_at(me["f"], ahead=0.01) if me and self.beh else None
             where = L(f" au virage {c}", f" at turn {c}") if c else ""
+            k = max(1, int(getattr(s, "tl_per_point", 1) or 1))
+            pts, mx = s.tl_steps / k, s.tl_per_penalty / k
+            f = lambda x: (str(int(x)) if x == int(x) else str(x).replace(".", ","))
+            fe = lambda x: (str(int(x)) if x == int(x) else str(x))
+            pl = "s" if pts >= 2 else ""
+            if s.tl_per_penalty and s.tl_steps >= s.tl_per_penalty:
+                return       # c'est la pénalité : annoncée par tactics.Penalties
             if s.tl_per_penalty:
-                left = s.tl_per_penalty - s.tl_steps
+                left = mx - pts
                 if left > 3:
-                    say(None, L(f"Limites de piste{where}, avertissement {s.tl_steps} sur {s.tl_per_penalty}.",
-                                f"Track limits{where}, warning {s.tl_steps} of {s.tl_per_penalty}."))
+                    say(None, L(f"Limites de piste{where} : {f(pts)} point{pl} sur {f(mx)}.",
+                                f"Track limits{where}: {fe(pts)} of {fe(mx)} points."))
                     return
                 tail = L("la prochaine, c'est la pénalité !", "next one is a penalty!") if left <= 1 else \
-                    L(f"encore {left} avant la pénalité.", f"{left} more before a penalty.")
-                say(None, L(f"Limites de piste{where}, avertissement {s.tl_steps} sur {s.tl_per_penalty}, {tail}",
-                            f"Track limits{where}, warning {s.tl_steps} of {s.tl_per_penalty}, {tail}"), urgent=left <= 1)
+                    L(f"encore {f(left)} point{'s' if left >= 2 else ''} avant la pénalité.", f"{fe(left)} more points before a penalty.")
+                say(None, L(f"Limites de piste{where} : {f(pts)} point{pl} sur {f(mx)}, {tail}",
+                            f"Track limits{where}: {fe(pts)} of {fe(mx)} points, {tail}"), urgent=left <= 1)
             else:
-                say(None, L(f"Limites de piste{where}, avertissement numéro {s.tl_steps}.", f"Track limits{where}, warning number {s.tl_steps}."))
+                say(None, L(f"Limites de piste{where} : {f(pts)} point{pl}.", f"Track limits{where}: {fe(pts)} point{'s' if pts != 1 else ''}."))
 
 
 # ======================================================================= 9. pneus et freins froids
@@ -914,10 +942,23 @@ class WarmUp:
         self.was_in_pits = s.in_pits
         if self.watch is None:
             return
-        if s.elapsed - self.watch > self.TIMEOUT or s.elapsed < self.watch:
+        if s.elapsed < self.watch:
             self.watch = None
             return
         tc, bc = self.cold(s)
+        since = s.elapsed - self.watch
+        if self.warned and not tc and bc and since > 120:
+            # pneus prêts mais freins qui restent tièdes (écopes très ouvertes, circuit peu freineur) : on le dit quand même
+            self.watch = None
+            say(None, L("Pneus en température, tu peux attaquer. Les freins restent un peu froids, prudence aux gros freinages.",
+                        "Tyres are up to temperature, you can push. Brakes are still a bit cold, careful in the big braking zones."))
+            return
+        if since > self.TIMEOUT:
+            self.watch = None
+            if self.warned and tc:
+                say(None, L("Les pneus ont du mal à monter en température. Fais-les travailler un peu plus, prudence.",
+                            "The tyres are struggling to warm up. Work them a bit harder, and stay careful."))
+            return
         if not self.warned:
             self.warned = True
             if tc and bc:
@@ -937,7 +978,7 @@ class WarmUp:
             if not any(b > -50 for b in s.brake_temp[:2]):      # jeu sans température de freins
                 say(None, L("Pneus en température. Tu peux attaquer !", "Tyres are up to temperature. You can push now!"))
                 return
-            say(None, var("warm", [("Pneus et freins en température. Vas-y, tu peux attaquer !",
+            say(None, var("warm", [("Pneus et freins en température. C'est le moment d'attaquer !",
                                     "Tyres and brakes are up to temperature. Go on, you can push now!"),
                                    ("Tout est chaud, pneus et freins. À toi de jouer !", "Everything's warm, tyres and brakes. Over to you!"),
                                    ("C'est bon, pneus et freins sont prêts. Tu peux pousser !", "All good, tyres and brakes are ready. You can push!")]))
@@ -1015,20 +1056,24 @@ class Damage:
                 self.repair, self.choice, self.all = False, None, False
             self._apply(s)
             return
-        # carrosserie
-        if sum(s.dents) > sum(self.dents) and time.monotonic() - getattr(self, "_contact_t", -1e9) < 10:
-            self._contact_t = time.monotonic()   # même accident (plusieurs chocs à la suite) : on l'a déjà dit
-            if max(s.dents) >= 2:
-                self.repair = True
-        elif sum(s.dents) > sum(self.dents):
+        # carrosserie. Les « bosses » du jeu ne disent pas si la voiture est touchée : un frottement léger met une bosse
+        # sans rien changer au comportement. Avec LMU on lit les vrais dégâts (aéro, suspensions) avant de parler.
+        api = self._api_ok(s)
+        if sum(s.dents) > sum(self.dents):
+            again = time.monotonic() - getattr(self, "_contact_t", -1e9) < 10   # même accident : déjà annoncé
             self._contact_t = time.monotonic()
             worst = max(s.dents)
-            say(None, L("Contact ! ", "Contact! ")
-                + (L("Gros dégâts à la carrosserie.", "Heavy body damage.") if worst >= 2 else L("Dégâts légers à la carrosserie.", "Light body damage."))
-                + L(" Je regarde l'aéro et les suspensions.", " Checking aero and suspension."), urgent=True)
-            if worst >= 2:
-                self.repair = True
-            self._last_fetch = 0   # on relit l'interface de LMU tout de suite
+            if api:
+                if not again:
+                    self._check = (time.monotonic(), dict(self.wear or {}))   # verdict après lecture des dégâts réels
+                    self._last_fetch = 0
+            else:
+                if not again:
+                    say(None, L("Contact ! ", "Contact! ") + (
+                        L("Gros dégâts à la carrosserie, on répare au prochain arrêt.", "Heavy body damage, we'll fix it at the next stop.")
+                        if worst >= 2 else L("Rien de grave, on continue.", "Nothing serious, carry on.")), urgent=worst >= 2)
+                if worst >= 2:
+                    self.repair = True
         self.dents = [max(a, b) for a, b in zip(self.dents, s.dents)]   # pire niveau vu : pas de 2e alerte si ça oscille
         # crevaisons, roues
         for i in range(4):
@@ -1045,7 +1090,26 @@ class Damage:
         if s.in_pits and s.pit_state == 3:
             self.repair, self.choice, self.all = False, None, False   # arrêté au stand : on considère que c'est réglé
         self._poll_api(say)
+        self._verdict(say)
         self._apply(s)
+
+    def _api_ok(self, s) -> bool:
+        """Dégâts réels lisibles (LMU sous Windows, interface déjà lue au moins une fois)."""
+        return getattr(s, "game", "lmu") == "lmu" and sys.platform == "win32" and self.wear is not None
+
+    def _verdict(self, say) -> None:
+        """Après un contact : une fois les dégâts relus (ou 6 s plus tard), dire « rien de cassé » si c'est le cas."""
+        chk = getattr(self, "_check", None)
+        if not chk:
+            return
+        t0, before = chk
+        fresh = self._last_fetch > t0 and not self._fetching
+        if not fresh and time.monotonic() - t0 < 6:
+            return
+        self._check = None
+        if getattr(self, "_reported", 0) > t0:
+            return          # _fetch a déjà annoncé des dégâts aéro / suspension
+        say(None, L("Contact léger, rien de grave. On continue.", "Light contact, nothing serious. Carry on."))
 
     def _apply(self, s) -> None:
         # plus aucun dégât lisible (voiture réparée ou remise à neuf) : plus rien à réparer
@@ -1078,14 +1142,16 @@ class Damage:
             self.wear = new
             if old is None:
                 return
-            if aero is not None and (old.get("aero") or 0) + 0.05 < aero:
+            if aero is not None and (old.get("aero") or 0) + 0.05 < aero and aero >= 0.10:   # sous 10 % : négligeable
+                self._reported = time.monotonic()
                 say(None, L(f"Aéro endommagé à {aero * 100:.0f} %.", f"Aero damaged {aero * 100:.0f} %.")
                     + (L(" On répare au prochain arrêt.", " We'll fix it at the next stop.") if aero > 0.15 else ""))
                 if aero > 0.15:
                     self.repair = True
             for i, v in enumerate(susp[:4]):
                 o = (old.get("susp") or [0, 0, 0, 0])[i] if old.get("susp") else 0
-                if isinstance(v, (int, float)) and v > (o or 0) + 0.05:
+                if isinstance(v, (int, float)) and v > (o or 0) + 0.05 and v >= 0.10:
+                    self._reported = time.monotonic()
                     say(None, L(f"Suspension {WHEEL_NAME(i)} touchée à {v * 100:.0f} %. Attention au comportement.",
                                 f"{WHEEL_NAME(i).capitalize()} suspension damaged {v * 100:.0f} %. Watch the handling."))
                     if v > 0.15:
@@ -1129,6 +1195,7 @@ class Weather:
             return
         if getattr(s, "game", "lmu") != "lmu":          # prévisions lues dans LMU seulement
             self.forecast = []
+            self._track_temp(s, say)
             return
         if self.demo and not self.forecast:
             self.forecast = [{"at": 0.0, "rain": 0.0, "sky": 1, "temp": 21}, {"at": 0.25, "rain": 0.3, "sky": 3, "temp": 20},
@@ -1139,6 +1206,29 @@ class Weather:
             self._fetching = True
             threading.Thread(target=self._fetch, args=(s.session_code,), daemon=True).start()
         self._announce(s, say)
+
+    def _track_temp(self, s, say) -> None:
+        """Jeux sans prévisions (AC EVO) : on suit la température de la piste, qui change le grip."""
+        tt = getattr(s, "track_temp", None)
+        if not tt or tt < -20 or tt > 80:
+            return
+        key = (s.track, s.session_code)
+        if getattr(self, "_tt_key", None) != key:
+            self._tt_key, self._tt_ref, self._tt_t0 = key, None, time.monotonic()
+            return
+        if self._tt_ref is None:
+            if time.monotonic() - self._tt_t0 > 60:     # la valeur se stabilise au début de la séance
+                self._tt_ref = tt
+            return
+        d = tt - self._tt_ref
+        if abs(d) >= 5:
+            self._tt_ref = tt
+            if d < 0:
+                say(None, L(f"La piste se refroidit : {tt:.0f} degrés, {abs(d):.0f} de moins. Un peu moins de grip, attention aux freinages.",
+                            f"The track is cooling down: {tt:.0f} degrees, {abs(d):.0f} less. A bit less grip, careful under braking."))
+            else:
+                say(None, L(f"La piste chauffe : {tt:.0f} degrés, {d:.0f} de plus. Surveille tes pneus.",
+                            f"The track is heating up: {tt:.0f} degrees, {d:.0f} more. Keep an eye on your tyres."))
 
     def _fetch(self, code: int) -> None:
         try:

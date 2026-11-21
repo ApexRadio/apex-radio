@@ -125,8 +125,11 @@ LINKED = {"bias": {("blocage", None), ("sous-virage", "entrée"), ("survirage", 
           "farb": {("sous-virage", "milieu"), ("sous-virage", "sortie"), ("sous-virage", "entrée")},
           "rarb": {("survirage", "milieu"), ("survirage", "sortie")}}
 CTRL_NAME = {"bias": "Répartition de freinage", "tc": "Contrôle de traction", "abs": "ABS",
+             "tcslip": "Patinage du contrôle de traction", "tccut": "Coupure du contrôle de traction",
+             "map": "Cartographie moteur",
              "farb": "Barre antiroulis avant", "rarb": "Barre antiroulis arrière"}
 CTRL_NAME_EN = {"bias": "Brake bias", "tc": "Traction control", "abs": "ABS",
+                "tcslip": "TC slip", "tccut": "TC cut", "map": "Motor map",
                 "farb": "Front anti-roll bar", "rarb": "Rear anti-roll bar"}
 
 
@@ -337,9 +340,9 @@ class Behavior:
             self.bias_front = (1 - m["bias"]) * 100
             if self.bias_start is None:
                 self.bias_start = self.bias_front
-        for k in ("bias", "tc", "abs"):
+        for k in ("bias", "tc", "abs", "tcslip", "tccut", "map"):
             v = m.get(k)
-            if v is None or v == 0 or (k == "bias" and not 0.2 < v < 0.8):
+            if v is None or (v == 0 and k in ("bias", "tc", "abs")) or (k == "bias" and not 0.2 < v < 0.8):
                 continue
             v = round(v, 4) if isinstance(v, float) else v
             if self.ctrl_track != self.map.track:
@@ -368,7 +371,7 @@ class Behavior:
                         val = dec(L(f"à {(1 - v) * 100:.1f} % à l'avant", f"{(1 - v) * 100:.1f} % front"))
                     else:
                         val = L(f"sur {v}", f"{v}")
-                    self.say(None, L(f"{CTRL_NAME[k]} {'passée' if k == 'bias' else 'passé'} {val}, je réévalue.", f"{CTRL_NAME_EN[k]} now {val}, re-evaluating."))
+                    self.say(None, L(f"{CTRL_NAME[k]} {'passée' if k in ('bias', 'tccut', 'map') else 'passé'} {val}, je réévalue.", f"{CTRL_NAME_EN[k]} now {val}, re-evaluating."))
 
     def _reset_linked(self, k: str) -> None:
         links = LINKED.get(k, set())

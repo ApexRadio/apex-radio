@@ -76,6 +76,7 @@ class Snapshot:
     air_temp: float = 0.0
     track_temp: float = 0.0
     yellow: bool = False
+    yellow_sectors: list = field(default_factory=list)   # drapeaux jaunes locaux : numéros de secteur (1, 2, 3)
     blue: bool = False               # drapeau bleu montré à ta voiture (plus rapide derrière qui va te doubler)
     lap_invalid: bool = False        # tour en cours invalidé (limites de piste…)
     sectors: list | None = None      # [S1, S2, S3] du dernier tour
@@ -87,6 +88,7 @@ class Snapshot:
     track_len: float = 0.0           # longueur du tour (m)
     tl_steps: int = 0                # limites de piste : avertissements cumulés
     tl_per_penalty: int = 0          # ... avant pénalité
+    tl_per_point: int = 1            # pas par point de limites de piste (pour parler en points)
     dents: list = field(default_factory=lambda: [0] * 8)   # dégâts carrosserie (0, 1, 2) sur 8 zones
     flat: list = field(default_factory=lambda: [False] * 4)
     wheel_off: list = field(default_factory=lambda: [False] * 4)
@@ -100,6 +102,8 @@ class Snapshot:
     lap_time: float | None = None    # temps écoulé dans le tour en cours (s)
     penalties: int = 0               # pénalités à purger (drive-through / stop-go)
     pen_warning: bool = False        # avertissement de la direction de course (AC EVO : drapeau noir et blanc)
+    meatball: bool = False           # drapeau noir à rond orange : voiture trop abîmée (AC EVO)
+    cut_gain_ms: int = 0             # temps gagné en coupant, à rendre (AC EVO)
     limiter: bool | None = None      # limiteur de vitesse des stands (None : pas de limiteur sur cette voiture)
     speed: float = 0.0               # ta vitesse (m/s)
 
@@ -140,6 +144,7 @@ def dynamics_sample(tel, sc, info) -> dict:
         "temps": [[t - 273.15 for t in w.mTemperature] for w in tel.mWheels],
         "opt": tel.mWheels[0].mOptimalTemp, "ride": [tel.mFrontRideHeight, tel.mRearRideHeight],
         "tc": tel.mTC, "abs": tel.mABS, "bias": tel.mRearBrakeBias,
+        "tcslip": tel.mTCSlip, "tccut": tel.mTCCut, "map": tel.mMotorMap,
         "farb": tel.mFrontAntiSway, "rarb": tel.mRearAntiSway,
         "btemp": [w.mBrakeTemp - 273.15 for w in tel.mWheels],
     }
@@ -339,6 +344,7 @@ class LMUSource:
         s.track_len = info.mLapDist
         s.tl_steps = tel.mTrackLimitsSteps
         s.tl_per_penalty = info.mTrackLimitsStepsPerPenalty
+        s.tl_per_point = max(1, int(getattr(info, "mTrackLimitsStepsPerPoint", 1) or 1))
         s.dents = list(tel.mDentSeverity)
         s.flat = [bool(w.mFlat) for w in tel.mWheels]
         s.wheel_off = [bool(w.mDetached) for w in tel.mWheels]
@@ -401,6 +407,15 @@ class LMUSource:
         if y > 127:
             y -= 256
         s.yellow = 1 <= y <= 6 or s.game_phase == 6
+        # jaunes locaux par secteur (même ordre que mSector : case 0 = secteur 3)
+        try:
+            raw = [int(v) for v in info.mSectorFlag]
+            s.yellow_sectors = sorted(sector_index(i) + 1 for i, v in enumerate(raw) if v == 1)
+            if raw != getattr(self, "_sf_raw", raw):
+                print(f"  Drapeaux de secteur LMU : {raw}")
+            self._sf_raw = raw
+        except Exception:
+            pass
         return s
 
 
@@ -437,6 +452,16 @@ class AutoSource:
         # serveur planté / éjecté de la session : le jeu laisse la dernière image en mémoire, et Apex
         # répétait « voiture arrêtée avant le virage 5 » pendant 7 minutes (19/11). Temps figé = plus en piste.
         now = time.monotonic()
+        # au lancement d'Apex (ou au changement de jeu), la mémoire peut contenir la séance d'avant :
+        # tant que le temps de séance n'a pas bougé une fois, on ne fait rien (pas de vieux drapeau ni de vieux tour invalidé)
+        if self.cur is not getattr(self, "_moved_src", None):
+            self._moved_src, self._moved, self._el0 = self.cur, False, s.elapsed
+        if not self._moved:
+            if s.elapsed and s.elapsed != self._el0:
+                self._moved = True
+            else:
+                s.on_track, s.cars = False, []
+                return s
         if s.on_track and s.elapsed and s.elapsed == getattr(self, "_el", None):
             if now - self._el_t > self.STALE_S:
                 if not getattr(self, "stale", False):

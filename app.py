@@ -82,6 +82,7 @@ class State:
         i18n.set_lang(self.radio.cfg.get("lang") or system_lang())   # avant la voix : elle charge le modèle de la bonne langue
         voices.CHOICE.update(self.radio.cfg.get("voices") or {})      # voix choisie pour chaque langue
         self.voice = Voice()
+        self.radio.on_press = self.voice.hush
         self.workshop = None
         self.beh = None
         self.demo = False
@@ -152,6 +153,10 @@ def loop(state: State, demo: bool) -> None:
     questions.BEHAVIOR = beh
     reflap = RefLap(beh)
     questions.REFLAP = reflap
+    import relais
+    relay = relais.Relay()
+    relay.eng = eng   # pneus neufs au changement de pilote
+    state.relay = relay
     state.beh = beh
     probe = Probe() if not demo else None
     say = lambda key, text, urgent=False: eng.say(key, text, urgent=urgent, elapsed=state.snap.elapsed)
@@ -237,12 +242,29 @@ def loop(state: State, demo: bool) -> None:
 
     questions.TYRES_SET = set_tyres
 
+    def set_amount(litres, energy) -> bool:
+        """« énergie à 100 % » / « fais le plein » / « mets 40 litres » : valable pour le prochain arrêt."""
+        crew.amount_for = eng.amount_order = (state.snap.pit_stops, litres, energy) if state.snap is not None else None
+        crew.no_fuel_for = None
+        return apply_now()
+
+    questions.AMOUNT_SET = set_amount
+
+    def set_compound(kind: str) -> bool:
+        """« mets les pneus pluie » / « sors les slicks » : valable pour le prochain arrêt."""
+        crew.compound_for = eng.compound_order = (state.snap.pit_stops, kind) if state.snap is not None else None
+        return apply_now()
+
+    questions.COMPOUND_SET = set_compound
+
     def cancel_orders(what: str = "tout") -> bool:
         """Le pilote dit « annule » : on oublie ses ordres pour le prochain arrêt, Apex reprend son propre plan."""
         if what in ("tout", "pneus"):
             crew.tyres_for = eng.tyre_order = None
+            crew.compound_for = eng.compound_order = None
         if what in ("tout", "essence"):
             crew.no_fuel_for = None
+            crew.amount_for = eng.amount_order = None
         if what == "tout":
             damage.choice, damage.choice_all = None, True
             if state.snap is not None:
@@ -352,6 +374,7 @@ def loop(state: State, demo: bool) -> None:
             snap = source.read()
             damage.update(snap, say)
             plan = eng.update(snap)
+            relay.update(snap, plan, say)
             lt.update(snap, eng.say)
             state.map.update(snap)
             spotter.session = snap.session
@@ -442,6 +465,7 @@ def loop(state: State, demo: bool) -> None:
                 "forecast": weather.ui(snap),
                 "spotter": {"on": spotter.enabled, "state": spotter.state},
                 "pit": {"mode": crew.mode, "status": crew.status},
+                "relay": relay.ui(plan),
                 "setup_prompt": session_end["prompt"],
                 "ts": time.time(),
             }
@@ -520,8 +544,11 @@ def make_handler(state: State):
                 self.end_headers()
                 self.wfile.write(body)
                 return
-            if self.path.startswith("/debrief") or self.path.rstrip("/") == "/records":
-                if self.path.rstrip("/") == "/records":
+            if self.path.startswith("/debrief") or self.path.rstrip("/") in ("/records", "/relais"):
+                if self.path.rstrip("/") == "/relais":
+                    import relais
+                    body = relais.page().encode()
+                elif self.path.rstrip("/") == "/records":
                     body = debrief.records_page().encode()
                 elif self.path.rstrip("/") == "/debriefs":
                     body = debrief.index_page().encode()
@@ -555,13 +582,23 @@ def make_handler(state: State):
                 self.end_headers()
                 self.wfile.write(body)
                 return
-            if self.path.startswith("/api/sd"):
+            if self.path.startswith("/api/relais"):
+                rl = getattr(state, "relay", None)
+                import relais
+                data = rl.info(state.plan, state.snap) if rl else {"cfg": relais.load(), "plan": relais.plan(relais.load()),
+                                                                    "fuel_stint_min": None, "live": None}
+                body, ctype = json.dumps(data, default=lambda o: None).encode(), "application/json"
+            elif self.path.startswith("/api/sd"):
                 # état résumé pour le plugin Stream Deck (léger, interrogé chaque seconde)
                 body, ctype = json.dumps(sd_state(state), default=lambda o: None).encode(), "application/json"
             elif self.path.startswith("/api/state"):
                 with state.lock:
                     body = state.payload
                 ctype = "application/json"
+            elif self.path.startswith("/api/phone"):         # adresse de la vue téléphone (pour le QR code)
+                body, ctype = json.dumps({"url": PHONE_URL}).encode(), "application/json"
+            elif self.path.split("?")[0] == "/qrcode.js":       # QR code de la vue téléphone (MIT, Kazuhiko Arase)
+                body, ctype = (HERE / "ui" / "qrcode.js").read_bytes(), "text/javascript; charset=utf-8"
             elif self.path.split("?")[0] == "/fsel.js":          # menus déroulants visibles dans les vidéos
                 body, ctype = (HERE / "ui" / "fsel.js").read_bytes(), "text/javascript; charset=utf-8"
             elif self.path == "/favicon.ico":
@@ -669,6 +706,24 @@ def make_handler(state: State):
                 m = json.loads(self.rfile.read(n) or b"{}").get("mode", "hold")
                 state.radio.cfg["ptt_mode"] = "toggle" if m == "toggle" else "hold"
                 save_config(state.radio.cfg)
+            elif self.path == "/api/relais":
+                n = int(self.headers.get("Content-Length") or 0)
+                cfg = json.loads(self.rfile.read(n) or b"{}")
+                rl = getattr(state, "relay", None)
+                import relais
+                if rl:
+                    rl.reload(cfg)
+                    data = rl.info(state.plan, state.snap)
+                else:
+                    c = relais.save(cfg)
+                    data = {"cfg": c, "plan": relais.plan(c), "fuel_stint_min": None, "live": None}
+                body = json.dumps(data, default=lambda o: None).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+                return
             elif self.path == "/api/coaching":
                 n = int(self.headers.get("Content-Length") or 0)
                 on = bool(json.loads(self.rfile.read(n) or b"{}").get("on", True))
@@ -1155,7 +1210,7 @@ def main() -> None:
     print("=" * 56)
     print(f"  APEX//RADIO {UPD.label()} — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate / Assetto Corsa EVO / iRacing"))
     print(f"  Tableau de bord : {url}")
-    print(f"  Sur téléphone : http://{local_ip()}:{PORT}/tel")
+    print(f"  Sur téléphone : {PHONE_URL}")
     print(f"  Tes données : {DATA}")
     if MIGRATED:
         print(f"  Données reprises de l'ancien dossier : {', '.join(MIGRATED)}")

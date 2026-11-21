@@ -57,13 +57,53 @@ class Penalties:
             say(None, L("Avertissement de la direction de course, drapeau noir et blanc. Attention, la prochaine fois c'est la pénalité.",
                         "Warning from race control, black and white flag. Careful, next time it's a penalty."), urgent=True)
         self._warn = warn
+        mb = bool(getattr(s, "meatball", False))
+        if mb and not getattr(self, "_mb", False):
+            say(None, L("Drapeau noir à rond orange : la voiture est trop abîmée, rentre au stand pour réparer.",
+                        "Black and orange flag: the car is too damaged, box to repair."), urgent=True)
+        self._mb = mb
+        # AC EVO : temps gagné en coupant la piste. On le dit une fois (s'il vaut le coup), puis quand il est rendu
+        cut = int(getattr(s, "cut_gain_ms", 0) or 0)
+        told = getattr(self, "_cut_told", False)
+        if cut >= 250 and not told:
+            self._cut_told = True
+            t = round(cut / 1000, 1)
+            t = int(t) if t == int(t) else t
+            say(None, L(f"Tu as gagné {str(t).replace('.', ',')} seconde{'s' if t >= 2 else ''} en coupant la piste : lève le pied pour la rendre, sinon pénalité.",
+                        f"You gained {t} seconds cutting the track: lift to give it back, or it's a penalty."), urgent=True)
+        elif cut == 0 and told:
+            self._cut_told = False
+            if not s.penalties:
+                say(None, L("C'est bon, l'avantage est rendu.", "Good, the advantage is given back."))
+        # limites de piste (LMU) : avertissements cumulés avant la pénalité
+        tl, tlmax = int(getattr(s, "tl_steps", 0) or 0), int(getattr(s, "tl_per_penalty", 0) or 0)
+        last_tl = getattr(self, "_tl", None)
+        tl_pen = False
+        if last_tl is not None and tl != last_tl:
+            print(f"  Limites de piste : {last_tl} -> {tl} (pénalité à {tlmax})")
+            if tl > last_tl and tlmax and tl >= tlmax:
+                tl_pen = True              # la pénalité tombe (les avertissements sont annoncés par alerts.TrackLimits)
+            elif tl == 0 and last_tl and tlmax and last_tl >= tlmax - max(1, int(getattr(s, 'tl_per_point', 1) or 1)):
+                tl_pen = True              # compteur remis à zéro : la pénalité vient d'être donnée
+        self._tl = tl
+        if tl_pen:
+            self._tl_pen_t = s.elapsed
         n = s.penalties
+        if n != self.count:
+            print(f"  Pénalités : {self.count} -> {n}")
         if n > self.count:
             self.given_lap = self.said_lap = s.laps_done
-            say(None, L("Pénalité ! Il faut la purger aux stands, regarde l'écran pour savoir si c'est un drive-through "
-                        f"ou un stop and go. Normalement tu as {PENALTY_LAPS} tours.",
-                        "Penalty! You need to serve it in the pits, check the screen for drive-through or stop and go. "
-                        f"You normally have {PENALTY_LAPS} laps."), urgent=True)
+            why = L(" pour les limites de piste", " for track limits") if s.elapsed - getattr(self, "_tl_pen_t", -1e9) < 20 else ""
+            say(None, L(f"Pénalité{why} ! Drive-through ou stop and go, regarde l'écran. Il faut la purger aux stands, "
+                        f"normalement tu as {PENALTY_LAPS} tours.",
+                        f"Penalty{why}! Drive-through or stop and go, check the screen. You need to serve it in the pits, "
+                        f"you normally have {PENALTY_LAPS} laps."), urgent=True)
+            self._tl_pen_t = -1e9
+        elif n == self.count and 5 < s.elapsed - getattr(self, "_tl_pen_t", -1e9) < 60:
+            # 5 s plus tard, toujours rien dans le compteur de pénalités du jeu : on la dit quand même
+            self._tl_pen_t = -1e9
+            say(None, L(f"Pénalité pour les limites de piste ! Regarde l'écran, il faudra sûrement passer par les stands.",
+                        "Track limits penalty! Check the screen, you'll probably have to go through the pits."), urgent=True)
         elif n < self.count:
             if n == 0:
                 self.given_lap = None

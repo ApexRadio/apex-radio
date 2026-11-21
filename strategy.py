@@ -300,15 +300,15 @@ class Engineer:
         laps_after = max(0.0, p.laps_to_finish - laps_driven_before)
         fpl_safe = self._per_lap("fuel", safe=True) or fpl    # prudent : mieux vaut 1 litre de trop qu'un tour de moins
         fuel_at_pit = max(0.0, s.fuel - laps_driven_before * fpl_safe)
-        if p.stops_needed == 1:
-            need = (laps_after + MARGIN_LAPS) * fpl_safe - fuel_at_pit
-        else:
-            need = s.fuel_capacity - fuel_at_pit
+        # plusieurs arrêts restants : on répartit ce qu'il reste à rouler sur les relais à venir au lieu de faire
+        # le plein complet à chaque fois (voiture plus légère, arrêts plus courts, même nombre d'arrêts)
+        stint_laps = laps_after / max(1, p.stops_needed)
+        need = (stint_laps + MARGIN_LAPS) * fpl_safe - fuel_at_pit
         room = (s.fuel_capacity - fuel_at_pit) if s.fuel_capacity else need
         p.fuel_to_add = max(0.0, min(need, room))
         p.fuel_total = min(s.fuel_capacity or 999, fuel_at_pit + p.fuel_to_add)
         if epl and s.energy is not None:
-            p.energy_target = 1.0 if p.stops_needed > 1 else min(1.0, (laps_after + MARGIN_LAPS) * epl)
+            p.energy_target = min(1.0, (stint_laps + MARGIN_LAPS) * epl)
 
         stint_after = min(laps_after, full_stint)
         if p.tyre_compound:
@@ -317,6 +317,22 @@ class Engineer:
             p.change_tyres = (p.tyre_laps_left - laps_driven_before) < stint_after
         else:
             p.change_tyres = None
+        if getattr(self, "relay_tyres", False) and not p.tyre_compound and p.tyre_wheels is None:
+            p.change_tyres = True      # planning des relais : pneus neufs au changement de pilote
+        # ordres du pilote pour le prochain arrêt (« énergie à 100 % », « mets les pneus pluie ») : ils passent avant le calcul
+        ao = getattr(self, "amount_order", None)
+        if ao and ao[0] == s.pit_stops:
+            litres, energy = ao[1], ao[2]
+            if energy is not None:
+                p.energy_target = energy
+                if not litres and s.fuel_capacity:
+                    litres = s.fuel_capacity * energy
+            if litres:
+                p.fuel_total = litres
+                p.fuel_to_add = max(0.0, litres - s.fuel)
+        co = getattr(self, "compound_order", None)
+        if co and co[0] == s.pit_stops:
+            p.tyre_compound = "pluie" if co[1] == "Wet" else "slicks"
 
         self._pit_calls(s, p)
         self.plan = p

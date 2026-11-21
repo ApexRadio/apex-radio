@@ -474,15 +474,17 @@ def brakes(s: Snapshot, p: Plan) -> str:
 
 
 def track_limits(s: Snapshot, p: Plan) -> str:
+    k = max(1, int(getattr(s, "tl_per_point", 1) or 1))
+    pts, mx = s.tl_steps / k, s.tl_per_penalty / k
+    f = lambda x: (str(int(x)) if x == int(x) else str(x).replace(".", ","))
+    fe = lambda x: (str(int(x)) if x == int(x) else str(x))
     if not s.tl_per_penalty:
-        return L(f"{s.tl_steps} avertissement{'s' if s.tl_steps > 1 else ''} pour limites de piste."
-                 if s.tl_steps else "Aucun avertissement pour limites de piste.",
-                 f"{s.tl_steps} track limit warning{'s' if s.tl_steps != 1 else ''}." if s.tl_steps else "No track limit warnings.")
-    left = s.tl_per_penalty - s.tl_steps
-    txt = L(f"Limites de piste : {s.tl_steps} avertissement{'s' if s.tl_steps > 1 else ''} sur {s.tl_per_penalty}.",
-            f"Track limits: {s.tl_steps} warning{'s' if s.tl_steps != 1 else ''} of {s.tl_per_penalty}.")
-    if 0 < left <= 1:
-        txt += " " + L("Encore un et c'est la pénalité, reste bien dans les lignes.", "One more and it's a penalty, stay inside the lines.")
+        return L(f"{f(pts)} point{'s' if pts >= 2 else ''} de limites de piste." if s.tl_steps else "Aucun avertissement pour limites de piste.",
+                 f"{fe(pts)} track limit point{'s' if pts != 1 else ''}." if s.tl_steps else "No track limit warnings.")
+    txt = L(f"Limites de piste : {f(pts)} point{'s' if pts >= 2 else ''} sur {f(mx)}.",
+            f"Track limits: {fe(pts)} of {fe(mx)} points.")
+    if 0 < mx - pts <= 1:
+        txt += " " + L("Encore une sortie et c'est la pénalité, reste bien dans les lignes.", "One more and it's a penalty, stay inside the lines.")
     return txt
 
 
@@ -584,7 +586,18 @@ def pace_rank(s: Snapshot, p: Plan) -> str:
              f"{_f(mine - best, 1 if mine - best >= 0.1 else 2)} s quicker.")
 
 
+def stints(s: Snapshot, p: Plan) -> str:
+    try:
+        from relais import Relay
+    except Exception:
+        Relay = None
+    if Relay is None or Relay.LAST is None:
+        return L("Le planning de relais n'est pas disponible.", "The stint planner isn't available.")
+    return Relay.LAST.answer()
+
+
 TOPICS[:0] = [
+    (r"\brelais\b|changement de pilote|change(ment|r) de pilote|qui (roule|conduit|prend le volant) (apres|ensuite)|c est qui apres|\bstints?\b|driver (change|swap)|who s (driving )?next", stints),
     (r"gagner du temps|gagner des dixiemes|ou (est ce que )?je (peux |pourrais |peut )?(gagner|perds|perdre|aller plus vite)|analys.{0,20}(pilotage|conduite)|comment (je pilote|je conduis|est mon pilotage)|ameliorer mon pilotage|where can i (gain|find) time|analy[sz]e my driving", coaching),
     (r"reference|par rapport a (mon|ton) meilleur|compare (a|avec) mon meilleur|best lap reference|my best lap", reference),
     (r"\bfreins?\b(?! a main)|\bdisques? de frein|\bbrakes?\b", brakes),
@@ -813,6 +826,67 @@ def fuel_command(t: str) -> str | None:
     return out + (L(" Je corrige le menu des stands.", " Updating the pit menu.") if menu else "")
 
 
+AMOUNT_SET = None    # fonction(litres_total|None, energie 0..1|None) : quantité voulue au prochain arrêt
+COMPOUND_SET = None  # fonction("Wet" | "dry") : type de pneus voulu au prochain arrêt
+_NUM = r"(\d+(?:[.,]\d+)?)"
+
+
+def amount_command(t: str, s: Snapshot | None = None) -> str | None:
+    """« mets l'énergie à 100 % » / « fais le plein » / « mets 40 litres » : quantité voulue au prochain arrêt."""
+    if re.search(r"^(il faut|faut il|est ce qu|on doit|je dois|tu crois|ca vaut|combien|quel)", t):
+        return None
+    energy = litres = None
+    # (le « % » disparaît dans le texte nettoyé : « énergie à 100 % » devient « energie a 100 »)
+    m = re.search(rf"\b(energie|energy|ve|batterie)\b(?: virtuelle| virtual)?(?: a| at| to| sur| de)? {_NUM}\b", t) or \
+        re.search(rf"\b{_NUM} ?(pour ?cent|percent)? (d |de )?(energie|energy)\b", t)
+    if m:
+        v = float(next(g for g in m.groups() if g and re.match(r"^\d", g)).replace(",", "."))
+        energy = max(0.0, min(1.0, v / 100))
+    elif re.search(r"\b(fais|faites|faire|mets|met|mettez|on fait) (le|un) plein\b|\bplein complet\b|\b(full tank|fill (it|her) up|fill up)\b|"
+                   r"\b(energie|energy) (au max|a fond|pleine|full)\b", t):
+        energy = 1.0
+        litres = float(getattr(s, "fuel_capacity", 0) or 0) or None
+    else:
+        m = re.search(rf"\b(mets|met|mettez|ajoute|rajoute|remets|add|put) {_NUM} ?(litres?|l|liters?)\b", t)
+        if not m:
+            return None
+        add = float(m.group(2).replace(",", "."))
+        litres = (float(getattr(s, "fuel", 0) or 0) + add) if s is not None else add
+        cap = float(getattr(s, "fuel_capacity", 0) or 0)
+        if cap:
+            litres = min(cap, litres)
+    if AMOUNT_SET is None:
+        return L("Je ne peux pas changer le menu des stands pour l'instant.", "I can't change the pit menu right now.")
+    menu = AMOUNT_SET(litres, energy)
+    if energy is not None and energy >= 0.995:
+        out = L("C'est noté, on fait le plein au prochain arrêt.", "Copy, full tank at the next stop.")
+    elif energy is not None:
+        out = L(f"C'est noté, énergie à {energy * 100:.0f} % au prochain arrêt.", f"Copy, energy to {energy * 100:.0f} % at the next stop.")
+    else:
+        out = L(f"C'est noté, on remplit jusqu'à {litres:.0f} litres au prochain arrêt.", f"Copy, we fill up to {litres:.0f} litres at the next stop.")
+    return out + (L(" Je corrige le menu des stands.", " Updating the pit menu.") if menu else "")
+
+
+def compound_command(t: str) -> str | None:
+    """« mets les pneus pluie » / « sors les slicks » : type de pneus au prochain arrêt (le pilote décide)."""
+    if re.search(r"^(il faut|faut il|est ce qu|on doit|je dois|tu crois|ca vaut|combien|quel|quand)", t):
+        return None
+    if not re.search(r"\b(mets|met|mettez|sors|sortez|sort|monte|montez|chausse|prepare|preparez|passe|passez|on passe|on met|change|swap|put|fit|go)\b", t):
+        return None
+    if re.search(r"\b(pluie|mouille|mouilles|wets?|rain)\b", t) and re.search(r"pneu|gomme|wet|pluie|mouille", t):
+        kind = "Wet"
+    elif re.search(r"\b(slicks?|secs?|dry)\b", t):
+        kind = "dry"
+    else:
+        return None
+    if COMPOUND_SET is None:
+        return L("Je ne peux pas changer les pneus pour l'instant.", "I can't change the tyres right now.")
+    menu = COMPOUND_SET(kind)
+    out = L("C'est noté, pneus pluie au prochain arrêt.", "Copy, wet tyres at the next stop.") if kind == "Wet" else \
+        L("C'est noté, slicks au prochain arrêt.", "Copy, slicks at the next stop.")
+    return out + (L(" Je corrige le menu des stands.", " Updating the pit menu.") if menu else "")
+
+
 # ---- pneus pneu par pneu : « change juste les deux avant », « les pneus gauches », « garde les pneus »
 TYRES_SET = None   # fonction(roues: tuple d'indices 0=AVG 1=AVD 2=ARG 3=ARD) ; renvoie True si le menu est re-réglé
 _FRONT, _REAR, _LEFT, _RIGHT = r"avants?|fronts?", r"arrieres?|rears?|back", r"gauches?|left", r"droite?s?|right"
@@ -982,9 +1056,11 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
     LAST_TEXT = t
     # ordres pour le prochain arrêt : réparations et/ou essence (« répare mais sans ravitaillement »)
     f = fuel_command(t)
+    a = None if f else amount_command(t, s)
     r = repair_command(t)
-    w = tyre_command(t, s)
-    orders = [x for x in (r, w, f) if x]
+    cp = compound_command(t)
+    w = None if cp else tyre_command(t, s)
+    orders = [x for x in (r, cp, w, f, a) if x]
     if orders:
         # « répare, change les avants et pas d'essence » : une seule phrase, « je corrige le menu » une fois à la fin
         tail = [L(" Je corrige le menu des stands.", " Updating the pit menu.")]

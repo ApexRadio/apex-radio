@@ -26,6 +26,13 @@
   .live .dot { background: var(--good); box-shadow: 0 0 10px var(--good); }
   button { font: inherit; color: var(--text); background: #0D1219; border: 1px solid var(--line2); border-radius: 999px; padding: 8px 14px; min-height: 40px; cursor: pointer; }
   button:hover { border-color: var(--accent); }
+  .iconbtn { width: 44px; height: 40px; padding: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--accent); }
+  .iconbtn .ico { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .iconbtn .ico .fill { fill: currentColor; stroke: none; }
+  .iconbtn .ico .accent { stroke: var(--warn, #FFD23F); }
+  .iconbtn:hover { background: rgba(0, 229, 255, .08); }
+  #quit.iconbtn { color: var(--alert); }
+  #quit.iconbtn:hover { border-color: var(--alert); background: rgba(255, 46, 136, .08); }
   button.off { color: var(--alert); border-color: var(--alert); }
   .layout { display: flex; gap: 16px; flex-wrap: wrap; align-items: stretch; }
   aside { flex: 1 1 340px; max-width: 460px; display: flex; flex-direction: column; gap: 16px; }
@@ -131,6 +138,24 @@
   .bub.k-pep { border-left: 3px solid var(--good); }
   .bub.k-info { border-left: 3px solid var(--line, #2a3242); }
   .pitrow[hidden] { display: none !important; }
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 13; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
+  .modal[hidden] { display: none; }
+  .quitcard { background: var(--bg); border: 1px solid var(--line); border-radius: 18px; padding: 22px 24px; width: min(360px, 90vw); text-align: center; box-shadow: 0 10px 50px rgba(0,0,0,.6); animation: pop .15s ease-out; }
+  .quitcard h2 { margin: 6px 0 4px; font-size: 20px; }
+  .quiticon { width: 54px; height: 54px; margin: 0 auto; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; color: var(--alert); background: rgba(255,46,136,.12); border: 1px solid rgba(255,46,136,.4); }
+  .quitbtns { display: flex; gap: 10px; margin-top: 18px; } .quitbtns button { flex: 1; padding: 10px; font-size: 15px; border-radius: 12px; }
+  .quitbtns .danger { background: var(--alert); border-color: var(--alert); color: #06070B; font-weight: 700; }
+  @keyframes pop { from { transform: scale(.94); opacity: 0; } to { transform: none; opacity: 1; } }
+  .byebye { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 20px; }
+  .byelogo { font-family: Orbitron, sans-serif; font-weight: 900; font-size: 34px; letter-spacing: .12em; color: var(--accent); text-shadow: 0 0 18px rgba(var(--accent-rgb),.6); }
+  .byetxt { font-size: 22px; font-weight: 600; } .byesub { color: var(--muted); }
+  #phonebox { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 12; display: flex; align-items: center; justify-content: center; }
+  #phonebox[hidden] { display: none; }
+  .phonecard { max-height: 92vh; overflow-y: auto; background: var(--bg); border: 1px solid var(--accent); border-radius: 16px; padding: 18px 20px; width: min(420px, 92vw); box-shadow: 0 0 40px rgba(var(--accent-rgb),.25); }
+  #qr { background: #fff; border-radius: 12px; padding: 12px; width: 220px; height: 220px; margin: 6px auto 0; }
+  #qr svg { width: 100%; height: 100%; display: block; }
+  .phonehelp summary { cursor: pointer; color: var(--accent); font-size: 14px; margin: 6px 0; }
+  .phonesteps { padding-left: 20px; margin: 8px 0; font-size: 14px; } .phonesteps li { margin: 4px 0; }
   #set { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 11; display: flex; justify-content: flex-end; }
   #set[hidden] { display: none; }
   .setbox { width: min(460px, 100%); }
@@ -213,10 +238,11 @@
       </div>
       <button id="wsopen" class="act" style="border-radius:999px" data-en="SETUP WORKSHOP">ATELIER SETUP</button>
       <a id="records" class="pill" href="/records" style="color:#FFE500;text-decoration:none">RECORDS</a>
+      <a id="relais" class="pill" href="/relais" style="color:var(--text);text-decoration:none" data-en="STINTS">RELAIS</a>
       <a id="debriefs" class="pill" href="/debriefs" style="color:var(--text);text-decoration:none" data-en="DEBRIEFS">DÉBRIEFS</a>
-      <button id="setopen" title="Réglages" data-en-title="Settings" aria-label="Réglages">⚙️</button>
-      <a id="phone" class="pill" href="/tel" target="_blank" style="color:var(--text);text-decoration:none" title="Affichage téléphone" data-en-title="Phone view">📱</a>
-      <button id="quit" title="Fermer Apex Radio" aria-label="Fermer Apex Radio" data-en-title="Close Apex Radio">⏻</button>
+      <button id="setopen" title="Réglages" data-en-title="Settings" aria-label="Réglages" class="iconbtn"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+      <button id="phone" title="Afficher Apex sur ton téléphone" data-en-title="Show Apex on your phone" aria-label="Téléphone" class="iconbtn"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2.5" width="11" height="19" rx="2.4"/><path d="M8 5.2h3"/><circle cx="9.5" cy="18.2" r="1" class="fill"/><path d="M17.6 8.4a4.2 4.2 0 0 1 0 5.6" class="accent"/><path d="M20 6.4a7.2 7.2 0 0 1 0 9.6" class="accent"/></svg></button>
+      <button id="quit" title="Fermer Apex Radio" aria-label="Fermer Apex Radio" data-en-title="Close Apex Radio" class="iconbtn"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8.5"/><path d="M7.2 6.3a7.5 7.5 0 1 0 9.6 0"/></svg></button>
     </div>
   </header>
 
@@ -276,6 +302,7 @@
             <div style="font-family:var(--title);font-weight:700;font-size:32px;margin-top:4px" id="box">–</div>
             <div class="sub" id="boxinfo">–</div>
             <div class="sub" id="pitstatus" style="margin-top:4px"></div>
+            <div class="sub" id="relayline" style="margin-top:4px" hidden></div>
             <div class="pitrow" style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;align-items:center">
               <span class="sub" style="margin:0" data-en="Pit:">Stand :</span>
               <button class="pitm" data-m="auto">AUTO</button><button class="pitm" data-m="demande" data-en="ON REQUEST">À LA DEMANDE</button><button class="pitm" data-m="off">OFF</button>
@@ -323,6 +350,42 @@
 </div>
 
 <div id="listen" aria-live="polite" hidden><span class="ldot"></span><b id="listentxt">J'ÉCOUTE…</b></div>
+<div id="quitbox" class="modal" hidden>
+  <div class="quitcard" role="dialog" aria-modal="true" aria-labelledby="quittitle">
+    <div class="quiticon">⏻</div>
+    <h2 id="quittitle" data-en="Close Apex Radio?">Fermer Apex Radio ?</h2>
+    <p class="sub" style="font-family:inherit" data-en="The engineer will stop talking until you start Apex again.">L'ingénieur ne te parlera plus jusqu'au prochain lancement d'Apex.</p>
+    <div class="quitbtns">
+      <button id="quitno" data-en="Cancel">Annuler</button>
+      <button id="quityes" class="danger" data-en="Close">Fermer</button>
+    </div>
+  </div>
+</div>
+<div id="phonebox" hidden>
+  <div class="phonecard">
+    <button id="phoneclose" style="float:right" aria-label="Fermer">✕</button>
+    <h2 style="margin-top:0" data-en="Apex on your phone">Apex sur ton téléphone</h2>
+    <div id="qr"></div>
+    <div class="mono" id="phoneurl" style="margin:10px 0;color:var(--accent);word-break:break-all"></div>
+    <ol class="phonesteps">
+      <li data-en="Connect your phone to the same Wi-Fi as this PC.">Connecte ton téléphone au même Wi-Fi que ce PC.</li>
+      <li data-en="Scan the QR code with the camera (or type the address in the browser).">Scanne le QR code avec l'appareil photo (ou tape l'adresse dans le navigateur).</li>
+      <li data-en="Tip: in the browser menu, « Add to home screen » makes it an app icon.">Astuce : dans le menu du navigateur, « Ajouter à l'écran d'accueil » en fait une icône comme une appli.</li>
+    </ol>
+    <details class="phonehelp">
+      <summary data-en="Doesn't open on the phone?">Ça ne s'ouvre pas sur le téléphone ?</summary>
+      <ol class="phonesteps">
+        <li data-en="Check the phone is on the same Wi-Fi as the PC (not 4G/5G, not a guest Wi-Fi), and that no VPN is on.">Vérifie que le téléphone est sur le même Wi-Fi que le PC (pas en 4G/5G, pas sur un Wi-Fi invité) et qu'aucun VPN n'est allumé.</li>
+        <li data-en="On the PC: Start menu, type « Allow an app through Windows Firewall » and open it.">Sur le PC : menu Démarrer, tape « Autoriser une application via le Pare-feu Windows » et ouvre-le.</li>
+        <li data-en="Click « Change settings », find « apexradio » or « Python » in the list and tick Private and Public, then OK.">Clique sur « Modifier les paramètres », cherche « apexradio » ou « Python » dans la liste, coche Privé et Public, puis OK.</li>
+        <li data-en="Not in the list? « Allow another app » → « Browse », pick ApexRadio.exe in the folder below, then tick Private and Public.">Pas dans la liste ? « Autoriser une autre application » → « Parcourir », choisis ApexRadio.exe dans le dossier ci-dessous, puis coche Privé et Public.</li>
+      </ol>
+      <div class="mono" style="font-size:12px;word-break:break-all;color:var(--muted)">%LOCALAPPDATA%\Programs\Apex Radio\python</div>
+      <div class="sub" style="font-family:inherit;margin-top:6px" data-en="Then scan the QR code again. Still stuck? Ask on our Discord.">Puis rescanne le QR code. Toujours bloqué ? Demande sur notre Discord.</div>
+    </details>
+    <a href="/tel" target="_blank" class="pill" style="display:inline-block;margin-top:10px;color:var(--text);text-decoration:none" data-en="Open the phone view on this PC">Ouvrir la vue téléphone sur ce PC</a>
+  </div>
+</div>
 <div id="set" hidden>
   <div class="wsbox setbox">
     <div class="row" style="align-items:center"><div class="logo" style="font-size:20px" data-en="SETTINGS">RÉGLAGES</div><button id="setclose" aria-label="Fermer">✕</button></div>
@@ -335,6 +398,8 @@
       <div class="setrow"><span data-en="Encouragement">Encouragements</span><div class="setctl"><select id="encourage" aria-label="Encouragements" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><label for="coaching" data-en="Driving tips on track">Conseils de pilotage en piste</label><div class="setctl"><input type="checkbox" id="coaching"></div></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Untick if you don't want tips while driving (braking, corners…). The engineer still answers if you ask.">Décoche si tu ne veux pas de conseils en roulant (freinage, virages…). L'ingénieur répond toujours si tu lui demandes.</div>
+      <div class="setrow"><span data-en="Pit menu (LMU)">Menu des stands (LMU)</span><div class="setctl"><select id="pitmode" aria-label="Menu des stands" style="max-width:none;border:0;padding:2px 4px"><option value="auto" data-en="Auto">Auto</option><option value="demande" data-en="On request">À la demande</option><option value="off" data-en="Off">Off</option></select></div></div>
+      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Auto: Apex sets fuel / energy, tyres and repairs in the LMU pit menu about a lap before your stop. On request: only when you say &quot;prepare the stop&quot;.">Auto : Apex règle l'essence / l'énergie, les pneus et les réparations dans le menu des stands de LMU environ un tour avant ton arrêt. À la demande : seulement quand tu dis « prépare l'arrêt ».</div>
       <div class="setrow"><span data-en="Radio tone">Ton de la radio</span><div class="setctl"><select id="tone" aria-label="Ton de la radio" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><span data-en="Your first name">Ton prénom</span><div class="setctl"><input id="drvname" maxlength="24" placeholder="ex. Laurent" data-en-placeholder="e.g. Laurent" aria-label="Ton prénom" style="max-width:160px"></div></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="The engineer calls you by your first name now and then. Leave empty if you don't want it.">L'ingénieur t'appelle de temps en temps par ton prénom. Laisse vide si tu ne veux pas.</div>
@@ -538,6 +603,7 @@ function render(d) {
     if ($("vchoice").innerHTML !== opts) $("vchoice").innerHTML = opts;
   }
   if (d.voice) { $("quiet").classList.toggle("on", !!d.voice.quiet); $("quiet").setAttribute("aria-pressed", !!d.voice.quiet); }
+  if (d.phone) phoneUrl = d.phone;
   if (d.phone) $("phone").title = T(`Affichage téléphone : ${d.phone} (même Wi-Fi que le PC)`, `Phone view: ${d.phone} (same Wi-Fi as the PC)`);
   const tmD = d.times || {}, dlt = tmD.delta;
   $("delta").hidden = !(s.on_track && dlt != null);
@@ -572,7 +638,7 @@ function render(d) {
   if (key !== lastRadio) {
     lastRadio = key;
     $("radio").innerHTML = radio.slice().reverse().map(m =>
-      `<div class="bub ${m.urgent ? "urgent" : ""} ${m.me ? "me" : ""} k-${m.me ? "me" : kind(m.text)}"><small>${m.me ? T("TOI", "YOU") : T("JESSICA", "ENGINEER")} · ${fmtTime(m.t)}</small>${esc(m.me ? m.text.replace(/^Toi : /, "") : m.text)}</div>`).join("");
+      `<div class="bub ${m.urgent ? "urgent" : ""} ${m.me ? "me" : ""} k-${m.me ? "me" : kind(m.text)}"><small>${m.me ? T("TOI", "YOU") : ((d.voice && d.voice.name) ? d.voice.name.toUpperCase() : T("INGÉ", "ENGINEER"))} · ${fmtTime(m.t)}</small>${esc(m.me ? m.text.replace(/^Toi : /, "") : m.text)}</div>`).join("");
     $("radio").scrollTop = $("radio").scrollHeight;
   }
 
@@ -589,6 +655,7 @@ function render(d) {
   renderShortcuts(t);
   renderOnboard(d);
   if (document.activeElement !== $("coaching")) $("coaching").checked = d.coaching !== false;
+  if (d.pit && document.activeElement !== $("pitmode")) $("pitmode").value = d.pit.mode;
   if (d.encourage && document.activeElement !== $("encourage")) $("encourage").value = d.encourage;
   if (d.tone && document.activeElement !== $("tone")) $("tone").value = d.tone;
   if (d.driver_name !== undefined && document.activeElement !== $("drvname")) $("drvname").value = d.driver_name;
@@ -638,6 +705,13 @@ function render(d) {
   if (d.setup_prompt !== undefined) {
     if (setupPrompt !== null && d.setup_prompt > setupPrompt) $("wsopen").click();   // fin de session : on ouvre l'atelier
     setupPrompt = d.setup_prompt;
+  }
+  const rl = d.relay;
+  $("relayline").hidden = !rl;
+  if (rl) {
+    const e = s => String(s).replace(/</g, "&lt;");
+    $("relayline").innerHTML = `🔁 ${T("Relais", "Stint")} ${e(rl.stint)} · <b>${e(rl.driver)}</b>` + (rl.next ? ` → ${e(rl.next)} ${e(rl.when)}` : ` · ${e(rl.when)}`);
+    $("relayline").style.color = rl.soon ? "var(--warn)" : "";
   }
   if (d.pit) {
     document.querySelectorAll(".pitm").forEach(b => b.classList.toggle("on", b.dataset.m === d.pit.mode));
@@ -830,6 +904,7 @@ $("tone").innerHTML = [["sobre", "Sobre (juste l'info)", "Plain (just the info)"
   ["detente", "Détendu", "Laid-back"]].map(e => `<option value="${e[0]}">${T(e[1], e[2])}</option>`).join("");
 $("tone").onchange = e => fetch("/api/tone", { method: "POST", body: JSON.stringify({ tone: e.target.value }) });
 $("drvname").onchange = e => fetch("/api/driver", { method: "POST", body: JSON.stringify({ name: e.target.value.trim() }) });
+$("pitmode").onchange = e => fetch("/api/pit/mode", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
 $("coaching").onchange = e => fetch("/api/coaching", { method: "POST", body: JSON.stringify({ on: e.target.checked }) });
 $("encourage").onchange = e => fetch("/api/encourage", { method: "POST", body: JSON.stringify({ level: e.target.value }) });
 
@@ -853,8 +928,19 @@ $("askform").onsubmit = e => { e.preventDefault(); const q = $("ask").value.trim
 document.querySelectorAll(".pitm").forEach(b => b.onclick = () => fetch("/api/pit/mode", { method: "POST", body: JSON.stringify({ mode: b.dataset.m }) }));
 $("pitnow").onclick = () => fetch("/api/pit/now", { method: "POST" });
 $("spot").onclick = () => fetch("/api/spotter/toggle", { method: "POST" });
-$("quit").onclick = () => { if (confirmQuit()) fetch("/api/quit", { method: "POST" }).then(() => { document.body.innerHTML = "<p style='padding:40px;font-size:18px'>" + T("Apex Radio est fermé. Tu peux fermer cet onglet.", "Apex Radio is closed. You can close this tab.") + "</p>"; }); };
-function confirmQuit() { const b = $("quit"); if (b.dataset.armed) return true; b.dataset.armed = 1; b.textContent = T("Fermer ?", "Close?"); setTimeout(() => { delete b.dataset.armed; b.textContent = "⏻"; }, 3000); return false; }
+// ---- fermer Apex : petite fenêtre de confirmation
+$("quit").onclick = () => { $("quitbox").hidden = false; setTimeout(() => $("quitno").focus(), 50); };
+$("quitno").onclick = () => { $("quitbox").hidden = true; };
+$("quitbox").onclick = e => { if (e.target === $("quitbox")) $("quitbox").hidden = true; };
+document.addEventListener("keydown", e => { if (e.key === "Escape") { $("quitbox").hidden = true; $("phonebox").hidden = true; } });
+$("quityes").onclick = () => {
+  $("quityes").disabled = true;
+  fetch("/api/quit", { method: "POST" }).catch(() => {}).finally(() => {
+    document.body.innerHTML = `<div class="byebye"><div class="byelogo">APEX//RADIO</div>
+      <div class="byetxt">${T("À bientôt sur la piste ! 🏁", "See you on track! 🏁")}</div>
+      <div class="byesub">${T("Apex Radio est fermé. Tu peux fermer cette fenêtre.", "Apex Radio is closed. You can close this window.")}</div></div>`;
+  });
+};
 $("vol").onchange = () => fetch("/api/voice/volume", { method: "POST", body: JSON.stringify({ v: Number($("vol").value) }) });
 $("vtoggle").onclick = () => fetch("/api/voice/toggle", { method: "POST" });
 $("quiet").onclick = () => fetch("/api/voice/quiet", { method: "POST" });
@@ -997,6 +1083,20 @@ function launchLMU() { lmuClicked = Date.now(); fetch("/api/lmu/launch", { metho
 $("lmulaunch").onclick = launchLMU; $("lmulaunch2").onclick = launchLMU;
 $("autolmu").onchange = e => fetch("/api/lmu/autolaunch", { method: "POST", body: JSON.stringify({ on: e.target.checked }) });
 $("setopen").onclick = () => { $("set").hidden = false; };
+// ---- vue téléphone : QR code + adresse sur le réseau local
+let phoneUrl = "";
+$("phone").onclick = async () => {
+  try { phoneUrl = (await (await fetch("/api/phone")).json()).url || phoneUrl; } catch (e) {}
+  const url = phoneUrl || (location.origin + "/tel");
+  $("phoneurl").textContent = url;
+  try {
+    const q = qrcode(0, "M"); q.addData(url); q.make();
+    $("qr").innerHTML = q.createSvgTag({ cellSize: 6, margin: 0, scalable: true });
+  } catch (e) { $("qr").textContent = ""; }
+  $("phonebox").hidden = false;
+};
+$("phoneclose").onclick = () => { $("phonebox").hidden = true; };
+$("phonebox").onclick = e => { if (e.target === $("phonebox")) $("phonebox").hidden = true; };
 $("setclose").onclick = () => { $("set").hidden = true; };
 $("set").onclick = e => { if (e.target.id === "set") $("set").hidden = true; };
 $("wsopen").onclick = () => { $("ws").hidden = false; $("wsresult").textContent = ""; wsLoad(false); clearInterval(wsTimer); wsTimer = setInterval(() => wsLoad(true), 3000); };
@@ -1026,6 +1126,7 @@ $("logsend").onclick = async () => {
   } catch (e) { m.textContent = T("Impossible de copier le journal.", "Couldn't copy the log."); }
 };
 </script>
+<script src="/qrcode.js"></script>
 <script src="/fsel.js"></script>
 </body>
 </html>

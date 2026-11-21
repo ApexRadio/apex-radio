@@ -40,6 +40,8 @@
 - 🇬🇧 Settings ⚙: pit menu mode (Auto / On request / Off), without having to be on track.
 - 🇫🇷 Pénalités LMU : « Pénalité pour les limites de piste ! » quand la pénalité tombe (même si le jeu ne la compte pas tout de suite), et limites de piste annoncées en points comme dans le jeu (« 2 points sur 4 »).
 - 🇬🇧 LMU penalties: "Track limits penalty!" when the penalty is given (even if the game doesn't count it right away), and track limits called in points like in the game ("2 of 4 points").
+- 🇫🇷 Nouvelles icônes pour les boutons Réglages, Téléphone et Fermer.
+- 🇬🇧 New icons for the Settings, Phone and Close buttons.
 
 ## 1.3.1
 - 🇫🇷 Micro : si le fichier de reconnaissance vocale (dossier whisper) a été mal téléchargé, Apex le retélécharge tout seul au lieu de rester sans micro.

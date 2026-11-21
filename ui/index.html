@@ -26,6 +26,13 @@
   .live .dot { background: var(--good); box-shadow: 0 0 10px var(--good); }
   button { font: inherit; color: var(--text); background: #0D1219; border: 1px solid var(--line2); border-radius: 999px; padding: 8px 14px; min-height: 40px; cursor: pointer; }
   button:hover { border-color: var(--accent); }
+  .iconbtn { width: 44px; height: 40px; padding: 0; display: inline-flex; align-items: center; justify-content: center; color: var(--accent); }
+  .iconbtn .ico { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .iconbtn .ico .fill { fill: currentColor; stroke: none; }
+  .iconbtn .ico .accent { stroke: var(--warn, #FFD23F); }
+  .iconbtn:hover { background: rgba(0, 229, 255, .08); }
+  #quit.iconbtn { color: var(--alert); }
+  #quit.iconbtn:hover { border-color: var(--alert); background: rgba(255, 46, 136, .08); }
   button.off { color: var(--alert); border-color: var(--alert); }
   .layout { display: flex; gap: 16px; flex-wrap: wrap; align-items: stretch; }
   aside { flex: 1 1 340px; max-width: 460px; display: flex; flex-direction: column; gap: 16px; }
@@ -233,9 +240,9 @@
       <a id="records" class="pill" href="/records" style="color:#FFE500;text-decoration:none">RECORDS</a>
       <a id="relais" class="pill" href="/relais" style="color:var(--text);text-decoration:none" data-en="STINTS">RELAIS</a>
       <a id="debriefs" class="pill" href="/debriefs" style="color:var(--text);text-decoration:none" data-en="DEBRIEFS">DÉBRIEFS</a>
-      <button id="setopen" title="Réglages" data-en-title="Settings" aria-label="Réglages">⚙️</button>
-      <button id="phone" title="Afficher Apex sur ton téléphone" data-en-title="Show Apex on your phone" aria-label="Téléphone">📱</button>
-      <button id="quit" title="Fermer Apex Radio" aria-label="Fermer Apex Radio" data-en-title="Close Apex Radio">⏻</button>
+      <button id="setopen" title="Réglages" data-en-title="Settings" aria-label="Réglages" class="iconbtn"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+      <button id="phone" title="Afficher Apex sur ton téléphone" data-en-title="Show Apex on your phone" aria-label="Téléphone" class="iconbtn"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2.5" width="11" height="19" rx="2.4"/><path d="M8 5.2h3"/><circle cx="9.5" cy="18.2" r="1" class="fill"/><path d="M17.6 8.4a4.2 4.2 0 0 1 0 5.6" class="accent"/><path d="M20 6.4a7.2 7.2 0 0 1 0 9.6" class="accent"/></svg></button>
+      <button id="quit" title="Fermer Apex Radio" aria-label="Fermer Apex Radio" data-en-title="Close Apex Radio" class="iconbtn"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8.5"/><path d="M7.2 6.3a7.5 7.5 0 1 0 9.6 0"/></svg></button>
     </div>
   </header>
 

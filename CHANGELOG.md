@@ -32,6 +32,8 @@
 - 🇬🇧 The radio window shows the chosen voice's name (Pierre, Jessica…).
 - 🇫🇷 Dégâts : après un contact léger, l'ingénieur vérifie les vrais dégâts (aéro, suspensions) avant de parler : « Contact léger, rien de grave » au lieu d'annoncer des dégâts et de demander une réparation pour rien.
 - 🇬🇧 Damage: after a light contact, the engineer checks the real damage (aero, suspension) before speaking: "Light contact, nothing serious" instead of calling damage and asking for a repair for nothing.
+- 🇫🇷 Tour de référence : plus de remarque « tu freines plus tôt / moins vite au virage X » quand tu es en bagarre (voiture à moins de ~150 m devant ou ~100 m derrière pendant le virage ou juste avant).
+- 🇬🇧 Reference lap: no more "you're braking earlier / slower in turn X" remarks while you're battling (a car within ~150 m ahead or ~100 m behind during or just before the corner).
 
 ## 1.3.1
 - 🇫🇷 Micro : si le fichier de reconnaissance vocale (dossier whisper) a été mal téléchargé, Apex le retélécharge tout seul au lieu de rester sans micro.

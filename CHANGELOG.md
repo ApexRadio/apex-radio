@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.4.2 (en préparation)
+- 🇫🇷 Places : quand la voiture devant s'arrête aux stands, abandonne ou s'arrête sur la piste, l'ingé le dit (« Tu récupères une place, Dupont s'arrête aux stands ») au lieu de te féliciter pour un dépassement.
+- 🇬🇧 Places: when the car ahead pits, retires or stops on track, the engineer says so ("You pick up a place, Dupont is pitting") instead of congratulating you on an overtake.
 - 🇫🇷 Réglages → Affichage : circuit en taille Normale, Grande ou Très grande, et choix des cases à afficher (pneus, météo, chronos, remarques de pilotage). Ce que tu masques laisse plus de place au circuit.
 - 🇬🇧 Settings → Layout: track map Normal, Large or Extra large, and choose which cards to show (tyres, weather, lap times, driving notes). What you hide gives the map more room.
 - 🇫🇷 Mises à jour : la nouvelle version se télécharge toute seule dans Apex, puis un bouton INSTALLER suffit. Apex se ferme, s'installe et se rouvre tout seul (rien ne s'installe sans ce clic). Le lien TÉLÉCHARGER reste là en secours.

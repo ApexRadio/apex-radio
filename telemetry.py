@@ -332,6 +332,7 @@ class LMUSource:
                 "me": bool(v.mIsPlayer), "pits": bool(v.mInPits),
                 "rel": "ahead" if v.mID == ahead_id else "behind" if v.mID == behind_id else "",
                 "best": v.mBestLapTime if v.mBestLapTime > 0 else None, "name": _txt(v.mDriverName),
+                "dnf": int(v.mFinishStatus) in (2, 3),     # abandon / disqualifié
             })
         s.session_code = info.mSession
         s.track_len = info.mLapDist

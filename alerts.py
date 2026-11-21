@@ -569,6 +569,9 @@ class Places:
         if s.in_pits or s.elapsed - self.pit_t < self.PIT_CALM:
             self.last_said = pos
             return
+        if pos == self.last_said and pos == self.cand:
+            a = s.ahead or {}
+            self.prev_ahead = a.get("name") or None     # qui était devant toi tant que la place ne bouge pas
         if pos != self.cand:
             self.cand, self.cand_t = pos, s.elapsed
             return
@@ -579,10 +582,24 @@ class Places:
         if abs(diff) > 3:
             return                 # gros saut : arrêts des autres, pénalité… pas un vrai dépassement
         if diff > 0:
+            how = self._how(s, diff)
+            if how in ("pits", "out", "slow"):
+                # pas un dépassement : la voiture devant est rentrée aux stands, a abandonné ou s'est arrêtée
+                who = _driver(getattr(self, "prev_ahead", None))
+                fr = f"{who}, qui était devant toi," if who else "la voiture devant"
+                en = f"{who}, who was ahead of you," if who else "the car ahead"
+                why = {"pits": L(f"{fr} s'arrête aux stands", f"{en} is pitting"),
+                       "out": L(f"{fr} a abandonné", f"{en} has retired"),
+                       "slow": L(f"{fr} est en difficulté", f"{en} is in trouble")}[how]
+                say(None, L(f"Tu récupères une place, {why}. Tu es P{pos}.", f"You pick up a place, {why}. You're P{pos}."))
+                return
             n = (L(f"{diff} places de plus", f"{diff} places gained") if diff > 1 else
                  var("up", [("Une place de plus", "One place up"), ("Et une place de gagnée", "And that's a place gained"),
                             ("Tu gagnes une place", "You gain a place")]))
-            pep = random.choice([L("Bien joué !", "Nice one!"), L("Superbe dépassement !", "Great move!"), L("Continue !", "Keep going!")])
+            if how == "pass":
+                pep = random.choice([L("Bien joué !", "Nice one!"), L("Superbe dépassement !", "Great move!"), L("Continue !", "Keep going!")])
+            else:   # on ne sait pas comment (pas de nom, plusieurs places) : pas de « dépassement »
+                pep = random.choice([L("Bien joué !", "Nice one!"), L("Continue !", "Keep going!"), L("C'est bien, garde ce rythme.", "Good, keep this pace.")])
             if ENCOURAGE == "motivant":
                 pep += " " + more_pep()
             say(None, L(f"{n}, tu es P{pos}. ", f"{n}, you're P{pos}. ") + pep)
@@ -592,6 +609,23 @@ class Places:
                 + random.choice([L("Accroche-toi, on va la reprendre.", "Hang on, we'll get it back."),
                                  L("Pas grave, reste concentré.", "No worries, stay focused."),
                                  L("Respire, la course est longue.", "Breathe, it's a long race.")]))
+
+    def _how(self, s, diff) -> str:
+        """Comment la place a été gagnée : « pass » (vrai dépassement), « pits », « out », « slow » ou « ? »."""
+        name = getattr(self, "prev_ahead", None)
+        if diff != 1 or not name:
+            return "?"
+        car = next((c for c in (s.cars or []) if c.get("name") == name and not c.get("me")), None)
+        if car is None or car.get("dnf"):
+            return "out"                       # abandon, disqualification ou déconnexion
+        if car.get("pits"):
+            return "pits"
+        if (car.get("spd") or 0) < 8:
+            return "slow"                      # arrêté sur la piste
+        b = s.behind or {}
+        if b.get("name") == name:
+            return "pass"
+        return "?"
 
     def _start_msg(self, pos, say) -> None:
         if not self.start:

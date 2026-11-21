@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.4.2 (en préparation)
+- 🇫🇷 Stratégie : plus de conseil essence pendant l'arrêt ni dans la minute qui suit (on entendait « économise » puis « tu as assez, pas besoin de t'arrêter » pendant le ravitaillement).
+- 🇬🇧 Strategy: no fuel advice during the stop or in the minute after (you could hear "save fuel" then "you've got enough, no need to pit" while refuelling).
 - 🇫🇷 « Écart » tout seul est compris même quand la reconnaissance l'entend mal (« et car », « écard », « les cartes »…).
 - 🇬🇧 A lone "gap" (FR « écart ») is understood even when speech recognition mishears it.
 - 🇫🇷 « Quel écart devant / derrière ? » : la réponse donne le pilote (« P4 Dupont est à 1,2 seconde devant »).

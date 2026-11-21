@@ -987,7 +987,7 @@ def _wanted_place(t: str) -> int | None:
     m = re.search(r"\bp ?(\d{1,2})\b|\bposition (\d{1,2})\b|\b(\d{1,2}) ?(e|eme|ieme)\b", t)
     if m:
         return int(next(g for g in m.groups()[:3] if g))
-    m = re.search(r"\b(?:pe|pee|p) (" + "|".join(NUM_WORDS) + r")\b", t)
+    m = re.search(r"\b(?:pe|pee|peh|p) ?(" + "|".join(NUM_WORDS) + r")\b", t)   # « pe dix », « pédix »
     if m:
         return NUM_WORDS[m.group(1)]
     m = re.search(r"\b(" + "|".join(w[:-1] if w.endswith("e") else w for w in NUM_WORDS if w not in ("un", "premier")) + r")ieme\b", t)
@@ -1071,8 +1071,8 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
     if not t:
         return L("Je n'ai rien entendu, répète.", "I didn't hear anything, say again.")
     # un seul mot souvent mal compris par la reconnaissance (« écart » → « et car », « écard », « les cartes »…)
-    if len(t.split()) <= 3 and re.fullmatch(r"\s*(les? |l |des |et |eh |e )?(e ?)?(c|k)ar(t|d|re|te)?s?( \w+)?\s*", t) \
-            and not re.search(r"essence|carbu|carros|carte des|carto", t):
+    if len(t.split()) <= 3 and re.fullmatch(r"\s*(les? |l |des |et |eh |e )?(e ?)?(c|k)ar(t|d|re|te)?s?( [a-z]+)?\s*", t) \
+            and not re.search(r"essence|carbu|carros|carte des|carto", t) and _wanted_place(t) is None:
         t = "ecart"
     if re.fullmatch(r"\s*(les? )?gaps?\s*", t):
         t = "ecart"

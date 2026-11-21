@@ -893,20 +893,24 @@ class Damage:
                 self.repair, self.choice, self.all = False, None, False
             self._apply(s)
             return
-        # carrosserie
-        if sum(s.dents) > sum(self.dents) and time.monotonic() - getattr(self, "_contact_t", -1e9) < 10:
-            self._contact_t = time.monotonic()   # même accident (plusieurs chocs à la suite) : on l'a déjà dit
-            if max(s.dents) >= 2:
-                self.repair = True
-        elif sum(s.dents) > sum(self.dents):
+        # carrosserie. Les « bosses » du jeu ne disent pas si la voiture est touchée : un frottement léger met une bosse
+        # sans rien changer au comportement. Avec LMU on lit les vrais dégâts (aéro, suspensions) avant de parler.
+        api = self._api_ok(s)
+        if sum(s.dents) > sum(self.dents):
+            again = time.monotonic() - getattr(self, "_contact_t", -1e9) < 10   # même accident : déjà annoncé
             self._contact_t = time.monotonic()
             worst = max(s.dents)
-            say(None, L("Contact ! ", "Contact! ")
-                + (L("Gros dégâts à la carrosserie.", "Heavy body damage.") if worst >= 2 else L("Dégâts légers à la carrosserie.", "Light body damage."))
-                + L(" Je regarde l'aéro et les suspensions.", " Checking aero and suspension."), urgent=True)
-            if worst >= 2:
-                self.repair = True
-            self._last_fetch = 0   # on relit l'interface de LMU tout de suite
+            if api:
+                if not again:
+                    self._check = (time.monotonic(), dict(self.wear or {}))   # verdict après lecture des dégâts réels
+                    self._last_fetch = 0
+            else:
+                if not again:
+                    say(None, L("Contact ! ", "Contact! ") + (
+                        L("Gros dégâts à la carrosserie, on répare au prochain arrêt.", "Heavy body damage, we'll fix it at the next stop.")
+                        if worst >= 2 else L("Rien de grave, on continue.", "Nothing serious, carry on.")), urgent=worst >= 2)
+                if worst >= 2:
+                    self.repair = True
         self.dents = [max(a, b) for a, b in zip(self.dents, s.dents)]   # pire niveau vu : pas de 2e alerte si ça oscille
         # crevaisons, roues
         for i in range(4):
@@ -923,7 +927,26 @@ class Damage:
         if s.in_pits and s.pit_state == 3:
             self.repair, self.choice, self.all = False, None, False   # arrêté au stand : on considère que c'est réglé
         self._poll_api(say)
+        self._verdict(say)
         self._apply(s)
+
+    def _api_ok(self, s) -> bool:
+        """Dégâts réels lisibles (LMU sous Windows, interface déjà lue au moins une fois)."""
+        return getattr(s, "game", "lmu") == "lmu" and sys.platform == "win32" and self.wear is not None
+
+    def _verdict(self, say) -> None:
+        """Après un contact : une fois les dégâts relus (ou 6 s plus tard), dire « rien de cassé » si c'est le cas."""
+        chk = getattr(self, "_check", None)
+        if not chk:
+            return
+        t0, before = chk
+        fresh = self._last_fetch > t0 and not self._fetching
+        if not fresh and time.monotonic() - t0 < 6:
+            return
+        self._check = None
+        if getattr(self, "_reported", 0) > t0:
+            return          # _fetch a déjà annoncé des dégâts aéro / suspension
+        say(None, L("Contact léger, rien de grave. On continue.", "Light contact, nothing serious. Carry on."))
 
     def _apply(self, s) -> None:
         # plus aucun dégât lisible (voiture réparée ou remise à neuf) : plus rien à réparer
@@ -956,14 +979,16 @@ class Damage:
             self.wear = new
             if old is None:
                 return
-            if aero is not None and (old.get("aero") or 0) + 0.05 < aero:
+            if aero is not None and (old.get("aero") or 0) + 0.05 < aero and aero >= 0.10:   # sous 10 % : négligeable
+                self._reported = time.monotonic()
                 say(None, L(f"Aéro endommagé à {aero * 100:.0f} %.", f"Aero damaged {aero * 100:.0f} %.")
                     + (L(" On répare au prochain arrêt.", " We'll fix it at the next stop.") if aero > 0.15 else ""))
                 if aero > 0.15:
                     self.repair = True
             for i, v in enumerate(susp[:4]):
                 o = (old.get("susp") or [0, 0, 0, 0])[i] if old.get("susp") else 0
-                if isinstance(v, (int, float)) and v > (o or 0) + 0.05:
+                if isinstance(v, (int, float)) and v > (o or 0) + 0.05 and v >= 0.10:
+                    self._reported = time.monotonic()
                     say(None, L(f"Suspension {WHEEL_NAME(i)} touchée à {v * 100:.0f} %. Attention au comportement.",
                                 f"{WHEEL_NAME(i).capitalize()} suspension damaged {v * 100:.0f} %. Watch the handling."))
                     if v > 0.15:

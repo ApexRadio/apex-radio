@@ -9,8 +9,8 @@
 - 🇬🇧 Local yellow flags called with the sector and the corner (LMU).
 - 🇫🇷 Assetto Corsa EVO : classement complet en course (« où est P1 ? »), coupes de piste à rendre, drapeau noir à rond orange, bonne température des pneus, piste qui se refroidit ou chauffe.
 - 🇬🇧 Assetto Corsa EVO: full race order ("where is P1?"), track cuts to give back, black and orange flag, right tyre temperature, track cooling down or heating up.
-- 🇫🇷 Appuyer sur le bouton radio coupe l'ingénieur. Ordres stands à la voix appliqués (énergie 100 %, plein, pneus pluie). LMU : TC slip, TC cut et carto moteur annoncés. Noms des pilotes dans les points écarts (« P5 Dupont »).
-- 🇬🇧 Pressing the radio button cuts the engineer off. Voice pit orders applied (100% energy, full tank, wet tyres). LMU: TC slip, TC cut and motor map called out. Driver names in gap updates ("P5 Dupont").
+- 🇫🇷 Appuyer sur le bouton radio coupe l'ingénieur. Ordres stands à la voix appliqués (énergie 100 %, plein, pneus pluie). LMU : TC slip, TC cut et carto moteur annoncés. Noms des pilotes dans les points écarts (« P5 Dupont »). Plus de fausses alertes dégâts après un contact léger.
+- 🇬🇧 Pressing the radio button cuts the engineer off. Voice pit orders applied (100% energy, full tank, wet tyres). LMU: TC slip, TC cut and motor map called out. Driver names in gap updates ("P5 Dupont"). No more false damage calls after a light contact.
 - 🇫🇷 Bouton ⏻ : une vraie fenêtre « Fermer Apex Radio ? ». Corrections : vieilles infos de la séance précédente ignorées au lancement, prononciation de « C'est le moment d'attaquer ».
 - 🇬🇧 ⏻ button: a proper "Close Apex Radio?" window. Fixes: old info from the previous session ignored at startup, pronunciation of "time to attack".
 

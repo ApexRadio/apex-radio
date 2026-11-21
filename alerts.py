@@ -48,6 +48,27 @@ def class_name(c: str) -> str:
     return c or L("voiture", "car")
 
 
+NAMES = True   # dire le nom du pilote avec sa place (« P5 Dupont ») dans les points écarts
+
+
+def _driver(name) -> str:
+    """Nom prononçable : le nom de famille (« Jean Dupont » → « Dupont »), pseudo nettoyé, rien si illisible."""
+    import re as _re
+    n = _re.sub(r"[#_*|\[\]{}<>\d]+", " ", str(name or "")).strip()
+    words = [w for w in n.split() if len(w) > 1]
+    if not words:
+        return ""
+    last = words[-1]
+    return last if len(last) <= 18 else ""
+
+
+def _tag(car: dict):
+    """« 5 Dupont » : utilisé dans les phrases sous la forme P{tag} → « P5 Dupont »."""
+    place = car.get("cpos") or car.get("place")
+    who = _driver(car.get("name")) if NAMES and place is not None else ""
+    return f"{place} {who}" if who else place
+
+
 def _sec(x: float, en: bool = False) -> str:
     """2,3 secondes / 0,8 seconde"""
     v = abs(x)
@@ -351,8 +372,8 @@ class GapTrend:
         self.count += 1
         # on suit la voiture par son pilote (pas par sa place, qui change à chaque dépassement)
         a, b = s.ahead or {}, s.behind or {}
-        self.ahead.append((a.get("name") or a.get("place"), s.gap_class_ahead, a.get("cpos") or a.get("place")))
-        self.behind.append((b.get("name") or b.get("place"), s.gap_class_behind, b.get("cpos") or b.get("place")))
+        self.ahead.append((a.get("name") or a.get("place"), s.gap_class_ahead, _tag(a)))
+        self.behind.append((b.get("name") or b.get("place"), s.gap_class_behind, _tag(b)))
         self.ahead, self.behind = self.ahead[-4:], self.behind[-4:]
         if s.in_pits or s.laps_done < 2:
             return
@@ -758,10 +779,23 @@ class WarmUp:
         self.was_in_pits = s.in_pits
         if self.watch is None:
             return
-        if s.elapsed - self.watch > self.TIMEOUT or s.elapsed < self.watch:
+        if s.elapsed < self.watch:
             self.watch = None
             return
         tc, bc = self.cold(s)
+        since = s.elapsed - self.watch
+        if self.warned and not tc and bc and since > 120:
+            # pneus prêts mais freins qui restent tièdes (écopes très ouvertes, circuit peu freineur) : on le dit quand même
+            self.watch = None
+            say(None, L("Pneus en température, tu peux attaquer. Les freins restent un peu froids, prudence aux gros freinages.",
+                        "Tyres are up to temperature, you can push. Brakes are still a bit cold, careful in the big braking zones."))
+            return
+        if since > self.TIMEOUT:
+            self.watch = None
+            if self.warned and tc:
+                say(None, L("Les pneus ont du mal à monter en température. Fais-les travailler un peu plus, prudence.",
+                            "The tyres are struggling to warm up. Work them a bit harder, and stay careful."))
+            return
         if not self.warned:
             self.warned = True
             if tc and bc:

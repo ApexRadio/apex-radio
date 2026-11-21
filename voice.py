@@ -189,6 +189,8 @@ class Voice:
         self._piper = None
         self.loaded = None          # (langue, id de voix) actuellement chargé
         self.downloading = None     # {"name": ..., "pct": ...} pendant un téléchargement
+        self._hush = threading.Event()   # le pilote appuie sur le bouton radio : on se tait
+        self._slot = 0
         threading.Thread(target=self._worker, daemon=True).start()
 
     # ------------------------------------------------------------ chargement
@@ -262,6 +264,11 @@ class Voice:
         except queue.Empty:
             pass
 
+    def hush(self) -> None:
+        """Le pilote reprend la parole : on coupe la phrase en cours et on oublie celles en attente."""
+        self.flush()
+        self._hush.set()
+
     def say(self, text: str, urgent: bool = False, spot: bool = False) -> None:
         """spot=True : message du spotter (« à gauche »), passe devant tout et est jeté s'il arrive trop tard."""
         if not self.enabled or (self.quiet and not urgent and not spot):
@@ -292,9 +299,27 @@ class Voice:
         return buf.getvalue()
 
     def _play(self, wav: bytes) -> None:
+        self._hush.clear()
         if sys.platform == "win32":
+            import time as _t
             import winsound
-            winsound.PlaySound(wav, winsound.SND_MEMORY)
+            # lecture asynchrone depuis un fichier pour pouvoir couper la phrase si le pilote appuie sur le bouton
+            self._slot ^= 1
+            f = LOCAL / f"_voix_{self._slot}.wav"
+            try:
+                f.write_bytes(wav)
+                with wave.open(io.BytesIO(wav)) as w:
+                    dur = w.getnframes() / float(w.getframerate() or 22050)
+                winsound.PlaySound(str(f), winsound.SND_FILENAME | winsound.SND_ASYNC | winsound.SND_NODEFAULT)
+            except Exception:
+                winsound.PlaySound(wav, winsound.SND_MEMORY)   # repli : lecture bloquante comme avant
+                return
+            end = _t.monotonic() + dur + 0.05
+            while _t.monotonic() < end:
+                if self._hush.wait(0.03):
+                    winsound.PlaySound(None, 0)
+                    print("  [radio] coupée par le pilote")
+                    break
         else:  # tests hors Windows : on enregistre le fichier
             (LOCAL / "derniere_annonce.wav").write_bytes(wav)
 

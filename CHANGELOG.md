@@ -18,6 +18,18 @@
 - 🇫🇷 LMU : drapeaux jaunes locaux annoncés avec le secteur et le virage (« Drapeau jaune secteur 2, voiture arrêtée au virage 7 ! C'est devant toi, pas de dépassement. »), puis « Drapeaux jaunes levés ».
 - 🇬🇧 LMU: local yellow flags called with the sector and the corner ("Yellow flag sector 2, car stopped at turn 7! It's ahead of you, no overtaking."), then "Yellows cleared".
 - 🇬🇧 Assetto Corsa EVO: when you gain time cutting the track, the engineer tells you to lift to give it back (or it's a penalty), then confirms when it's done. Black and orange flag (car too damaged) called out.
+- 🇫🇷 Le pilote reprend la parole : appuyer sur le bouton radio coupe l'ingénieur au milieu de sa phrase.
+- 🇬🇧 Talk over the engineer: pressing the radio button cuts him off mid-sentence.
+- 🇫🇷 Stands à la voix : « mets l'énergie virtuelle à 100 % au prochain arrêt », « fais le plein », « mets 40 litres » et « mets les pneus pluie » sont maintenant appliqués au menu des stands (avant : énergie calculée selon la conso et slicks).
+- 🇬🇧 Pit orders by voice: "set virtual energy to 100% at the next stop", "fill it up", "put 40 litres" and "put the wet tyres on" are now applied to the pit menu (before: energy from consumption and slicks).
+- 🇫🇷 LMU : changements de patinage TC (slip), coupure TC (cut) et cartographie moteur annoncés, comme le TC et la répartition de freinage.
+- 🇬🇧 LMU: TC slip, TC cut and motor map changes called out, like TC and brake bias.
+- 🇫🇷 « Pneus en température » annoncé même quand les freins restent un peu froids (Hypercar sur circuit peu freineur), et avertissement si les pneus n'arrivent pas à chauffer.
+- 🇬🇧 "Tyres up to temperature" called even when the brakes stay a bit cold (Hypercar on a light-braking track), and a warning if the tyres can't warm up.
+- 🇫🇷 Points écarts avec le nom du pilote : « P5 Dupont à 1,2 seconde devant ».
+- 🇬🇧 Gap updates with the driver's name: "P5 Dupont 1.2 seconds ahead".
+- 🇫🇷 La fenêtre radio affiche le nom de la voix choisie (Pierre, Jessica…).
+- 🇬🇧 The radio window shows the chosen voice's name (Pierre, Jessica…).
 
 ## 1.3.1
 - 🇫🇷 Micro : si le fichier de reconnaissance vocale (dossier whisper) a été mal téléchargé, Apex le retélécharge tout seul au lieu de rester sans micro.

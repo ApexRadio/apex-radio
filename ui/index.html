@@ -629,7 +629,7 @@ function render(d) {
   if (key !== lastRadio) {
     lastRadio = key;
     $("radio").innerHTML = radio.slice().reverse().map(m =>
-      `<div class="bub ${m.urgent ? "urgent" : ""} ${m.me ? "me" : ""} k-${m.me ? "me" : kind(m.text)}"><small>${m.me ? T("TOI", "YOU") : T("JESSICA", "ENGINEER")} · ${fmtTime(m.t)}</small>${esc(m.me ? m.text.replace(/^Toi : /, "") : m.text)}</div>`).join("");
+      `<div class="bub ${m.urgent ? "urgent" : ""} ${m.me ? "me" : ""} k-${m.me ? "me" : kind(m.text)}"><small>${m.me ? T("TOI", "YOU") : ((d.voice && d.voice.name) ? d.voice.name.toUpperCase() : T("INGÉ", "ENGINEER"))} · ${fmtTime(m.t)}</small>${esc(m.me ? m.text.replace(/^Toi : /, "") : m.text)}</div>`).join("");
     $("radio").scrollTop = $("radio").scrollHeight;
   }
 

@@ -319,6 +319,20 @@ class Engineer:
             p.change_tyres = None
         if getattr(self, "relay_tyres", False) and not p.tyre_compound and p.tyre_wheels is None:
             p.change_tyres = True      # planning des relais : pneus neufs au changement de pilote
+        # ordres du pilote pour le prochain arrêt (« énergie à 100 % », « mets les pneus pluie ») : ils passent avant le calcul
+        ao = getattr(self, "amount_order", None)
+        if ao and ao[0] == s.pit_stops:
+            litres, energy = ao[1], ao[2]
+            if energy is not None:
+                p.energy_target = energy
+                if not litres and s.fuel_capacity:
+                    litres = s.fuel_capacity * energy
+            if litres:
+                p.fuel_total = litres
+                p.fuel_to_add = max(0.0, litres - s.fuel)
+        co = getattr(self, "compound_order", None)
+        if co and co[0] == s.pit_stops:
+            p.tyre_compound = "pluie" if co[1] == "Wet" else "slicks"
 
         self._pit_calls(s, p)
         self.plan = p

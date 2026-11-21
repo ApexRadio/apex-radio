@@ -81,6 +81,7 @@ class State:
         i18n.set_lang(self.radio.cfg.get("lang") or system_lang())   # avant la voix : elle charge le modèle de la bonne langue
         voices.CHOICE.update(self.radio.cfg.get("voices") or {})      # voix choisie pour chaque langue
         self.voice = Voice()
+        self.radio.on_press = self.voice.hush
         self.workshop = None
         self.beh = None
         self.demo = False
@@ -239,12 +240,29 @@ def loop(state: State, demo: bool) -> None:
 
     questions.TYRES_SET = set_tyres
 
+    def set_amount(litres, energy) -> bool:
+        """« énergie à 100 % » / « fais le plein » / « mets 40 litres » : valable pour le prochain arrêt."""
+        crew.amount_for = eng.amount_order = (state.snap.pit_stops, litres, energy) if state.snap is not None else None
+        crew.no_fuel_for = None
+        return apply_now()
+
+    questions.AMOUNT_SET = set_amount
+
+    def set_compound(kind: str) -> bool:
+        """« mets les pneus pluie » / « sors les slicks » : valable pour le prochain arrêt."""
+        crew.compound_for = eng.compound_order = (state.snap.pit_stops, kind) if state.snap is not None else None
+        return apply_now()
+
+    questions.COMPOUND_SET = set_compound
+
     def cancel_orders(what: str = "tout") -> bool:
         """Le pilote dit « annule » : on oublie ses ordres pour le prochain arrêt, Apex reprend son propre plan."""
         if what in ("tout", "pneus"):
             crew.tyres_for = eng.tyre_order = None
+            crew.compound_for = eng.compound_order = None
         if what in ("tout", "essence"):
             crew.no_fuel_for = None
+            crew.amount_for = eng.amount_order = None
         if what == "tout":
             damage.choice, damage.choice_all = None, True
             if state.snap is not None:

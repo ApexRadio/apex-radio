@@ -78,6 +78,8 @@ class State:
         self.eng = None
         self.map = TrackMap()
         self.radio = Radio(self.on_question, self.on_shortcut)
+        import share
+        share.CFG = self.radio.cfg      # webhook de l'équipe (⚙️ Discord)
         i18n.set_lang(self.radio.cfg.get("lang") or system_lang())   # avant la voix : elle charge le modèle de la bonne langue
         voices.CHOICE.update(self.radio.cfg.get("voices") or {})      # voix choisie pour chaque langue
         self.voice = Voice()
@@ -451,6 +453,7 @@ def loop(state: State, demo: bool) -> None:
                 "lang": i18n.LANG,
                 "langs": i18n.available(),
                 "update": UPD.ui(),
+                "share": {"webhook": bool(__import__("share").webhook())},
                 "ptt": state.radio.info(),
                 "times": lt.ui(snap),
                 "map": state.map.info(),
@@ -762,6 +765,40 @@ def make_handler(state: State):
                 phrases.set_driver(nm)
                 if nm:
                     v.say(L(f"Bien reçu, {nm}.", f"Copy that, {nm}."))
+            elif self.path.startswith("/api/share/"):
+                import share
+                n = int(self.headers.get("Content-Length") or 0)
+                req = json.loads(self.rfile.read(n) or b"{}")
+                what = self.path.rsplit("/", 1)[-1]
+                out = {"ok": False}
+                if what == "open":
+                    out = {"ok": share.open_discord()}
+                elif what == "webhook":            # enregistrer (et tester) le webhook de l'équipe
+                    ok = share.set_webhook(req.get("url", ""))
+                    out = {"ok": ok, "set": bool(share.webhook())}
+                    if ok and share.webhook() and req.get("test"):
+                        sent, why = share.post(L("✅ Apex Radio est relié à ce salon : les chronos, setups et débriefs "
+                                                 "partagés par l'équipe arriveront ici.",
+                                                 "✅ Apex Radio is linked to this channel: the team's shared lap times, setups "
+                                                 "and debriefs will arrive here."))
+                        out = {"ok": sent, "set": True, "why": why}
+                elif what == "text":               # message de chronos / débrief : vers l'équipe
+                    sent, why = share.post(str(req.get("text", ""))[:1900])
+                    out = {"ok": sent, "why": why}
+                elif what == "setup":              # fichier setup : presse-papiers, ou équipe
+                    f, text = share.setup_file(state.workshop, state.track())
+                    if not f:
+                        out = {"ok": False, "why": "no-file"}
+                    elif req.get("team"):
+                        sent, why = share.post(text, f)
+                        out = {"ok": sent, "why": why, "file": f.name}
+                    else:
+                        out = {"ok": share.copy_file(f), "file": f.name, "text": text}
+                        share.open_discord()
+                body = json.dumps(out).encode()
+                self.send_response(200); self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body))); self.end_headers(); self.wfile.write(body)
+                return
             elif self.path == "/api/journal":
                 body = json.dumps(send_journal()).encode()
                 self.send_response(200); self.send_header("Content-Type", "application/json")

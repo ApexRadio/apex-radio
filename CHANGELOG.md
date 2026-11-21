@@ -1,6 +1,10 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.4.2 (en préparation)
+- 🇫🇷 Partage Discord : bouton « Partager ce setup » dans l'atelier (copie le fichier et ouvre Discord, Ctrl+V dans #setups), « Partager » dans chaque débrief, et Discord s'ouvre tout seul après une copie (records, débriefs).
+- 🇬🇧 Discord sharing: "Share this setup" in the workshop (copies the file and opens Discord, Ctrl+V in #setups), "Share" in each debrief, and Discord opens by itself after copying (records, debriefs).
+- 🇫🇷 Équipe : ⚙️ → Discord (équipe), colle le webhook du salon de ton équipe et Apex y envoie tout seul les chronos, setups et le débrief en fin de course. Le lien reste sur ton PC.
+- 🇬🇧 Team: ⚙️ → Discord (team), paste your team channel's webhook and Apex sends lap times, setups and the end-of-race debrief there by itself. The link stays on your PC.
 - 🇫🇷 Style néon partout : records, débriefs, atelier setup, vue téléphone, fenêtre Fermer, et un léger halo sur les cases du tableau de bord.
 - 🇬🇧 Neon style everywhere: records, debriefs, setup workshop, phone view, Close window, and a light glow on the dashboard cards.
 - 🇫🇷 Planning des relais : style néon (cadres lumineux, une couleur par pilote dans le plan), et « Pilote 1 / Pilote 2 » au lieu de « Pilote 1 » deux fois quand les noms ne sont pas remplis.

@@ -104,6 +104,8 @@ def spoken(text: str) -> str:
     text = text.replace("%", pct).replace("°", deg)
     text = re.sub(r"\bP(\d+)\b", r"P \1", text)
     text = text.replace("!", ".")
+    if voice_lang() == "fr":   # les voix françaises lisaient « spotté » : on écrit comme ça se dit
+        text = re.sub(r"(?i)\bspotters?\b", lambda m: ("S" if m.group(0)[0] == "S" else "s") + "potteur", text)
     return text
 
 

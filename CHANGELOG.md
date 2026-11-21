@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.4.2 (en préparation)
+- 🇫🇷 Planning des relais : style néon (cadres lumineux, une couleur par pilote dans le plan), et « Pilote 1 / Pilote 2 » au lieu de « Pilote 1 » deux fois quand les noms ne sont pas remplis.
+- 🇬🇧 Stint planner: neon style (glowing frames, one colour per driver in the plan), and "Driver 1 / Driver 2" instead of "Driver 1" twice when names are empty.
 - 🇫🇷 « Écart P10 » (sans vraie question) est compris : l'ingé donne l'écart avec la voiture P10 et son nom. Marche aussi avec « écart pé dix », « écart dixième ».
 - 🇬🇧 "Gap P10" (not a full question) is understood: the engineer gives the gap to P10 and the driver's name.
 - 🇫🇷 Noms des virages célèbres : « au Raidillon », « en sortie de la Parabolica », « limites de piste aux Esses »… au lieu de « virage 3 » (Spa, Le Mans, Monza, Interlagos pour commencer).

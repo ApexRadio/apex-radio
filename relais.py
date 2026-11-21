@@ -66,7 +66,7 @@ def save(cfg: dict) -> dict:
 
 
 def names(cfg: dict) -> list[str]:
-    return cfg["drivers"] or [L("Pilote 1", "Driver 1")]
+    return cfg["drivers"] or [L("Pilote 1", "Driver 1"), L("Pilote 2", "Driver 2")]
 
 
 def stint_min(cfg: dict, fuel_min: float | None = None) -> float | None:
@@ -392,6 +392,20 @@ input[type=number]{{width:70px}} select{{background:#06070B;color:var(--text);bo
 button{{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font:inherit;cursor:pointer}}
 button.main{{background:var(--accent);color:#06070B;border-color:var(--accent);font-weight:700;letter-spacing:.06em}}
 #ok{{color:#2BFF88;margin-left:10px}} .big{{font-family:"JetBrains Mono",monospace;font-size:22px;font-weight:700;color:var(--accent)}}
+/* style néon, comme les réglages */
+h1{{text-shadow:0 0 14px rgba(0,229,255,.55)}}
+.card{{--c:0,229,255;border-color:rgba(var(--c),.55);background:linear-gradient(180deg,rgba(var(--c),.07),rgba(var(--c),.015) 60%);
+      box-shadow:0 0 16px rgba(var(--c),.18),inset 0 0 10px rgba(var(--c),.06)}}
+#livecard{{--c:255,46,136}} .card.scroll{{--c:168,85,247}}
+#livecard h2{{color:rgb(255,46,136);text-shadow:0 0 8px rgba(255,46,136,.5)}}
+h2{{color:rgb(168,85,247);text-shadow:0 0 8px rgba(168,85,247,.45);letter-spacing:.12em}}
+input:focus,select:focus{{outline:none;border-color:rgb(0,229,255);box-shadow:0 0 10px rgba(0,229,255,.35)}}
+input[type=checkbox]{{accent-color:rgb(0,229,255);width:17px;height:17px}}
+button.main{{box-shadow:0 0 16px rgba(0,229,255,.45)}} button.main:hover{{box-shadow:0 0 24px rgba(0,229,255,.7)}}
+#add:hover,.drv button:hover{{border-color:rgb(0,229,255);box-shadow:0 0 10px rgba(0,229,255,.3)}}
+th{{color:rgb(168,85,247)}}
+.dc0{{color:rgb(0,229,255)}} .dc1{{color:rgb(255,46,136)}} .dc2{{color:rgb(255,210,63)}} .dc3{{color:rgb(61,255,162)}}
+#plan td:nth-child(2){{font-weight:700}}
 </style>
 <h1>{t['title']}</h1><p class="muted">{t['intro']}</p>
 <div class="card">
@@ -433,7 +447,8 @@ function draw(d, form) {{
     drivers = d.cfg.drivers.length ? d.cfg.drivers.slice() : ["", ""]; drawDrivers();
   }}
   const known = d.plan.length && d.plan[0].start !== null;
-  $("plan").innerHTML = d.plan.map(p => `<tr><td>${{p.n}}</td><td>${{p.driver.replace(/</g, "&lt;")}}</td><td>${{known ? hm(p.start) : "–"}}</td><td>${{known ? hm(p.end) : "–"}}</td><td>${{known ? (p.end - p.start) + " min" : (d.cfg.mode === "pleins" ? d.cfg.tanks + " ⛽" : "–")}}</td></tr>`).join("");
+  const order = [];
+  $("plan").innerHTML = d.plan.map(p => {{ if (!order.includes(p.driver)) order.push(p.driver); return `<tr><td>${{p.n}}</td><td class="dc${{order.indexOf(p.driver) % 4}}">${{p.driver.replace(/</g, "&lt;")}}</td><td>${{known ? hm(p.start) : "–"}}</td><td>${{known ? hm(p.end) : "–"}}</td><td>${{known ? (p.end - p.start) + " min" : (d.cfg.mode === "pleins" ? d.cfg.tanks + " ⛽" : "–")}}</td></tr>`; }}).join("");
   $("fuel").textContent = d.fuel_stint_min ? `${{T.fuel}} ${{d.fuel_stint_min}} min.` : (known ? "" : T.notime);
   $("livecard").hidden = !d.live;
   if (d.live) $("live").innerHTML = `<span class="big">${{T.n}} ${{d.live.stint}}${{d.live.of ? " / " + d.live.of : ""}}</span> · ${{d.live.driver.replace(/</g, "&lt;")}} · ${{d.live.driven_min}}${{d.live.target_min ? " / " + d.live.target_min : ""}} min → ${{d.live.next.replace(/</g, "&lt;")}}`;

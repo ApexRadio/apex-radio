@@ -1,6 +1,7 @@
 # APEX//RADIO
 
-**A free voice race engineer for Le Mans Ultimate and Assetto Corsa EVO** · *Un ingénieur de course vocal gratuit pour Le Mans Ultimate et Assetto Corsa EVO*
+**A free voice race engineer for sim racing** · *Un ingénieur de course vocal gratuit pour le sim racing*  
+Le Mans Ultimate and Assetto Corsa EVO, more sims on the way. · *Le Mans Ultimate et Assetto Corsa EVO, d'autres simulateurs arrivent.*
 
 [![Téléchargements / Downloads](https://img.shields.io/github/downloads/ApexRadio/apex-radio/total?label=t%C3%A9l%C3%A9chargements%20%2F%20downloads&color=00b8d4)](https://github.com/ApexRadio/apex-radio/releases) [![Version](https://img.shields.io/github/v/release/ApexRadio/apex-radio?label=version&color=00b8d4)](https://github.com/ApexRadio/apex-radio/releases/latest)
 
@@ -17,6 +18,17 @@
 Apex Radio reads Le Mans Ultimate (and Assetto Corsa EVO) in real time and talks to you on the radio, like a real race engineer.
 Push a button on your wheel, ask a question, get an answer. Voice and speech recognition run on your PC: no subscription,
 no account. Internet is only needed the first time (to download the voice) and to check for updates.
+
+### Supported games
+
+| Game | Status |
+|---|---|
+| Le Mans Ultimate | ✅ Supported (all features) |
+| Assetto Corsa EVO | ✅ Supported (no pit menu or setup workshop yet) |
+| iRacing | 🧪 In testing |
+| Automobilista 2 | 📋 Planned |
+
+Want another sim? Tell us on [Discord](https://discord.gg/ZHg4qXd26g).
 
 ### What it does
 - **Strategy**: fuel and energy per lap, range, pit lap, how much fuel to add, tyre change or not.
@@ -65,6 +77,17 @@ if it helps you find a few tenths, you can support its development on [Patreon](
 Apex Radio lit Le Mans Ultimate (et Assetto Corsa EVO) en direct et te parle à la radio, comme un vrai ingénieur de course.
 Tu appuies sur un bouton du volant, tu poses ta question, il te répond. La voix et la reconnaissance vocale tournent sur ton PC :
 pas d'abonnement, pas de compte. Internet sert seulement la première fois (téléchargement de la voix) et pour vérifier les mises à jour.
+
+### Jeux supportés
+
+| Jeu | État |
+|---|---|
+| Le Mans Ultimate | ✅ Supporté (toutes les fonctions) |
+| Assetto Corsa EVO | ✅ Supporté (sans menu des stands ni atelier setup pour l'instant) |
+| iRacing | 🧪 En test |
+| Automobilista 2 | 📋 Prévu |
+
+Tu veux un autre simulateur ? Dis-le sur [Discord](https://discord.gg/ZHg4qXd26g).
 
 ### Ce qu'il fait
 - **Stratégie** : conso essence et énergie, autonomie, tour d'arrêt, quantité à remettre, pneus ou pas.

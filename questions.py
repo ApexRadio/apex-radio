@@ -185,6 +185,19 @@ def _sec(g: float) -> str:
     return L(f"{_f(g)} seconde{'s' if g >= 2 else ''}", f"{_f(g)} second{'s' if g != 1 else ''}")
 
 
+def _nm(car) -> str:
+    """« P5 Dupont » pour la voiture devant / derrière (nom de famille), rien si le jeu ne donne pas le nom."""
+    if not car:
+        return ""
+    try:
+        from alerts import _driver
+        who = _driver(car.get("name"))
+    except Exception:
+        who = ""
+    place = car.get("cpos") or car.get("place")
+    return (f"P{place} {who}" if place else who) if who else ""
+
+
 def gaps(s: Snapshot, p: Plan) -> str:
     # écart dans ta catégorie d'abord (celui de LMU est souvent vide), sinon l'écart général
     ga = s.gap_class_ahead if s.gap_class_ahead is not None else s.gap_ahead
@@ -224,21 +237,25 @@ def gaps(s: Snapshot, p: Plan) -> str:
             return L(f"L'écart est stable avec {who}, à {_sec(gap)}.", f"The gap to {who} is stable, {_sec(gap)}.")
     if front and not back:
         if ga is not None:
-            return L(f"La voiture devant est à {_sec(ga)}.", f"The car ahead is {_sec(ga)} up the road.")
+            n = _nm(s.ahead)
+            return L(f"{n or 'La voiture devant'} est à {_sec(ga)} devant.", f"{n or 'The car ahead'} is {_sec(ga)} up the road.")
         if leader:
             return L("Tu es en tête, il n'y a personne devant toi.", "You're leading, there's nobody ahead.")
         return L("Je n'arrive pas à lire l'écart avec la voiture devant pour l'instant.", "I can't read the gap to the car ahead right now.")
     if back and not front:
         if gb is not None:
-            return L(f"La voiture derrière est à {_sec(gb)}.", f"The car behind is {_sec(gb)} back.")
+            n = _nm(s.behind)
+            return L(f"{n or 'La voiture derrière'} est à {_sec(gb)} derrière.", f"{n or 'The car behind'} is {_sec(gb)} back.")
         return L("Personne derrière toi pour l'instant.", "Nobody behind you right now.")
     parts = []
     if ga is not None:
-        parts.append(L(f"{_sec(ga)} devant", f"{_sec(ga)} ahead"))
+        n = _nm(s.ahead)
+        parts.append(L(f"{_sec(ga)} devant" + (f" sur {n}" if n else ""), f"{_sec(ga)} ahead" + (f" to {n}" if n else "")))
     elif leader:
         parts.append(L("tu es en tête", "you're leading"))
     if gb is not None:
-        parts.append(L(f"{_sec(gb)} derrière", f"{_sec(gb)} behind"))
+        n = _nm(s.behind)
+        parts.append(L(f"{_sec(gb)} derrière" + (f" avec {n}" if n else ""), f"{_sec(gb)} behind" + (f" to {n}" if n else "")))
     if not parts:
         return L("Personne de proche autour de toi.", "Nobody close around you.")
     return L("Écart : ", "Gaps: ") + ", ".join(parts) + "."

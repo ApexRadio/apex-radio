@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.4.2 (en préparation)
+- 🇫🇷 « Écart » tout seul est compris même quand la reconnaissance l'entend mal (« et car », « écard », « les cartes »…).
+- 🇬🇧 A lone "gap" (FR « écart ») is understood even when speech recognition mishears it.
 - 🇫🇷 « Quel écart devant / derrière ? » : la réponse donne le pilote (« P4 Dupont est à 1,2 seconde devant »).
 - 🇬🇧 "Gap ahead / behind?": the answer names the driver ("P4 Dupont is 1.2 seconds up the road").
 - 🇫🇷 Places : quand la voiture devant s'arrête aux stands, abandonne ou s'arrête sur la piste, l'ingé le dit (« Tu récupères une place, Dupont s'arrête aux stands ») au lieu de te féliciter pour un dépassement.

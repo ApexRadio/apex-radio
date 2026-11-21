@@ -1070,6 +1070,12 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
     t = _norm(text).strip()
     if not t:
         return L("Je n'ai rien entendu, répète.", "I didn't hear anything, say again.")
+    # un seul mot souvent mal compris par la reconnaissance (« écart » → « et car », « écard », « les cartes »…)
+    if len(t.split()) <= 3 and re.fullmatch(r"\s*(les? |l |des |et |eh |e )?(e ?)?(c|k)ar(t|d|re|te)?s?( \w+)?\s*", t) \
+            and not re.search(r"essence|carbu|carros|carte des|carto", t):
+        t = "ecart"
+    if re.fullmatch(r"\s*(les? )?gaps?\s*", t):
+        t = "ecart"
     LAST_TEXT = t
     # ordres pour le prochain arrêt : réparations et/ou essence (« répare mais sans ravitaillement »)
     f = fuel_command(t)

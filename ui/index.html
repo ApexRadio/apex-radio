@@ -127,6 +127,11 @@
   .faster { color: var(--good); } .slower { color: var(--alert); }
   .scroll { overflow-x: auto; }
   #wait { padding: 90px 20px; text-align: center; }
+  #teamw { margin-top: 26px; }
+  .tmgrid { display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); gap: 10px; max-width: 760px; margin: 14px auto; }
+  .tmgrid div { border: 1px solid rgba(255,46,136,.5); border-radius: 12px; padding: 10px; background: rgba(255,46,136,.06); box-shadow: 0 0 12px rgba(255,46,136,.15); }
+  .tmgrid span { display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .tmgrid b { display: block; font-family: "JetBrains Mono", monospace; font-size: 20px; margin-top: 4px; color: var(--text); }
   #wait p { color: var(--muted); font-size: 17px; }
   .good { color: var(--good); } .warn { color: var(--warn); } .bad { color: var(--alert); }
   #ws { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 10; display: flex; justify-content: flex-end; }
@@ -304,7 +309,22 @@
     </aside>
 
     <main>
-      <div id="wait" class="card"><div class="logo" style="font-size:34px">APEX//RADIO</div><p data-en="Start Le Mans Ultimate or Assetto Corsa EVO and get in your car: the dashboard will show up by itself.">Lance Le Mans Ultimate ou Assetto Corsa EVO et monte dans ta voiture : le tableau de bord s'affichera tout seul.</p></div>
+      <div id="wait" class="card"><div class="logo" style="font-size:34px">APEX//RADIO</div><p id="waitmsg" data-en="Start Le Mans Ultimate or Assetto Corsa EVO and get in your car: the dashboard will show up by itself.">Lance Le Mans Ultimate ou Assetto Corsa EVO et monte dans ta voiture : le tableau de bord s'affichera tout seul.</p>
+        <div id="teamw" hidden>
+          <div class="sub" style="letter-spacing:.2em;color:#FF2E88" data-en="TEAMMATE MODE">MODE ÉQUIPIER</div>
+          <div id="tm_who" style="font-size:26px;font-weight:700;margin:6px 0"></div>
+          <div class="tmgrid">
+            <div><span data-en="Position">Position</span><b id="tm_pos">–</b></div>
+            <div><span data-en="Laps">Tours</span><b id="tm_laps">–</b></div>
+            <div><span data-en="Last lap">Dernier tour</span><b id="tm_last">–</b></div>
+            <div><span data-en="Best">Meilleur</span><b id="tm_best">–</b></div>
+            <div><span data-en="Ahead">Devant</span><b id="tm_ahead">–</b></div>
+            <div><span data-en="Behind">Derrière</span><b id="tm_behind">–</b></div>
+            <div><span data-en="Stops">Arrêts</span><b id="tm_stops">–</b></div>
+            <div><span data-en="Time left">Temps restant</span><b id="tm_left">–</b></div>
+          </div>
+          <p style="font-size:13px" data-en="When a teammate drives, the game gives neither the fuel nor the tyres of the car. Ask the radio: position, gap, lap times, stops.">Quand un coéquipier roule, le jeu ne donne ni l'essence ni les pneus de la voiture. Demande à la radio : position, écart, temps au tour, arrêts.</p>
+        </div></div>
       <div id="dash" style="display:none;flex-direction:column;gap:16px;flex-grow:1">
         <div class="tiles">
           <section class="card">
@@ -743,6 +763,20 @@ function render(d) {
   if (document.activeElement !== $("mic") && t.mic !== undefined) $("mic").value = t.mic == null ? "" : String(t.mic);
 
   $("wait").style.display = s.on_track ? "none" : "block";
+  const tmw = !s.on_track && s.team;
+  $("teamw").hidden = !tmw;
+  $("waitmsg").hidden = !!tmw;
+  if (tmw) {
+    const nm = x => (x || "").split(/\s+/).filter(Boolean).pop() || "";
+    $("tm_who").textContent = T(`${tmw.driver} roule`, `${tmw.driver} is driving`) + (tmw.pits ? T(" · aux stands", " · in the pits") : "");
+    $("tm_pos").textContent = `P${tmw.cpos}`;
+    $("tm_laps").textContent = tmw.laps ?? "–";
+    $("tm_last").textContent = fmtLap(tmw.last); $("tm_best").textContent = fmtLap(tmw.best);
+    $("tm_ahead").textContent = tmw.ahead ? `${tmw.ahead.gap != null ? "-" + tmw.ahead.gap.toFixed(1) + " s" : "–"} ${nm(tmw.ahead.name)}` : "–";
+    $("tm_behind").textContent = tmw.behind ? `${tmw.behind.gap != null ? "+" + tmw.behind.gap.toFixed(1) + " s" : "–"} ${nm(tmw.behind.name)}` : "–";
+    $("tm_stops").textContent = tmw.stops ?? "–";
+    $("tm_left").textContent = tmw.time_left != null ? `${Math.floor(tmw.time_left / 3600)}h${String(Math.floor(tmw.time_left % 3600 / 60)).padStart(2, "0")}` : "–";
+  }
   $("dash").style.display = s.on_track ? "flex" : "none";
   if (!s.on_track) return;
 

@@ -185,6 +185,44 @@ def _sec(g: float) -> str:
     return L(f"{_f(g)} seconde{'s' if g >= 2 else ''}", f"{_f(g)} second{'s' if g != 1 else ''}")
 
 
+def team_answer(t: str, tm: dict) -> str | None:
+    """Mode équipier : ce n'est pas toi qui roules, on répond sur ta voiture d'équipe (classement seulement)."""
+    from alerts import _driver
+    who = _driver(tm.get("driver")) or L("ton équipier", "your teammate")
+    def lapf(x):
+        return _laptime(x) if x else "–"
+    pos = L(f"P{tm['cpos']} dans sa catégorie", f"P{tm['cpos']} in class")
+    parts = []
+    if re.search(r"ecart|gap|devant|derriere|ahead|behind", t):
+        a, b = tm.get("ahead"), tm.get("behind")
+        if a and a.get("gap") is not None:
+            parts.append(L(f"à {_sec(a['gap'])} de P{a['cpos']} {_driver(a['name'])} devant".strip(),
+                           f"{_sec(a['gap'])} to P{a['cpos']} {_driver(a['name'])} ahead".strip()))
+        if b and b.get("gap") is not None:
+            parts.append(L(f"{_sec(b['gap'])} d'avance sur P{b['cpos']} {_driver(b['name'])}".strip(),
+                           f"{_sec(b['gap'])} over P{b['cpos']} {_driver(b['name'])} behind".strip()))
+        return L(f"{who} est {pos}", f"{who} is {pos}") + (", " + ", ".join(parts) + "." if parts else ".")
+    if re.search(r"reste|temps restant|time left|fin", t) and tm.get("time_left"):
+        m = int(tm["time_left"] // 60)
+        return L(f"Il reste {m // 60} h {m % 60:02d}." if m >= 60 else f"Il reste {m} minutes.",
+                 f"{m // 60} h {m % 60:02d} to go." if m >= 60 else f"{m} minutes to go.")
+    if re.search(r"temps|chrono|tour|lap|rythme|pace|tourne", t):
+        return L(f"{who} : dernier tour {lapf(tm.get('last'))}, meilleur {lapf(tm.get('best'))}, {tm.get('laps', 0)} tours.",
+                 f"{who}: last lap {lapf(tm.get('last'))}, best {lapf(tm.get('best'))}, {tm.get('laps', 0)} laps.")
+    if re.search(r"arret|stand|box|pit", t):
+        return L(f"{tm.get('stops', 0)} arrêt(s) pour l'instant." + (" Il est aux stands en ce moment." if tm.get("pits") else ""),
+                 f"{tm.get('stops', 0)} stop(s) so far." + (" In the pits right now." if tm.get("pits") else ""))
+    if re.search(r"position|place|classement|ou en est|il est ou|elle est ou|qui roule|qui conduit|ca va|point|status|ou on en est", t):
+        return L(f"C'est {who} qui roule, {pos}, {tm.get('laps', 0)} tours, dernier tour {lapf(tm.get('last'))}.",
+                 f"{who} is driving, {pos}, {tm.get('laps', 0)} laps, last lap {lapf(tm.get('last'))}.")
+    if re.search(r"essence|carbu|fuel|energie|pneu|tyre|tire", t):
+        return L("Quand c'est ton équipier qui roule, le jeu ne me donne ni l'essence ni les pneus de la voiture. "
+                 "Je peux te dire la position, les écarts, ses temps et ses arrêts.",
+                 "When your teammate drives, the game doesn't give me the car's fuel or tyres. "
+                 "I can tell you the position, gaps, lap times and stops.")
+    return None
+
+
 def _nm(car) -> str:
     """« P5 Dupont » pour la voiture devant / derrière (nom de famille), rien si le jeu ne donne pas le nom."""
     if not car:
@@ -1100,6 +1138,10 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
     k = race_fuel_command(t, s)
     if k:
         return k
+    if not s.on_track and getattr(s, "team", None):
+        r = team_answer(t, s.team)
+        if r:
+            return r
     if not s.on_track:
         # hors piste, « comment ça va » est une politesse, pas une demande de point complet
         polite = bool(re.search(r"\bca va\b|comment vas tu|how are you", t))

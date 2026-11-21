@@ -10,8 +10,10 @@ Les deux renvoient un objet Snapshot avec les mêmes champs.
 
 from __future__ import annotations
 
+import json
 import math
 import random
+import re
 import sys
 import time
 from dataclasses import dataclass, field
@@ -20,6 +22,15 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent / "vendor"))
 
 WHEELS = ("AVG", "AVD", "ARG", "ARD")  # avant gauche, avant droit, arrière gauche, arrière droit
+
+
+TEAM_DRIVERS: list[str] = []      # pilotes du planning de relais (app.py), pour retrouver la voiture d'équipe
+
+
+def _fold(t: str) -> str:
+    import unicodedata
+    t = unicodedata.normalize("NFD", (t or "").lower())
+    return "".join(c for c in t if unicodedata.category(c) != "Mn")
 
 
 @dataclass
@@ -92,6 +103,7 @@ class Snapshot:
     gap_class_ahead: float | None = None    # écart (s) avec la voiture devant dans ta catégorie
     gap_class_behind: float | None = None
     driver: str = ""
+    team: dict | None = None         # mode équipier : ta voiture d'équipe quand c'est un coéquipier qui roule
     lap_time: float | None = None    # temps écoulé dans le tour en cours (s)
     penalties: int = 0               # pénalités à purger (drive-through / stop-go)
     pen_warning: bool = False        # avertissement de la direction de course (AC EVO : drapeau noir et blanc)
@@ -224,6 +236,64 @@ class LMUSource:
             others.append((p.x, p.z))
         return {"me": (me.mPos.x, me.mPos.z), "others": others, "t": me.mElapsedTime}
 
+    # ------------------------------------------------------------ mode équipier
+    _team_car = None          # nom de la voiture d'équipe (tel que LMU l'écrit, avec le numéro)
+
+    def _remember_team_car(self, vehicle: str, track: str) -> None:
+        if vehicle and vehicle != self._team_car:
+            self._team_car = vehicle
+            try:
+                from paths import DATA
+                (DATA / "equipe.json").write_text(json.dumps({"vehicle": vehicle, "track": track}), encoding="utf-8")
+            except Exception:
+                pass
+
+    def _team_watch(self, d, info) -> dict | None:
+        """Quand ce n'est pas toi qui roules : retrouve ta voiture d'équipe dans le classement
+        (la dernière voiture que tu as pilotée, ou celle d'un pilote de ton planning de relais)."""
+        n = min(info.mNumVehicles, len(d.scoring.vehScoringInfo))
+        if n <= 0:
+            return None
+        vs = [d.scoring.vehScoringInfo[i] for i in range(n)]
+        if self._team_car is None:
+            try:
+                from paths import DATA
+                self._team_car = json.loads((DATA / "equipe.json").read_text(encoding="utf-8")).get("vehicle") or ""
+            except Exception:
+                self._team_car = ""
+        car = next((v for v in vs if self._team_car and _txt(v.mVehicleName) == self._team_car), None)
+        if car is None and TEAM_DRIVERS:
+            def words(x):
+                return {w for w in re.split(r"[^a-z0-9]+", _fold(x)) if len(w) >= 3}
+            mates = [words(x) for x in TEAM_DRIVERS]
+            car = next((v for v in vs if any(m & words(_txt(v.mDriverName)) for m in mates if m)), None)
+        if car is None or (getattr(self, "_me_name", "") and _txt(car.mDriverName) == self._me_name):
+            return None              # personne d'autre au volant (c'est toi, au garage ou en spectateur)
+        if not getattr(self, "_team_logged", False) or self._team_logged != _txt(car.mDriverName):
+            self._team_logged = _txt(car.mDriverName)
+            print(f"  Mode équipier : {self._team_logged} roule ({_txt(car.mVehicleName)}, P{car.mPlace})")
+        cls = car.mVehicleClass
+        same = sorted((v for v in vs if v.mVehicleClass == cls), key=lambda v: v.mPlace)
+        k = next((i for i, v in enumerate(same) if v.mID == car.mID), 0)
+        lap = car.mLastLapTime if car.mLastLapTime > 0 else (car.mBestLapTime if car.mBestLapTime > 0 else 0)
+
+        def gap(a, b):
+            g = (b.mTimeBehindLeader - a.mTimeBehindLeader) + (b.mLapsBehindLeader - a.mLapsBehindLeader) * lap
+            return round(g, 1) if g > 0 else None
+
+        ahead = same[k - 1] if k > 0 else None
+        behind = same[k + 1] if k + 1 < len(same) else None
+        return {
+            "driver": _txt(car.mDriverName), "car": _txt(car.mVehicleName), "track": _txt(info.mTrackName),
+            "session": _session_name(info.mSession), "place": car.mPlace, "cpos": k + 1, "class": _txt(cls),
+            "laps": car.mTotalLaps, "last": car.mLastLapTime if car.mLastLapTime > 0 else None,
+            "best": car.mBestLapTime if car.mBestLapTime > 0 else None, "pits": bool(car.mInPits),
+            "stops": car.mNumPitstops, "penalties": car.mNumPenalties,
+            "time_left": max(0.0, info.mEndET - info.mCurrentET) if info.mEndET > 0 else None,
+            "ahead": {"name": _txt(ahead.mDriverName), "cpos": k, "gap": gap(ahead, car)} if ahead else None,
+            "behind": {"name": _txt(behind.mDriverName), "cpos": k + 2, "gap": gap(car, behind)} if behind else None,
+        }
+
     def read(self) -> Snapshot:
         self._mm.update()
         d = self._mm.data
@@ -235,6 +305,7 @@ class LMUSource:
         tel_all = d.telemetry
         info = d.scoring.scoringInfo
         if not tel_all.playerHasVehicle:
+            s.team = self._team_watch(d, info)
             return s
 
         tel = tel_all.telemInfo[tel_all.playerVehicleIdx]
@@ -246,8 +317,11 @@ class LMUSource:
                 sc = v
                 break
         if sc is None:
+            s.team = self._team_watch(d, info)
             return s
         s.on_track = True
+        self._remember_team_car(_txt(sc.mVehicleName), _txt(info.mTrackName))
+        self._me_name = _txt(sc.mDriverName)
 
         s.track = _txt(info.mTrackName)
         s.car = _txt(sc.mVehicleName)

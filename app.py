@@ -157,6 +157,8 @@ def loop(state: State, demo: bool) -> None:
     import relais
     relay = relais.Relay()
     relay.eng = eng   # pneus neufs au changement de pilote
+    from equipier import TeamWatch
+    team = TeamWatch()
     state.relay = relay
     state.beh = beh
     probe = Probe() if not demo else None
@@ -375,6 +377,12 @@ def loop(state: State, demo: bool) -> None:
             damage.update(snap, say)
             plan = eng.update(snap)
             relay.update(snap, plan, say)
+            try:   # mode équipier : voiture d'équipe quand un coéquipier roule
+                import telemetry as _tm
+                _tm.TEAM_DRIVERS = [x for x in (relay.cfg.get("drivers") or []) if x]
+                team.update(snap, say)
+            except Exception:
+                traceback.print_exc()
             lt.update(snap, eng.say)
             state.map.update(snap)
             spotter.session = snap.session

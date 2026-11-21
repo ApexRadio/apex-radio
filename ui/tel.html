@@ -148,7 +148,25 @@ function render(d) {
   if (up.latest) $("upd").textContent = T(`Mise à jour ${up.latest} disponible : télécharge-la sur le PC`, `Update ${up.latest} available: download it on the PC`);
   $("wait").hidden = !!s.on_track; $("dash").hidden = !s.on_track;
   $("sess").textContent = s.on_track ? `${s.track} · ${T(s.session, SESSION_EN[s.session] || s.session)}` : (s.connected ? T("jeu détecté", "game detected") : T("en attente du jeu", "waiting for the game"));
-  if (!s.on_track) return;
+  if (!s.on_track) {
+    const tm = s.team;   // mode équipier : ta voiture d'équipe quand un coéquipier roule
+    const e2 = x => String(x || "").replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+    if (tm) {
+      const f = x => { if (x == null || x <= 0) return "–"; const m = Math.floor(x / 60), r = x - m * 60; return `${m}:${r.toFixed(3).padStart(6, "0")}`; };
+      const nm = x => (x || "").split(/\s+/).filter(Boolean).pop() || "";
+      $("wait").innerHTML = `<div style="color:#FF2E88;letter-spacing:.2em;font-size:12px">${T("MODE ÉQUIPIER", "TEAMMATE MODE")}</div>`
+        + `<div style="font-size:22px;font-weight:700;margin:6px 0">${e2(tm.driver)}${tm.pits ? T(" · stands", " · pits") : ""}</div>`
+        + `<div style="font-size:44px;font-weight:800;color:var(--accent)">P${tm.cpos}</div>`
+        + `<div>${T("Tours", "Laps")} ${tm.laps ?? "–"} · ${T("Arrêts", "Stops")} ${tm.stops ?? "–"}</div>`
+        + `<div>${T("Dernier", "Last")} ${f(tm.last)} · ${T("Meilleur", "Best")} ${f(tm.best)}</div>`
+        + (tm.ahead ? `<div>${T("Devant", "Ahead")} : ${tm.ahead.gap != null ? tm.ahead.gap.toFixed(1) + " s" : "–"} ${e2(nm(tm.ahead.name))}</div>` : "")
+        + (tm.behind ? `<div>${T("Derrière", "Behind")} : ${tm.behind.gap != null ? tm.behind.gap.toFixed(1) + " s" : "–"} ${e2(nm(tm.behind.name))}</div>` : "");
+    } else if ($("wait").dataset.base) {
+      $("wait").textContent = $("wait").dataset.base;
+    }
+    if (!$("wait").dataset.base) $("wait").dataset.base = T("En attente du jeu…", "Waiting for the game…");
+    return;
+  }
   const lt = x => { if (x == null || x <= 0) return "–"; const m = Math.floor(x / 60), r = x - m * 60; return `${m}:${r.toFixed(3).padStart(6, "0")}`; };
   const gs = g => g == null ? "–" : `${g.toFixed(1)} s`;
   let title = T("EN PISTE", "ON TRACK"), text = "", cls = "";

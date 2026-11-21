@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.4.2 (en préparation)
+- 🇫🇷 Mode équipier (endurance) : quand c'est un coéquipier qui roule, Apex suit votre voiture d'équipe au lieu d'afficher « En attente du jeu » : position, écarts avec les noms, temps au tour, arrêts, temps restant, sur le PC et le téléphone. L'ingé annonce les changements de place, les passages aux stands et les changements de pilote, et répond à « position ? », « écart ? », « il tourne en combien ? ». (Le jeu ne donne ni l'essence ni les pneus dans ce cas.)
+- 🇬🇧 Teammate mode (endurance): when a teammate drives, Apex follows your team car instead of showing "Waiting for the game": position, gaps with names, lap times, stops, time left, on PC and phone. The engineer calls place changes, pit stops and driver changes, and answers "position?", "gap?", "lap times?". (The game gives neither fuel nor tyres in that case.)
 - 🇫🇷 Partage Discord : bouton « Partager ce setup » dans l'atelier (copie le fichier et ouvre Discord, Ctrl+V dans #setups), « Partager » dans chaque débrief, et Discord s'ouvre tout seul après une copie (records, débriefs).
 - 🇬🇧 Discord sharing: "Share this setup" in the workshop (copies the file and opens Discord, Ctrl+V in #setups), "Share" in each debrief, and Discord opens by itself after copying (records, debriefs).
 - 🇫🇷 Équipe : ⚙️ → Discord (équipe), colle le webhook du salon de ton équipe et Apex y envoie tout seul les chronos, setups et le débrief en fin de course. Le lien reste sur ton PC.

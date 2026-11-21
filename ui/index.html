@@ -95,6 +95,15 @@
   .mid { display: flex; gap: 16px; flex-wrap: wrap; }
   .leftcol { flex: 0 1 290px; min-width: 250px; display: flex; flex-direction: column; gap: 16px; }
   .leftcol .tyres { gap: 8px; } .leftcol .tyre { padding: 8px 6px; } .leftcol .tyre b { font-size: 24px; }
+  /* style néon : tableau de bord (léger), atelier setup et fenêtre Fermer */
+  .card { border-color: rgba(var(--accent-rgb), .28); box-shadow: 0 0 14px rgba(var(--accent-rgb), .07), inset 0 0 10px rgba(var(--accent-rgb), .03); }
+  .card h2 { text-shadow: 0 0 8px rgba(var(--accent-rgb), .35); }
+  .wsbox .card { --c: 0,229,255; border-color: rgba(var(--c), .55); background: linear-gradient(180deg, rgba(var(--c), .07), rgba(var(--c), .015) 60%), var(--panel);
+                 box-shadow: 0 0 14px rgba(var(--c), .18), inset 0 0 10px rgba(var(--c), .06); }
+  .wsbox .card h2 { color: rgb(var(--c)); text-shadow: 0 0 8px rgba(var(--c), .55); }
+  .wsbox .card:nth-of-type(5n+2) { --c: 255,46,136; } .wsbox .card:nth-of-type(5n+3) { --c: 168,85,247; }
+  .wsbox .card:nth-of-type(5n+4) { --c: 61,255,162; } .wsbox .card:nth-of-type(5n+5) { --c: 255,210,63; }
+  .quitcard { border-color: rgba(255,46,136,.6); box-shadow: 0 0 30px rgba(255,46,136,.25), 0 10px 50px rgba(0,0,0,.6); }
   /* affichage personnalisé (⚙ Affichage) */
   body.lay-l #map, body.lay-xl #map { max-height: none; min-height: 300px; }
   body.lay-xl #map { min-height: 52vh; }

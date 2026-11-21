@@ -220,6 +220,17 @@ a{{color:var(--accent)}} .back{{text-decoration:none}}
 .nav{{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}} .nav a{{text-decoration:none;color:var(--text);border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;letter-spacing:.04em}}
 .nav a:hover{{border-color:var(--accent)}} .nav a.home{{color:#06070B;background:var(--accent);border-color:var(--accent)}} .nav a.nrec{{color:#FFE500}}
 @media(max-width:700px){{.row{{grid-template-columns:1fr 1fr}}}}
+/* style néon, comme les réglages : une couleur par cadre */
+.tile,.rec,.row,svg{{--c:0,229,255;border-color:rgba(var(--c),.5)!important;background:linear-gradient(180deg,rgba(var(--c),.07),rgba(var(--c),.015) 60%),var(--panel)!important;
+  box-shadow:0 0 12px rgba(var(--c),.15),inset 0 0 8px rgba(var(--c),.05)}}
+.tile:nth-child(5n+2),.rec:nth-of-type(5n+2),.row:nth-child(5n+2){{--c:255,46,136}}
+.tile:nth-child(5n+3),.rec:nth-of-type(5n+3),.row:nth-child(5n+3){{--c:168,85,247}}
+.tile:nth-child(5n+4),.rec:nth-of-type(5n+4),.row:nth-child(5n+4){{--c:61,255,162}}
+.tile:nth-child(5n+5),.rec:nth-of-type(5n+5),.row:nth-child(5n+5){{--c:255,210,63}}
+.tile .lab{{color:rgb(var(--c));text-shadow:0 0 6px rgba(var(--c),.45)}}
+.row:hover,.rec:hover{{box-shadow:0 0 20px rgba(var(--c),.35)}}
+h2{{color:#A855F7;text-shadow:0 0 8px rgba(168,85,247,.45)}}
+.nav a:hover{{box-shadow:0 0 10px rgba(0,229,255,.35)}} .nav a.home{{box-shadow:0 0 14px rgba(0,229,255,.45)}}
 </style></head><body>
 <nav class="nav"><a class="home" href="/">← {L('TABLEAU DE BORD', 'DASHBOARD')}</a><a class="nrec" href="/records">RECORDS</a><a href="/debriefs">{L('DÉBRIEFS', 'DEBRIEFS')}</a><a href="/relais">{L('RELAIS', 'STINTS')}</a></nav>
 {body}<script src="/fsel.js"></script></body></html>"""

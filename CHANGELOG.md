@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.4.2 (en préparation)
+- 🇫🇷 Style néon partout : records, débriefs, atelier setup, vue téléphone, fenêtre Fermer, et un léger halo sur les cases du tableau de bord.
+- 🇬🇧 Neon style everywhere: records, debriefs, setup workshop, phone view, Close window, and a light glow on the dashboard cards.
 - 🇫🇷 Planning des relais : style néon (cadres lumineux, une couleur par pilote dans le plan), et « Pilote 1 / Pilote 2 » au lieu de « Pilote 1 » deux fois quand les noms ne sont pas remplis.
 - 🇬🇧 Stint planner: neon style (glowing frames, one colour per driver in the plan), and "Driver 1 / Driver 2" instead of "Driver 1" twice when names are empty.
 - 🇫🇷 « Écart P10 » (sans vraie question) est compris : l'ingé donne l'écart avec la voiture P10 et son nom. Marche aussi avec « écart pé dix », « écart dixième ».

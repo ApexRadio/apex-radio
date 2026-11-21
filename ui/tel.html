@@ -19,6 +19,11 @@
   .muted { color: var(--muted); font-size: 12px; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 9px 12px; min-width: 0; }
+  /* style néon, comme l'appli */
+  .card { --c: 0,229,255; border-color: rgba(var(--c),.5); background: linear-gradient(180deg, rgba(var(--c),.07), rgba(var(--c),.015) 60%), var(--panel);
+          box-shadow: 0 0 12px rgba(var(--c),.15), inset 0 0 8px rgba(var(--c),.05); }
+  .card:nth-of-type(5n+2) { --c: 255,46,136; } .card:nth-of-type(5n+3) { --c: 168,85,247; }
+  .card:nth-of-type(5n+4) { --c: 61,255,162; } .card:nth-of-type(5n+5) { --c: 255,210,63; }
   .full { grid-column: 1 / -1; }
   .lab { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
   .val { font-family: var(--mono); font-weight: 700; font-size: clamp(30px, 10vw, 54px); line-height: 1.05; white-space: nowrap; overflow: hidden; }

@@ -533,7 +533,7 @@
     </section>
     <section class="card">
       <h2 data-en="4 · Share this setup">4 · Partager ce setup</h2>
-      <div class="sub" style="font-family:inherit;letter-spacing:0" data-en="Copies the setup file and opens Discord: paste it (Ctrl+V) in #setups.">Copie le fichier du setup et ouvre Discord : colle-le (Ctrl+V) dans #setups.</div>
+      <div class="sub" style="font-family:inherit;letter-spacing:0" data-en="Copies the setup file and opens the LMU setups channel on Discord: just press Ctrl+V.">Copie le fichier du setup et ouvre le salon setups LMU sur Discord : il ne reste qu'à faire Ctrl+V.</div>
       <button class="act" id="wsshare" style="margin-top:10px;width:100%" data-en="📤 SHARE ON DISCORD">📤 PARTAGER SUR DISCORD</button>
       <button id="wsteam" class="pill" style="margin-top:8px;width:100%" hidden data-en="🚀 Send to my team">🚀 Envoyer à mon équipe</button>
       <div class="sub" id="wssharemsg" style="font-family:inherit;letter-spacing:0"></div>
@@ -1186,7 +1186,7 @@ $("hooksave").onclick = async () => {
 $("hookdel").onclick = async () => { await sharePost("webhook", { url: "" }); $("hook").value = ""; $("hookmsg").textContent = T("Webhook retiré.", "Webhook removed."); };
 $("wsshare").onclick = async () => {
   const j = await sharePost("setup", {});
-  $("wssharemsg").textContent = j.ok ? T(`✓ « ${j.file} » copié et Discord ouvert : va dans #setups et fais Ctrl+V.`, `✓ "${j.file}" copied and Discord opened: go to #setups and press Ctrl+V.`)
+  $("wssharemsg").textContent = j.ok ? T(`✓ « ${j.file} » copié, Discord s'ouvre sur le salon setups LMU : fais Ctrl+V.`, `✓ "${j.file}" copied, Discord opens the LMU setups channel: press Ctrl+V.`)
     : j.why === "no-file" ? T("Pas encore de setup pour ce circuit : choisis-le à l'étape 1 ou crée le fichier APEX.", "No setup for this track yet: pick it in step 1 or create the APEX file.")
     : T("Impossible de copier le fichier.", "Couldn't copy the file.");
 };

@@ -19,6 +19,12 @@ import uuid
 from pathlib import Path
 
 GUILD = "1566786232422236232"           # serveur Discord Apex Radio
+CHANNELS = {                            # salons par jeu (liens donnés par Laurent le 21/11/2026)
+    ("lmu", "setups"): "1566787776639406102",
+    ("lmu", "chronos"): "1566787790425825310",
+    ("acevo", "setups"): "1573709270241902622",
+    ("acevo", "chronos"): "1573709338793607311",
+}
 WEBHOOK_RX = re.compile(r"^https://(?:ptb\.|canary\.)?(?:discord|discordapp)\.com/api/webhooks/\d+/[\w-]+$")
 
 CFG: dict = {}                          # config de l'appli (radio.cfg), branchée par app.py
@@ -79,19 +85,21 @@ def copy_file(path: Path) -> bool:
         return False
 
 
-def open_discord() -> bool:
-    """Ouvre le serveur Apex Radio dans l'appli Discord (sinon dans le navigateur)."""
+def open_discord(kind: str = "", game: str = "lmu") -> bool:
+    """Ouvre le bon salon du serveur Apex Radio (chronos / setups du jeu) dans l'appli Discord, sinon dans le navigateur."""
+    ch = CHANNELS.get((game if game in ("lmu", "acevo") else "lmu", kind))
+    path = f"{GUILD}/{ch}" if ch else GUILD
     try:
         if sys.platform == "win32":
-            os.startfile(f"discord://-/channels/{GUILD}")      # noqa: S606 (protocole de l'appli Discord)
+            os.startfile(f"discord://-/channels/{path}")      # noqa: S606 (protocole de l'appli Discord)
         else:
             import webbrowser
-            webbrowser.open(f"https://discord.com/channels/{GUILD}")
+            webbrowser.open(f"https://discord.com/channels/{path}")
         return True
     except Exception:
         try:
             import webbrowser
-            webbrowser.open(f"https://discord.com/channels/{GUILD}")
+            webbrowser.open(f"https://discord.com/channels/{path}")
             return True
         except Exception:
             return False

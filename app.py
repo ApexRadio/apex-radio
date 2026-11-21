@@ -772,7 +772,7 @@ def make_handler(state: State):
                 what = self.path.rsplit("/", 1)[-1]
                 out = {"ok": False}
                 if what == "open":
-                    out = {"ok": share.open_discord()}
+                    out = {"ok": share.open_discord(str(req.get("kind", "")), str(req.get("game", "lmu")))}
                 elif what == "webhook":            # enregistrer (et tester) le webhook de l'équipe
                     ok = share.set_webhook(req.get("url", ""))
                     out = {"ok": ok, "set": bool(share.webhook())}
@@ -794,7 +794,7 @@ def make_handler(state: State):
                         out = {"ok": sent, "why": why, "file": f.name}
                     else:
                         out = {"ok": share.copy_file(f), "file": f.name, "text": text}
-                        share.open_discord()
+                        share.open_discord("setups", "lmu")
                 body = json.dumps(out).encode()
                 self.send_response(200); self.send_header("Content-Type", "application/json")
                 self.send_header("Content-Length", str(len(body))); self.end_headers(); self.wfile.write(body)

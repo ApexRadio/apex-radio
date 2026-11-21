@@ -214,10 +214,11 @@ document.addEventListener("click", async e => {
   try { await navigator.clipboard.writeText(t); ok = true; } catch (_) {
     const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select();
     try { ok = document.execCommand("copy"); } catch (__) {} a.remove(); }
-  b.textContent = ok ? "✓ """ + L("Copié ! Discord s'ouvre : colle-le (Ctrl+V)", "Copied! Discord opens: paste it (Ctrl+V)") + """" : old;
-  if (ok) fetch("/api/share/open", { method: "POST", body: "{}" });
+  b.textContent = ok ? "✓ """ + L("Copié ! Discord s'ouvre sur le salon chronos : colle-le (Ctrl+V)", "Copied! Discord opens the lap times channel: paste it (Ctrl+V)") + """" : old;
+  if (ok) fetch("/api/share/open", { method: "POST", body: JSON.stringify({ kind: "chronos", game: "GAMEID" }) });
   b.classList.toggle("ok", ok); setTimeout(() => { b.textContent = old; b.classList.remove("ok"); }, 5000);
 });</script>""" + TEAM_JS
+    js = js.replace("GAMEID", "acevo" if str(d.get("track", "")).endswith("(AC EVO)") else "lmu")
     return _page(L(f"Débrief {d['track']}", f"Debrief {d['track']}"), body + js)
 
 
@@ -402,8 +403,9 @@ document.addEventListener("click", async e => {
   try { await navigator.clipboard.writeText(t); ok = true; } catch (_) {
     const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select();
     try { ok = document.execCommand("copy"); } catch (__) {} a.remove(); }
-  b.textContent = ok ? "✓ """ + L("Copié ! Discord s'ouvre : colle-le dans #chronos-laptimes", "Copied! Discord opens: paste it in #chronos-laptimes") + """" : old;
-  if (ok) fetch("/api/share/open", { method: "POST", body: "{}" });
+  b.textContent = ok ? "✓ """ + L("Copié ! Discord s'ouvre sur le salon chronos : colle-le (Ctrl+V)", "Copied! Discord opens the lap times channel: paste it (Ctrl+V)") + """" : old;
+  const g = (b.closest(".rec") || {}).dataset ? b.closest(".rec").dataset.game : "lmu";
+  if (ok) fetch("/api/share/open", { method: "POST", body: JSON.stringify({ kind: "chronos", game: g || "lmu" }) });
   b.classList.toggle("ok", ok); setTimeout(() => { b.textContent = old; b.classList.remove("ok"); }, 5000);
 });</script>""" + TEAM_JS
     picker = (f"<p><label class='muted' for='recgame'>{L('Jeu', 'Game')} </label>"

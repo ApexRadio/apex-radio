@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.4.2 (en préparation)
+- 🇫🇷 Planning des relais : nom de la course, date et heure de départ (les relais s'affichent avec les vraies heures), indisponibilités par pilote (« 21:50-22:50 ») prises en compte dans le plan et en course, frise du temps (une ligne par pilote), et bouton « Partager le planning » (Discord, ou directement le salon de l'équipe).
+- 🇬🇧 Stint planner: race name, date and start time (stints shown with real clock times), per-driver unavailability ("21:50-22:50") used in the plan and live, a timeline (one row per driver), and a "Share the plan" button (Discord, or straight to the team channel).
 - 🇫🇷 Mode équipier (endurance) : quand c'est un coéquipier qui roule, Apex suit votre voiture d'équipe au lieu d'afficher « En attente du jeu » : position, écarts avec les noms, temps au tour, arrêts, temps restant, sur le PC et le téléphone. L'ingé annonce les changements de place, les passages aux stands et les changements de pilote, et répond à « position ? », « écart ? », « il tourne en combien ? ». (Le jeu ne donne ni l'essence ni les pneus dans ce cas.)
 - 🇬🇧 Teammate mode (endurance): when a teammate drives, Apex follows your team car instead of showing "Waiting for the game": position, gaps with names, lap times, stops, time left, on PC and phone. The engineer calls place changes, pit stops and driver changes, and answers "position?", "gap?", "lap times?". (The game gives neither fuel nor tyres in that case.)
 - 🇫🇷 Partage Discord : bouton « Partager ce setup » dans l'atelier (copie le fichier et ouvre Discord, Ctrl+V dans #setups), « Partager » dans chaque débrief, et Discord s'ouvre tout seul après une copie (records, débriefs).

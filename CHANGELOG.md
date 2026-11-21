@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.4.2 (en préparation)
+- 🇫🇷 Noms des virages célèbres : « au Raidillon », « en sortie de la Parabolica », « limites de piste aux Esses »… au lieu de « virage 3 » (Spa, Le Mans, Monza, Interlagos pour commencer).
+- 🇬🇧 Famous corner names: "into Raidillon", "Parabolica", "the Esses"… instead of "turn 3" (Spa, Le Mans, Monza, Interlagos to start with).
 - 🇫🇷 Stratégie : plus de conseil essence pendant l'arrêt ni dans la minute qui suit (on entendait « économise » puis « tu as assez, pas besoin de t'arrêter » pendant le ravitaillement).
 - 🇬🇧 Strategy: no fuel advice during the stop or in the minute after (you could hear "save fuel" then "you've got enough, no need to pit" while refuelling).
 - 🇫🇷 « Écart » tout seul est compris même quand la reconnaissance l'entend mal (« et car », « écard », « les cartes »…).

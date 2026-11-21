@@ -1,5 +1,11 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.4.1
+- 🇫🇷 Micro : si la reconnaissance vocale n'arrive pas à ouvrir son fichier (« Unable to open file 'model.bin' »), Apex la retélécharge dans un dossier simple au lieu du cache Hugging Face, et explique quoi faire si l'antivirus la bloque.
+- 🇬🇧 Mic: if speech recognition can't open its file ("Unable to open file 'model.bin'"), Apex downloads it again into a plain folder instead of the Hugging Face cache, and explains what to do if the antivirus blocks it.
+- 🇫🇷 Réglages : cadres néon de couleur pour chaque section.
+- 🇬🇧 Settings: coloured neon frames for each section.
+
 ## 1.4.0
 - 🇫🇷 Nouveau : **planning des relais** (bouton RELAIS) pour l'endurance en équipe : pilotes, durée de course, relais en nombre de pleins (ex. 2 pleins chacun) ou en durée, pneus neufs au changement de pilote. En course, Apex annonce les changements de pilote au bon arrêt et recalcule le plan si un relais dure plus ou moins longtemps. Question : « qui roule après ? ».
 - 🇬🇧 New: **stint planner** (STINTS button) for team endurance: drivers, race length, stints as a number of tanks (e.g. 2 each) or a length of time, new tyres at each driver change. In the race, Apex calls driver changes at the right stop and recalculates the plan if a stint runs longer or shorter. Question: "who's driving next?".

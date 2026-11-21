@@ -36,6 +36,8 @@
 - 🇬🇧 Reference lap: no more "you're braking earlier / slower in turn X" remarks while you're battling (a car within ~150 m ahead or ~100 m behind during or just before the corner).
 - 🇫🇷 Énergie virtuelle / essence : quand il reste plusieurs arrêts, Apex ne met plus le plein complet à chaque fois. Il répartit ce qu'il reste à rouler sur les relais à venir (voiture plus légère, arrêts plus courts, même nombre d'arrêts).
 - 🇬🇧 Virtual energy / fuel: with several stops left, Apex no longer fills to 100% every time. It splits what's left to drive over the coming stints (lighter car, shorter stops, same number of stops).
+- 🇫🇷 Réglages ⚙ : choix du mode du menu des stands (Auto / À la demande / Off), sans devoir être en piste.
+- 🇬🇧 Settings ⚙: pit menu mode (Auto / On request / Off), without having to be on track.
 
 ## 1.3.1
 - 🇫🇷 Micro : si le fichier de reconnaissance vocale (dossier whisper) a été mal téléchargé, Apex le retélécharge tout seul au lieu de rester sans micro.

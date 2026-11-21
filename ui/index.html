@@ -391,6 +391,8 @@
       <div class="setrow"><span data-en="Encouragement">Encouragements</span><div class="setctl"><select id="encourage" aria-label="Encouragements" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><label for="coaching" data-en="Driving tips on track">Conseils de pilotage en piste</label><div class="setctl"><input type="checkbox" id="coaching"></div></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Untick if you don't want tips while driving (braking, corners…). The engineer still answers if you ask.">Décoche si tu ne veux pas de conseils en roulant (freinage, virages…). L'ingénieur répond toujours si tu lui demandes.</div>
+      <div class="setrow"><span data-en="Pit menu (LMU)">Menu des stands (LMU)</span><div class="setctl"><select id="pitmode" aria-label="Menu des stands" style="max-width:none;border:0;padding:2px 4px"><option value="auto" data-en="Auto">Auto</option><option value="demande" data-en="On request">À la demande</option><option value="off" data-en="Off">Off</option></select></div></div>
+      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Auto: Apex sets fuel / energy, tyres and repairs in the LMU pit menu about a lap before your stop. On request: only when you say &quot;prepare the stop&quot;.">Auto : Apex règle l'essence / l'énergie, les pneus et les réparations dans le menu des stands de LMU environ un tour avant ton arrêt. À la demande : seulement quand tu dis « prépare l'arrêt ».</div>
       <div class="setrow"><span data-en="Radio tone">Ton de la radio</span><div class="setctl"><select id="tone" aria-label="Ton de la radio" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><span data-en="Your first name">Ton prénom</span><div class="setctl"><input id="drvname" maxlength="24" placeholder="ex. Laurent" data-en-placeholder="e.g. Laurent" aria-label="Ton prénom" style="max-width:160px"></div></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="The engineer calls you by your first name now and then. Leave empty if you don't want it.">L'ingénieur t'appelle de temps en temps par ton prénom. Laisse vide si tu ne veux pas.</div>
@@ -646,6 +648,7 @@ function render(d) {
   renderShortcuts(t);
   renderOnboard(d);
   if (document.activeElement !== $("coaching")) $("coaching").checked = d.coaching !== false;
+  if (d.pit && document.activeElement !== $("pitmode")) $("pitmode").value = d.pit.mode;
   if (d.encourage && document.activeElement !== $("encourage")) $("encourage").value = d.encourage;
   if (d.tone && document.activeElement !== $("tone")) $("tone").value = d.tone;
   if (d.driver_name !== undefined && document.activeElement !== $("drvname")) $("drvname").value = d.driver_name;
@@ -894,6 +897,7 @@ $("tone").innerHTML = [["sobre", "Sobre (juste l'info)", "Plain (just the info)"
   ["detente", "Détendu", "Laid-back"]].map(e => `<option value="${e[0]}">${T(e[1], e[2])}</option>`).join("");
 $("tone").onchange = e => fetch("/api/tone", { method: "POST", body: JSON.stringify({ tone: e.target.value }) });
 $("drvname").onchange = e => fetch("/api/driver", { method: "POST", body: JSON.stringify({ name: e.target.value.trim() }) });
+$("pitmode").onchange = e => fetch("/api/pit/mode", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
 $("coaching").onchange = e => fetch("/api/coaching", { method: "POST", body: JSON.stringify({ on: e.target.checked }) });
 $("encourage").onchange = e => fetch("/api/encourage", { method: "POST", body: JSON.stringify({ level: e.target.value }) });
 

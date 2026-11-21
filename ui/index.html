@@ -658,6 +658,8 @@ function render(d) {
     if ($("vchoice").innerHTML !== opts) $("vchoice").innerHTML = opts;
   }
   if (d.voice) { $("quiet").classList.toggle("on", !!d.voice.quiet); $("quiet").setAttribute("aria-pressed", !!d.voice.quiet); }
+  // le bouton Spotter s'allume même hors piste (avant, il restait éteint tant qu'on n'était pas dans la voiture)
+  if (d.spotter) { $("spot").classList.toggle("on", !!d.spotter.on); $("spot").setAttribute("aria-pressed", !!d.spotter.on); }
   if (d.phone) phoneUrl = d.phone;
   if (d.phone) $("phone").title = T(`Affichage téléphone : ${d.phone} (même Wi-Fi que le PC)`, `Phone view: ${d.phone} (same Wi-Fi as the PC)`);
   const tmD = d.times || {}, dlt = tmD.delta;
@@ -802,7 +804,6 @@ function render(d) {
   $("wet").textContent = `${n((s.wetness || 0) * 100, 0)} %`;
   $("fc").innerHTML = (d.forecast || []).filter(f => f.mins > 0).slice(0, 3).map(f =>
     `<span style="color:${f.rain >= 50 ? "var(--alert)" : "var(--muted)"}">+${f.mins} min : ${esc(f.sky)} (${f.rain}%)</span>`).join("<br>");
-  if (d.spotter) { $("spot").classList.toggle("on", !!d.spotter.on); $("spot").setAttribute("aria-pressed", !!d.spotter.on); }
   drawMap(d);
   $("laps").textContent = `${fmtLap(s.last_lap)} / ${fmtLap(s.best_lap)}`;
 

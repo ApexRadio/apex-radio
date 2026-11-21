@@ -95,6 +95,12 @@
   .mid { display: flex; gap: 16px; flex-wrap: wrap; }
   .leftcol { flex: 0 1 290px; min-width: 250px; display: flex; flex-direction: column; gap: 16px; }
   .leftcol .tyres { gap: 8px; } .leftcol .tyre { padding: 8px 6px; } .leftcol .tyre b { font-size: 24px; }
+  /* affichage personnalisé (⚙ Affichage) */
+  body.lay-l #map, body.lay-xl #map { max-height: none; min-height: 300px; }
+  body.lay-xl #map { min-height: 52vh; }
+  body.lay-xl .leftcol { flex-basis: clamp(200px, 14vw, 240px) !important; }
+  body.no-tyres .tyrecard, body.no-weather .weathercard, body.no-chrono .chrono, body.no-behav #behav, body.no-behav #mapnote { display: none !important; }
+  body.no-tyres.no-weather .leftcol { display: none !important; }
   .mapcard { flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
   #map { width: 100%; flex-grow: 1; min-height: 240px; max-height: 44vh; }
   .chrono { flex-grow: 1; }
@@ -327,12 +333,12 @@
 
         <div class="mid">
           <div class="leftcol">
-            <section class="card">
+            <section class="card tyrecard">
               <h2><span data-en="Tyres">Pneus</span> <span id="compound"></span></h2>
               <div class="tyres" id="tyres"></div>
               <div class="row" style="margin-top:10px"><span data-en="Before critical wear">Avant usure critique</span><span id="tyrelaps">–</span></div>
             </section>
-            <section class="card">
+            <section class="card weathercard">
               <h2 data-en="Weather">Météo</h2>
               <div style="font-family:var(--title);font-weight:700;font-size:20px" id="weather">–</div>
               <div class="row" style="margin-top:6px"><span data-en="Air / track">Air / piste</span><span id="temps">–</span></div>
@@ -440,6 +446,14 @@
     <section class="setsec"><h2>🎨 <span data-en="Look">Apparence</span></h2>
       <div class="setrow"><span data-en="Colour">Couleur</span><div class="setctl"><select id="accent" aria-label="Couleur" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><span data-en="Language">Langue</span><div class="setctl"><select id="lang" title="Langue / Language" aria-label="Langue / Language"></select></div></div>
+    </section>
+    <section class="setsec"><h2>🖥️ <span data-en="Layout">Affichage</span></h2>
+      <div class="setrow"><span data-en="Track map size">Taille du circuit</span><div class="setctl"><select id="lay_map" aria-label="Taille du circuit" style="max-width:none;border:0;padding:2px 4px"><option value="n" data-en="Normal">Normale</option><option value="l" data-en="Large">Grande</option><option value="xl" data-en="Extra large">Très grande</option></select></div></div>
+      <div class="setrow"><span data-en="Show tyres">Afficher les pneus</span><div class="setctl"><input type="checkbox" id="lay_tyres" checked></div></div>
+      <div class="setrow"><span data-en="Show weather">Afficher la météo</span><div class="setctl"><input type="checkbox" id="lay_weather" checked></div></div>
+      <div class="setrow"><span data-en="Show lap times">Afficher les chronos</span><div class="setctl"><input type="checkbox" id="lay_chrono" checked></div></div>
+      <div class="setrow"><span data-en="Show driving notes under the map">Remarques de pilotage sous le circuit</span><div class="setctl"><input type="checkbox" id="lay_behav" checked></div></div>
+      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="The cards you hide leave more room for the track map. Saved for this screen only (the phone has its own view).">Les cases que tu masques laissent plus de place au circuit. Gardé pour cet écran seulement (le téléphone a sa propre vue).</div>
     </section>
     <section class="setsec"><h2>🔄 <span data-en="Version">Version</span></h2>
       <div class="setrow"><span data-en="Installed version">Version installée</span><div class="setctl"><b id="vernow">–</b></div></div>
@@ -1109,6 +1123,22 @@ function launchLMU() { lmuClicked = Date.now(); fetch("/api/lmu/launch", { metho
 $("lmulaunch").onclick = launchLMU; $("lmulaunch2").onclick = launchLMU;
 $("autolmu").onchange = e => fetch("/api/lmu/autolaunch", { method: "POST", body: JSON.stringify({ on: e.target.checked }) });
 $("setopen").onclick = () => { $("set").hidden = false; };
+// --- affichage personnalisé, gardé dans ce navigateur
+function layLoad() { try { return JSON.parse(localStorage.getItem("apex-layout") || "{}"); } catch (e) { return {}; } }
+function layApply() {
+  const L = layLoad(), b = document.body.classList;
+  b.toggle("lay-l", L.map === "l"); b.toggle("lay-xl", L.map === "xl");
+  b.toggle("no-tyres", L.tyres === false); b.toggle("no-weather", L.weather === false);
+  b.toggle("no-chrono", L.chrono === false); b.toggle("no-behav", L.behav === false);
+  $("lay_map").value = L.map || "n";
+  $("lay_tyres").checked = L.tyres !== false; $("lay_weather").checked = L.weather !== false;
+  $("lay_chrono").checked = L.chrono !== false; $("lay_behav").checked = L.behav !== false;
+  window.dispatchEvent(new Event("resize"));
+}
+function laySet(k, v) { const L = layLoad(); L[k] = v; try { localStorage.setItem("apex-layout", JSON.stringify(L)); } catch (e) {} layApply(); }
+$("lay_map").onchange = e => laySet("map", e.target.value);
+for (const k of ["tyres", "weather", "chrono", "behav"]) $("lay_" + k).onchange = e => laySet(k, e.target.checked);
+layApply();
 $("updinst").onclick = async () => {
   window.updInstalling = true;
   $("updinst").hidden = true;

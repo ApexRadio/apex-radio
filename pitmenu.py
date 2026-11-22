@@ -199,7 +199,7 @@ class PitCrew:
     def __init__(self, cfg: dict, demo: bool = False) -> None:
         self.cfg = cfg
         self.demo = demo
-        self.mode = cfg.get("pit_auto", "auto")   # "auto" / "demande" / "off"
+        self.mode = cfg.get("pit_auto", "demande")   # "auto" / "demande" / "off" (par défaut : à la demande, retours joueurs)
         self.done_for = None                        # n° d'arrêt déjà préparé
         self.no_fuel_for = None                     # n° d'arrêt pour lequel le pilote a dit « pas d'essence »
         self.tyres_for = None                       # (n° d'arrêt, roues) : « change juste les deux avant »

@@ -530,7 +530,8 @@ class Workshop:
             # pas encore vu dans tes fichiers : on l'estime à partir des valeurs connues (crans réguliers), sinon on dit « 1 cran de plus / de moins »
             pts = sorted((i, _num(d)) for i, d in known.items() if _num(d) is not None)
             unit = re.sub(r"^[\s\-+\d.,]+", "", disp or "").strip()
-            if len(pts) >= 2 and pts[-1][0] != pts[0][0]:
+            if len(pts) >= 2 and pts[-1][0] != pts[0][0] and not re.search(r"\d", unit):
+                # (pas pour « D22 H-H » ou « P5 » : ce ne sont pas des valeurs régulières, ça donnait « ≈ 21.2 D22 H-H »)
                 step = (pts[-1][1] - pts[0][1]) / (pts[-1][0] - pts[0][0])
                 v = pts[0][1] + (new - pts[0][0]) * step
                 to_disp = f"≈ {v:.{max(0, min(2, len(str(step).split('.')[-1]) if '.' in str(round(step, 2)) else 0))}f} {unit}".strip()

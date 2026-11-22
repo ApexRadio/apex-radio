@@ -122,7 +122,14 @@ class State:
 
     def on_question(self, text: str) -> None:
         from strategy import Plan
-        reply = phrases.dress(answer(text, self.snap, self.plan or Plan()), answer=True)
+        raw = answer(text, self.snap, self.plan or Plan())
+        import time as _t
+        lost = any(k in raw for k in ("pas compris", "Pas sûr d'avoir compris", "didn't get", "Not sure I got"))
+        if lost and _t.monotonic() - getattr(self.voice, "cut_at", -99) < 20:
+            # tu as appuyé pour la faire taire, pas pour lui parler : pas de « je n'ai pas compris »
+            print(f"  [ingé] (radio coupée par le pilote, « {text} » ignoré)")
+            return
+        reply = phrases.dress(raw, answer=True)
         if self.eng is not None:
             self.eng.radio.appendleft({"t": self.snap.elapsed, "text": f"Toi : {text}", "urgent": False, "me": True})
             self.eng.radio.appendleft({"t": self.snap.elapsed, "text": reply, "urgent": False})

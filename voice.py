@@ -273,6 +273,9 @@ class Voice:
 
     def hush(self) -> None:
         """Le pilote reprend la parole : on coupe la phrase en cours et on oublie celles en attente."""
+        import time as _t
+        if self._busy == "info" or not self._q.empty():
+            self.cut_at = _t.monotonic()   # le pilote a appuyé pour la faire taire (pas forcément pour parler)
         self.flush()
         self._hush.set()
 

@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.4.3 (en préparation)
+- 🇫🇷 Noms des virages aussi au Paul Ricard (S de la Verrerie, Camp, chicane du Mistral, Signes, double droite du Beausset, Bendor), à Daytona (International et West Horseshoe, Bus Stop) et à Road Atlanta (Esses, chicane).
+- 🇬🇧 Corner names also at Paul Ricard (Verrerie, Le Camp, Mistral chicane, Signes, Beausset, Bendor), Daytona (International and West Horseshoe, Bus Stop) and Road Atlanta (Esses, chicane).
 - 🇫🇷 Conseils de trajectoire, comparés à ton meilleur tour et dits comme un vrai ingé : « tu es loin de la corde, resserre ta trajectoire », « va chercher le vibreur à la corde », « tu sors trop large », « utilise toute la largeur en sortie ». Seulement quand ça te coûte du temps. Démarre au prochain meilleur tour enregistré.
 - 🇬🇧 Line advice, compared to your best lap and phrased like a real engineer: "you're missing the apex", "use the apex kerb", "running wide on exit", "use all the track on exit". Only when it costs you time. Starts from your next recorded best lap.
 - 🇫🇷 « État des pneus » compris même quand la reconnaissance entend « état des neufs », « état des peux »…

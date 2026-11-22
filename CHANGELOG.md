@@ -1,6 +1,10 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.4.3 (en préparation)
+- 🇫🇷 Conseils de trajectoire, comparés à ton meilleur tour et dits comme un vrai ingé : « tu es loin de la corde, resserre ta trajectoire », « va chercher le vibreur à la corde », « tu sors trop large », « utilise toute la largeur en sortie ». Seulement quand ça te coûte du temps. Démarre au prochain meilleur tour enregistré.
+- 🇬🇧 Line advice, compared to your best lap and phrased like a real engineer: "you're missing the apex", "use the apex kerb", "running wide on exit", "use all the track on exit". Only when it costs you time. Starts from your next recorded best lap.
+- 🇫🇷 « État des pneus » compris même quand la reconnaissance entend « état des neufs », « état des peux »…
+- 🇬🇧 "Tyre condition" (FR « état des pneus ») understood even when speech recognition mishears it.
 - 🇫🇷 Overlay pour les streamers : ⚙️ → Affichage → « Copier le lien », puis source « Navigateur » dans OBS. Les messages radio de l'ingénieur s'affichent en bas du live (fond transparent), avec en option une petite barre position / écarts (?info=1).
 - 🇬🇧 Stream overlay: ⚙️ → Layout → "Copy the link", then a "Browser" source in OBS. The engineer's radio messages show at the bottom of the stream (transparent background), with an optional small position / gaps bar (?info=1).
 - 🇫🇷 Neutralisation (drapeau jaune général, voiture de sécurité) : si tu devais t'arrêter bientôt de toute façon, l'ingé te conseille de rentrer maintenant (l'arrêt coûte beaucoup moins de temps). Il prévient si les stands sont fermés et redit dès qu'ils ouvrent. Un conseil seulement : le menu n'est réglé que si tu dis « je rentre ».

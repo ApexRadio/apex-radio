@@ -69,8 +69,9 @@ class RefLap:
         """Freinage, vitesse mini et remise des gaz pour un virage, à partir des mesures du tour."""
         s = c["start"]
         ln = (c["end"] - s) % 1
-        pts = [(_rel(f, s), v, b, t) for f, v, b, t in trace]
-        pts = [p for p in pts if -APPROACH <= p[0] <= ln + EXIT]
+        full = [(_rel(x[0], s),) + tuple(x[1:]) + (None, None, 0)[len(x) - 4:] for x in trace]
+        full = [p for p in full if -APPROACH <= p[0] <= ln + EXIT]
+        pts = [p[:4] for p in full]
         if len(pts) < 10:
             return None
         brake, prev = None, 1.0
@@ -88,7 +89,29 @@ class RefLap:
         rv, vmin = inside[k][0], inside[k][1]
         thr = next((r for r, v, b, t in pts if r > rv and t > 0.8), None)
         m = lambda r: None if r is None else round(r * L_m, 1)
-        return {"s": round(s, 4), "b": m(brake), "v": round(vmin * 3.6, 1), "t": m(thr)}
+        out = {"s": round(s, 4), "b": m(brake), "v": round(vmin * 3.6, 1), "t": m(thr)}
+        out.update(self._line(full, rv, ln))
+        return out
+
+    @staticmethod
+    def _line(full, rv, ln) -> dict:
+        """Trajectoire au point de corde (vitesse mini) et en sortie : distance au bord de piste le plus proche
+        (mPathLateral / mTrackEdge, en mètres, négatif = roues dehors) et vibreurs. Sert aux conseils de ligne,
+        dits en mots de pilote (« tu ne vas pas chercher la corde »), jamais en mètres."""
+        def room(p):
+            pl, edge = p[4], p[5]
+            if pl is None or edge is None or abs(edge) < 2:
+                return None
+            return abs(edge) - abs(pl)          # place jusqu'au bord, côté où se trouve la voiture
+        apex = [p for p in full if abs(p[0] - rv) <= 0.004]
+        exitp = [p for p in full if ln <= p[0] <= ln + EXIT]
+        ra = [room(p) for p in apex if room(p) is not None]
+        rx = [room(p) for p in exitp if room(p) is not None]
+        if not ra or not rx:
+            return {}
+        return {"ae": round(min(ra), 2), "ac": int(any(p[6] >= 2 for p in apex)),
+                "xe": round(min(rx), 2), "xc": int(any(p[6] >= 2 for p in exitp)),
+                "as": 1 if (apex[len(apex) // 2][4] or 0) >= 0 else -1}
 
     def _all_corners(self, trace, L_m):
         out = {}
@@ -122,7 +145,8 @@ class RefLap:
                 return
             if 0.4 < m["f"] < 0.6:
                 self.mid_last = s.last_lap      # chrono du tour PRÉCÉDENT : il changera quand ce tour-ci sera fini
-            self.trace.append((m["f"], m["speed"], m.get("brk") or 0.0, m.get("thr") or 0.0))
+            self.trace.append((m["f"], m["speed"], m.get("brk") or 0.0, m.get("thr") or 0.0,
+                               m.get("pl"), m.get("edge"), m.get("curb") or 0))
             # bataille / trafic : une voiture à moins de ~150 m devant ou ~100 m derrière. On le retient quelques
             # secondes pour ne pas comparer un virage pris en défense, en attaque ou côte à côte.
             L_m, f = s.track_len, m["f"]
@@ -175,7 +199,8 @@ class RefLap:
                 continue
             d = {"early": (ref["b"] - cur["b"]) if ref["b"] is not None and cur["b"] is not None else 0.0,
                  "dv": cur["v"] - ref["v"],
-                 "late": (cur["t"] - ref["t"]) if ref["t"] is not None and cur["t"] is not None else 0.0}
+                 "late": (cur["t"] - ref["t"]) if ref["t"] is not None and cur["t"] is not None else 0.0,
+                 "line": self._line_diff(ref, cur)}
             if d["dv"] < -30 or abs(d["early"]) > 80 or d["late"] > 80:   # incident, voiture devant, ralentissement
                 continue
             self.last_cmp[cid] = d
@@ -192,8 +217,35 @@ class RefLap:
             say(None, msg)
 
     @staticmethod
+    def _line_diff(ref: dict, cur: dict) -> str | None:
+        """Ce qui change dans la trajectoire par rapport au meilleur tour : "corde", "vibreur", "large", "largeur"."""
+        if "ae" not in ref or "ae" not in cur:
+            return None                         # référence enregistrée avant les conseils de ligne
+        if cur["xe"] < -0.8 and ref["xe"] > -0.3:
+            return "large"                      # roues dehors en sortie, pas à la référence
+        if ref["as"] == cur["as"] and cur["ae"] - ref["ae"] > 1.2 and ref["ae"] < 1.0:
+            return "vibreur" if ref["ac"] and not cur["ac"] else "corde"
+        if ref["xe"] < 0.8 and cur["xe"] - ref["xe"] > 1.5:
+            return "largeur"                    # n'utilise pas toute la largeur en sortie
+        return None
+
+    @staticmethod
     def _advice(cid: str, d: dict) -> str | None:
         e, dv, late = round(d["early"]), round(d["dv"]), round(d["late"])
+        line = d.get("line")
+        if line == "large":
+            return L(f"Virage {cid} : tu sors trop large, tu mets les roues dehors en sortie. Patiente un peu avant de remettre les gaz.",
+                     f"Turn {cid}: you're running wide on exit, wheels off. Wait a touch before getting on the power.")
+        if line and (dv <= -2 or late >= 10):
+            if line == "vibreur":
+                return L(f"Virage {cid} : va chercher le vibreur à la corde, comme à ton meilleur tour.",
+                         f"Turn {cid}: use the apex kerb, like on your best lap.")
+            if line == "corde":
+                return L(f"Virage {cid} : tu es loin de la corde, resserre ta trajectoire.",
+                         f"Turn {cid}: you're missing the apex, tighten your line.")
+            if line == "largeur":
+                return L(f"Virage {cid} : utilise toute la largeur en sortie, tu pourras remettre les gaz plus tôt.",
+                         f"Turn {cid}: use all the track on exit, you'll get on the power earlier.")
         if e >= 15 and dv < 3:
             return L(f"Virage {cid} : tu freines {e} mètres plus tôt qu'à ton meilleur tour.",
                      f"Turn {cid}: you're braking {e} metres earlier than on your best lap.")
@@ -216,14 +268,18 @@ class RefLap:
             if not self.ref:
                 return L("Je n'ai pas encore de tour de référence pour cette voiture ici : fais un tour propre et valide.",
                          "I don't have a reference lap for this car here yet: do a clean, valid lap.")
-            score = lambda d: max(d["early"] / 10, -d["dv"] / 3, d["late"] / 15)
+            score = lambda d: max(d["early"] / 10, -d["dv"] / 3, d["late"] / 15, 1.5 if d.get("line") == "large" else 0)
             worst = sorted(((score(d), cid, d) for cid, d in self.last_cmp.items() if score(d) >= 1), reverse=True)[:3]
             if not worst:
                 return L("Par rapport à ton meilleur tour, rien de net à signaler, tu es dans tes marques.",
                          "Compared to your best lap, nothing clear to report, you're on your marks.")
             parts = []
             for _, cid, d in worst:
-                if d["early"] >= 10:
+                ln = {"corde": L("loin de la corde", "missing the apex"), "vibreur": L("tu ne prends pas le vibreur à la corde", "not using the apex kerb"),
+                      "large": L("tu sors trop large", "running wide on exit"), "largeur": L("tu n'utilises pas toute la largeur en sortie", "not using all the track on exit")}.get(d.get("line"))
+                if ln:
+                    parts.append(L(f"virage {cid}, {ln}", f"turn {cid}, {ln}"))
+                elif d["early"] >= 10:
                     parts.append(L(f"virage {cid}, tu freines {round(d['early'])} mètres plus tôt",
                                    f"turn {cid}, braking {round(d['early'])} metres earlier"))
                 elif d["dv"] <= -3:

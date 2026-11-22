@@ -284,9 +284,9 @@ class Voice:
         if not spot:
             self.last_text = text          # pour « répète » (touche Stream Deck)
         import time as _t
-        self._q.put((-1 if spot else 0 if urgent else 1, self._n, text, _t.monotonic(), spot))
-        if spot and self._busy == "info":
-            self._cut.set()      # « à gauche ! » ne doit pas attendre la fin d'une phrase d'info
+        self._q.put((-1 if spot else 0 if urgent else 1, self._n, text, _t.monotonic(), spot, False))
+        if spot and self._busy == "info" and text.strip(" .!").lower() not in ("dégagé", "clear"):
+            self._cut.set()   # (« Dégagé » ne coupe personne : il attend la fin de la phrase)      # « à gauche ! » ne doit pas attendre la fin d'une phrase d'info
 
     # ------------------------------------------------------------ rendu
     def _render_piper(self, text: str) -> bytes:
@@ -373,7 +373,7 @@ class Voice:
         self._load()
         self._warm()
         while True:
-            prio, _, text, t0, spot = self._q.get()
+            prio, _, text, t0, spot, again = self._q.get()
             import time as _t
             if self.loaded != (voice_lang(), current_id()):   # langue ou voix changée : on charge l'autre voix
                 self._load()
@@ -393,9 +393,9 @@ class Voice:
                     else:
                         done = self._play(wav)
                     self._busy = None
-                    if not done:              # coupée par le spotter : on la redira juste après
+                    if not done and not again:   # coupée par le spotter : on la redit une fois (pas en boucle)
                         self._n += 1
-                        self._q.put((min(prio, 0), self._n, text, _t.monotonic(), False))
+                        self._q.put((min(prio, 0), self._n, text, _t.monotonic(), False, True))
                 elif self.engine == "Windows":
                     self._speak_windows(spoken(text))
             except Exception as e:

@@ -20,16 +20,21 @@ REPO = "https://github.com/ApexRadio/apex-radio"
 def notes(version: str) -> tuple[list[str], list[str]]:
     """Lignes françaises et anglaises de la section de cette version."""
     text = (ROOT / "installer" / "release-notes.md").read_text(encoding="utf-8")
-    fr, en, inside = [], [], False
+    fr, en, inside, lang = [], [], False, None
     for line in text.splitlines():
         if line.startswith("## "):
-            inside = version in line
+            inside, lang = version in line, None
             continue
-        if inside and line.strip().startswith("-"):
+        if not inside:
+            continue
+        if line.strip() in ("🇫🇷", "🇬🇧"):          # notes rangées par langue : « 🇫🇷 » puis la liste
+            lang = line.strip()
+            continue
+        if line.strip().startswith("-"):
             item = line.strip()[1:].strip()
-            if item.startswith("🇫🇷"):
+            if item.startswith("🇫🇷") or (lang == "🇫🇷" and not item.startswith("🇬🇧")):
                 fr.append("• " + item.replace("🇫🇷", "", 1).strip())
-            elif item.startswith("🇬🇧"):
+            elif item.startswith("🇬🇧") or lang == "🇬🇧":
                 en.append("• " + item.replace("🇬🇧", "", 1).strip())
     return fr, en
 

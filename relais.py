@@ -494,6 +494,7 @@ def page() -> str:
         "drivers": ("Pilotes, dans l'ordre", "Drivers, in order"),
         "add": ("+ Ajouter un pilote", "+ Add a driver"),
         "save": ("ENREGISTRER", "SAVE"), "saved": ("Enregistré ✓", "Saved ✓"),
+        "new": ("Nouvelle course", "New race"), "new_sure": ("Sûr ? Re-clique pour effacer", "Sure? Click again to clear"),
         "plan": ("Le plan", "The plan"), "n": ("Relais", "Stint"), "who": ("Pilote", "Driver"),
         "from": ("Début", "Start"), "to": ("Fin", "End"), "dur": ("Durée", "Length"),
         "live": ("En course", "Live"),
@@ -549,7 +550,7 @@ th{{color:rgb(168,85,247)}}
  <div class="f"><label for="ty">{t['tyres']}</label><input type="checkbox" id="ty"></div>
  <div class="f" style="align-items:flex-start"><label>{t['drivers']}</label><div><div id="drvs"></div>
    <button id="add">{t['add']}</button><div class="muted" style="font-size:13px;margin-top:6px">{t['tip']}<br>{t['busy_tip']}</div></div></div>
- <div class="f"><button class="main" id="save">{t['save']}</button><span id="ok"></span></div>
+ <div class="f"><button class="main" id="save">{t['save']}</button> <button id="newrace" style="margin-left:10px">{t['new']}</button><span id="ok"></span></div>
 </div>
 <div class="card" id="livecard" hidden><h2 style="margin-top:0">{t['live']}</h2><div id="live"></div></div>
 <h2>{t['plan']}</h2><p class="muted" id="fuel"></p>
@@ -644,6 +645,20 @@ $("save").onclick = async () => {{
     name: $("rn").value, date: $("rd").value, start: $("rs").value, unavail: busy }};
   draw(await (await fetch("/api/relais", {{ method: "POST", body: JSON.stringify(cfg) }})).json(), true);
   $("ok").textContent = T.saved; setTimeout(() => $("ok").textContent = "", 2500);
+}};
+// Nouvelle course : on efface nom, date, heure et indisponibilités (on garde les pilotes et les réglages de relais)
+let armNew = null;
+$("newrace").onclick = () => {{
+  if (!armNew) {{
+    $("newrace").textContent = T.new_sure;
+    armNew = setTimeout(() => {{ armNew = null; $("newrace").textContent = T.new; }}, 4000);
+    return;
+  }}
+  clearTimeout(armNew); armNew = null; $("newrace").textContent = T.new;
+  $("rn").value = ""; $("rd").value = ""; $("rs").value = ""; $("on").checked = false;
+  Object.keys(busy).forEach(k => delete busy[k]);
+  drawDrivers();
+  $("save").click();
 }};
 load(true); setInterval(() => load(false), 5000);
 </script>"""

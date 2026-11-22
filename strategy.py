@@ -210,7 +210,11 @@ class Engineer:
         p.limited_by = "énergie" if energy_range < fuel_range else "essence"
 
         full_stint = min(s.fuel_capacity / fpl if s.fuel_capacity else math.inf, (1.0 / epl) if epl else math.inf)
-        short = p.laps_to_finish + MARGIN_LAPS - p.range_laps
+        # « faut-il s'arrêter ? » : pour l'énergie, avec la consommation prudente. Avec la moyenne, une fin de course
+        # un peu plus gourmande donnait « pas d'arrêt » puis la panne d'énergie dans le dernier tour.
+        epl_safe = (self._per_lap("energy", safe=True) or epl) if epl else None
+        range_safe = min(fuel_range, (s.energy / max(epl, epl_safe)) if (epl and s.energy is not None) else math.inf)
+        short = p.laps_to_finish + MARGIN_LAPS - range_safe
         p.stops_needed = 0 if short <= 0 else math.ceil(short / max(full_stint - MARGIN_LAPS, 1.0))
 
         # tyres

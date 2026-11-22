@@ -618,6 +618,8 @@ def make_handler(state: State):
                 body, ctype = (HERE / "ui" / "fsel.js").read_bytes(), "text/javascript; charset=utf-8"
             elif self.path == "/favicon.ico":
                 body, ctype = (HERE / "apex.ico").read_bytes(), "image/x-icon"
+            elif self.path.split("?")[0].rstrip("/") == "/overlay":   # overlay OBS pour les streamers (fond transparent)
+                body, ctype = (HERE / "ui" / "overlay.html").read_bytes(), "text/html; charset=utf-8"
             elif self.path.rstrip("/") in ("/tel", "/phone"):
                 body, ctype = (HERE / "ui" / "tel.html").read_bytes(), "text/html; charset=utf-8"
             elif self.path in ("/", "/index.html"):

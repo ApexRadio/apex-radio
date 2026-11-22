@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.4.3 (en préparation)
+- 🇫🇷 Overlay pour les streamers : ⚙️ → Affichage → « Copier le lien », puis source « Navigateur » dans OBS. Les messages radio de l'ingénieur s'affichent en bas du live (fond transparent), avec en option une petite barre position / écarts (?info=1).
+- 🇬🇧 Stream overlay: ⚙️ → Layout → "Copy the link", then a "Browser" source in OBS. The engineer's radio messages show at the bottom of the stream (transparent background), with an optional small position / gaps bar (?info=1).
 - 🇫🇷 Neutralisation (drapeau jaune général, voiture de sécurité) : si tu devais t'arrêter bientôt de toute façon, l'ingé te conseille de rentrer maintenant (l'arrêt coûte beaucoup moins de temps). Il prévient si les stands sont fermés et redit dès qu'ils ouvrent. Un conseil seulement : le menu n'est réglé que si tu dis « je rentre ».
 - 🇬🇧 Neutralisation (full course yellow, safety car): if you were due to pit soon anyway, the engineer advises boxing now (the stop costs far less time). He warns if pits are closed and tells you when they open. Advice only: the menu is set only if you say "I'm pitting".
 - 🇫🇷 Relais : « Mes courses ». Garde plusieurs courses préparées à l'avance (6h de Spa, 4h de Monza…) et recharge-les d'un clic.

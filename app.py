@@ -124,7 +124,8 @@ class State:
         from strategy import Plan
         raw = answer(text, self.snap, self.plan or Plan())
         import time as _t
-        lost = any(k in raw for k in ("pas compris", "Pas sûr d'avoir compris", "didn't get", "Not sure I got"))
+        lost = any(k in raw for k in ("pas compris", "Pas sûr d'avoir compris", "didn't get", "Not sure I got",
+                                      "rien entendu", "didn't hear anything"))
         if lost and _t.monotonic() - getattr(self.voice, "cut_at", -99) < 20:
             # tu as appuyé pour la faire taire, pas pour lui parler : pas de « je n'ai pas compris »
             print(f"  [ingé] (radio coupée par le pilote, « {text} » ignoré)")

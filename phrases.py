@@ -95,6 +95,11 @@ _ALREADY = ("c'est noté", "ok", "reçu", "bien reçu", "compris", "je n'ai", "j
 
 def dress(text: str, answer: bool = False, urgent: bool = False) -> str:
     """Ajoute parfois une ouverture (« Reçu. », « Info radio. ») et une fin (« À toi. ») selon le ton."""
+    try:
+        import cornernames
+        text = cornernames.rename(text)      # « virage 3 » → « le Raidillon » sur les circuits où il a un nom
+    except Exception:
+        pass
     if TONE == "sobre" or urgent or not text:
         return text
     named = with_name(text, answer)

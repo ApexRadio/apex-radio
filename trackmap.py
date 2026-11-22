@@ -43,6 +43,11 @@ class TrackMap:
         self.saved = False
         self.version += 1
         try:
+            import cornernames
+            cornernames.ACTIVE = {}      # nouveau circuit : on oublie les noms de l'ancien
+        except Exception:
+            pass
+        try:
             d = json.loads(_fname(track).read_text(encoding="utf-8"))
             for i, (x, z, sec) in enumerate(d["points"]):
                 self.sum[i] = [x * SAMPLES, z * SAMPLES]
@@ -158,6 +163,15 @@ class TrackMap:
             p = pts[mid]
             out.append({"id": len(out) + 1, "start": g[0] / n, "end": (g[-1] + 1) / n, "mid": mid / n,
                         "x": p[0], "z": p[1]})
+        try:   # noms des virages célèbres (le Raidillon, Mulsanne…) pour ce circuit
+            import cornernames
+            names = cornernames.names_for(self.track or "", out)
+            for c in out:
+                if c["id"] in names:
+                    c["name"] = names[c["id"]]
+            cornernames.ACTIVE = names
+        except Exception:
+            pass
         self._corners, self._corners_v = out, self.version
         return out
 

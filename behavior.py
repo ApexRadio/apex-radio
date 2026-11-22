@@ -35,6 +35,14 @@ def set_coach(on) -> None:
     COACH = bool(on)
 
 
+COACH_RACE = True   # « tu perds du temps au virage X » aussi en course (réglage : certains pilotes préfèrent pas)
+
+
+def set_coach_race(on) -> None:
+    global COACH_RACE
+    COACH_RACE = bool(on)
+
+
 SAY_EVERY = 3          # au plus une annonce de comportement tous les 3 tours
 LOCK = -0.18           # taux de glissement : roue bloquée
 FAST_V = 42.0          # m/s (~150 km/h) : vitesse mini au-delà de laquelle un virage est « rapide » (l'aéro compte plus)

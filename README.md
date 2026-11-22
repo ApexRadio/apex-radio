@@ -40,7 +40,9 @@ Want another sim? Tell us on [Discord](https://discord.gg/ZHg4qXd26g).
 - **Setup workshop** (LMU): builds one Qualifying and one Race setup file per track from what it measured
   (never touches your own setup files). Starting fuel calculated from your consumption.
 - **Reference lap**: keeps your best clean lap per car and track and tells you where you lose time, corner by corner (not while you're battling).
-- **Stint planner** for team endurance: drivers, stints in tanks or in time, driver change called at the right stop.
+- **Stint planner** for team endurance: race name, date and start time, drivers and their unavailability, stints in tanks or in time with real clock times, a timeline, Discord sharing, driver change called at the right stop.
+- **Teammate mode**: when your teammate drives, Apex follows your team car (position, gaps, lap times, stops) instead of waiting for the game.
+- **1-click updates**: the new version downloads inside the app, one click on INSTALL and Apex reinstalls and reopens.
 - **Records and debriefs**: best lap per track and class, progress chart, a report for every session.
 - **Phone view**: scan the QR code (📱 button) with your phone, on the same Wi-Fi.
 - **Assetto Corsa EVO**: strategy, gaps and full race order, spotter, track cuts to give back, penalties, tyre temperatures. Pit menu and setup workshop are LMU only for now.
@@ -99,7 +101,9 @@ Tu veux un autre simulateur ? Dis-le sur [Discord](https://discord.gg/ZHg4qXd26g
 - **Atelier setup** (LMU) : un fichier Qualif et un fichier Course par circuit, construits à partir des mesures
   (il ne touche jamais à tes propres setups). Essence de départ calculée d'après ta conso.
 - **Tour de référence** : il garde ton meilleur tour propre par voiture et circuit et te dit où tu perds du temps, virage par virage (pas pendant une bagarre).
-- **Planning des relais** pour l'endurance en équipe : pilotes, relais en pleins ou en durée, changement de pilote annoncé au bon arrêt.
+- **Planning des relais** pour l'endurance en équipe : nom, date et heure de départ de la course, pilotes et leurs indisponibilités, relais en pleins ou en durée avec les vraies heures, frise, partage Discord, changement de pilote annoncé au bon arrêt.
+- **Mode équipier** : quand ton coéquipier roule, Apex suit votre voiture (position, écarts, temps au tour, arrêts) au lieu d'attendre le jeu.
+- **Mise à jour en 1 clic** : la nouvelle version se télécharge dans l'appli, un clic sur INSTALLER et Apex se réinstalle puis se rouvre.
 - **Records et débriefs** : meilleur tour par circuit et catégorie, courbe de progression, un rapport par session.
 - **Affichage téléphone** : scanne le QR code (bouton 📱) avec ton téléphone, sur le même Wi-Fi.
 - **Assetto Corsa EVO** : stratégie, écarts et classement complet, spotter, coupes de piste à rendre, pénalités, température des pneus. Menu des stands et atelier setup : LMU seulement pour l'instant.

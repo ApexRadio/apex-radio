@@ -54,6 +54,8 @@
          border: 1px solid var(--accent); border-radius: 10px; background: rgba(var(--accent-rgb),.08); color: var(--text); font-weight: 600; }
   #upd a { color: #06070B; background: var(--accent); padding: 5px 12px; border-radius: 999px; text-decoration: none; font-weight: 700; letter-spacing: .04em; }
   #upd button { background: none; border: 0; color: var(--muted); font-size: 18px; cursor: pointer; padding: 0 4px; }
+  #upd button.updinst { color: #06070B; background: var(--accent); padding: 5px 14px; border-radius: 999px; font-size: 14px; font-weight: 700;
+                        letter-spacing: .04em; min-height: 0; box-shadow: 0 0 14px rgba(var(--accent-rgb),.45); }
   #pen { display: none; margin-top: 6px; background: var(--alert); color: #06070B; font-weight: 700; letter-spacing: .06em; border-radius: 8px; padding: 6px 10px; animation: flash 1s steps(2) infinite; }
   @keyframes flash { 50% { opacity: .55; } }
   #quiet.on { background: var(--warn); color: #06070B; border-color: var(--warn); font-weight: 700; }
@@ -93,6 +95,21 @@
   .mid { display: flex; gap: 16px; flex-wrap: wrap; }
   .leftcol { flex: 0 1 290px; min-width: 250px; display: flex; flex-direction: column; gap: 16px; }
   .leftcol .tyres { gap: 8px; } .leftcol .tyre { padding: 8px 6px; } .leftcol .tyre b { font-size: 24px; }
+  /* style néon : tableau de bord (léger), atelier setup et fenêtre Fermer */
+  .card { border-color: rgba(var(--accent-rgb), .28); box-shadow: 0 0 14px rgba(var(--accent-rgb), .07), inset 0 0 10px rgba(var(--accent-rgb), .03); }
+  .card h2 { text-shadow: 0 0 8px rgba(var(--accent-rgb), .35); }
+  .wsbox .card { --c: 0,229,255; border-color: rgba(var(--c), .55); background: linear-gradient(180deg, rgba(var(--c), .07), rgba(var(--c), .015) 60%), var(--panel);
+                 box-shadow: 0 0 14px rgba(var(--c), .18), inset 0 0 10px rgba(var(--c), .06); }
+  .wsbox .card h2 { color: rgb(var(--c)); text-shadow: 0 0 8px rgba(var(--c), .55); }
+  .wsbox .card:nth-of-type(5n+2) { --c: 255,46,136; } .wsbox .card:nth-of-type(5n+3) { --c: 168,85,247; }
+  .wsbox .card:nth-of-type(5n+4) { --c: 61,255,162; } .wsbox .card:nth-of-type(5n+5) { --c: 255,210,63; }
+  .quitcard { border-color: rgba(255,46,136,.6); box-shadow: 0 0 30px rgba(255,46,136,.25), 0 10px 50px rgba(0,0,0,.6); }
+  /* affichage personnalisé (⚙ Affichage) */
+  body.lay-l #map, body.lay-xl #map { max-height: none; min-height: 300px; }
+  body.lay-xl #map { min-height: 52vh; }
+  body.lay-xl .leftcol { flex-basis: clamp(200px, 14vw, 240px) !important; }
+  body.no-tyres .tyrecard, body.no-weather .weathercard, body.no-chrono .chrono, body.no-behav #behav, body.no-behav #mapnote { display: none !important; }
+  body.no-tyres.no-weather .leftcol { display: none !important; }
   .mapcard { flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
   #map { width: 100%; flex-grow: 1; min-height: 240px; max-height: 44vh; }
   .chrono { flex-grow: 1; }
@@ -110,6 +127,11 @@
   .faster { color: var(--good); } .slower { color: var(--alert); }
   .scroll { overflow-x: auto; }
   #wait { padding: 90px 20px; text-align: center; }
+  #teamw { margin-top: 26px; }
+  .tmgrid { display: grid; grid-template-columns: repeat(4, minmax(120px, 1fr)); gap: 10px; max-width: 760px; margin: 14px auto; }
+  .tmgrid div { border: 1px solid rgba(255,46,136,.5); border-radius: 12px; padding: 10px; background: rgba(255,46,136,.06); box-shadow: 0 0 12px rgba(255,46,136,.15); }
+  .tmgrid span { display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .tmgrid b { display: block; font-family: "JetBrains Mono", monospace; font-size: 20px; margin-top: 4px; color: var(--text); }
   #wait p { color: var(--muted); font-size: 17px; }
   .good { color: var(--good); } .warn { color: var(--warn); } .bad { color: var(--alert); }
   #ws { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 10; display: flex; justify-content: flex-end; }
@@ -258,7 +280,7 @@
     </div>
   </header>
 
-  <div id="upd" role="status"><span id="updtxt"></span><a id="updlink" href="#" target="_blank" rel="noopener"></a><button id="updx" aria-label="Masquer" title="Masquer">×</button></div>
+  <div id="upd" role="status"><span id="updtxt"></span><a id="updlink" href="#" target="_blank" rel="noopener"></a><button id="updinst" class="updinst" hidden></button><button id="updx" aria-label="Masquer" title="Masquer">×</button></div>
 
   <div class="layout">
     <aside>
@@ -287,7 +309,22 @@
     </aside>
 
     <main>
-      <div id="wait" class="card"><div class="logo" style="font-size:34px">APEX//RADIO</div><p data-en="Start Le Mans Ultimate or Assetto Corsa EVO and get in your car: the dashboard will show up by itself.">Lance Le Mans Ultimate ou Assetto Corsa EVO et monte dans ta voiture : le tableau de bord s'affichera tout seul.</p></div>
+      <div id="wait" class="card"><div class="logo" style="font-size:34px">APEX//RADIO</div><p id="waitmsg" data-en="Start Le Mans Ultimate or Assetto Corsa EVO and get in your car: the dashboard will show up by itself.">Lance Le Mans Ultimate ou Assetto Corsa EVO et monte dans ta voiture : le tableau de bord s'affichera tout seul.</p>
+        <div id="teamw" hidden>
+          <div class="sub" style="letter-spacing:.2em;color:#FF2E88" data-en="TEAMMATE MODE">MODE ÉQUIPIER</div>
+          <div id="tm_who" style="font-size:26px;font-weight:700;margin:6px 0"></div>
+          <div class="tmgrid">
+            <div><span data-en="Position">Position</span><b id="tm_pos">–</b></div>
+            <div><span data-en="Laps">Tours</span><b id="tm_laps">–</b></div>
+            <div><span data-en="Last lap">Dernier tour</span><b id="tm_last">–</b></div>
+            <div><span data-en="Best">Meilleur</span><b id="tm_best">–</b></div>
+            <div><span data-en="Ahead">Devant</span><b id="tm_ahead">–</b></div>
+            <div><span data-en="Behind">Derrière</span><b id="tm_behind">–</b></div>
+            <div><span data-en="Stops">Arrêts</span><b id="tm_stops">–</b></div>
+            <div><span data-en="Time left">Temps restant</span><b id="tm_left">–</b></div>
+          </div>
+          <p style="font-size:13px" data-en="When a teammate drives, the game gives neither the fuel nor the tyres of the car. Ask the radio: position, gap, lap times, stops.">Quand un coéquipier roule, le jeu ne donne ni l'essence ni les pneus de la voiture. Demande à la radio : position, écart, temps au tour, arrêts.</p>
+        </div></div>
       <div id="dash" style="display:none;flex-direction:column;gap:16px;flex-grow:1">
         <div class="tiles">
           <section class="card">
@@ -325,12 +362,12 @@
 
         <div class="mid">
           <div class="leftcol">
-            <section class="card">
+            <section class="card tyrecard">
               <h2><span data-en="Tyres">Pneus</span> <span id="compound"></span></h2>
               <div class="tyres" id="tyres"></div>
               <div class="row" style="margin-top:10px"><span data-en="Before critical wear">Avant usure critique</span><span id="tyrelaps">–</span></div>
             </section>
-            <section class="card">
+            <section class="card weathercard">
               <h2 data-en="Weather">Météo</h2>
               <div style="font-family:var(--title);font-weight:700;font-size:20px" id="weather">–</div>
               <div class="row" style="margin-top:6px"><span data-en="Air / track">Air / piste</span><span id="temps">–</span></div>
@@ -409,6 +446,7 @@
     <section class="setsec"><h2>💬 <span data-en="Engineer">Ingénieur</span></h2>
       <div class="setrow"><span data-en="Encouragement">Encouragements</span><div class="setctl"><select id="encourage" aria-label="Encouragements" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><label for="coaching" data-en="Driving tips on track">Conseils de pilotage en piste</label><div class="setctl"><input type="checkbox" id="coaching"></div></div>
+      <div class="setrow"><label for="coachrace" data-en="Corner time loss also in races">Temps perdu par virage aussi en course</label><div class="setctl"><input type="checkbox" id="coachrace"></div></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Untick if you don't want tips while driving (braking, corners…). The engineer still answers if you ask.">Décoche si tu ne veux pas de conseils en roulant (freinage, virages…). L'ingénieur répond toujours si tu lui demandes.</div>
       <div class="setrow"><span data-en="Pit menu (LMU)">Menu des stands (LMU)</span><div class="setctl"><select id="pitmode" aria-label="Menu des stands" style="max-width:none;border:0;padding:2px 4px"><option value="auto" data-en="Auto">Auto</option><option value="demande" data-en="On request">À la demande</option><option value="off" data-en="Off">Off</option></select></div></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Auto: Apex sets fuel / energy, tyres and repairs in the LMU pit menu about a lap before your stop. On request: only when you say &quot;prepare the stop&quot;.">Auto : Apex règle l'essence / l'énergie, les pneus et les réparations dans le menu des stands de LMU environ un tour avant ton arrêt. À la demande : seulement quand tu dis « prépare l'arrêt ».</div>
@@ -438,6 +476,25 @@
     <section class="setsec"><h2>🎨 <span data-en="Look">Apparence</span></h2>
       <div class="setrow"><span data-en="Colour">Couleur</span><div class="setctl"><select id="accent" aria-label="Couleur" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><span data-en="Language">Langue</span><div class="setctl"><select id="lang" title="Langue / Language" aria-label="Langue / Language"></select></div></div>
+    </section>
+    <section class="setsec"><h2>🖥️ <span data-en="Layout">Affichage</span></h2>
+      <div class="setrow"><span data-en="Track map size">Taille du circuit</span><div class="setctl"><select id="lay_map" aria-label="Taille du circuit" style="max-width:none;border:0;padding:2px 4px"><option value="n" data-en="Normal">Normale</option><option value="l" data-en="Large">Grande</option><option value="xl" data-en="Extra large">Très grande</option></select></div></div>
+      <div class="setrow"><span data-en="Show tyres">Afficher les pneus</span><div class="setctl"><input type="checkbox" id="lay_tyres" checked></div></div>
+      <div class="setrow"><span data-en="Show weather">Afficher la météo</span><div class="setctl"><input type="checkbox" id="lay_weather" checked></div></div>
+      <div class="setrow"><span data-en="Show lap times">Afficher les chronos</span><div class="setctl"><input type="checkbox" id="lay_chrono" checked></div></div>
+      <div class="setrow"><span data-en="Show driving notes under the map">Remarques de pilotage sous le circuit</span><div class="setctl"><input type="checkbox" id="lay_behav" checked></div></div>
+      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="The cards you hide leave more room for the track map. Saved for this screen only (the phone has its own view).">Les cases que tu masques laissent plus de place au circuit. Gardé pour cet écran seulement (le téléphone a sa propre vue).</div>
+    </section>
+    <section class="setsec"><h2>💬 <span data-en="Discord (team)">Discord (équipe)</span></h2>
+      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Optional. Paste the webhook of your TEAM channel: Apex will post your lap times, setups and race debriefs there by itself. The link stays on this PC. For the public Apex Radio server, the share buttons copy the message and open Discord.">Facultatif. Colle le webhook du salon de TON ÉQUIPE : Apex y postera tout seul tes chronos, setups et débriefs de course. Le lien reste sur ce PC. Pour le serveur public Apex Radio, les boutons de partage copient le message et ouvrent Discord.</div>
+      <div class="setrow"><input id="hook" type="password" autocomplete="off" spellcheck="false" style="flex:1;min-width:0" placeholder="https://discord.com/api/webhooks/…" aria-label="Webhook Discord"></div>
+      <div class="row" style="gap:8px;justify-content:flex-start;flex-wrap:wrap"><button id="hooksave" class="pill" data-en="Save and test">Enregistrer et tester</button><button id="hookdel" class="pill" data-en="Remove">Retirer</button><span id="hookmsg" class="sub" style="font-family:inherit;letter-spacing:0;margin:0"></span></div>
+      <details class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0"><summary style="cursor:pointer;color:var(--accent)" data-en="How do I get a webhook?">Comment avoir un webhook ?</summary>
+        <ol style="padding-left:18px;margin:6px 0">
+          <li data-en="In Discord, hover the team channel and click the gear ⚙️ (Edit channel).">Dans Discord, passe la souris sur le salon de l'équipe et clique sur la roue ⚙️ (Modifier le salon).</li>
+          <li data-en="Integrations → Webhooks → New webhook.">Intégrations → Webhooks → Nouveau webhook.</li>
+          <li data-en="Click the webhook, then Copy webhook URL, and paste it here.">Clique sur le webhook, puis Copier l'URL du webhook, et colle-la ici.</li>
+        </ol><span data-en="Never post this link in public: anyone who has it can write in the channel.">Ne poste jamais ce lien en public : n'importe qui qui l'a peut écrire dans le salon.</span></details>
     </section>
     <section class="setsec"><h2>🔄 <span data-en="Version">Version</span></h2>
       <div class="setrow"><span data-en="Installed version">Version installée</span><div class="setctl"><b id="vernow">–</b></div></div>
@@ -494,6 +551,13 @@
     <section class="card">
       <h2 data-en="3 · History on this track">3 · Historique sur ce circuit</h2>
       <div id="wshist" class="sub"></div>
+    </section>
+    <section class="card">
+      <h2 data-en="4 · Share this setup">4 · Partager ce setup</h2>
+      <div class="sub" style="font-family:inherit;letter-spacing:0" data-en="Copies the setup file and opens the LMU setups channel on Discord: just press Ctrl+V.">Copie le fichier du setup et ouvre le salon setups LMU sur Discord : il ne reste qu'à faire Ctrl+V.</div>
+      <button class="act" id="wsshare" style="margin-top:10px;width:100%" data-en="📤 SHARE ON DISCORD">📤 PARTAGER SUR DISCORD</button>
+      <button id="wsteam" class="pill" style="margin-top:8px;width:100%" hidden data-en="🚀 Send to my team">🚀 Envoyer à mon équipe</button>
+      <div class="sub" id="wssharemsg" style="font-family:inherit;letter-spacing:0"></div>
     </section>
   </div>
 </div>
@@ -615,6 +679,8 @@ function render(d) {
     if ($("vchoice").innerHTML !== opts) $("vchoice").innerHTML = opts;
   }
   if (d.voice) { $("quiet").classList.toggle("on", !!d.voice.quiet); $("quiet").setAttribute("aria-pressed", !!d.voice.quiet); }
+  // le bouton Spotter s'allume même hors piste (avant, il restait éteint tant qu'on n'était pas dans la voiture)
+  if (d.spotter) { $("spot").classList.toggle("on", !!d.spotter.on); $("spot").setAttribute("aria-pressed", !!d.spotter.on); }
   if (d.phone) phoneUrl = d.phone;
   if (d.phone) $("phone").title = T(`Affichage téléphone : ${d.phone} (même Wi-Fi que le PC)`, `Phone view: ${d.phone} (same Wi-Fi as the PC)`);
   const tmD = d.times || {}, dlt = tmD.delta;
@@ -623,6 +689,8 @@ function render(d) {
     $("delta").className = dlt < -0.02 ? "fast" : dlt > 0.02 ? "slow" : "";
     $("delta").innerHTML = `${dlt > 0 ? "+" : dlt < 0 ? "−" : "±"}${Math.abs(dlt).toFixed(2)}<small>vs ${tmD.delta_ref === "record" ? "record" : T("meilleur tour", "best lap")}</small>`;
   }
+  $("wsteam").hidden = !(d.share && d.share.webhook);
+  $("hook").placeholder = d.share && d.share.webhook ? T("✓ Webhook enregistré (colle un autre lien pour le changer)", "✓ Webhook saved (paste another link to change it)") : "https://discord.com/api/webhooks/…";
   const up = d.update || {};
   if (up.version) $("vernow").textContent = up.version;
   if (up.all) $("verall").href = up.all;
@@ -648,7 +716,19 @@ function render(d) {
   } else
   $("upd").style.display = up.latest && hid !== up.latest ? "flex" : "none";
   if (up.latest && !tst) {
-    $("updtxt").textContent = T(`Nouvelle version ${up.latest} disponible (tu as la ${up.version})`, `New version ${up.latest} available (you have ${up.version})`);
+    const dl = up.dl || {};
+    if (!window.updInstalling) {
+      if (dl.state === "ready") {
+        $("updtxt").textContent = T(`Nouvelle version ${up.latest} téléchargée, prête à installer (tu as la ${up.version})`, `New version ${up.latest} downloaded, ready to install (you have ${up.version})`);
+      } else if (dl.state === "downloading") {
+        $("updtxt").textContent = T(`Nouvelle version ${up.latest} : téléchargement… ${dl.pct || 0} %`, `New version ${up.latest}: downloading… ${dl.pct || 0}%`);
+      } else {
+        $("updtxt").textContent = T(`Nouvelle version ${up.latest} disponible (tu as la ${up.version})`, `New version ${up.latest} available (you have ${up.version})`);
+      }
+      $("updinst").hidden = dl.state !== "ready";
+      $("updinst").textContent = T("INSTALLER", "INSTALL");
+      $("updlink").hidden = dl.state === "ready" || dl.state === "downloading";
+    }
     $("updlink").textContent = T("TÉLÉCHARGER", "DOWNLOAD"); $("updlink").href = up.url;
     $("updx").onclick = () => { try { localStorage.setItem("apex-upd-hide", up.latest); } catch (e) {} $("upd").style.display = "none"; };
   }
@@ -681,6 +761,7 @@ function render(d) {
   renderShortcuts(t);
   renderOnboard(d);
   if (document.activeElement !== $("coaching")) $("coaching").checked = d.coaching !== false;
+  if (document.activeElement !== $("coachrace")) $("coachrace").checked = d.coach_race !== false;
   if (d.pit && document.activeElement !== $("pitmode")) $("pitmode").value = d.pit.mode;
   if (d.encourage && document.activeElement !== $("encourage")) $("encourage").value = d.encourage;
   if (d.tone && document.activeElement !== $("tone")) $("tone").value = d.tone;
@@ -698,6 +779,20 @@ function render(d) {
   if (document.activeElement !== $("mic") && t.mic !== undefined) $("mic").value = t.mic == null ? "" : String(t.mic);
 
   $("wait").style.display = s.on_track ? "none" : "block";
+  const tmw = !s.on_track && s.team;
+  $("teamw").hidden = !tmw;
+  $("waitmsg").hidden = !!tmw;
+  if (tmw) {
+    const nm = x => (x || "").split(/\s+/).filter(Boolean).pop() || "";
+    $("tm_who").textContent = T(`${tmw.driver} roule`, `${tmw.driver} is driving`) + (tmw.pits ? T(" · aux stands", " · in the pits") : "");
+    $("tm_pos").textContent = `P${tmw.cpos}`;
+    $("tm_laps").textContent = tmw.laps ?? "–";
+    $("tm_last").textContent = fmtLap(tmw.last); $("tm_best").textContent = fmtLap(tmw.best);
+    $("tm_ahead").textContent = tmw.ahead ? `${tmw.ahead.gap != null ? "-" + tmw.ahead.gap.toFixed(1) + " s" : "–"} ${nm(tmw.ahead.name)}` : "–";
+    $("tm_behind").textContent = tmw.behind ? `${tmw.behind.gap != null ? "+" + tmw.behind.gap.toFixed(1) + " s" : "–"} ${nm(tmw.behind.name)}` : "–";
+    $("tm_stops").textContent = tmw.stops ?? "–";
+    $("tm_left").textContent = tmw.time_left != null ? `${Math.floor(tmw.time_left / 3600)}h${String(Math.floor(tmw.time_left % 3600 / 60)).padStart(2, "0")}` : "–";
+  }
   $("dash").style.display = s.on_track ? "flex" : "none";
   if (!s.on_track) return;
 
@@ -759,7 +854,6 @@ function render(d) {
   $("wet").textContent = `${n((s.wetness || 0) * 100, 0)} %`;
   $("fc").innerHTML = (d.forecast || []).filter(f => f.mins > 0).slice(0, 3).map(f =>
     `<span style="color:${f.rain >= 50 ? "var(--alert)" : "var(--muted)"}">+${f.mins} min : ${esc(f.sky)} (${f.rain}%)</span>`).join("<br>");
-  if (d.spotter) { $("spot").classList.toggle("on", !!d.spotter.on); $("spot").setAttribute("aria-pressed", !!d.spotter.on); }
   drawMap(d);
   $("laps").textContent = `${fmtLap(s.last_lap)} / ${fmtLap(s.best_lap)}`;
 
@@ -931,6 +1025,7 @@ $("tone").innerHTML = [["sobre", "Sobre (juste l'info)", "Plain (just the info)"
 $("tone").onchange = e => fetch("/api/tone", { method: "POST", body: JSON.stringify({ tone: e.target.value }) });
 $("drvname").onchange = e => fetch("/api/driver", { method: "POST", body: JSON.stringify({ name: e.target.value.trim() }) });
 $("pitmode").onchange = e => fetch("/api/pit/mode", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
+$("coachrace").onchange = e => fetch("/api/coach_race", { method: "POST", body: JSON.stringify({ on: e.target.checked }) });
 $("coaching").onchange = e => fetch("/api/coaching", { method: "POST", body: JSON.stringify({ on: e.target.checked }) });
 $("encourage").onchange = e => fetch("/api/encourage", { method: "POST", body: JSON.stringify({ level: e.target.value }) });
 
@@ -1109,6 +1204,63 @@ function launchLMU() { lmuClicked = Date.now(); fetch("/api/lmu/launch", { metho
 $("lmulaunch").onclick = launchLMU; $("lmulaunch2").onclick = launchLMU;
 $("autolmu").onchange = e => fetch("/api/lmu/autolaunch", { method: "POST", body: JSON.stringify({ on: e.target.checked }) });
 $("setopen").onclick = () => { $("set").hidden = false; };
+// --- affichage personnalisé, gardé dans ce navigateur
+function layLoad() { try { return JSON.parse(localStorage.getItem("apex-layout") || "{}"); } catch (e) { return {}; } }
+function layApply() {
+  const L = layLoad(), b = document.body.classList;
+  b.toggle("lay-l", L.map === "l"); b.toggle("lay-xl", L.map === "xl");
+  b.toggle("no-tyres", L.tyres === false); b.toggle("no-weather", L.weather === false);
+  b.toggle("no-chrono", L.chrono === false); b.toggle("no-behav", L.behav === false);
+  $("lay_map").value = L.map || "n";
+  $("lay_tyres").checked = L.tyres !== false; $("lay_weather").checked = L.weather !== false;
+  $("lay_chrono").checked = L.chrono !== false; $("lay_behav").checked = L.behav !== false;
+  window.dispatchEvent(new Event("resize"));
+}
+function laySet(k, v) { const L = layLoad(); L[k] = v; try { localStorage.setItem("apex-layout", JSON.stringify(L)); } catch (e) {} layApply(); }
+$("lay_map").onchange = e => laySet("map", e.target.value);
+for (const k of ["tyres", "weather", "chrono", "behav"]) $("lay_" + k).onchange = e => laySet(k, e.target.checked);
+layApply();
+// --- partage Discord
+async function sharePost(what, data) {
+  try { const r = await fetch("/api/share/" + what, { method: "POST", body: JSON.stringify(data || {}) }); return await r.json(); }
+  catch (e) { return { ok: false, why: "réseau" }; }
+}
+$("hooksave").onclick = async () => {
+  const url = $("hook").value.trim();
+  if (!url) { $("hookmsg").textContent = T("Colle d'abord le lien du webhook.", "Paste the webhook link first."); return; }
+  $("hookmsg").textContent = T("Test en cours…", "Testing…");
+  const j = await sharePost("webhook", { url, test: true });
+  $("hookmsg").textContent = j.ok ? T("✓ Relié ! Un message de test est arrivé dans le salon.", "✓ Linked! A test message arrived in the channel.")
+    : j.set === undefined || (!j.set && !j.why) ? T("Ce lien n'est pas un webhook Discord.", "That link isn't a Discord webhook.")
+    : T("Enregistré, mais le test n'est pas passé (" + (j.why || "?") + "). Vérifie le lien.", "Saved, but the test failed (" + (j.why || "?") + "). Check the link.");
+  if (j.ok) $("hook").value = "";
+};
+$("hookdel").onclick = async () => { await sharePost("webhook", { url: "" }); $("hook").value = ""; $("hookmsg").textContent = T("Webhook retiré.", "Webhook removed."); };
+$("wsshare").onclick = async () => {
+  const j = await sharePost("setup", {});
+  $("wssharemsg").textContent = j.ok ? T(`✓ « ${j.file} » copié, Discord s'ouvre sur le salon setups LMU : fais Ctrl+V.`, `✓ "${j.file}" copied, Discord opens the LMU setups channel: press Ctrl+V.`)
+    : j.why === "no-file" ? T("Pas encore de setup pour ce circuit : choisis-le à l'étape 1 ou crée le fichier APEX.", "No setup for this track yet: pick it in step 1 or create the APEX file.")
+    : T("Impossible de copier le fichier.", "Couldn't copy the file.");
+};
+$("wsteam").onclick = async () => {
+  $("wssharemsg").textContent = T("Envoi…", "Sending…");
+  const j = await sharePost("setup", { team: true });
+  $("wssharemsg").textContent = j.ok ? T(`✓ « ${j.file} » envoyé dans le salon de l'équipe.`, `✓ "${j.file}" sent to the team channel.`)
+    : j.why === "no-file" ? T("Pas encore de setup pour ce circuit.", "No setup for this track yet.") : T("Envoi impossible (" + j.why + ").", "Couldn't send (" + j.why + ").");
+};
+$("updinst").onclick = async () => {
+  window.updInstalling = true;
+  $("updinst").hidden = true;
+  $("updtxt").textContent = T("Installation de la mise à jour… Apex va se fermer puis se rouvrir tout seul.", "Installing the update… Apex will close and reopen by itself.");
+  try {
+    const r = await fetch("/api/update/install", { method: "POST" });
+    if (!r.ok) throw new Error(r.status);
+  } catch (e) {
+    window.updInstalling = false;
+    $("updtxt").textContent = T("Installation impossible, utilise le bouton TÉLÉCHARGER.", "Couldn't install, use the DOWNLOAD button.");
+    $("updlink").hidden = false;
+  }
+};
 // ---- vue téléphone : QR code + adresse sur le réseau local
 let phoneUrl = "";
 $("phone").onclick = async () => {

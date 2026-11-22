@@ -86,14 +86,14 @@ def _dix(x: float) -> str:
 
 # ======================================================================= 1. spotter
 class Spotter:
-    CAR_LEN = 4.8      # m : chevauchement avant/arrière (vraiment côte à côte)
+    CAR_LEN = 5.3      # m : chevauchement avant/arrière (vraiment côte à côte)
     SIDE_MIN, SIDE_MAX = 0.8, 4.0
     # une fois annoncée, la voiture reste « à côté » un peu plus longtemps : les positions sont celles du CENTRE
     # des voitures (5 m de long en Hypercar), lues 25 fois/s ; à 4,8 m on disait « dégagé » alors que l'arrière
     # de l'autre voiture était encore au niveau de ta roue arrière
     CAR_LEN_KEEP, SIDE_MAX_KEEP = 7.0, 5.0
     CLEAR_DELAY = 1.2  # s : voie libre depuis 1,2 s avant de dire « dégagé »
-    CONFIRM = 0.35     # s : la voiture doit rester à côté un instant (pas un dépassement éclair)
+    CONFIRM = 0.2      # s : la voiture doit rester à côté un instant (0,35 s : annonces trop tardives)
     SAME_SIDE_GAP = 4.0  # s : on ne répète pas le même côté trop vite
 
     def __init__(self, voice) -> None:
@@ -343,26 +343,64 @@ class Traffic:
         mine = pace.get(me["c"]) or my_lap
         now = time.monotonic()
         self._learn_speed(s, me)
-        if now - self.last < self.GLOBAL_GAP:
-            return
-        for c in s.cars:
-            if c.get("me") or c.get("pits") or c["c"] == me["c"] or c["c"] not in pace:
-                continue
-            delta = pace[c["c"]] - mine          # < 0 : catégorie plus rapide
-            name = class_name(c["cls"])
-            if delta < -0.02 * mine:             # plus rapide : on regarde derrière
-                gap = ((me["f"] - c["f"]) % 1) * Lm / speed
-                key = (c["id"], "back")
-                prev = self.prev_gap.get(key)
-                self.prev_gap[key] = gap
-                if 1.0 < gap < 3.0 and prev is not None and prev > gap and now - self.said.get(key, -999) > 90:
-                    self.said[key] = self.last = now
-                    catch = gap / -delta
-                    when = L("elle sera sur toi dans ce tour", "it'll be on you this lap") if catch < 1 else \
-                        L(f"elle sera sur toi dans {math.ceil(catch)} tours", f"it'll be on you in {math.ceil(catch)} laps")
-                    say(None, L(f"{name} qui arrive derrière, {gap:.0f} seconde{'s' if round(gap) > 1 else ''}, {when}.",
-                                f"{name} coming up behind, {gap:.0f} second{'s' if round(gap) != 1 else ''}, {when}."))
+        self._faster_behind(s, me, pace, mine, speed, now, say)
         self._slower_ahead(s, me, pace, mine, speed, now, say)
+
+    # « Drapeau bleu » anticipé (retours pilotes : l'annonce arrivait trop tard). On prévient quand la voiture
+    # plus rapide passe sous BLUE_GAP secondes derrière toi ; 10 s quand c'est un prototype qui arrive sur une GT
+    # (l'écart fond beaucoup plus vite).
+    BLUE_GAP = 5.0
+    BLUE_GAP_PROTO_ON_GT = 10.0
+    BLUE_EVERY = 8.0          # s entre deux annonces « derrière » (indépendant des annonces de trafic devant)
+
+    def _faster_behind(self, s, me, pace, mine, speed, now, say) -> None:
+        Lm = s.track_len
+        my_name = class_name(me.get("cls", ""))
+        gt_me = my_name in ("GT3", "GTE")
+        my_laps = me.get("laps")
+        cands = []
+        for c in s.cars:
+            if c.get("me") or c.get("pits") or c.get("dnf"):
+                continue
+            if c["c"] != me["c"]:
+                if c["c"] not in pace or pace[c["c"]] - mine >= -0.02 * mine:
+                    continue                      # pas une catégorie nettement plus rapide
+                lapping = False
+            else:
+                # même catégorie : seulement une voiture qui va te prendre un tour
+                if my_laps is None or c.get("laps") is None or c["laps"] - my_laps < 0.5:
+                    continue
+                lapping = True
+            gap = ((me["f"] - c["f"]) % 1) * Lm / speed    # secondes derrière toi
+            key = (c["id"], "back")
+            prev = self.prev_gap.get(key)
+            self.prev_gap[key] = gap
+            proto = class_name(c.get("cls", "")) in ("Hypercar", "LMP2", "LMP3")
+            limit = self.BLUE_GAP_PROTO_ON_GT if (gt_me and proto) else self.BLUE_GAP
+            if prev is None or not (gap <= limit < prev) or gap < 0.8 or prev - gap > 3:
+                continue                              # pas en train de franchir la limite (ou saut : tour bouclé)
+            if now - self.said.get(key, -999) < 90:
+                continue
+            cands.append((gap, c, key, lapping))
+        if not cands or now - getattr(self, "blue_last", -999) < self.BLUE_EVERY:
+            return
+        cands.sort(key=lambda x: x[0])
+        gap, c, key, lapping = cands[0]
+        group = [x for x in cands if x[1]["c"] == c["c"]]
+        for x in group:
+            self.said[x[2]] = now
+        self.blue_last = now
+        name = class_name(c.get("cls", ""))
+        secs = int(round(gap))
+        if lapping:
+            msg = L_(f"Le leader de ta catégorie arrive pour te prendre un tour, {secs} secondes derrière.",
+                     f"Class leader coming to lap you, {secs} seconds behind.")
+        elif len(group) > 1:
+            msg = L_(f"{len(group)} {name} arrivent derrière, {secs} secondes. Laisse-les passer proprement.",
+                     f"{len(group)} {name} cars coming up behind, {secs} seconds. Let them by cleanly.")
+        else:
+            msg = L_(f"{name} qui arrive derrière, {secs} secondes.", f"{name} coming up behind, {secs} seconds.")
+        say(None, msg)
 
     NB = 200   # le tour découpé en 200 tronçons : ta vitesse habituelle dans chacun
 
@@ -723,6 +761,9 @@ class Places:
         if s.in_pits or s.elapsed - self.pit_t < self.PIT_CALM:
             self.last_said = pos
             return
+        if pos == self.last_said and pos == self.cand:
+            a = s.ahead or {}
+            self.prev_ahead = a.get("name") or None     # qui était devant toi tant que la place ne bouge pas
         if pos != self.cand:
             self.cand, self.cand_t = pos, s.elapsed
             return
@@ -733,10 +774,24 @@ class Places:
         if abs(diff) > 3:
             return                 # gros saut : arrêts des autres, pénalité… pas un vrai dépassement
         if diff > 0:
+            how = self._how(s, diff)
+            if how in ("pits", "out", "slow"):
+                # pas un dépassement : la voiture devant est rentrée aux stands, a abandonné ou s'est arrêtée
+                who = _driver(getattr(self, "prev_ahead", None))
+                fr = f"{who}, qui était devant toi," if who else "la voiture devant"
+                en = f"{who}, who was ahead of you," if who else "the car ahead"
+                why = {"pits": L(f"{fr} s'arrête aux stands", f"{en} is pitting"),
+                       "out": L(f"{fr} a abandonné", f"{en} has retired"),
+                       "slow": L(f"{fr} est en difficulté", f"{en} is in trouble")}[how]
+                say(None, L(f"Tu récupères une place, {why}. Tu es P{pos}.", f"You pick up a place, {why}. You're P{pos}."))
+                return
             n = (L(f"{diff} places de plus", f"{diff} places gained") if diff > 1 else
                  var("up", [("Une place de plus", "One place up"), ("Et une place de gagnée", "And that's a place gained"),
                             ("Tu gagnes une place", "You gain a place")]))
-            pep = random.choice([L("Bien joué !", "Nice one!"), L("Superbe dépassement !", "Great move!"), L("Continue !", "Keep going!")])
+            if how == "pass":
+                pep = random.choice([L("Bien joué !", "Nice one!"), L("Superbe dépassement !", "Great move!"), L("Continue !", "Keep going!")])
+            else:   # on ne sait pas comment (pas de nom, plusieurs places) : pas de « dépassement »
+                pep = random.choice([L("Bien joué !", "Nice one!"), L("Continue !", "Keep going!"), L("C'est bien, garde ce rythme.", "Good, keep this pace.")])
             if ENCOURAGE == "motivant":
                 pep += " " + more_pep()
             say(None, L(f"{n}, tu es P{pos}. ", f"{n}, you're P{pos}. ") + pep)
@@ -746,6 +801,23 @@ class Places:
                 + random.choice([L("Accroche-toi, on va la reprendre.", "Hang on, we'll get it back."),
                                  L("Pas grave, reste concentré.", "No worries, stay focused."),
                                  L("Respire, la course est longue.", "Breathe, it's a long race.")]))
+
+    def _how(self, s, diff) -> str:
+        """Comment la place a été gagnée : « pass » (vrai dépassement), « pits », « out », « slow » ou « ? »."""
+        name = getattr(self, "prev_ahead", None)
+        if diff != 1 or not name:
+            return "?"
+        car = next((c for c in (s.cars or []) if c.get("name") == name and not c.get("me")), None)
+        if car is None or car.get("dnf"):
+            return "out"                       # abandon, disqualification ou déconnexion
+        if car.get("pits"):
+            return "pits"
+        if (car.get("spd") or 0) < 8:
+            return "slow"                      # arrêté sur la piste
+        b = s.behind or {}
+        if b.get("name") == name:
+            return "pass"
+        return "?"
 
     def _start_msg(self, pos, say) -> None:
         if not self.start or self.start < 0:

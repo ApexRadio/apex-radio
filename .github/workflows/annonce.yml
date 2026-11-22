@@ -4,8 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       message:
-        description: "Texte du message"
-        required: true
+        description: "Texte du message (vide si on renvoie l'annonce de la version)"
+        required: false
+        default: ""
+      version:
+        description: "Renvoyer l'annonce de la version actuelle (notes de release-notes.md)"
+        type: boolean
+        default: false
       image:
         description: "Image du dépôt à joindre (ex. docs/promo/teaser.jpg), facultatif"
         required: false
@@ -20,7 +25,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Annonce de la version
+        if: inputs.version
+        env:
+          DISCORD_WEBHOOK: ${{ inputs.early && secrets.DISCORD_WEBHOOK_EARLY || secrets.DISCORD_WEBHOOK }}
+        run: python3 .github/scripts/discord_announce.py
       - name: Envoi
+        if: ${{ !inputs.version }}
         env:
           HOOK: ${{ inputs.early && secrets.DISCORD_WEBHOOK_EARLY || secrets.DISCORD_WEBHOOK }}
           MESSAGE: ${{ inputs.message }}

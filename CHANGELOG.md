@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.4.3 (en préparation)
+- 🇫🇷 Neutralisation (drapeau jaune général, voiture de sécurité) : si tu devais t'arrêter bientôt de toute façon, l'ingé te conseille de rentrer maintenant (l'arrêt coûte beaucoup moins de temps). Il prévient si les stands sont fermés et redit dès qu'ils ouvrent. Un conseil seulement : le menu n'est réglé que si tu dis « je rentre ».
+- 🇬🇧 Neutralisation (full course yellow, safety car): if you were due to pit soon anyway, the engineer advises boxing now (the stop costs far less time). He warns if pits are closed and tells you when they open. Advice only: the menu is set only if you say "I'm pitting".
 - 🇫🇷 Relais : « Mes courses ». Garde plusieurs courses préparées à l'avance (6h de Spa, 4h de Monza…) et recharge-les d'un clic.
 - 🇬🇧 Stints: "My races". Keep several races prepared in advance (Spa 6h, Monza 4h…) and reload them in one click.
 - 🇫🇷 Menu des stands « À la demande » par défaut : Apex ne règle plus le menu tout seul (essence, pneus, réparations) tant que tu ne lui demandes pas (« prépare l'arrêt »). Ceux qui avaient choisi « Auto » le gardent.

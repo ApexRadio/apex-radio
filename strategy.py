@@ -301,6 +301,7 @@ class Engineer:
         k = math.floor(s.lap_frac + p.range_laps - BOX_RESERVE)
         p.laps_until_box = max(0, k)
         p.box_lap = s.laps_done + max(1, k)
+        self._fcy(s, p, full_stint)
 
         # quantités au stand
         laps_driven_before = max(0.0, max(1, k) - s.lap_frac)
@@ -450,6 +451,38 @@ class Engineer:
                           f"Rain {s.raining * 100:.0f} %, track {s.wetness * 100:.0f} % wet")
         else:
             p.weather = L("Sec", "Dry")
+
+    def _fcy(self, s: Snapshot, p: Plan, full_stint: float) -> None:
+        """Drapeau jaune général / voiture de sécurité : si un arrêt arrive bientôt de toute façon, le faire
+        maintenant coûte beaucoup moins de temps (les autres roulent au ralenti). Un conseil, une seule fois
+        par neutralisation ; le menu n'est réglé que si le pilote le demande (« je rentre »)."""
+        if not s.yellow:
+            self._fcy_said = None
+            return
+        if s.in_pits or not s.on_track or s.done or not p.stops_needed or p.laps_until_box is None:
+            return
+        st = getattr(s, "fcy_state", 0)
+        if getattr(self, "_fcy_said", None) == "advice":
+            return
+        window = max(3, 0.5 * full_stint) if full_stint and full_stint != math.inf else 6
+        if p.laps_until_box > window:
+            if getattr(self, "_fcy_said", None) is None:
+                self._fcy_said = "far"
+            return
+        if st == 2:      # stands fermés pour l'instant
+            if getattr(self, "_fcy_said", None) != "closed":
+                self._fcy_said = "closed"
+                self.say(None, L(f"Neutralisation : tu devais t'arrêter dans {p.laps_until_box} tour{'s' if p.laps_until_box > 1 else ''}. "
+                                 "Les stands sont fermés, je te dis dès qu'ils ouvrent.",
+                                 f"Neutralisation: you were due to pit in {p.laps_until_box} lap{'s' if p.laps_until_box != 1 else ''}. "
+                                 "Pits are closed, I'll tell you as soon as they open."), urgent=True, elapsed=s.elapsed)
+            return
+        self._fcy_said = "advice"
+        n = p.laps_until_box
+        self.say(None, L(f"Neutralisation ! Tu devais t'arrêter dans {n} tour{'s' if n > 1 else ''} : rentre maintenant, "
+                         "l'arrêt te coûte beaucoup moins de temps pendant que les autres roulent au ralenti. Dis « je rentre » et je prépare le menu.",
+                         f"Neutralisation! You were due to pit in {n} lap{'s' if n != 1 else ''}: box now, the stop costs far less time "
+                         "while everyone is slow. Say \"I'm pitting\" and I'll set the menu."), urgent=True, elapsed=s.elapsed)
 
     def _flags(self, s: Snapshot) -> None:
         if s.yellow and not self._was_yellow:

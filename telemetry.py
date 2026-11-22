@@ -80,6 +80,7 @@ class Snapshot:
     air_temp: float = 0.0
     track_temp: float = 0.0
     yellow: bool = False
+    fcy_state: int = 0               # LMU : état du drapeau jaune général (2 stands fermés, 4 stands ouverts…)
     yellow_sectors: list = field(default_factory=list)   # drapeaux jaunes locaux : numéros de secteur (1, 2, 3)
     blue: bool = False               # drapeau bleu montré à ta voiture (plus rapide derrière qui va te doubler)
     lap_invalid: bool = False        # tour en cours invalidé (limites de piste…)
@@ -482,6 +483,7 @@ class LMUSource:
         if y > 127:
             y -= 256
         s.yellow = 1 <= y <= 6 or s.game_phase == 6
+        s.fcy_state = y   # 2 = stands fermés, 3 = voie des stands ouverte aux leaders, 4 = stands ouverts
         # jaunes locaux par secteur. L'ordre des cases n'est pas documenté : on pensait « comme mSector »
         # (case 0 = secteur 3), mais un pilote sorti au secteur 1 s'est entendu dire « jaune secteur 3 ».
         # On part donc de l'ordre direct (case 0 = secteur 1) et on vérifie à chaque nouveau jaune avec les

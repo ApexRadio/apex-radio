@@ -1,5 +1,9 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.4.3 (en préparation)
+- 🇫🇷 « Combien de temps pour réparer ? » : l'ingé donne le temps de réparation de l'équipe de stand (lu dans LMU) et la durée estimée de l'arrêt. Seulement quand tu le demandes, pas d'annonce automatique.
+- 🇬🇧 "How long to repair?": the engineer gives the pit crew's repair time (read from LMU) and the estimated stop length. Only when you ask, no automatic call.
+
 ## 1.4.2
 - 🇫🇷 Setups : les setups Apex dont la note contenait « ≈ » n'apparaissaient pas dans la liste de LMU : corrigé (et plus jamais ce caractère).
 - 🇬🇧 Setups: Apex setups whose note contained "≈" didn't show up in LMU's list: fixed (and that character is never written again).

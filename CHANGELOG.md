@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.4.3 (en préparation)
+- 🇫🇷 Relais : « Mes courses ». Garde plusieurs courses préparées à l'avance (6h de Spa, 4h de Monza…) et recharge-les d'un clic.
+- 🇬🇧 Stints: "My races". Keep several races prepared in advance (Spa 6h, Monza 4h…) and reload them in one click.
 - 🇫🇷 Menu des stands « À la demande » par défaut : Apex ne règle plus le menu tout seul (essence, pneus, réparations) tant que tu ne lui demandes pas (« prépare l'arrêt »). Ceux qui avaient choisi « Auto » le gardent.
 - 🇬🇧 Pit menu "On request" by default: Apex no longer sets the menu by itself (fuel, tyres, repairs) until you ask ("prepare the stop"). Those who had picked "Auto" keep it.
 - 🇫🇷 « Combien de temps pour réparer ? » : l'ingé donne le temps de réparation de l'équipe de stand (lu dans LMU) et la durée estimée de l'arrêt. Seulement quand tu le demandes, pas d'annonce automatique.

@@ -254,7 +254,12 @@ class LMUSource:
         n = min(info.mNumVehicles, len(d.scoring.vehScoringInfo))
         if n <= 0:
             return None
+        # seulement les voitures pilotées par un autre humain (en ligne) : hors ligne, la voiture que tu
+        # as pilotée hier peut être conduite par l'IA (ex. TDS #14 hors ligne -> « Mode équipier » en solo)
         vs = [d.scoring.vehScoringInfo[i] for i in range(n)]
+        vs = [v for v in vs if int(getattr(v, "mControl", 2)) == 2]
+        if not vs:
+            return None
         if self._team_car is None:
             try:
                 from paths import DATA
@@ -273,7 +278,8 @@ class LMUSource:
             self._team_logged = _txt(car.mDriverName)
             print(f"  Mode équipier : {self._team_logged} roule ({_txt(car.mVehicleName)}, P{car.mPlace})")
         cls = car.mVehicleClass
-        same = sorted((v for v in vs if v.mVehicleClass == cls), key=lambda v: v.mPlace)
+        allv = [d.scoring.vehScoringInfo[i] for i in range(n)]
+        same = sorted((v for v in allv if v.mVehicleClass == cls), key=lambda v: v.mPlace)
         k = next((i for i, v in enumerate(same) if v.mID == car.mID), 0)
         lap = car.mLastLapTime if car.mLastLapTime > 0 else (car.mBestLapTime if car.mBestLapTime > 0 else 0)
 

@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.4.3 (en préparation)
+- 🇫🇷 Énergie virtuelle au stand plus sûre : consommation prudente (comme pour l'essence) et un tour de marge. Un arrêt imprévu (dégâts, changement de pilote) complète maintenant l'énergie si elle risque de manquer, au lieu de ne rien remettre.
+- 🇬🇧 Safer virtual energy at the stop: cautious consumption (like fuel) and a full lap of margin. An unplanned stop (damage, driver change) now tops up the energy if it might run short, instead of adding nothing.
 - 🇫🇷 Noms des virages aussi au Paul Ricard (S de la Verrerie, Camp, chicane du Mistral, Signes, double droite du Beausset, Bendor), à Daytona (International et West Horseshoe, Bus Stop) et à Road Atlanta (Esses, chicane).
 - 🇬🇧 Corner names also at Paul Ricard (Verrerie, Le Camp, Mistral chicane, Signes, Beausset, Bendor), Daytona (International and West Horseshoe, Bus Stop) and Road Atlanta (Esses, chicane).
 - 🇫🇷 Conseils de trajectoire, comparés à ton meilleur tour et dits comme un vrai ingé : « tu es loin de la corde, resserre ta trajectoire », « va chercher le vibreur à la corde », « tu sors trop large », « utilise toute la largeur en sortie ». Seulement quand ça te coûte du temps. Démarre au prochain meilleur tour enregistré.

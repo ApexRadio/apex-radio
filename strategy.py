@@ -19,6 +19,7 @@ from telemetry import Snapshot
 from i18n import L, dec
 from phrases import pick, dress
 
+ENERGY_MARGIN_LAPS = 1.0  # marge pour l'énergie virtuelle au stand (en tours)
 MARGIN_LAPS = 0.5        # marge de sécurité en tours d'essence / énergie (quantité à mettre, arrêts nécessaires)
 BOX_RESERVE = 0.2        # réserve gardée en arrivant au stand : on roule jusqu'au dernier tour possible
 TYRE_LIMIT = 0.30        # on considère un pneu à changer sous 30 % restant
@@ -316,7 +317,10 @@ class Engineer:
         p.fuel_to_add = max(0.0, min(need, room))
         p.fuel_total = min(s.fuel_capacity or 999, fuel_at_pit + p.fuel_to_add)
         if epl and s.energy is not None:
-            p.energy_target = min(1.0, (stint_laps + MARGIN_LAPS) * epl)
+            # énergie : valeur prudente (comme l'essence) et un tour entier de marge. Tomber à court d'énergie
+            # virtuelle coûte bien plus cher qu'1 ou 2 % de trop (retour joueur : « pas assez d'énergie au stand »)
+            epl_safe = self._per_lap("energy", safe=True) or epl
+            p.energy_target = min(1.0, (stint_laps + max(MARGIN_LAPS, ENERGY_MARGIN_LAPS)) * max(epl, epl_safe))
 
         stint_after = min(laps_after, full_stint)
         if p.tyre_compound:

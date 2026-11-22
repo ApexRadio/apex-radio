@@ -104,8 +104,10 @@ def spoken(text: str) -> str:
     text = text.replace("%", pct).replace("°", deg)
     text = re.sub(r"\bP(\d+)\b", r"P \1", text)
     text = text.replace("!", ".")
-    if voice_lang() == "fr":   # les voix françaises lisaient « spotté » : on écrit comme ça se dit
-        text = re.sub(r"(?i)\bspotters?\b", lambda m: ("S" if m.group(0)[0] == "S" else "s") + "potteur", text)
+    if voice_lang() == "fr":
+        # « spotter » et même « spotteur » sont lus à l'anglaise par la voix (« spoté », « spotiou »).
+        # Écrit « sspotteur », elle le lit enfin en français : /spɔtœʁ/ (vérifié sur les phonèmes).
+        text = re.sub(r"(?i)\bspott?(?:er|eur)(s?)\b", lambda m: ("S" if m.group(0)[0] == "S" else "s") + "spotteur" + m.group(1), text)
     return text
 
 

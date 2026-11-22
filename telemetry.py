@@ -407,6 +407,7 @@ class LMUSource:
                 "rel": "ahead" if v.mID == ahead_id else "behind" if v.mID == behind_id else "",
                 "best": v.mBestLapTime if v.mBestLapTime > 0 else None, "name": _txt(v.mDriverName),
                 "dnf": int(v.mFinishStatus) in (2, 3),     # abandon / disqualifié
+                "laps": v.mTotalLaps + ((v.mLapDist / info.mLapDist) if info.mLapDist > 0 else 0.0),
             })
         s.session_code = info.mSession
         s.track_len = info.mLapDist
@@ -475,12 +476,26 @@ class LMUSource:
         if y > 127:
             y -= 256
         s.yellow = 1 <= y <= 6 or s.game_phase == 6
-        # jaunes locaux par secteur (même ordre que mSector : case 0 = secteur 3)
+        # jaunes locaux par secteur. L'ordre des cases n'est pas documenté : on pensait « comme mSector »
+        # (case 0 = secteur 3), mais un pilote sorti au secteur 1 s'est entendu dire « jaune secteur 3 ».
+        # On part donc de l'ordre direct (case 0 = secteur 1) et on vérifie à chaque nouveau jaune avec les
+        # voitures arrêtées ou très lentes : l'ordre qui tombe dans leur secteur gagne un point.
         try:
             raw = [int(v) for v in info.mSectorFlag]
-            s.yellow_sectors = sorted(sector_index(i) + 1 for i, v in enumerate(raw) if v == 1)
-            if raw != getattr(self, "_sf_raw", raw):
-                print(f"  Drapeaux de secteur LMU : {raw}")
+            old = getattr(self, "_sf_raw", raw)
+            votes = self.__dict__.setdefault("_sf_votes", {"direct": 0, "decale": 0})
+            slow = {c["s"] for c in s.cars if not c.get("pits") and c.get("spd", 99) < 10}
+            for i, v in enumerate(raw):
+                if v == 1 and old[i] != 1 and slow:
+                    ok_d, ok_r = i in slow, sector_index(i) in slow
+                    if ok_d != ok_r:
+                        votes["direct" if ok_d else "decale"] += 1
+                        print(f"  Drapeaux de secteur : case {i}, voitures lentes au secteur "
+                              f"{sorted(x + 1 for x in slow)} -> ordre {'direct' if ok_d else 'décalé'} ({votes})")
+            order = (lambda i: sector_index(i)) if votes["decale"] > votes["direct"] else (lambda i: i)
+            s.yellow_sectors = sorted(order(i) + 1 for i, v in enumerate(raw) if v == 1)
+            if raw != old:
+                print(f"  Drapeaux de secteur LMU : {raw} -> secteurs {s.yellow_sectors}")
             self._sf_raw = raw
         except Exception:
             pass

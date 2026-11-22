@@ -193,6 +193,9 @@ class Voice:
         self.downloading = None     # {"name": ..., "pct": ...} pendant un téléchargement
         self._hush = threading.Event()   # le pilote appuie sur le bouton radio : on se tait
         self._slot = 0
+        self._cut = threading.Event()    # une annonce du spotter arrive : on coupe la phrase en cours
+        self._busy = None                # None, "spot" ou "info" : ce qui est en train d'être dit
+        self._spot_cache = {}            # phrases du spotter déjà prêtes (pas de calcul au moment de parler)
         threading.Thread(target=self._worker, daemon=True).start()
 
     # ------------------------------------------------------------ chargement
@@ -280,6 +283,8 @@ class Voice:
             self.last_text = text          # pour « répète » (touche Stream Deck)
         import time as _t
         self._q.put((-1 if spot else 0 if urgent else 1, self._n, text, _t.monotonic(), spot))
+        if spot and self._busy == "info":
+            self._cut.set()      # « à gauche ! » ne doit pas attendre la fin d'une phrase d'info
 
     # ------------------------------------------------------------ rendu
     def _render_piper(self, text: str) -> bytes:
@@ -300,7 +305,29 @@ class Voice:
             w.writeframes(data)
         return buf.getvalue()
 
-    def _play(self, wav: bytes) -> None:
+    def _wav(self, text: str, spot: bool) -> bytes:
+        key = (self.loaded, self.volume, text)
+        if spot and key in self._spot_cache:
+            return self._spot_cache[key]
+        wav = self._render_piper(spoken(text))
+        if spot:
+            self._spot_cache[key] = wav
+        return wav
+
+    def _warm(self) -> None:
+        """Prépare à l'avance les phrases du spotter : elles partent sans délai de calcul."""
+        if self._piper is None:
+            return
+        fr = voice_lang() == "fr"
+        for t in (["À gauche !", "À droite !", "Des deux côtés !", "Dégagé."] if fr else
+                  ["Car left!", "Car right!", "Three wide!", "Clear."]):
+            try:
+                self._wav(t, True)
+            except Exception:
+                pass
+
+    def _play(self, wav: bytes) -> bool:
+        """Renvoie False si la phrase a été coupée par une annonce du spotter."""
         self._hush.clear()
         if sys.platform == "win32":
             import time as _t
@@ -318,12 +345,16 @@ class Voice:
                 return
             end = _t.monotonic() + dur + 0.05
             while _t.monotonic() < end:
-                if self._hush.wait(0.03):
+                if self._hush.wait(0.02):
                     winsound.PlaySound(None, 0)
                     print("  [radio] coupée par le pilote")
                     break
+                if self._cut.is_set():
+                    winsound.PlaySound(None, 0)
+                    return False
         else:  # tests hors Windows : on enregistre le fichier
             (LOCAL / "derniere_annonce.wav").write_bytes(wav)
+        return True
 
     def _speak_windows(self, text: str) -> None:
         safe = text.replace("'", "''")
@@ -338,22 +369,33 @@ class Voice:
 
     def _worker(self) -> None:
         self._load()
+        self._warm()
         while True:
-            _, _, text, t0, spot = self._q.get()
+            prio, _, text, t0, spot = self._q.get()
             import time as _t
             if self.loaded != (voice_lang(), current_id()):   # langue ou voix changée : on charge l'autre voix
                 self._load()
+                self._warm()
             if spot and _t.monotonic() - t0 > 1.2:
                 continue   # info du spotter périmée : on ne la dit pas
             print(f"  [radio] {text}")
             if not self.enabled:
                 continue
             try:
-                t = spoken(text)
                 if self._piper is not None:
-                    self._play(self._render_piper(t))
+                    self._cut.clear()
+                    self._busy = "spot" if spot else "info"
+                    wav = self._wav(text, spot)
+                    if not spot and self._cut.is_set():
+                        done = False          # un « à gauche » est arrivé pendant le calcul : il passe d'abord
+                    else:
+                        done = self._play(wav)
+                    self._busy = None
+                    if not done:              # coupée par le spotter : on la redira juste après
+                        self._n += 1
+                        self._q.put((min(prio, 0), self._n, text, _t.monotonic(), False))
                 elif self.engine == "Windows":
-                    self._speak_windows(t)
+                    self._speak_windows(spoken(text))
             except Exception as e:
                 import traceback; traceback.print_exc()
                 print(f"  Erreur voix : {e!r}")

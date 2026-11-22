@@ -180,6 +180,8 @@ class RefLap:
                 continue
             self.last_cmp[cid] = d
             msg = self._advice(cid, d)
+            if s.session == "course":
+                continue   # en course on ne dit pas où tu perds du temps (retours pilotes) : gardé pour les questions
             now = time.monotonic()
             if not msg or now - self.said_at < GAP.get(s.session, GAP_DEFAULT):
                 continue

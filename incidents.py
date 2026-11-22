@@ -49,6 +49,10 @@ class Incidents:
         now = time.monotonic()
         new = [x for x in sorted(secs - old) if now - self.said.get(f"y{x}", -99) > 15]
         me = next((c for c in s.cars if c.get("me")), None)
+        if me and me.get("spd", 99) < 15:
+            # tu es toi-même arrêté ou au ralenti (sortie, tête-à-queue) : ce jaune, c'est sans doute pour toi
+            self._ysecs = secs
+            return
         for sec in new:
             self.said[f"y{sec}"] = now
             where = ""

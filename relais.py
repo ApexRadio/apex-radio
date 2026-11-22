@@ -20,12 +20,14 @@ from __future__ import annotations
 
 import json
 import math
+import re
 
 from i18n import L
 from paths import DATA
 
 CFG = DATA / "relais.json"
-DEFAULT = {"on": False, "drivers": ["", ""], "race_min": 360, "stint_min": 60, "mode": "pleins", "tanks": 2, "tyres": True}
+DEFAULT = {"on": False, "drivers": ["", ""], "race_min": 360, "stint_min": 60, "mode": "pleins", "tanks": 2, "tyres": True,
+           "name": "", "date": "", "start": "", "unavail": {}}
 
 
 def load() -> dict:
@@ -51,8 +53,69 @@ def clean(cfg: dict) -> dict:
     except (TypeError, ValueError):
         tanks = 2
     mode = "temps" if cfg.get("mode") == "temps" else "pleins"
+    start = str(cfg.get("start") or "").strip()
+    start = start if re.fullmatch(r"([01]?\d|2[0-3])[:h][0-5]\d", start) else ""
+    date = str(cfg.get("date") or "").strip()
+    date = date if re.fullmatch(r"\d{4}-\d{2}-\d{2}", date) else ""
+    un = cfg.get("unavail") or {}
+    un = {str(k)[:24]: str(v)[:120] for k, v in (un.items() if isinstance(un, dict) else []) if str(k).strip() and str(v).strip()}
     return {"on": bool(cfg.get("on")), "drivers": drivers, "race_min": race, "stint_min": stint,
-            "mode": mode, "tanks": tanks, "tyres": cfg.get("tyres", True) is not False}
+            "mode": mode, "tanks": tanks, "tyres": cfg.get("tyres", True) is not False,
+            "name": str(cfg.get("name") or "").strip()[:60], "date": date, "start": start.replace("h", ":"), "unavail": un}
+
+
+def _hm(txt: str) -> int | None:
+    """« 21:53 » ou « 21h53 » → minutes depuis minuit."""
+    m = re.fullmatch(r"\s*([01]?\d|2[0-3])[:h]([0-5]\d)\s*", txt or "")
+    return int(m.group(1)) * 60 + int(m.group(2)) if m else None
+
+
+def windows(cfg: dict, driver: str) -> list[tuple[int, int]]:
+    """Indisponibilités d'un pilote, en minutes depuis le départ : « 21:50-22:50, 01:00-02:00 »."""
+    t0 = _hm(cfg.get("start", ""))
+    if t0 is None:
+        return []
+    out = []
+    for part in re.split(r"[,;]", (cfg.get("unavail") or {}).get(driver, "")):
+        a, _, b = part.partition("-")
+        ma, mb = _hm(a), _hm(b)
+        if ma is None or mb is None:
+            continue
+        ra, rb = (ma - t0) % 1440, (mb - t0) % 1440
+        if rb <= ra:
+            rb += 1440
+        out.append((ra, rb))
+    return out
+
+
+def clock(cfg: dict, minute: float | None) -> str | None:
+    """Minutes depuis le départ → heure réelle (« 23:48 ») si l'heure de départ est connue."""
+    t0 = _hm(cfg.get("start", ""))
+    if t0 is None or minute is None:
+        return None
+    m = int(round(t0 + minute)) % 1440
+    return f"{m // 60:02d}:{m % 60:02d}"
+
+
+def _assign(cfg: dict, stints: list[dict]) -> list[dict]:
+    """Répartit les pilotes à tour de rôle en sautant ceux qui ne sont pas disponibles pendant le relais."""
+    d = names(cfg)
+    busy = {x: windows(cfg, x) for x in d}
+    k = 0
+    for st in stints:
+        pick = None
+        for j in range(len(d)):
+            cand = d[(k + j) % len(d)]
+            if st["start"] is None or not any(a < st["end"] and st["start"] < b for a, b in busy[cand]):
+                pick = (k + j) % len(d)
+                break
+        if pick is None:
+            pick = k % len(d)
+            st["clash"] = True          # personne de libre : on garde l'ordre, et on le signale
+        st["driver"] = d[pick]
+        st["clock_start"], st["clock_end"] = clock(cfg, st["start"]), clock(cfg, st["end"])
+        k = pick + 1
+    return stints
 
 
 def save(cfg: dict) -> dict:
@@ -66,7 +129,7 @@ def save(cfg: dict) -> dict:
 
 
 def names(cfg: dict) -> list[str]:
-    return cfg["drivers"] or [L("Pilote 1", "Driver 1")]
+    return cfg["drivers"] or [L("Pilote 1", "Driver 1"), L("Pilote 2", "Driver 2")]
 
 
 def stint_min(cfg: dict, fuel_min: float | None = None) -> float | None:
@@ -85,6 +148,10 @@ def count(cfg: dict, fuel_min: float | None = None) -> int:
 
 
 def plan(cfg: dict, fuel_min: float | None = None) -> list[dict]:
+    return _assign(cfg, _plan(cfg, fuel_min))
+
+
+def _plan(cfg: dict, fuel_min: float | None = None) -> list[dict]:
     """Plan théorique : relais de même durée, pilotes à tour de rôle."""
     n, d = count(cfg, fuel_min), names(cfg)
     if not n:
@@ -152,6 +219,11 @@ class Relay:
         return L(", avec 4 pneus neufs", ", with four new tyres") if self.cfg["tyres"] else ""
 
     def update(self, s, p, say) -> None:
+        try:   # durée d'un plein, pour placer les relais dans le temps (indisponibilités)
+            if p is not None and p.fuel_per_lap and p.avg_lap and getattr(s, "fuel_capacity", 0):
+                self._fullmin = round(s.fuel_capacity / p.fuel_per_lap * p.avg_lap / 60)
+        except Exception:
+            pass
         eng = getattr(self, "eng", None)
         if eng is not None:
             eng.relay_tyres = False
@@ -205,7 +277,7 @@ class Relay:
         full = None
         if avg and p.fuel_per_lap and s.fuel_capacity:
             full = s.fuel_capacity / p.fuel_per_lap * avg       # durée d'un plein complet (s)
-        nxt = d[(self.cur + 1) % len(d)]
+        nxt = self._nxt(d)
 
         if pleins:
             # relais = N pleins : le changement se fait au N-ième arrêt du relais (s'il reste des arrêts)
@@ -271,7 +343,8 @@ class Relay:
         prev = self.cur
         # le nom dans le jeu donne le nouveau pilote ; sinon (nom inchangé, ou inconnu) on suit l'ordre prévu
         if not (renamed and self._match(s.driver)) or self.cur == prev:
-            self.cur = (prev + 1) % len(d)
+            k = self._planned(self.done)
+            self.cur = k if k is not None else (prev + 1) % len(d)
         self.stint_start, self.pending, self.said = s.elapsed, False, set()
         self.stops0 = s.pit_stops
         if self.cfg["mode"] == "pleins":
@@ -287,13 +360,29 @@ class Relay:
             msg += L(" Le plan est recalculé.", " The plan has been recalculated.")
         say(None, msg)
 
+    _fullmin = None
+
+    def _planned(self, k: int) -> int | None:
+        """Pilote prévu pour le relais k (0 = premier) quand le plan tient compte des indisponibilités."""
+        if not self.cfg.get("unavail") or not self.cfg.get("start"):
+            return None
+        p = plan(self.cfg, self._fullmin)
+        d = names(self.cfg)
+        if k < len(p) and p[k].get("start") is not None and p[k]["driver"] in d:
+            return d.index(p[k]["driver"])
+        return None
+
+    def _nxt(self, d: list[str]) -> str:
+        k = self._planned(self.done + 1)
+        return d[k] if k is not None else d[(self.cur + 1) % len(d)]
+
     # ------------------------------------------------------------------ questions / page
     def answer(self) -> str:
         if not self.cfg["on"]:
             return L("Le planning de relais n'est pas activé. Ça se règle dans la page RELAIS du tableau de bord.",
                      "The stint planner is off. You can set it up on the STINTS page of the dashboard.")
         d = names(self.cfg)
-        nxt = d[(self.cur + 1) % len(d)]
+        nxt = self._nxt(d)
         order = ", ".join(d[(self.cur + i) % len(d)] for i in range(len(d)))
         if self.stint_start is None:
             if self.cfg["mode"] == "pleins":
@@ -322,7 +411,7 @@ class Relay:
         if not self.cfg["on"] or self.stint_start is None:
             return None
         d = names(self.cfg)
-        nxt = d[(self.cur + 1) % len(d)]
+        nxt = self._nxt(d)
         if self.cfg["mode"] == "pleins":
             if self.eng_plan_last_stop and not self.pending:
                 when = L("jusqu'au bout", "to the end")
@@ -347,11 +436,42 @@ class Relay:
         if self.stint_start is not None:
             d = names(self.cfg)
             live = {"stint": self.done + 1, "of": self.n if self.cfg["mode"] == "temps" else None,
-                    "driver": d[self.cur], "next": d[(self.cur + 1) % len(d)],
+                    "driver": d[self.cur], "next": self._nxt(d),
                     "driven_min": round(self.driven / 60),
                     "target_min": round(self.target / 60) if self.target else None,
                     "remaining_min": round((self.remaining or 0) / 60), "pending": self.pending}
-        return {"cfg": self.cfg, "plan": plan(self.cfg, full_min), "fuel_stint_min": full_min, "live": live}
+        pl = plan(self.cfg, full_min)
+        try:
+            import share
+            hook = bool(share.webhook())
+        except Exception:
+            hook = False
+        return {"cfg": self.cfg, "plan": pl, "fuel_stint_min": full_min, "live": live, "share": share_text(self.cfg, pl),
+                "busy": {x: windows(self.cfg, x) for x in names(self.cfg)}, "webhook": hook}
+
+
+def share_text(cfg: dict, pl: list[dict]) -> str:
+    """Le planning, prêt à coller dans le salon Discord de l'équipe."""
+    head = "🏁 " + (cfg.get("name") or L("Planning des relais", "Stint plan"))
+    if cfg.get("date"):
+        y, m, dd = cfg["date"].split("-")
+        head += f" · {dd}/{m}/{y}"
+    if cfg.get("start"):
+        head += L(f" · départ {cfg['start']}", f" · start {cfg['start']}")
+    h, mn = divmod(cfg["race_min"], 60)
+    head += f" · {h}h{mn:02d}" if mn else f" · {h}h"
+    lines = [head]
+    for st in pl:
+        if st.get("start") is None:
+            lines.append(f"{st['n']}. {st['driver']}")
+            continue
+        when = (f"{st['clock_start']} → {st['clock_end']}" if st.get("clock_start")
+                else f"{st['start'] // 60}h{st['start'] % 60:02d} → {st['end'] // 60}h{st['end'] % 60:02d}")
+        lines.append(f"{st['n']}. {st['driver']} · {when}" + (" ⚠️" if st.get("clash") else ""))
+    if any(st.get("clash") for st in pl):
+        lines.append(L("⚠️ personne n'est libre sur ce relais", "⚠️ nobody is free for this stint"))
+    lines.append("· Apex Radio")
+    return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------- page RELAIS
@@ -374,6 +494,7 @@ def page() -> str:
         "drivers": ("Pilotes, dans l'ordre", "Drivers, in order"),
         "add": ("+ Ajouter un pilote", "+ Add a driver"),
         "save": ("ENREGISTRER", "SAVE"), "saved": ("Enregistré ✓", "Saved ✓"),
+        "new": ("Nouvelle course", "New race"), "new_sure": ("Sûr ? Re-clique pour effacer", "Sure? Click again to clear"),
         "plan": ("Le plan", "The plan"), "n": ("Relais", "Stint"), "who": ("Pilote", "Driver"),
         "from": ("Début", "Start"), "to": ("Fin", "End"), "dur": ("Durée", "Length"),
         "live": ("En course", "Live"),
@@ -382,20 +503,45 @@ def page() -> str:
         "name": ("Prénom (comme dans le jeu, si possible)", "Name (as in the game, if possible)"),
         "tip": ("Astuce : écris les noms comme dans le jeu, Apex reconnaîtra qui est au volant.",
                 "Tip: write the names as in the game, Apex will recognise who is driving."),
+        "rname": ("Nom de la course", "Race name"), "rname_ph": ("ex. 6h de Spa", "e.g. Spa 6 Hours"),
+        "rdate": ("Date", "Date"), "rstart": ("Heure de départ", "Start time"),
+        "busy_ph": ("Pas dispo : 21:50-22:50", "Not free: 21:50-22:50"),
+        "busy_tip": ("Indisponibilités : heures où le pilote ne peut pas rouler (ex. 21:50-22:50, 01:00-02:00). "
+                     "Il faut l'heure de départ.",
+                     "Unavailability: times the driver can't drive (e.g. 21:50-22:50, 01:00-02:00). Needs the start time."),
+        "tl": ("Frise", "Timeline"), "share": ("📋 Partager le planning", "📋 Share the plan"),
+        "copied": ("✓ Copié ! Colle-le dans Discord (Ctrl+V)", "✓ Copied! Paste it in Discord (Ctrl+V)"),
+        "team": ("🚀 Équipe", "🚀 Team"), "clash": ("personne de libre", "nobody free"),
     }.items()}
     body = f"""
 <style>
 .card{{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0}}
 .f[hidden]{{display:none}} .f{{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0}} .f label{{min-width:230px;color:var(--muted)}}
 input{{background:#06070B;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font:inherit}}
-input[type=number]{{width:70px}} select{{background:#06070B;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font:inherit}} .drv input{{width:260px}} .drv{{display:flex;gap:6px;margin:6px 0}}
+input[type=number]{{width:70px}} select{{background:#06070B;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font:inherit}} .drv input{{width:220px}} .drv input.busy{{width:230px;font-size:13px}} .drv{{display:flex;gap:6px;margin:6px 0}}
 button{{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font:inherit;cursor:pointer}}
 button.main{{background:var(--accent);color:#06070B;border-color:var(--accent);font-weight:700;letter-spacing:.06em}}
 #ok{{color:#2BFF88;margin-left:10px}} .big{{font-family:"JetBrains Mono",monospace;font-size:22px;font-weight:700;color:var(--accent)}}
+/* style néon, comme les réglages */
+h1{{text-shadow:0 0 14px rgba(0,229,255,.55)}}
+.card{{--c:0,229,255;border-color:rgba(var(--c),.55);background:linear-gradient(180deg,rgba(var(--c),.07),rgba(var(--c),.015) 60%);
+      box-shadow:0 0 16px rgba(var(--c),.18),inset 0 0 10px rgba(var(--c),.06)}}
+#livecard{{--c:255,46,136}} .card.scroll{{--c:168,85,247}}
+#livecard h2{{color:rgb(255,46,136);text-shadow:0 0 8px rgba(255,46,136,.5)}}
+h2{{color:rgb(168,85,247);text-shadow:0 0 8px rgba(168,85,247,.45);letter-spacing:.12em}}
+input:focus,select:focus{{outline:none;border-color:rgb(0,229,255);box-shadow:0 0 10px rgba(0,229,255,.35)}}
+input[type=checkbox]{{accent-color:rgb(0,229,255);width:17px;height:17px}}
+button.main{{box-shadow:0 0 16px rgba(0,229,255,.45)}} button.main:hover{{box-shadow:0 0 24px rgba(0,229,255,.7)}}
+#add:hover,.drv button:hover{{border-color:rgb(0,229,255);box-shadow:0 0 10px rgba(0,229,255,.3)}}
+th{{color:rgb(168,85,247)}}
+.dc0{{color:rgb(0,229,255)}} .dc1{{color:rgb(255,46,136)}} .dc2{{color:rgb(255,210,63)}} .dc3{{color:rgb(61,255,162)}}
+#plan td:nth-child(2){{font-weight:700}}
 </style>
 <h1>{t['title']}</h1><p class="muted">{t['intro']}</p>
 <div class="card">
  <div class="f"><label for="on">{t['on']}</label><input type="checkbox" id="on"></div>
+ <div class="f"><label>{t['rname']}</label><input id="rn" maxlength="60" style="width:260px" placeholder="{t['rname_ph']}"></div>
+ <div class="f"><label>{t['rdate']}</label><input type="date" id="rd"> <label style="min-width:0;margin-left:14px">{t['rstart']}</label><input type="time" id="rs"></div>
  <div class="f"><label>{t['race']}</label><input type="number" id="rh" min="0" max="48"> {t['h']}
    <input type="number" id="rm" min="0" max="59" step="5"> {t['min']}</div>
  <div class="f"><label>{t['mode']}</label><select id="mode"><option value="pleins">{t['mp']}</option><option value="temps">{t['mt']}</option></select></div>
@@ -403,49 +549,116 @@ button.main{{background:var(--accent);color:#06070B;border-color:var(--accent);f
  <div class="f" id="rowst"><label>{t['stint']}</label><input type="number" id="st" min="10" max="360" step="5"> {t['min']}</div>
  <div class="f"><label for="ty">{t['tyres']}</label><input type="checkbox" id="ty"></div>
  <div class="f" style="align-items:flex-start"><label>{t['drivers']}</label><div><div id="drvs"></div>
-   <button id="add">{t['add']}</button><div class="muted" style="font-size:13px;margin-top:6px">{t['tip']}</div></div></div>
- <div class="f"><button class="main" id="save">{t['save']}</button><span id="ok"></span></div>
+   <button id="add">{t['add']}</button><div class="muted" style="font-size:13px;margin-top:6px">{t['tip']}<br>{t['busy_tip']}</div></div></div>
+ <div class="f"><button class="main" id="save">{t['save']}</button> <button id="newrace" style="margin-left:10px">{t['new']}</button><span id="ok"></span></div>
 </div>
 <div class="card" id="livecard" hidden><h2 style="margin-top:0">{t['live']}</h2><div id="live"></div></div>
 <h2>{t['plan']}</h2><p class="muted" id="fuel"></p>
 <div class="card scroll"><table><thead><tr><th>{t['n']}</th><th>{t['who']}</th><th>{t['from']}</th><th>{t['to']}</th><th>{t['dur']}</th></tr></thead>
 <tbody id="plan"></tbody></table></div>
+<div class="card" id="tlcard" hidden><h2 style="margin-top:0">{t['tl']}</h2><div id="tl"></div></div>
+<div style="margin:12px 0"><button id="sharebtn">{t['share']}</button> <button id="teambtn" hidden>{t['team']}</button> <span id="sharemsg" class="muted"></span></div>
 <script>
 const T = {json.dumps(t, ensure_ascii=False)};
 const $ = id => document.getElementById(id);
 const hm = m => Math.floor(m / 60) + "h" + String(m % 60).padStart(2, "0");
-let drivers = [];
+let drivers = [], busy = {{}}, shareTxt = "";
 function drawDrivers() {{
   $("drvs").innerHTML = "";
   drivers.forEach((d, i) => {{
     const row = document.createElement("div"); row.className = "drv";
     const inp = document.createElement("input"); inp.value = d; inp.placeholder = T.name; inp.maxLength = 24;
-    inp.oninput = () => drivers[i] = inp.value;
+    const old = d;
+    inp.oninput = () => {{ const v = busy[drivers[i]]; delete busy[drivers[i]]; drivers[i] = inp.value; if (v) busy[inp.value] = v; }};
+    const bz = document.createElement("input"); bz.className = "busy"; bz.placeholder = T.busy_ph; bz.maxLength = 120;
+    bz.value = busy[d] || ""; bz.oninput = () => {{ busy[drivers[i]] = bz.value; }};
     const del = document.createElement("button"); del.textContent = "✕";
     del.onclick = () => {{ drivers.splice(i, 1); drawDrivers(); }};
-    row.append(inp, del); $("drvs").append(row);
+    row.append(inp, bz, del); $("drvs").append(row);
   }});
 }}
 function draw(d, form) {{
   if (form) {{
     $("on").checked = d.cfg.on; $("rh").value = Math.floor(d.cfg.race_min / 60); $("rm").value = d.cfg.race_min % 60;
     $("st").value = d.cfg.stint_min; $("tk").value = d.cfg.tanks; $("ty").checked = d.cfg.tyres; $("mode").value = d.cfg.mode; modeRows();
+    busy = Object.assign({{}}, d.cfg.unavail || {{}});
+    $("rn").value = d.cfg.name || ""; $("rd").value = d.cfg.date || ""; $("rs").value = d.cfg.start || "";
     drivers = d.cfg.drivers.length ? d.cfg.drivers.slice() : ["", ""]; drawDrivers();
   }}
   const known = d.plan.length && d.plan[0].start !== null;
-  $("plan").innerHTML = d.plan.map(p => `<tr><td>${{p.n}}</td><td>${{p.driver.replace(/</g, "&lt;")}}</td><td>${{known ? hm(p.start) : "–"}}</td><td>${{known ? hm(p.end) : "–"}}</td><td>${{known ? (p.end - p.start) + " min" : (d.cfg.mode === "pleins" ? d.cfg.tanks + " ⛽" : "–")}}</td></tr>`).join("");
+  const order = [];
+  $("plan").innerHTML = d.plan.map(p => {{ if (!order.includes(p.driver)) order.push(p.driver); return `<tr><td>${{p.n}}</td><td class="dc${{order.indexOf(p.driver) % 4}}">${{p.driver.replace(/</g, "&lt;")}}</td><td>${{known ? (p.clock_start || hm(p.start)) : "–"}}</td><td>${{known ? (p.clock_end || hm(p.end)) : "–"}}${{p.clash ? " ⚠️" : ""}}</td><td>${{known ? (p.end - p.start) + " min" : (d.cfg.mode === "pleins" ? d.cfg.tanks + " ⛽" : "–")}}</td></tr>`; }}).join("");
+  shareTxt = d.share || ""; drawTL(d, known, order); $("teambtn").hidden = !d.webhook;
   $("fuel").textContent = d.fuel_stint_min ? `${{T.fuel}} ${{d.fuel_stint_min}} min.` : (known ? "" : T.notime);
   $("livecard").hidden = !d.live;
   if (d.live) $("live").innerHTML = `<span class="big">${{T.n}} ${{d.live.stint}}${{d.live.of ? " / " + d.live.of : ""}}</span> · ${{d.live.driver.replace(/</g, "&lt;")}} · ${{d.live.driven_min}}${{d.live.target_min ? " / " + d.live.target_min : ""}} min → ${{d.live.next.replace(/</g, "&lt;")}}`;
 }}
+const COLORS = ["0,229,255", "255,46,136", "255,210,63", "61,255,162"];
+function drawTL(d, known, order) {{
+  if (!known) {{ $("tlcard").hidden = true; return; }}
+  $("tlcard").hidden = false;
+  const total = d.cfg.race_min, W = 1000, rowH = 34, left = 130;
+  const names = d.cfg.drivers.length ? d.cfg.drivers : order;
+  const t0 = d.cfg.start ? (+d.cfg.start.slice(0, 2)) * 60 + (+d.cfg.start.slice(3, 5)) : null;
+  const x = m => left + (W - left - 10) * Math.min(1, m / total);
+  let svg = `<svg viewBox="0 0 ${{W}} ${{(names.length + 1) * rowH + 24}}" style="width:100%;height:auto">`;
+  const step = total > 600 ? 120 : 60;
+  for (let m = 0; m <= total; m += step) {{
+    const lab = t0 != null ? String(Math.floor((t0 + m) % 1440 / 60)).padStart(2, "0") + ":" + String((t0 + m) % 60).padStart(2, "0") : Math.floor(m / 60) + "h";
+    svg += `<line x1="${{x(m)}}" y1="16" x2="${{x(m)}}" y2="${{(names.length + 1) * rowH + 10}}" stroke="rgba(255,255,255,.08)"/>`
+         + `<text x="${{x(m)}}" y="12" fill="#8892A6" font-size="11" text-anchor="${{m + step > total ? "end" : "middle"}}" font-family="JetBrains Mono,monospace">${{lab}}</text>`;
+  }}
+  names.forEach((nm, i) => {{
+    const y = 22 + i * rowH, c = COLORS[i % 4];
+    svg += `<text x="6" y="${{y + 20}}" fill="rgb(${{c}})" font-size="14" font-weight="700">${{nm.replace(/</g, "&lt;")}}</text>`;
+    (d.busy || {{}})[nm] && d.busy[nm].forEach(([a, b]) => {{
+      svg += `<rect x="${{x(a)}}" y="${{y + 4}}" width="${{Math.max(2, x(b) - x(a))}}" height="${{rowH - 10}}" fill="rgba(255,255,255,.07)" stroke="rgba(255,255,255,.25)" stroke-dasharray="4 3" rx="5"/>`;
+    }});
+    d.plan.filter(p => p.driver === nm).forEach(p => {{
+      svg += `<rect x="${{x(p.start)}}" y="${{y + 4}}" width="${{Math.max(3, x(p.end) - x(p.start) - 2)}}" height="${{rowH - 10}}" rx="5" fill="rgba(${{c}},.85)" style="filter:drop-shadow(0 0 5px rgba(${{c}},.6))"/>`
+           + `<text x="${{x(p.start) + 6}}" y="${{y + 21}}" fill="#06070B" font-size="12" font-weight="700">${{p.n}}</text>`;
+    }});
+  }});
+  svg += "</svg>";
+  $("tl").innerHTML = svg;
+}}
+$("sharebtn").onclick = async () => {{
+  let ok = false;
+  try {{ await navigator.clipboard.writeText(shareTxt); ok = true; }} catch (_) {{
+    const a = document.createElement("textarea"); a.value = shareTxt; document.body.appendChild(a); a.select();
+    try {{ ok = document.execCommand("copy"); }} catch (__) {{}} a.remove(); }}
+  $("sharemsg").textContent = ok ? T.copied : "";
+  if (ok) fetch("/api/share/open", {{ method: "POST", body: "{{}}" }});
+}};
+$("teambtn").onclick = async () => {{
+  $("sharemsg").textContent = "…";
+  let ok = false;
+  try {{ ok = (await (await fetch("/api/share/text", {{ method: "POST", body: JSON.stringify({{ text: shareTxt }}) }})).json()).ok; }} catch (_) {{}}
+  $("sharemsg").textContent = ok ? "✓" : "✗";
+}};
 async function load(form) {{ draw(await (await fetch("/api/relais")).json(), form); }}
 function modeRows() {{ const p = $("mode").value === "pleins"; $("rowtanks").hidden = !p; $("rowst").hidden = p; }}
 $("mode").onchange = modeRows;
 $("add").onclick = () => {{ if (drivers.length < 8) {{ drivers.push(""); drawDrivers(); }} }};
 $("save").onclick = async () => {{
-  const cfg = {{ on: $("on").checked, race_min: (+$("rh").value || 0) * 60 + (+$("rm").value || 0), stint_min: +$("st").value, tanks: +$("tk").value, tyres: $("ty").checked, mode: $("mode").value, drivers }};
+  const cfg = {{ on: $("on").checked, race_min: (+$("rh").value || 0) * 60 + (+$("rm").value || 0), stint_min: +$("st").value, tanks: +$("tk").value, tyres: $("ty").checked, mode: $("mode").value, drivers,
+    name: $("rn").value, date: $("rd").value, start: $("rs").value, unavail: busy }};
   draw(await (await fetch("/api/relais", {{ method: "POST", body: JSON.stringify(cfg) }})).json(), true);
   $("ok").textContent = T.saved; setTimeout(() => $("ok").textContent = "", 2500);
+}};
+// Nouvelle course : on efface nom, date, heure et indisponibilités (on garde les pilotes et les réglages de relais)
+let armNew = null;
+$("newrace").onclick = () => {{
+  if (!armNew) {{
+    $("newrace").textContent = T.new_sure;
+    armNew = setTimeout(() => {{ armNew = null; $("newrace").textContent = T.new; }}, 4000);
+    return;
+  }}
+  clearTimeout(armNew); armNew = null; $("newrace").textContent = T.new;
+  $("rn").value = ""; $("rd").value = ""; $("rs").value = ""; $("on").checked = false;
+  Object.keys(busy).forEach(k => delete busy[k]);
+  drawDrivers();
+  $("save").click();
 }};
 load(true); setInterval(() => load(false), 5000);
 </script>"""

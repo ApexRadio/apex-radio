@@ -180,6 +180,9 @@ class RefLap:
                 continue
             self.last_cmp[cid] = d
             msg = self._advice(cid, d)
+            import behavior
+            if s.session == "course" and not behavior.COACH_RACE:
+                continue   # réglage : pas de conseils virage en course (toujours dispo si tu demandes)
             now = time.monotonic()
             if not msg or now - self.said_at < GAP.get(s.session, GAP_DEFAULT):
                 continue

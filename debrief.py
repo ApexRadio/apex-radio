@@ -58,6 +58,15 @@ class Recorder:
             self._start(s)
         self._lap_pit |= s.in_pits
         self._lap_invalid |= s.lap_invalid
+        if s.done and s.session == "course" and self.data and self.data["laps"] and not self.data.get("posted"):
+            self.data["posted"] = True       # fin de course : débrief envoyé tout seul au salon de l'équipe (si webhook)
+            try:
+                import share, threading
+                if share.webhook():
+                    txt = summary_text(self.data)
+                    threading.Thread(target=share.post, args=(txt,), daemon=True).start()
+            except Exception:
+                pass
         if s.laps_done == self._laps_seen:
             return
         # un tour vient d'être bouclé
@@ -193,7 +202,64 @@ def render(d: dict) -> str:
 <h2>{L('Comportement de la voiture', 'Car behaviour')}</h2><ul>{issues or '<li class="muted">' + L('Rien de répétitif signalé.', 'Nothing recurring reported.') + '</li>'}</ul>
 <h2>{L('Tours', 'Laps')}</h2><div class="scroll"><table><tr><th>{L('Tour', 'Lap')}</th><th>{L('Temps', 'Time')}</th><th>S1</th><th>S2</th><th>S3</th><th>Pos.</th><th>{L('Essence', 'Fuel')}</th><th></th></tr>{rows}</table></div>
 <h2>Radio</h2><ul class="radio">{radio}</ul>"""
-    return _page(L(f"Débrief {d['track']}", f"Debrief {d['track']}"), body)
+    summary = summary_text(d)
+    share_html = (f"""<div style="margin:14px 0"><button class="share" data-share="{html.escape(summary, quote=True)}">📋 """
+                  f"""{L('Partager sur Discord', 'Share on Discord')}</button>{_team_btn(summary)}</div>""")
+    body = body.replace("<div class=\"tiles\">", share_html + "<div class=\"tiles\">", 1)
+    js = """<style>.share{font:inherit;font-size:13px;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:inherit;cursor:pointer;margin-right:6px}
+.share:hover{border-color:#00E5FF}.share.ok{border-color:#3DFFA2;color:#3DFFA2}</style><script>
+document.addEventListener("click", async e => {
+  const b = e.target.closest(".share:not(.team)"); if (!b) return;
+  const t = b.dataset.share, old = b.textContent; let ok = false;
+  try { await navigator.clipboard.writeText(t); ok = true; } catch (_) {
+    const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select();
+    try { ok = document.execCommand("copy"); } catch (__) {} a.remove(); }
+  b.textContent = ok ? "✓ """ + L("Copié ! Discord s'ouvre sur le salon chronos : colle-le (Ctrl+V)", "Copied! Discord opens the lap times channel: paste it (Ctrl+V)") + """" : old;
+  if (ok) fetch("/api/share/open", { method: "POST", body: JSON.stringify({ kind: "chronos", game: "GAMEID" }) });
+  b.classList.toggle("ok", ok); setTimeout(() => { b.textContent = old; b.classList.remove("ok"); }, 5000);
+});</script>""" + TEAM_JS
+    js = js.replace("GAMEID", "acevo" if str(d.get("track", "")).endswith("(AC EVO)") else "lmu")
+    return _page(L(f"Débrief {d['track']}", f"Debrief {d['track']}"), body + js)
+
+
+def summary_text(d: dict) -> str:
+    """Résumé de la séance, prêt à coller (ou envoyé) dans Discord."""
+    laps = d["laps"]
+    times = [l["time"] for l in laps if l["valid"]]
+    best = min(times) if times else None
+    clean = [t for t in times if best and t < best * 1.07]
+    avg = statistics.mean(clean) if clean else None
+    pits = sum(1 for l in laps if l["pit"])
+    gained = (d["start_pos"] - d["end_pos"]) if d.get("start_pos") and d.get("end_pos") else None
+    pos = f"P{d['end_pos']}" if d.get("end_pos") else ""
+    gtxt = f" ({'+' if gained > 0 else ''}{gained})" if gained else ""
+    return (f"🏁 {L('Débrief', 'Debrief')} · {d['track']} · {i18n.session(d['session']).capitalize()}"
+            + (f"\n🚗 {d['car']}" if d.get("car") else "")
+            + (f"\n🏆 {pos}{gtxt}" if pos else "")
+            + f"\n⏱️ {L('Meilleur tour', 'Best lap')} {fmt(best)}" + (f" · {L('moyenne', 'average')} {fmt(avg)}" if avg else "")
+            + f"\n🔁 {len(laps)} {L('tours', 'laps')} · {pits} {L('arrêt(s)', 'stop(s)')}"
+            + f"\n📅 {d['date']} · Apex Radio")
+
+
+def _team_btn(text: str) -> str:
+    """Bouton « envoyer à mon équipe » si un webhook d'équipe est enregistré (⚙️ Discord)."""
+    try:
+        import share
+        if not share.webhook():
+            return ""
+    except Exception:
+        return ""
+    return f""" <button class="share team" data-team="{html.escape(text, quote=True)}">🚀 {L('Équipe', 'Team')}</button>"""
+
+
+TEAM_JS = """<script>
+document.addEventListener("click", async e => {
+  const b = e.target.closest(".team"); if (!b) return;
+  const old = b.textContent; b.textContent = "…";
+  let ok = false;
+  try { const r = await fetch("/api/share/text", { method: "POST", body: JSON.stringify({ text: b.dataset.team }) }); ok = (await r.json()).ok; } catch (_) {}
+  b.textContent = ok ? "✓ OK" : "✗"; b.classList.toggle("ok", ok); setTimeout(() => { b.textContent = old; b.classList.remove("ok"); }, 4000);
+});</script>"""
 
 
 def _page(title: str, body: str) -> str:
@@ -220,6 +286,17 @@ a{{color:var(--accent)}} .back{{text-decoration:none}}
 .nav{{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}} .nav a{{text-decoration:none;color:var(--text);border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;letter-spacing:.04em}}
 .nav a:hover{{border-color:var(--accent)}} .nav a.home{{color:#06070B;background:var(--accent);border-color:var(--accent)}} .nav a.nrec{{color:#FFE500}}
 @media(max-width:700px){{.row{{grid-template-columns:1fr 1fr}}}}
+/* style néon, comme les réglages : une couleur par cadre */
+.tile,.rec,.row,svg{{--c:0,229,255;border-color:rgba(var(--c),.5)!important;background:linear-gradient(180deg,rgba(var(--c),.07),rgba(var(--c),.015) 60%),var(--panel)!important;
+  box-shadow:0 0 12px rgba(var(--c),.15),inset 0 0 8px rgba(var(--c),.05)}}
+.tile:nth-child(5n+2),.rec:nth-of-type(5n+2),.row:nth-child(5n+2){{--c:255,46,136}}
+.tile:nth-child(5n+3),.rec:nth-of-type(5n+3),.row:nth-child(5n+3){{--c:168,85,247}}
+.tile:nth-child(5n+4),.rec:nth-of-type(5n+4),.row:nth-child(5n+4){{--c:61,255,162}}
+.tile:nth-child(5n+5),.rec:nth-of-type(5n+5),.row:nth-child(5n+5){{--c:255,210,63}}
+.tile .lab{{color:rgb(var(--c));text-shadow:0 0 6px rgba(var(--c),.45)}}
+.row:hover,.rec:hover{{box-shadow:0 0 20px rgba(var(--c),.35)}}
+h2{{color:#A855F7;text-shadow:0 0 8px rgba(168,85,247,.45)}}
+.nav a:hover{{box-shadow:0 0 10px rgba(0,229,255,.35)}} .nav a.home{{box-shadow:0 0 14px rgba(0,229,255,.45)}}
 </style></head><body>
 <nav class="nav"><a class="home" href="/">← {L('TABLEAU DE BORD', 'DASHBOARD')}</a><a class="nrec" href="/records">RECORDS</a><a href="/debriefs">{L('DÉBRIEFS', 'DEBRIEFS')}</a><a href="/relais">{L('RELAIS', 'STINTS')}</a></nav>
 {body}<script src="/fsel.js"></script></body></html>"""
@@ -298,7 +375,7 @@ def records_page() -> str:
     <div class="muted mono" style="font-size:13px">{sec_html}</div>{_spark(prog.get((track, cls), []))}</div>
   <div class="best"><div class="lab">{L('Meilleur tour', 'Best lap')}</div><div class="val">{fmt(r.get('lap'))}</div>
     <div class="sub">{L('tour idéal', 'ideal lap')} {fmt(ideal)}</div>
-    <button class="share" data-share="{html.escape(share, quote=True)}">📋 {L('Partager sur Discord', 'Share on Discord')}</button></div></div>""")
+    <button class="share" data-share="{html.escape(share, quote=True)}">📋 {L('Partager sur Discord', 'Share on Discord')}</button>{_team_btn(share)}</div></div>""")
     css = """<style>.rec{display:grid;grid-template-columns:170px 1fr 180px;gap:16px;align-items:center;background:var(--panel);
 border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:10px}.thumb{width:160px;height:100px;border:0;background:none;
 display:flex;align-items:center;justify-content:center}
@@ -320,15 +397,17 @@ document.addEventListener("DOMContentLoaded", () => {
   sel.value = v; recFilter(sel.value); sel.onchange = () => recFilter(sel.value);
 });
 document.addEventListener("click", async e => {
-  const b = e.target.closest(".share"); if (!b) return;
+  const b = e.target.closest(".share:not(.team)"); if (!b) return;
   const t = b.dataset.share, old = b.textContent;
   let ok = false;
   try { await navigator.clipboard.writeText(t); ok = true; } catch (_) {
     const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select();
     try { ok = document.execCommand("copy"); } catch (__) {} a.remove(); }
-  b.textContent = ok ? "✓ """ + L("Copié ! Colle-le dans #chronos-laptimes", "Copied! Paste it in #chronos-laptimes") + """" : old;
-  b.classList.toggle("ok", ok); setTimeout(() => { b.textContent = old; b.classList.remove("ok"); }, 4000);
-});</script>"""
+  b.textContent = ok ? "✓ """ + L("Copié ! Discord s'ouvre sur le salon chronos : colle-le (Ctrl+V)", "Copied! Discord opens the lap times channel: paste it (Ctrl+V)") + """" : old;
+  const g = (b.closest(".rec") || {}).dataset ? b.closest(".rec").dataset.game : "lmu";
+  if (ok) fetch("/api/share/open", { method: "POST", body: JSON.stringify({ kind: "chronos", game: g || "lmu" }) });
+  b.classList.toggle("ok", ok); setTimeout(() => { b.textContent = old; b.classList.remove("ok"); }, 5000);
+});</script>""" + TEAM_JS
     picker = (f"<p><label class='muted' for='recgame'>{L('Jeu', 'Game')} </label>"
               f"<select id='recgame' style='font:inherit;padding:4px 8px;border-radius:8px;background:var(--panel);color:inherit;border:1px solid var(--line)'>"
               f"<option value='all'>{L('Tous les jeux', 'All games')}</option><option value='lmu'>Le Mans Ultimate</option>"

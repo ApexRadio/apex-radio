@@ -78,6 +78,8 @@ class State:
         self.eng = None
         self.map = TrackMap()
         self.radio = Radio(self.on_question, self.on_shortcut)
+        import share
+        share.CFG = self.radio.cfg      # webhook de l'équipe (⚙️ Discord)
         i18n.set_lang(self.radio.cfg.get("lang") or system_lang())   # avant la voix : elle charge le modèle de la bonne langue
         voices.CHOICE.update(self.radio.cfg.get("voices") or {})      # voix choisie pour chaque langue
         self.voice = Voice()
@@ -120,7 +122,15 @@ class State:
 
     def on_question(self, text: str) -> None:
         from strategy import Plan
-        reply = phrases.dress(answer(text, self.snap, self.plan or Plan()), answer=True)
+        raw = answer(text, self.snap, self.plan or Plan())
+        import time as _t
+        lost = any(k in raw for k in ("pas compris", "Pas sûr d'avoir compris", "didn't get", "Not sure I got",
+                                      "rien entendu", "didn't hear anything"))
+        if lost and _t.monotonic() - getattr(self.voice, "cut_at", -99) < 20:
+            # tu as appuyé pour la faire taire, pas pour lui parler : pas de « je n'ai pas compris »
+            print(f"  [ingé] (radio coupée par le pilote, « {text} » ignoré)")
+            return
+        reply = phrases.dress(raw, answer=True)
         if self.eng is not None:
             self.eng.radio.appendleft({"t": self.snap.elapsed, "text": f"Toi : {text}", "urgent": False, "me": True})
             self.eng.radio.appendleft({"t": self.snap.elapsed, "text": reply, "urgent": False})
@@ -155,6 +165,8 @@ def loop(state: State, demo: bool) -> None:
     import relais
     relay = relais.Relay()
     relay.eng = eng   # pneus neufs au changement de pilote
+    from equipier import TeamWatch
+    team = TeamWatch()
     state.relay = relay
     state.beh = beh
     probe = Probe() if not demo else None
@@ -168,6 +180,7 @@ def loop(state: State, demo: bool) -> None:
     set_encourage(state.radio.cfg.get("encourage", "normal"))
     import behavior as _bh
     _bh.set_coach(state.radio.cfg.get("coaching", True))
+    _bh.set_coach_race(state.radio.cfg.get("coach_race", True))
     phrases.set_tone(state.radio.cfg.get("tone", "radio"))
     phrases.set_driver(state.radio.cfg.get("driver_name", ""))
     weather = Weather(demo)
@@ -373,6 +386,12 @@ def loop(state: State, demo: bool) -> None:
             damage.update(snap, say)
             plan = eng.update(snap)
             relay.update(snap, plan, say)
+            try:   # mode équipier : voiture d'équipe quand un coéquipier roule
+                import telemetry as _tm
+                _tm.TEAM_DRIVERS = [x for x in (relay.cfg.get("drivers") or []) if x]
+                team.update(snap, say)
+            except Exception:
+                traceback.print_exc()
             lt.update(snap, eng.say)
             state.map.update(snap)
             spotter.session = snap.session
@@ -435,6 +454,7 @@ def loop(state: State, demo: bool) -> None:
                 "accent": state.radio.cfg.get("accent", "bleu"),
                 "encourage": state.radio.cfg.get("encourage", "normal"),
                 "coaching": state.radio.cfg.get("coaching", True),
+                "coach_race": state.radio.cfg.get("coach_race", True),
                 "tone": state.radio.cfg.get("tone", "radio"),
                 "driver_name": state.radio.cfg.get("driver_name", ""),
                 "ptt_mode": state.radio.cfg.get("ptt_mode", "hold"),
@@ -451,6 +471,7 @@ def loop(state: State, demo: bool) -> None:
                 "lang": i18n.LANG,
                 "langs": i18n.available(),
                 "update": UPD.ui(),
+                "share": {"webhook": bool(__import__("share").webhook())},
                 "ptt": state.radio.info(),
                 "times": lt.ui(snap),
                 "map": state.map.info(),
@@ -651,6 +672,11 @@ def make_handler(state: State):
                 state.toggle_spotter()
             elif self.path == "/api/show":
                 desktop.open_window(f"http://localhost:{PORT}")
+            elif self.path == "/api/update/install":
+                ok = UPD.install()
+                self.send_response(204 if ok else 409)
+                self.end_headers()
+                return
             elif self.path == "/api/quit":
                 self.send_response(204)
                 self.end_headers()
@@ -725,6 +751,13 @@ def make_handler(state: State):
                 save_config(state.radio.cfg)
                 import behavior as _bh
                 _bh.set_coach(on)
+            elif self.path == "/api/coach_race":
+                n = int(self.headers.get("Content-Length") or 0)
+                on = bool(json.loads(self.rfile.read(n) or b"{}").get("on", True))
+                state.radio.cfg["coach_race"] = on
+                save_config(state.radio.cfg)
+                import behavior as _bh
+                _bh.set_coach_race(on)
             elif self.path == "/api/encourage":
                 n = int(self.headers.get("Content-Length") or 0)
                 lv = json.loads(self.rfile.read(n) or b"{}").get("level", "normal")
@@ -757,6 +790,40 @@ def make_handler(state: State):
                 phrases.set_driver(nm)
                 if nm:
                     v.say(L(f"Bien reçu, {nm}.", f"Copy that, {nm}."))
+            elif self.path.startswith("/api/share/"):
+                import share
+                n = int(self.headers.get("Content-Length") or 0)
+                req = json.loads(self.rfile.read(n) or b"{}")
+                what = self.path.rsplit("/", 1)[-1]
+                out = {"ok": False}
+                if what == "open":
+                    out = {"ok": share.open_discord(str(req.get("kind", "")), str(req.get("game", "lmu")))}
+                elif what == "webhook":            # enregistrer (et tester) le webhook de l'équipe
+                    ok = share.set_webhook(req.get("url", ""))
+                    out = {"ok": ok, "set": bool(share.webhook())}
+                    if ok and share.webhook() and req.get("test"):
+                        sent, why = share.post(L("✅ Apex Radio est relié à ce salon : les chronos, setups et débriefs "
+                                                 "partagés par l'équipe arriveront ici.",
+                                                 "✅ Apex Radio is linked to this channel: the team's shared lap times, setups "
+                                                 "and debriefs will arrive here."))
+                        out = {"ok": sent, "set": True, "why": why}
+                elif what == "text":               # message de chronos / débrief : vers l'équipe
+                    sent, why = share.post(str(req.get("text", ""))[:1900])
+                    out = {"ok": sent, "why": why}
+                elif what == "setup":              # fichier setup : presse-papiers, ou équipe
+                    f, text = share.setup_file(state.workshop, state.track())
+                    if not f:
+                        out = {"ok": False, "why": "no-file"}
+                    elif req.get("team"):
+                        sent, why = share.post(text, f)
+                        out = {"ok": sent, "why": why, "file": f.name}
+                    else:
+                        out = {"ok": share.copy_file(f), "file": f.name, "text": text}
+                        share.open_discord("setups", "lmu")
+                body = json.dumps(out).encode()
+                self.send_response(200); self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body))); self.end_headers(); self.wfile.write(body)
+                return
             elif self.path == "/api/journal":
                 body = json.dumps(send_journal()).encode()
                 self.send_response(200); self.send_header("Content-Type", "application/json")

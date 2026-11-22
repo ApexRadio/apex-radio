@@ -49,7 +49,13 @@ class Incidents:
         now = time.monotonic()
         new = [x for x in sorted(secs - old) if now - self.said.get(f"y{x}", -99) > 15]
         me = next((c for c in s.cars if c.get("me")), None)
+        if me and me.get("spd", 99) < 15:
+            # tu es toi-même arrêté ou au ralenti (sortie, tête-à-queue) : ce jaune, c'est sans doute pour toi
+            self._ysecs = secs
+            return
+        ann = self.__dict__.setdefault("_yann", set())   # jaunes vraiment annoncés (pour « levés »)
         for sec in new:
+            ann.add(sec)
             self.said[f"y{sec}"] = now
             where = ""
             stopped = [c for c in s.cars if not c.get("me") and not c.get("pits") and c.get("s") == sec - 1
@@ -65,7 +71,9 @@ class Incidents:
             tail = L(" C'est devant toi, pas de dépassement.", " It's ahead of you, no overtaking.") if ahead else ""
             self.say(None, L(f"Drapeau jaune secteur {sec}{where} !{tail}", f"Yellow flag sector {sec}{where}!{tail}"),
                      urgent=ahead)
-        if old and not secs and now - self.said.get("yclear", -99) > 15:
+        if old and not secs and getattr(self, "_yann", None) and now - self.said.get("yclear", -99) > 15:
+            # « levés » seulement si on avait annoncé un jaune (sinon « levés » tombait de nulle part)
+            self._yann = set()
             self.said["yclear"] = now
             self.say(None, L("Drapeaux jaunes levés, la piste est dégagée.", "Yellows cleared, the track is clear."))
         self._ysecs = secs

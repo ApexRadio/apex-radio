@@ -217,6 +217,13 @@ class Engineer:
         if wr:
             p.tyre_laps_left = max(0.0, (min(s.tyre_wear) - TYRE_LIMIT) / wr)
 
+        if s.in_pits:
+            self._pit_t = s.elapsed  # dans la voie des stands / au stand : l'essence monte pendant le ravitaillement
+        if s.elapsed < getattr(self, "_pit_t", -1e9):
+            self._pit_t = -1e9       # nouvelle séance : le chrono est reparti de zéro
+        if s.in_pits or s.elapsed - getattr(self, "_pit_t", -1e9) < 60:
+            self.plan = p          # pas de conseil essence pendant l'arrêt ni juste après (« économise » puis « assez » : 21/11)
+            return p
         if s.pit_stops and self._stop_lap is not None and s.laps_done - self._stop_lap < 2:
             self.plan = p          # juste après l'arrêt : on attend un tour propre avant de parler essence
             return p

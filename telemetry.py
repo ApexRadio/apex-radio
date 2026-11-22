@@ -10,8 +10,10 @@ Les deux renvoient un objet Snapshot avec les mêmes champs.
 
 from __future__ import annotations
 
+import json
 import math
 import random
+import re
 import sys
 import time
 from dataclasses import dataclass, field
@@ -20,6 +22,15 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent / "vendor"))
 
 WHEELS = ("AVG", "AVD", "ARG", "ARD")  # avant gauche, avant droit, arrière gauche, arrière droit
+
+
+TEAM_DRIVERS: list[str] = []      # pilotes du planning de relais (app.py), pour retrouver la voiture d'équipe
+
+
+def _fold(t: str) -> str:
+    import unicodedata
+    t = unicodedata.normalize("NFD", (t or "").lower())
+    return "".join(c for c in t if unicodedata.category(c) != "Mn")
 
 
 @dataclass
@@ -92,6 +103,7 @@ class Snapshot:
     gap_class_ahead: float | None = None    # écart (s) avec la voiture devant dans ta catégorie
     gap_class_behind: float | None = None
     driver: str = ""
+    team: dict | None = None         # mode équipier : ta voiture d'équipe quand c'est un coéquipier qui roule
     lap_time: float | None = None    # temps écoulé dans le tour en cours (s)
     penalties: int = 0               # pénalités à purger (drive-through / stop-go)
     pen_warning: bool = False        # avertissement de la direction de course (AC EVO : drapeau noir et blanc)
@@ -224,6 +236,70 @@ class LMUSource:
             others.append((p.x, p.z))
         return {"me": (me.mPos.x, me.mPos.z), "others": others, "t": me.mElapsedTime}
 
+    # ------------------------------------------------------------ mode équipier
+    _team_car = None          # nom de la voiture d'équipe (tel que LMU l'écrit, avec le numéro)
+
+    def _remember_team_car(self, vehicle: str, track: str) -> None:
+        if vehicle and vehicle != self._team_car:
+            self._team_car = vehicle
+            try:
+                from paths import DATA
+                (DATA / "equipe.json").write_text(json.dumps({"vehicle": vehicle, "track": track}), encoding="utf-8")
+            except Exception:
+                pass
+
+    def _team_watch(self, d, info) -> dict | None:
+        """Quand ce n'est pas toi qui roules : retrouve ta voiture d'équipe dans le classement
+        (la dernière voiture que tu as pilotée, ou celle d'un pilote de ton planning de relais)."""
+        n = min(info.mNumVehicles, len(d.scoring.vehScoringInfo))
+        if n <= 0:
+            return None
+        # seulement les voitures pilotées par un autre humain (en ligne) : hors ligne, la voiture que tu
+        # as pilotée hier peut être conduite par l'IA (ex. TDS #14 hors ligne -> « Mode équipier » en solo)
+        vs = [d.scoring.vehScoringInfo[i] for i in range(n)]
+        vs = [v for v in vs if int(getattr(v, "mControl", 2)) == 2]
+        if not vs:
+            return None
+        if self._team_car is None:
+            try:
+                from paths import DATA
+                self._team_car = json.loads((DATA / "equipe.json").read_text(encoding="utf-8")).get("vehicle") or ""
+            except Exception:
+                self._team_car = ""
+        car = next((v for v in vs if self._team_car and _txt(v.mVehicleName) == self._team_car), None)
+        if car is None and TEAM_DRIVERS:
+            def words(x):
+                return {w for w in re.split(r"[^a-z0-9]+", _fold(x)) if len(w) >= 3}
+            mates = [words(x) for x in TEAM_DRIVERS]
+            car = next((v for v in vs if any(m & words(_txt(v.mDriverName)) for m in mates if m)), None)
+        if car is None or (getattr(self, "_me_name", "") and _txt(car.mDriverName) == self._me_name):
+            return None              # personne d'autre au volant (c'est toi, au garage ou en spectateur)
+        if not getattr(self, "_team_logged", False) or self._team_logged != _txt(car.mDriverName):
+            self._team_logged = _txt(car.mDriverName)
+            print(f"  Mode équipier : {self._team_logged} roule ({_txt(car.mVehicleName)}, P{car.mPlace})")
+        cls = car.mVehicleClass
+        allv = [d.scoring.vehScoringInfo[i] for i in range(n)]
+        same = sorted((v for v in allv if v.mVehicleClass == cls), key=lambda v: v.mPlace)
+        k = next((i for i, v in enumerate(same) if v.mID == car.mID), 0)
+        lap = car.mLastLapTime if car.mLastLapTime > 0 else (car.mBestLapTime if car.mBestLapTime > 0 else 0)
+
+        def gap(a, b):
+            g = (b.mTimeBehindLeader - a.mTimeBehindLeader) + (b.mLapsBehindLeader - a.mLapsBehindLeader) * lap
+            return round(g, 1) if g > 0 else None
+
+        ahead = same[k - 1] if k > 0 else None
+        behind = same[k + 1] if k + 1 < len(same) else None
+        return {
+            "driver": _txt(car.mDriverName), "car": _txt(car.mVehicleName), "track": _txt(info.mTrackName),
+            "session": _session_name(info.mSession), "place": car.mPlace, "cpos": k + 1, "class": _txt(cls),
+            "laps": car.mTotalLaps, "last": car.mLastLapTime if car.mLastLapTime > 0 else None,
+            "best": car.mBestLapTime if car.mBestLapTime > 0 else None, "pits": bool(car.mInPits),
+            "stops": car.mNumPitstops, "penalties": car.mNumPenalties,
+            "time_left": max(0.0, info.mEndET - info.mCurrentET) if info.mEndET > 0 else None,
+            "ahead": {"name": _txt(ahead.mDriverName), "cpos": k, "gap": gap(ahead, car)} if ahead else None,
+            "behind": {"name": _txt(behind.mDriverName), "cpos": k + 2, "gap": gap(car, behind)} if behind else None,
+        }
+
     def read(self) -> Snapshot:
         self._mm.update()
         d = self._mm.data
@@ -235,6 +311,7 @@ class LMUSource:
         tel_all = d.telemetry
         info = d.scoring.scoringInfo
         if not tel_all.playerHasVehicle:
+            s.team = self._team_watch(d, info)
             return s
 
         tel = tel_all.telemInfo[tel_all.playerVehicleIdx]
@@ -246,8 +323,11 @@ class LMUSource:
                 sc = v
                 break
         if sc is None:
+            s.team = self._team_watch(d, info)
             return s
         s.on_track = True
+        self._remember_team_car(_txt(sc.mVehicleName), _txt(info.mTrackName))
+        self._me_name = _txt(sc.mDriverName)
 
         s.track = _txt(info.mTrackName)
         s.car = _txt(sc.mVehicleName)
@@ -332,6 +412,8 @@ class LMUSource:
                 "me": bool(v.mIsPlayer), "pits": bool(v.mInPits),
                 "rel": "ahead" if v.mID == ahead_id else "behind" if v.mID == behind_id else "",
                 "best": v.mBestLapTime if v.mBestLapTime > 0 else None, "name": _txt(v.mDriverName),
+                "dnf": int(v.mFinishStatus) in (2, 3),     # abandon / disqualifié
+                "laps": v.mTotalLaps + ((v.mLapDist / info.mLapDist) if info.mLapDist > 0 else 0.0),
             })
         s.session_code = info.mSession
         s.track_len = info.mLapDist
@@ -400,12 +482,26 @@ class LMUSource:
         if y > 127:
             y -= 256
         s.yellow = 1 <= y <= 6 or s.game_phase == 6
-        # jaunes locaux par secteur (même ordre que mSector : case 0 = secteur 3)
+        # jaunes locaux par secteur. L'ordre des cases n'est pas documenté : on pensait « comme mSector »
+        # (case 0 = secteur 3), mais un pilote sorti au secteur 1 s'est entendu dire « jaune secteur 3 ».
+        # On part donc de l'ordre direct (case 0 = secteur 1) et on vérifie à chaque nouveau jaune avec les
+        # voitures arrêtées ou très lentes : l'ordre qui tombe dans leur secteur gagne un point.
         try:
             raw = [int(v) for v in info.mSectorFlag]
-            s.yellow_sectors = sorted(sector_index(i) + 1 for i, v in enumerate(raw) if v == 1)
-            if raw != getattr(self, "_sf_raw", raw):
-                print(f"  Drapeaux de secteur LMU : {raw}")
+            old = getattr(self, "_sf_raw", raw)
+            votes = self.__dict__.setdefault("_sf_votes", {"direct": 0, "decale": 0})
+            slow = {c["s"] for c in s.cars if not c.get("pits") and c.get("spd", 99) < 10}
+            for i, v in enumerate(raw):
+                if v == 1 and old[i] != 1 and slow:
+                    ok_d, ok_r = i in slow, sector_index(i) in slow
+                    if ok_d != ok_r:
+                        votes["direct" if ok_d else "decale"] += 1
+                        print(f"  Drapeaux de secteur : case {i}, voitures lentes au secteur "
+                              f"{sorted(x + 1 for x in slow)} -> ordre {'direct' if ok_d else 'décalé'} ({votes})")
+            order = (lambda i: sector_index(i)) if votes["decale"] > votes["direct"] else (lambda i: i)
+            s.yellow_sectors = sorted(order(i) + 1 for i, v in enumerate(raw) if v == 1)
+            if raw != old:
+                print(f"  Drapeaux de secteur LMU : {raw} -> secteurs {s.yellow_sectors}")
             self._sf_raw = raw
         except Exception:
             pass

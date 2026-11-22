@@ -1,5 +1,43 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.4.2
+- 🇫🇷 Setups : les setups Apex dont la note contenait « ≈ » n'apparaissaient pas dans la liste de LMU : corrigé (et plus jamais ce caractère).
+- 🇬🇧 Setups: Apex setups whose note contained "≈" didn't show up in LMU's list: fixed (and that character is never written again).
+- 🇫🇷 Voix : « spotter » enfin prononcé à la française ; une phrase coupée par le spotter n'est redite qu'une fois ; appuyer sur le bouton radio pour la faire taire ne déclenche plus « je n'ai pas compris ».
+- 🇬🇧 Voice: a phrase cut by the spotter is repeated only once; pressing the radio button to silence her no longer triggers "I didn't get that".
+- 🇫🇷 Relais : bouton « Nouvelle course » (efface nom, date, heure et indisponibilités, garde les pilotes). Mode équipier seulement pour une voiture pilotée par un autre humain (pas l'IA en solo).
+- 🇬🇧 Stints: "New race" button (clears name, date, time and unavailability, keeps drivers). Teammate mode only for a car driven by another human (not the AI offline).
+- 🇫🇷 Retours d'endurance : voiture plus rapide annoncée plus tôt (5 s derrière, 10 s quand un prototype arrive sur une GT, et le leader de ta catégorie qui va te prendre un tour) ; spotter plus réactif (phrases prêtes à l'avance, il coupe une info en cours au lieu d'attendre) ; drapeau jaune annoncé dans le bon secteur (et plus de jaune pour ta propre sortie) ; nouveau réglage « Temps perdu par virage aussi en course » (⚙️ Ingénieur) pour couper ces conseils en course.
+- 🇬🇧 Endurance feedback: faster cars announced earlier (5 s behind, 10 s for a prototype closing on a GT, and the class leader about to lap you); quicker spotter (phrases pre-rendered, it cuts in over other info); yellow flags called in the right sector (and none for your own off); new "Corner time loss also in races" setting (⚙️ Engineer) to mute those tips in races.
+- 🇫🇷 Planning des relais : nom de la course, date et heure de départ (les relais s'affichent avec les vraies heures), indisponibilités par pilote (« 21:50-22:50 ») prises en compte dans le plan et en course, frise du temps (une ligne par pilote), et bouton « Partager le planning » (Discord, ou directement le salon de l'équipe).
+- 🇬🇧 Stint planner: race name, date and start time (stints shown with real clock times), per-driver unavailability ("21:50-22:50") used in the plan and live, a timeline (one row per driver), and a "Share the plan" button (Discord, or straight to the team channel).
+- 🇫🇷 Mode équipier (endurance) : quand c'est un coéquipier qui roule, Apex suit votre voiture d'équipe au lieu d'afficher « En attente du jeu » : position, écarts avec les noms, temps au tour, arrêts, temps restant, sur le PC et le téléphone. L'ingé annonce les changements de place, les passages aux stands et les changements de pilote, et répond à « position ? », « écart ? », « il tourne en combien ? ». (Le jeu ne donne ni l'essence ni les pneus dans ce cas.)
+- 🇬🇧 Teammate mode (endurance): when a teammate drives, Apex follows your team car instead of showing "Waiting for the game": position, gaps with names, lap times, stops, time left, on PC and phone. The engineer calls place changes, pit stops and driver changes, and answers "position?", "gap?", "lap times?". (The game gives neither fuel nor tyres in that case.)
+- 🇫🇷 Partage Discord : bouton « Partager ce setup » dans l'atelier (copie le fichier et ouvre Discord, Ctrl+V dans #setups), « Partager » dans chaque débrief, et Discord s'ouvre tout seul après une copie (records, débriefs).
+- 🇬🇧 Discord sharing: "Share this setup" in the workshop (copies the file and opens Discord, Ctrl+V in #setups), "Share" in each debrief, and Discord opens by itself after copying (records, debriefs).
+- 🇫🇷 Équipe : ⚙️ → Discord (équipe), colle le webhook du salon de ton équipe et Apex y envoie tout seul les chronos, setups et le débrief en fin de course. Le lien reste sur ton PC.
+- 🇬🇧 Team: ⚙️ → Discord (team), paste your team channel's webhook and Apex sends lap times, setups and the end-of-race debrief there by itself. The link stays on your PC.
+- 🇫🇷 Style néon partout : records, débriefs, atelier setup, vue téléphone, fenêtre Fermer, et un léger halo sur les cases du tableau de bord.
+- 🇬🇧 Neon style everywhere: records, debriefs, setup workshop, phone view, Close window, and a light glow on the dashboard cards.
+- 🇫🇷 Planning des relais : style néon (cadres lumineux, une couleur par pilote dans le plan), et « Pilote 1 / Pilote 2 » au lieu de « Pilote 1 » deux fois quand les noms ne sont pas remplis.
+- 🇬🇧 Stint planner: neon style (glowing frames, one colour per driver in the plan), and "Driver 1 / Driver 2" instead of "Driver 1" twice when names are empty.
+- 🇫🇷 « Écart P10 » (sans vraie question) est compris : l'ingé donne l'écart avec la voiture P10 et son nom. Marche aussi avec « écart pé dix », « écart dixième ».
+- 🇬🇧 "Gap P10" (not a full question) is understood: the engineer gives the gap to P10 and the driver's name.
+- 🇫🇷 Noms des virages célèbres : « au Raidillon », « en sortie de la Parabolica », « limites de piste aux Esses »… au lieu de « virage 3 » (Spa, Le Mans, Monza, Interlagos pour commencer).
+- 🇬🇧 Famous corner names: "into Raidillon", "Parabolica", "the Esses"… instead of "turn 3" (Spa, Le Mans, Monza, Interlagos to start with).
+- 🇫🇷 Stratégie : plus de conseil essence pendant l'arrêt ni dans la minute qui suit (on entendait « économise » puis « tu as assez, pas besoin de t'arrêter » pendant le ravitaillement).
+- 🇬🇧 Strategy: no fuel advice during the stop or in the minute after (you could hear "save fuel" then "you've got enough, no need to pit" while refuelling).
+- 🇫🇷 « Écart » tout seul est compris même quand la reconnaissance l'entend mal (« et car », « écard », « les cartes »…).
+- 🇬🇧 A lone "gap" (FR « écart ») is understood even when speech recognition mishears it.
+- 🇫🇷 « Quel écart devant / derrière ? » : la réponse donne le pilote (« P4 Dupont est à 1,2 seconde devant »).
+- 🇬🇧 "Gap ahead / behind?": the answer names the driver ("P4 Dupont is 1.2 seconds up the road").
+- 🇫🇷 Places : quand la voiture devant s'arrête aux stands, abandonne ou s'arrête sur la piste, l'ingé le dit (« Tu récupères une place, Dupont s'arrête aux stands ») au lieu de te féliciter pour un dépassement.
+- 🇬🇧 Places: when the car ahead pits, retires or stops on track, the engineer says so ("You pick up a place, Dupont is pitting") instead of congratulating you on an overtake.
+- 🇫🇷 Réglages → Affichage : circuit en taille Normale, Grande ou Très grande, et choix des cases à afficher (pneus, météo, chronos, remarques de pilotage). Ce que tu masques laisse plus de place au circuit.
+- 🇬🇧 Settings → Layout: track map Normal, Large or Extra large, and choose which cards to show (tyres, weather, lap times, driving notes). What you hide gives the map more room.
+- 🇫🇷 Mises à jour : la nouvelle version se télécharge toute seule dans Apex, puis un bouton INSTALLER suffit. Apex se ferme, s'installe et se rouvre tout seul (rien ne s'installe sans ce clic). Le lien TÉLÉCHARGER reste là en secours.
+- 🇬🇧 Updates: the new version downloads by itself inside Apex, then one INSTALL button is enough. Apex closes, installs and reopens by itself (nothing installs without that click). The DOWNLOAD link stays as a fallback.
+
 ## 1.4.1
 - 🇫🇷 Micro : si la reconnaissance vocale n'arrive pas à ouvrir son fichier (« Unable to open file 'model.bin' »), Apex la retélécharge dans un dossier simple au lieu du cache Hugging Face, et explique quoi faire si l'antivirus la bloque.
 - 🇬🇧 Mic: if speech recognition can't open its file ("Unable to open file 'model.bin'"), Apex downloads it again into a plain folder instead of the Hugging Face cache, and explains what to do if the antivirus blocks it.

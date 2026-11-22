@@ -1,6 +1,12 @@
 # Apex Radio — historique des versions / changelog
 
-## 1.4.2 (en préparation)
+## 1.4.2
+- 🇫🇷 Setups : les setups Apex dont la note contenait « ≈ » n'apparaissaient pas dans la liste de LMU : corrigé (et plus jamais ce caractère).
+- 🇬🇧 Setups: Apex setups whose note contained "≈" didn't show up in LMU's list: fixed (and that character is never written again).
+- 🇫🇷 Voix : « spotter » enfin prononcé à la française ; une phrase coupée par le spotter n'est redite qu'une fois ; appuyer sur le bouton radio pour la faire taire ne déclenche plus « je n'ai pas compris ».
+- 🇬🇧 Voice: a phrase cut by the spotter is repeated only once; pressing the radio button to silence her no longer triggers "I didn't get that".
+- 🇫🇷 Relais : bouton « Nouvelle course » (efface nom, date, heure et indisponibilités, garde les pilotes). Mode équipier seulement pour une voiture pilotée par un autre humain (pas l'IA en solo).
+- 🇬🇧 Stints: "New race" button (clears name, date, time and unavailability, keeps drivers). Teammate mode only for a car driven by another human (not the AI offline).
 - 🇫🇷 Retours d'endurance : voiture plus rapide annoncée plus tôt (5 s derrière, 10 s quand un prototype arrive sur une GT, et le leader de ta catégorie qui va te prendre un tour) ; spotter plus réactif (phrases prêtes à l'avance, il coupe une info en cours au lieu d'attendre) ; drapeau jaune annoncé dans le bon secteur (et plus de jaune pour ta propre sortie) ; nouveau réglage « Temps perdu par virage aussi en course » (⚙️ Ingénieur) pour couper ces conseils en course.
 - 🇬🇧 Endurance feedback: faster cars announced earlier (5 s behind, 10 s for a prototype closing on a GT, and the class leader about to lap you); quicker spotter (phrases pre-rendered, it cuts in over other info); yellow flags called in the right sector (and none for your own off); new "Corner time loss also in races" setting (⚙️ Engineer) to mute those tips in races.
 - 🇫🇷 Planning des relais : nom de la course, date et heure de départ (les relais s'affichent avec les vraies heures), indisponibilités par pilote (« 21:50-22:50 ») prises en compte dans le plan et en course, frise du temps (une ligne par pilote), et bouton « Partager le planning » (Discord, ou directement le salon de l'équipe).

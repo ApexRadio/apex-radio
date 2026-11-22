@@ -446,6 +446,7 @@
     <section class="setsec"><h2>💬 <span data-en="Engineer">Ingénieur</span></h2>
       <div class="setrow"><span data-en="Encouragement">Encouragements</span><div class="setctl"><select id="encourage" aria-label="Encouragements" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><label for="coaching" data-en="Driving tips on track">Conseils de pilotage en piste</label><div class="setctl"><input type="checkbox" id="coaching"></div></div>
+      <div class="setrow"><label for="coachrace" data-en="Corner time loss also in races">Temps perdu par virage aussi en course</label><div class="setctl"><input type="checkbox" id="coachrace"></div></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Untick if you don't want tips while driving (braking, corners…). The engineer still answers if you ask.">Décoche si tu ne veux pas de conseils en roulant (freinage, virages…). L'ingénieur répond toujours si tu lui demandes.</div>
       <div class="setrow"><span data-en="Pit menu (LMU)">Menu des stands (LMU)</span><div class="setctl"><select id="pitmode" aria-label="Menu des stands" style="max-width:none;border:0;padding:2px 4px"><option value="auto" data-en="Auto">Auto</option><option value="demande" data-en="On request">À la demande</option><option value="off" data-en="Off">Off</option></select></div></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Auto: Apex sets fuel / energy, tyres and repairs in the LMU pit menu about a lap before your stop. On request: only when you say &quot;prepare the stop&quot;.">Auto : Apex règle l'essence / l'énergie, les pneus et les réparations dans le menu des stands de LMU environ un tour avant ton arrêt. À la demande : seulement quand tu dis « prépare l'arrêt ».</div>
@@ -746,6 +747,7 @@ function render(d) {
   renderShortcuts(t);
   renderOnboard(d);
   if (document.activeElement !== $("coaching")) $("coaching").checked = d.coaching !== false;
+  if (document.activeElement !== $("coachrace")) $("coachrace").checked = d.coach_race !== false;
   if (d.pit && document.activeElement !== $("pitmode")) $("pitmode").value = d.pit.mode;
   if (d.encourage && document.activeElement !== $("encourage")) $("encourage").value = d.encourage;
   if (d.tone && document.activeElement !== $("tone")) $("tone").value = d.tone;
@@ -1009,6 +1011,7 @@ $("tone").innerHTML = [["sobre", "Sobre (juste l'info)", "Plain (just the info)"
 $("tone").onchange = e => fetch("/api/tone", { method: "POST", body: JSON.stringify({ tone: e.target.value }) });
 $("drvname").onchange = e => fetch("/api/driver", { method: "POST", body: JSON.stringify({ name: e.target.value.trim() }) });
 $("pitmode").onchange = e => fetch("/api/pit/mode", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
+$("coachrace").onchange = e => fetch("/api/coach_race", { method: "POST", body: JSON.stringify({ on: e.target.checked }) });
 $("coaching").onchange = e => fetch("/api/coaching", { method: "POST", body: JSON.stringify({ on: e.target.checked }) });
 $("encourage").onchange = e => fetch("/api/encourage", { method: "POST", body: JSON.stringify({ level: e.target.value }) });
 

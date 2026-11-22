@@ -87,6 +87,13 @@ def label(section: str, key: str) -> str:
 
 
 # ===================================================================== fichiers
+def _safe_note(note: str) -> str:
+    """LMU ne montre plus du tout un setup dont les notes contiennent certains caractères (ex. « ≈ ») :
+    on ne garde que des caractères latins simples (les accents français passent, vérifié sur Interlagos)."""
+    note = note.replace('"', "'").replace("≈", "~").replace("→", "->").replace("−", "-")
+    return "".join(ch if ord(ch) < 256 else "?" for ch in note)
+
+
 class Setup:
     """Un fichier .svm : on garde les lignes telles quelles pour pouvoir le réécrire."""
 
@@ -126,7 +133,7 @@ class Setup:
             lines[n] = f"{c['key']}={c['to']}//{shown}"
         for i, line in enumerate(lines):
             if line.startswith("Notes="):
-                lines[i] = 'Notes="' + note.replace('"', "'") + '"'
+                lines[i] = 'Notes="' + _safe_note(note) + '"'
                 break
         text = self.newline.join(lines) + self.newline
         if not overwrite:

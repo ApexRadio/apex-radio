@@ -1,5 +1,9 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.4.4
+- 🇫🇷 Automobilista 2 affiché partout : l'écran d'attente et les « Premiers pas » le citent, avec le réglage à activer dans le jeu (Options → Système → Mémoire partagée → « Project CARS 2 »).
+- 🇬🇧 Automobilista 2 shown everywhere: the waiting screen and "Getting started" mention it, with the setting to turn on in the game (Options → System → Shared Memory → "Project CARS 2").
+
 ## 1.4.3
 - 🇫🇷 Nouveau jeu : **Automobilista 2**. Apex le détecte tout seul (dans AMS2 : Options → Système → Mémoire partagée → « Project CARS 2 »). Noms des pilotes, positions par catégorie, écarts, essence, pneus, freins, dégâts, drapeaux, voiture de sécurité, spotter, chronos et conseils de pilotage. Le menu des stands se règle dans le jeu.
 - 🇬🇧 New game: **Automobilista 2**. Apex detects it by itself (in AMS2: Options → System → Shared Memory → "Project CARS 2"). Driver names, class positions, gaps, fuel, tyres, brakes, damage, flags, safety car, spotter, lap times and driving tips. The pit menu is set in the game.

@@ -1,6 +1,15 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
-## 🆕 1.4.3
+## 🆕 1.4.4
+🇫🇷
+- **Automobilista 2 affiché partout** : l'écran d'attente le cite maintenant, avec le réglage à activer dans AMS2 : Options → Système → Mémoire partagée → « Project CARS 2 ».
+- Rappel de la 1.4.3 : Automobilista 2, ingé qui parle comme un pro, nouvelles questions radio, moins de bavardage, overlay OBS.
+
+🇬🇧
+- **Automobilista 2 shown everywhere**: the waiting screen now mentions it, with the setting to turn on in AMS2: Options → System → Shared Memory → "Project CARS 2".
+- From 1.4.3: Automobilista 2, an engineer who talks like a pro, new radio questions, less chatter, OBS overlay.
+
+## 1.4.3
 🇫🇷
 - **Nouveau jeu : Automobilista 2** 🏁 Apex le détecte tout seul (dans AMS2 : Options → Système → Mémoire partagée → « Project CARS 2 »). Noms des pilotes, écarts, essence, pneus, drapeaux, spotter, chronos et conseils.
 - **Un ingé qui parle comme un pro** : plus de mètres ni de km/h, mais « tu freines trop tôt, retarde ton point de freinage », « va chercher le vibreur », « tu sors trop large ».

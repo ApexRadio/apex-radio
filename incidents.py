@@ -47,14 +47,20 @@ class Incidents:
             return
         old = getattr(self, "_ysecs", set())
         now = time.monotonic()
-        new = [x for x in sorted(secs - old) if now - self.said.get(f"y{x}", -99) > 15]
+        # un même secteur n'est pas réannoncé avant 45 s (course hors ligne à Portimão : 40 jaunes en 30 min, 23/11)
+        new = [x for x in sorted(secs - old) if now - self.said.get(f"y{x}", -99) > 45]
         me = next((c for c in s.cars if c.get("me")), None)
         if me and me.get("spd", 99) < 15:
             # tu es toi-même arrêté ou au ralenti (sortie, tête-à-queue) : ce jaune, c'est sans doute pour toi
             self._ysecs = secs
             return
         ann = self.__dict__.setdefault("_yann", set())   # jaunes vraiment annoncés (pour « levés »)
+        mine = me.get("s") if me else None
         for sec in new:
+            # seulement les jaunes devant toi (ton secteur ou le suivant) : les autres sont sur la carte,
+            # pas besoin de les dire à la radio
+            if mine is not None and (sec - 1 - mine) % 3 not in (0, 1):
+                continue
             ann.add(sec)
             self.said[f"y{sec}"] = now
             where = ""
@@ -71,7 +77,7 @@ class Incidents:
             tail = L(" C'est devant toi, pas de dépassement.", " It's ahead of you, no overtaking.") if ahead else ""
             self.say(None, L(f"Drapeau jaune secteur {sec}{where} !{tail}", f"Yellow flag sector {sec}{where}!{tail}"),
                      urgent=ahead)
-        if old and not secs and getattr(self, "_yann", None) and now - self.said.get("yclear", -99) > 15:
+        if getattr(self, "_yann", None) and not (secs & self._yann) and now - self.said.get("yclear", -99) > 45:
             # « levés » seulement si on avait annoncé un jaune (sinon « levés » tombait de nulle part)
             self._yann = set()
             self.said["yclear"] = now

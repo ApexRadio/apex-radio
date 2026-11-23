@@ -209,6 +209,24 @@ class Behavior:
             self.dirty = True   # le tour en cours ne compte pas
             self.bias_start = None
 
+    def new_session(self) -> None:
+        """Autre circuit ou autre voiture (ou autre jeu) : tout ce qu'on avait noté ne vaut plus rien.
+        Avant, les virages de Brands Hatch (AMS2) se retrouvaient dans les conseils de setup de Monza (AC EVO), 23/11."""
+        self.reset_analysis()
+        with self.lock:
+            self.garage_notes = {}
+            self.garage_said = -9999.0
+            self.repeats.clear()
+            self.announced.clear()
+            self.corner_v = {}
+            self.sgn = {1: 0, -1: 0}
+            self.brake_peaks = None
+            self.brake_hist.clear()
+            self.bias_done = False
+            self.hold_until = 0
+            self.last_say = -99
+            self._lap = None
+
     def _new_lap(self) -> None:
         self.cur = defaultdict(lambda: [0, 0, 0])        # (virage, phase) -> [n, sous, sur]
         self.locks = defaultdict(int)                    # (virage, roue) -> mesures

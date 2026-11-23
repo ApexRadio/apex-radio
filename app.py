@@ -399,6 +399,11 @@ def loop(state: State, demo: bool) -> None:
             inc.update(snap)
             traffic.update(snap, plan, say)
             beh.game = getattr(snap, "game", "lmu")
+            if snap.on_track and snap.track:
+                bkey = (beh.game, snap.track, snap.car)
+                if getattr(beh, "_key", None) not in (None, bkey):
+                    beh.new_session()
+                beh._key = bkey
             pitlane.update(snap, say)
             trend.update(snap, say)
             limits.update(snap, say)

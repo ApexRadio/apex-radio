@@ -984,7 +984,9 @@ class Damage:
                     self._check = (time.monotonic(), dict(self.wear or {}))   # verdict après lecture des dégâts réels
                     self._last_fetch = 0
             else:
-                if not again:
+                if not again and (s.game_phase == 8 or getattr(s, "finish_status", 0) == 1):
+                    pass        # après le damier : plus d'arrêt, inutile de parler de réparation
+                elif not again:
                     say(None, L("Contact ! ", "Contact! ") + (
                         L("Gros dégâts à la carrosserie, on répare au prochain arrêt.", "Heavy body damage, we'll fix it at the next stop.")
                         if worst >= 2 else L("Rien de grave, on continue.", "Nothing serious, carry on.")), urgent=worst >= 2)

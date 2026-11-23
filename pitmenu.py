@@ -77,6 +77,8 @@ def plan_menu(menu: list, fuel_total: float | None, tyres: str | None, compound:
         opts = [(i, _pct(x.get("text"))) for i, x in enumerate(ve["settings"])]
         opts = [(i, v) for i, v in opts if v is not None]
         if opts:
+            if fuel_total != 0 and energy_total is not None and energy_now is not None and energy_total <= energy_now:
+                fuel_total = 0         # assez d'énergie pour finir : on n'en remet pas (et on ne vise pas plus bas)
             if fuel_total == 0:      # on n'ajoute rien : le niveau le plus haut qui ne dépasse pas ce qu'on a déjà
                 cur = (energy_now or 0) * 100
                 low = [o for o in opts if o[1] <= cur + 0.5]
@@ -199,7 +201,7 @@ class PitCrew:
     def __init__(self, cfg: dict, demo: bool = False) -> None:
         self.cfg = cfg
         self.demo = demo
-        self.mode = cfg.get("pit_auto", "auto")   # "auto" / "demande" / "off"
+        self.mode = cfg.get("pit_auto", "demande")   # "auto" / "demande" / "off" (par défaut : à la demande, retours joueurs)
         self.done_for = None                        # n° d'arrêt déjà préparé
         self.no_fuel_for = None                     # n° d'arrêt pour lequel le pilote a dit « pas d'essence »
         self.tyres_for = None                       # (n° d'arrêt, roues) : « change juste les deux avant »
@@ -242,9 +244,10 @@ class PitCrew:
             return
         if mark_done:
             self.done_for = s.pit_stops
-        # arrêt imprévu (crevaison, dégâts…) alors que l'essence suffit : on n'en remet pas
-        unplanned = not getattr(p, "stops_needed", 0)
-        keep = self.no_fuel_for == s.pit_stops or unplanned
+        # arrêt imprévu (crevaison, dégâts, changement de pilote…) : le calcul met déjà 0 si l'essence / l'énergie
+        # suffit jusqu'au bout, et complète sinon. Avant, on ne remettait RIEN dès que l'arrêt n'était pas prévu :
+        # si l'estimation était un peu juste, la voiture repartait sans assez d'énergie (retour joueur).
+        keep = self.no_fuel_for == s.pit_stops
         fuel_total = 0.0 if keep else getattr(p, "fuel_total", None)
         energy_total = None if keep else getattr(p, "energy_target", None)
         if energy_total is None and not keep and fuel_total and s.energy and s.fuel and s.fuel > 0.5:

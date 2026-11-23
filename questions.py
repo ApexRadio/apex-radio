@@ -397,12 +397,50 @@ def status(s: Snapshot, p: Plan) -> str:
     return " ".join([position(s, p), laps(s, p), pit(s, p)])
 
 
+def repair_time(s: Snapshot, p: Plan) -> str:
+    """« Combien de temps pour réparer ? » : temps donnés par LMU (équipe de stand de ta voiture).
+    Seulement quand on le demande (pas d'annonce automatique : Laurent ne veut pas surcharger la radio)."""
+    if getattr(s, "game", "lmu") != "lmu":
+        return L("Le jeu ne me donne pas les temps de réparation ici, seulement dans Le Mans Ultimate.",
+                 "The game doesn't give me repair times here, only in Le Mans Ultimate.")
+    damaged = s.repair or s.repair_all or any(d for d in (s.dents or []))
+    if not damaged:
+        return L("Pas de dégâts à réparer pour l'instant.", "No damage to repair right now.")
+    try:
+        import pitmenu
+        st, j = pitmenu._req("GET", "/rest/garage/UIScreen/RepairAndRefuel")
+        times = (j.get("pitStopTimes") or {}).get("times") or {}
+        stop = float((j.get("pitStopLength") or {}).get("timeInSeconds") or 0)
+        dmg = next((it for it in (j.get("pitMenu") or {}).get("pitMenu", []) if it.get("PMC Value") == pitmenu.DAMAGE), None)
+    except Exception:
+        return L("Je n'arrive pas à lire les temps du stand dans le jeu pour l'instant.", "I can't read the pit times from the game right now.")
+    full = bool(s.repair_all)
+    rep = float(times.get("FixAllDamage" if full else "FixAeroDamage") or 0)
+    if rep <= 0:
+        return L("Le jeu ne m'indique pas de temps de réparation pour cette voiture.", "The game gives no repair time for this car.")
+    what = L("tout réparer", "a full repair") if full else L("réparer la carrosserie", "a bodywork repair")
+    chosen = ""
+    if dmg:
+        try:
+            chosen = str(dmg["settings"][dmg.get("currentSetting", 0)]["text"]).lower()
+        except Exception:
+            chosen = ""
+    planned = ("répar" in chosen or "repair" in chosen or "fix" in chosen) and not any(n in chosen for n in ("ne pas", "not", "no "))
+    msg = L(f"Pour {what}, compte jusqu'à {round(rep)} secondes au stand.", f"{what.capitalize()} takes up to {round(rep)} seconds in the pits.")
+    if stop > 0:
+        msg += " " + (L(f"Avec le menu actuel, le jeu estime l'arrêt complet à {round(stop)} secondes.",
+                        f"With the current menu, the game estimates the full stop at {round(stop)} seconds.") if planned else
+                      L(f"Sans réparation, le jeu estime l'arrêt à {round(stop)} secondes.",
+                        f"Without repairs, the game estimates the stop at {round(stop)} seconds."))
+    return msg
+
+
 TOPICS = [
     # (mots-clés, fonction)
     (r"essence|des sens|d sens|carbu|fuel|conso|litre|reservoir|jus|gasoil|\bgas\b|petrol|consumption|\btank", fuel),
     (r"energie|batterie|virtuel|energy|battery|virtual", energy),
     (r"stand|\bbox|arret|rentr|\bpit|ravitaill|strateg|\bstop\b|come in", pit),
-    (r"pneu|pner|peneu|pneumatique|gomme|usure|pression|crev|\betat d(u|e|es)\b(?!.*(voiture|caisse|carrosserie|course|jeu de la))|\btyre|\btire|rubber|\bwear|\bpressure", tyres),
+    (r"pneu|pner|peneu|pneumatique|gomme|usure|pression|crev|\betat (des?|de mes|d) ?(neu|peu|pne|ne|nu|beu|meu)\w*|\bpneus?\b|\bdes p?neus?\b|\betat d(u|e|es)\b(?!.*(voiture|caisse|carrosserie|course|jeu de la))|\btyre|\btire|rubber|\bwear|\bpressure", tyres),
     (r"ecart|devant|derriere|\bgap|attaque|rattrap|revient|remont|rapproch|monte fort|montant fort|ahead|behind|in front|catching|closing", gaps),
     (r"repar|degat|degare|dommage|abime|casse|etat de (la|ma) (voiture|caisse|bagnole)|damage|repair", repairs),
     (r"position|place|classement|placement|cassement|quelle p\b|combien ?t?i?eme|combien siam|combien.*(je suis|suis je)|je suis ou\b|where am i|what p\b", position),
@@ -654,6 +692,7 @@ def stints(s: Snapshot, p: Plan) -> str:
 
 
 TOPICS[:0] = [
+    (r"(combien de temps|temps|long|secondes|duree).{0,25}(repar|reparation)|(repar|reparation).{0,30}(combien|temps|long|secondes|duree)|how long.{0,20}repair|repair time", repair_time),
     (r"\brelais\b|changement de pilote|change(ment|r) de pilote|qui (roule|conduit|prend le volant) (apres|ensuite)|c est qui apres|\bstints?\b|driver (change|swap)|who s (driving )?next", stints),
     (r"gagner du temps|gagner des dixiemes|ou (est ce que )?je (peux |pourrais |peut )?(gagner|perds|perdre|aller plus vite)|analys.{0,20}(pilotage|conduite)|comment (je pilote|je conduis|est mon pilotage)|ameliorer mon pilotage|where can i (gain|find) time|analy[sz]e my driving", coaching),
     (r"reference|par rapport a (mon|ton) meilleur|compare (a|avec) mon meilleur|best lap reference|my best lap", reference),
@@ -804,6 +843,8 @@ def repair_command(t: str) -> str | None:
     """« pas de réparation » / « répare la voiture » : change le menu des stands."""
     if re.search(r"^(il faut|faut il|est ce qu|on doit|je dois|tu crois|ca vaut)", t):
         return None   # c'est une question (« il faut réparer ? »), pas un ordre
+    if re.search(r"combien de temps|\bcombien\b|\bduree\b|\bhow long\b|repair time|temps de (la )?repar", t):
+        return None   # « combien de temps pour réparer ? » : une question (repair_time), pas un ordre
     if re.search(NO_REPAIR, t):
         want = False
     elif re.search(DO_REPAIR, t) and re.search(r"\b(repare|reparer|reparez|reparte|repart|tout|toutes|carrosserie|fix|repair the|do the|on repare)\b|"
@@ -1173,6 +1214,8 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
             if fn is laptimes and any(r[0] is record for r in replies):
                 continue
             if fn is gaps and any(r[0] in (who_ahead, who_behind, leader) for r in replies):
+                continue
+            if fn in (repairs, pit) and any(r[0] is repair_time for r in replies):
                 continue
             if fn is pit and any(r[0] is stops_count for r in replies):
                 continue

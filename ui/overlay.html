@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<title>Apex Radio · overlay</title>
+<!--
+  Overlay pour OBS / Streamlabs (streamers) : source « Navigateur », adresse http://localhost:8765/overlay,
+  taille 1920 × 1080. Le fond est transparent : seuls les messages radio de l'ingénieur apparaissent,
+  quelques secondes chacun.
+  Options dans l'adresse : ?pos=bas|haut (place du message), ?info=1 (petite barre position / tour / écarts),
+  ?scale=1.2 (taille).
+-->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; background: transparent; overflow: hidden; width: 100vw; height: 100vh; font-family: Inter, sans-serif; }
+  #wrap { position: absolute; left: 50%; transform: translateX(-50%) scale(var(--sc, 1)); transform-origin: 50% 100%;
+          bottom: 60px; width: 1100px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  body.haut #wrap { bottom: auto; top: 60px; transform-origin: 50% 0; }
+  .msg { display: flex; align-items: flex-start; gap: 18px; background: rgba(6, 7, 11, .88); border: 2px solid #00E5FF;
+         border-radius: 22px; padding: 18px 26px; box-shadow: 0 0 28px rgba(0, 229, 255, .45); color: #E8EDF5;
+         opacity: 0; transform: translateY(20px); transition: opacity .35s, transform .35s; max-width: 1100px; }
+  .msg.on { opacity: 1; transform: none; }
+  .msg.urg { border-color: #FF2E88; box-shadow: 0 0 30px rgba(255, 46, 136, .5); }
+  .tag { font-family: Orbitron; font-weight: 900; font-size: 18px; letter-spacing: .12em; color: #00E5FF; white-space: nowrap;
+         text-shadow: 0 0 12px rgba(0, 229, 255, .8); padding-top: 6px; }
+  .msg.urg .tag { color: #FF2E88; text-shadow: 0 0 12px rgba(255, 46, 136, .8); }
+  .txt { font-size: 30px; font-weight: 700; line-height: 1.25; }
+  .bars { display: flex; gap: 4px; align-items: center; height: 26px; padding-top: 6px; }
+  .bars i { width: 5px; border-radius: 3px; background: #00E5FF; animation: b .9s ease-in-out infinite; }
+  .msg.urg .bars i { background: #FF2E88; }
+  .bars i:nth-child(2) { animation-delay: .15s } .bars i:nth-child(3) { animation-delay: .3s } .bars i:nth-child(4) { animation-delay: .45s }
+  @keyframes b { 0%, 100% { height: 6px } 50% { height: 24px } }
+  #info { display: none; gap: 22px; font-family: 'JetBrains Mono', monospace; font-size: 22px; color: #E8EDF5;
+          background: rgba(6, 7, 11, .8); border: 1px solid rgba(0, 229, 255, .45); border-radius: 14px; padding: 8px 18px; }
+  body.info #info { display: flex; }
+  #info b { color: #00E5FF; } #info .up { color: #3DFFA2; } #info .dn { color: #FFB547; }
+</style></head>
+<body>
+<div id="wrap">
+  <div id="info"></div>
+  <div class="msg" id="msg"><div class="bars"><i></i><i></i><i></i><i></i></div><div class="tag">APEX//RADIO</div><div class="txt" id="txt"></div></div>
+</div>
+<script>
+const q = new URLSearchParams(location.search);
+if (q.get("pos") === "haut" || q.get("pos") === "top") document.body.classList.add("haut");
+if (q.get("info") === "1") document.body.classList.add("info");
+document.documentElement.style.setProperty("--sc", Math.max(.5, Math.min(2, +q.get("scale") || 1)));
+let lastKey = null, hideT = null, first = true;
+function show(m) {
+  const box = document.getElementById("msg");
+  document.getElementById("txt").textContent = m.text;
+  box.classList.toggle("urg", !!m.urgent);
+  box.classList.add("on");
+  clearTimeout(hideT);
+  // assez longtemps pour lire : ~ 1 s pour 12 caractères, entre 4 et 12 s
+  hideT = setTimeout(() => box.classList.remove("on"), Math.max(4000, Math.min(12000, m.text.length * 85)));
+}
+function fmt(g) { return g == null ? "–" : (g > 0 ? "+" : "") + g.toFixed(1); }
+async function tick() {
+  try {
+    const d = await (await fetch("/api/state", { cache: "no-store" })).json();
+    const m = (d.radio || []).find(x => !x.me && x.text && !String(x.text).startsWith("Toi :"));
+    if (m) {
+      const key = m.t + "|" + m.text;
+      if (key !== lastKey) { if (!first) show(m); lastKey = key; }
+    }
+    first = false;
+    const s = d.snap || {};
+    if (s.on_track) {
+      document.getElementById("info").innerHTML =
+        `<span>P<b>${s.class_position || s.position || "–"}</b></span><span>TOUR <b>${(s.laps_done || 0) + 1}</b></span>` +
+        `<span class="up">▲ ${fmt(s.gap_class_ahead != null ? -s.gap_class_ahead : null)}</span><span class="dn">▼ ${fmt(s.gap_class_behind)}</span>`;
+    }
+  } catch (e) {}
+}
+setInterval(tick, 700); tick();
+</script>
+</body></html>

@@ -153,6 +153,7 @@ def loop(state: State, demo: bool) -> None:
     source = make_source(demo)
     eng = Engineer()
     eng.on_say = state.voice.say
+    eng.map = state.map   # pour dire où lever le pied quand il faut économiser
     state.eng = eng
     questions.VOICE, questions.ENG = state.voice, eng
     lt = LapTimes()
@@ -607,7 +608,7 @@ def make_handler(state: State):
                 rl = getattr(state, "relay", None)
                 import relais
                 data = rl.info(state.plan, state.snap) if rl else {"cfg": relais.load(), "plan": relais.plan(relais.load()),
-                                                                    "fuel_stint_min": None, "live": None}
+                                                                    "fuel_stint_min": None, "live": None, "races": relais.races()}
                 body, ctype = json.dumps(data, default=lambda o: None).encode(), "application/json"
             elif self.path.startswith("/api/sd"):
                 # état résumé pour le plugin Stream Deck (léger, interrogé chaque seconde)
@@ -624,6 +625,8 @@ def make_handler(state: State):
                 body, ctype = (HERE / "ui" / "fsel.js").read_bytes(), "text/javascript; charset=utf-8"
             elif self.path == "/favicon.ico":
                 body, ctype = (HERE / "apex.ico").read_bytes(), "image/x-icon"
+            elif self.path.split("?")[0].rstrip("/") == "/overlay":   # overlay OBS pour les streamers (fond transparent)
+                body, ctype = (HERE / "ui" / "overlay.html").read_bytes(), "text/html; charset=utf-8"
             elif self.path.rstrip("/") in ("/tel", "/phone"):
                 body, ctype = (HERE / "ui" / "tel.html").read_bytes(), "text/html; charset=utf-8"
             elif self.path in ("/", "/index.html"):
@@ -737,12 +740,20 @@ def make_handler(state: State):
                 cfg = json.loads(self.rfile.read(n) or b"{}")
                 rl = getattr(state, "relay", None)
                 import relais
+                act = cfg.pop("_race", None)
+                if act == "store":
+                    relais.race_store(cfg)          # garde la course… et elle reste la course active
+                elif act == "load":
+                    cfg = relais.race_get(str(cfg.get("key", ""))) or (rl.cfg if rl else relais.load())
+                elif act == "drop":
+                    relais.race_drop(str(cfg.get("key", "")))
+                    cfg = rl.cfg if rl else relais.load()
                 if rl:
                     rl.reload(cfg)
                     data = rl.info(state.plan, state.snap)
                 else:
                     c = relais.save(cfg)
-                    data = {"cfg": c, "plan": relais.plan(c), "fuel_stint_min": None, "live": None}
+                    data = {"cfg": c, "plan": relais.plan(c), "fuel_stint_min": None, "live": None, "races": relais.races()}
                 body = json.dumps(data, default=lambda o: None).encode()
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")

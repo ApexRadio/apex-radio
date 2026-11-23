@@ -118,6 +118,51 @@ def _assign(cfg: dict, stints: list[dict]) -> list[dict]:
     return stints
 
 
+RACES = DATA / "relais_courses.json"   # courses gardées (« 6h de Spa », « 4h de Monza »…) pour les préparer à l'avance
+
+
+def _races() -> dict:
+    try:
+        d = json.loads(RACES.read_text(encoding="utf-8"))
+        return d if isinstance(d, dict) else {}
+    except Exception:
+        return {}
+
+
+def races() -> list[dict]:
+    """Liste des courses gardées, les plus proches d'abord."""
+    out = [{"key": k, "name": v.get("name") or k, "date": v.get("date", ""), "start": v.get("start", "")}
+           for k, v in _races().items() if isinstance(v, dict)]
+    return sorted(out, key=lambda r: (r["date"] or "9999", r["name"].lower()))
+
+
+def race_store(cfg: dict) -> str:
+    cfg = clean(cfg)
+    key = (cfg.get("name") or L("Course sans nom", "Untitled race")).strip()
+    d = _races()
+    d[key] = cfg
+    try:
+        RACES.parent.mkdir(parents=True, exist_ok=True)
+        RACES.write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding="utf-8")
+    except OSError:
+        pass
+    return key
+
+
+def race_get(key: str) -> dict | None:
+    v = _races().get(key)
+    return clean(v) if isinstance(v, dict) else None
+
+
+def race_drop(key: str) -> None:
+    d = _races()
+    if d.pop(key, None) is not None:
+        try:
+            RACES.write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding="utf-8")
+        except OSError:
+            pass
+
+
 def save(cfg: dict) -> dict:
     cfg = clean(cfg)
     try:
@@ -447,7 +492,7 @@ class Relay:
         except Exception:
             hook = False
         return {"cfg": self.cfg, "plan": pl, "fuel_stint_min": full_min, "live": live, "share": share_text(self.cfg, pl),
-                "busy": {x: windows(self.cfg, x) for x in names(self.cfg)}, "webhook": hook}
+                "busy": {x: windows(self.cfg, x) for x in names(self.cfg)}, "webhook": hook, "races": races()}
 
 
 def share_text(cfg: dict, pl: list[dict]) -> str:
@@ -494,7 +539,11 @@ def page() -> str:
         "drivers": ("Pilotes, dans l'ordre", "Drivers, in order"),
         "add": ("+ Ajouter un pilote", "+ Add a driver"),
         "save": ("ENREGISTRER", "SAVE"), "saved": ("Enregistré ✓", "Saved ✓"),
-        "new": ("Nouvelle course", "New race"), "new_sure": ("Sûr ? Re-clique pour effacer", "Sure? Click again to clear"),
+        "new": ("Nouvelle course", "New race"),
+        "races": ("Mes courses", "My races"), "races_none": ("— aucune course gardée —", "— no saved race —"),
+        "races_pick": ("— choisir une course —", "— pick a race —"),
+        "keep": ("Garder cette course", "Keep this race"), "kept": ("Course gardée ✓", "Race kept ✓"),
+        "drop": ("Supprimer", "Delete"), "drop_sure": ("Sûr ?", "Sure?"), "new_sure": ("Sûr ? Re-clique pour effacer", "Sure? Click again to clear"),
         "plan": ("Le plan", "The plan"), "n": ("Relais", "Stint"), "who": ("Pilote", "Driver"),
         "from": ("Début", "Start"), "to": ("Fin", "End"), "dur": ("Durée", "Length"),
         "live": ("En course", "Live"),
@@ -540,6 +589,8 @@ th{{color:rgb(168,85,247)}}
 <h1>{t['title']}</h1><p class="muted">{t['intro']}</p>
 <div class="card">
  <div class="f"><label for="on">{t['on']}</label><input type="checkbox" id="on"></div>
+ <div class="f"><label>{t['races']}</label><select id="races" style="min-width:260px"></select>
+   <button id="keep" style="margin-left:10px">{t['keep']}</button> <button id="dropr">{t['drop']}</button></div>
  <div class="f"><label>{t['rname']}</label><input id="rn" maxlength="60" style="width:260px" placeholder="{t['rname_ph']}"></div>
  <div class="f"><label>{t['rdate']}</label><input type="date" id="rd"> <label style="min-width:0;margin-left:14px">{t['rstart']}</label><input type="time" id="rs"></div>
  <div class="f"><label>{t['race']}</label><input type="number" id="rh" min="0" max="48"> {t['h']}
@@ -578,6 +629,7 @@ function drawDrivers() {{
   }});
 }}
 function draw(d, form) {{
+  drawRaces(d.races || [], (d.cfg.name || "").trim());
   if (form) {{
     $("on").checked = d.cfg.on; $("rh").value = Math.floor(d.cfg.race_min / 60); $("rm").value = d.cfg.race_min % 60;
     $("st").value = d.cfg.stint_min; $("tk").value = d.cfg.tanks; $("ty").checked = d.cfg.tyres; $("mode").value = d.cfg.mode; modeRows();
@@ -659,6 +711,31 @@ $("newrace").onclick = () => {{
   Object.keys(busy).forEach(k => delete busy[k]);
   drawDrivers();
   $("save").click();
+}};
+// Mes courses : garder la course affichée, en recharger une autre, en supprimer une
+function drawRaces(list, current) {{
+  const sel = $("races"); if (document.activeElement === sel) return;
+  sel.innerHTML = "";
+  const o0 = document.createElement("option"); o0.value = ""; o0.textContent = list.length ? T.races_pick : T.races_none; sel.appendChild(o0);
+  list.forEach(r => {{ const o = document.createElement("option"); o.value = r.key;
+    o.textContent = r.name + (r.date ? " · " + r.date.split("-").reverse().join("/") : "") + (r.start ? " · " + r.start : "");
+    if (r.key === current) o.selected = true; sel.appendChild(o); }});
+  $("dropr").disabled = !sel.value;
+}}
+async function raceAction(body) {{ draw(await (await fetch("/api/relais", {{ method: "POST", body: JSON.stringify(body) }})).json(), true); }}
+$("races").onchange = () => {{ $("dropr").disabled = !$("races").value; if ($("races").value) raceAction({{ _race: "load", key: $("races").value }}); }};
+$("keep").onclick = async () => {{
+  const cfg = {{ on: $("on").checked, race_min: (+$("rh").value || 0) * 60 + (+$("rm").value || 0), stint_min: +$("st").value, tanks: +$("tk").value, tyres: $("ty").checked, mode: $("mode").value, drivers,
+    name: $("rn").value, date: $("rd").value, start: $("rs").value, unavail: busy }};
+  await raceAction(Object.assign({{ _race: "store" }}, cfg));
+  $("ok").textContent = T.kept; setTimeout(() => $("ok").textContent = "", 2500);
+}};
+let armDrop = null;
+$("dropr").onclick = () => {{
+  const k = $("races").value; if (!k) return;
+  if (!armDrop) {{ $("dropr").textContent = T.drop_sure; armDrop = setTimeout(() => {{ armDrop = null; $("dropr").textContent = T.drop; }}, 4000); return; }}
+  clearTimeout(armDrop); armDrop = null; $("dropr").textContent = T.drop;
+  raceAction({{ _race: "drop", key: k }});
 }};
 load(true); setInterval(() => load(false), 5000);
 </script>"""

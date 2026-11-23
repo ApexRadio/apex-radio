@@ -484,6 +484,8 @@
       <div class="setrow"><span data-en="Show lap times">Afficher les chronos</span><div class="setctl"><input type="checkbox" id="lay_chrono" checked></div></div>
       <div class="setrow"><span data-en="Show driving notes under the map">Remarques de pilotage sous le circuit</span><div class="setctl"><input type="checkbox" id="lay_behav" checked></div></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="The cards you hide leave more room for the track map. Saved for this screen only (the phone has its own view).">Les cases que tu masques laissent plus de place au circuit. Gardé pour cet écran seulement (le téléphone a sa propre vue).</div>
+      <div class="setrow"><span data-en="Stream overlay (OBS)">Overlay pour les streams (OBS)</span><div class="setctl"><button id="ovcopy" data-en="Copy the link">Copier le lien</button></div></div>
+      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="In OBS: add a « Browser » source, paste the link, size 1920 × 1080. Transparent background: only the engineer's radio messages show up. Add ?info=1 at the end for a small position / gaps bar.">Dans OBS : ajoute une source « Navigateur », colle le lien, taille 1920 × 1080. Fond transparent : seuls les messages radio de l'ingénieur s'affichent. Ajoute ?info=1 à la fin pour une petite barre position / écarts.</div>
     </section>
     <section class="setsec"><h2>💬 <span data-en="Discord (team)">Discord (équipe)</span></h2>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Optional. Paste the webhook of your TEAM channel: Apex will post your lap times, setups and race debriefs there by itself. The link stays on this PC. For the public Apex Radio server, the share buttons copy the message and open Discord.">Facultatif. Colle le webhook du salon de TON ÉQUIPE : Apex y postera tout seul tes chronos, setups et débriefs de course. Le lien reste sur ce PC. Pour le serveur public Apex Radio, les boutons de partage copient le message et ouvrent Discord.</div>
@@ -1025,6 +1027,11 @@ $("tone").innerHTML = [["sobre", "Sobre (juste l'info)", "Plain (just the info)"
 $("tone").onchange = e => fetch("/api/tone", { method: "POST", body: JSON.stringify({ tone: e.target.value }) });
 $("drvname").onchange = e => fetch("/api/driver", { method: "POST", body: JSON.stringify({ name: e.target.value.trim() }) });
 $("pitmode").onchange = e => fetch("/api/pit/mode", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
+$("ovcopy").onclick = async () => {
+  const url = location.origin + "/overlay";
+  try { await navigator.clipboard.writeText(url); } catch (e) { const a = document.createElement("textarea"); a.value = url; document.body.appendChild(a); a.select(); try { document.execCommand("copy"); } catch (_) {} a.remove(); }
+  $("ovcopy").textContent = T("Copié ✓", "Copied ✓"); setTimeout(() => $("ovcopy").textContent = T("Copier le lien", "Copy the link"), 2500);
+};
 $("coachrace").onchange = e => fetch("/api/coach_race", { method: "POST", body: JSON.stringify({ on: e.target.checked }) });
 $("coaching").onchange = e => fetch("/api/coaching", { method: "POST", body: JSON.stringify({ on: e.target.checked }) });
 $("encourage").onchange = e => fetch("/api/encourage", { method: "POST", body: JSON.stringify({ level: e.target.value }) });

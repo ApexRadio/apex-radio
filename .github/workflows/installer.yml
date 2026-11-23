@@ -4,6 +4,11 @@ on:
   push:
     tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      essai_store:
+        description: "Construire seulement le paquet Microsoft Store (pas d'installateur, pas de publication, pas d'annonce)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -70,7 +75,40 @@ jobs:
           if ($p.ExitCode -ne 7) { throw "ApexRadio.exe ne démarre pas Python correctement (code $($p.ExitCode))" }
           Write-Host "ApexRadio.exe OK"
 
+      - name: Paquet Microsoft Store (MSIX)
+        shell: pwsh
+        env:
+          # identité du Partner Center (Apex Radio → Identité du produit, Store ID 9NPPNPFX1LRB) : pas secret
+          ID: ApexRadio.ApexRadio
+          PUB: CN=88C68946-6C6E-4F43-94D6-67BA502D811B
+          PUBNAME: Apex Radio
+        run: |
+          $v = "${{ steps.v.outputs.version }}"
+          $p = ($v -split '[^0-9]+' | Where-Object { $_ -ne '' }) + @('0', '0', '0')
+          $mv = "$($p[0]).$($p[1]).$($p[2]).0"
+          Remove-Item -Recurse -Force build\msix -ErrorAction SilentlyContinue
+          Copy-Item -Recurse build\app build\msix
+          Get-ChildItem build\msix -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
+          Set-Content build\msix\store.txt "Microsoft Store"
+          build\app\python\python.exe store\make_assets.py apex.ico build\msix\Assets
+          $m = Get-Content store\AppxManifest.xml -Raw -Encoding UTF8
+          $esc = { param($x) [Security.SecurityElement]::Escape($x) }
+          $m = $m.Replace('__IDENTITY_NAME__', $env:ID).Replace('__PUBLISHER_NAME__', (& $esc $env:PUBNAME)).Replace('__PUBLISHER__', (& $esc $env:PUB)).Replace('__VERSION__', $mv)
+          [IO.File]::WriteAllText("$PWD\build\msix\AppxManifest.xml", $m, (New-Object Text.UTF8Encoding $false))
+          $mk = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\makeappx.exe" | Sort-Object FullName -Descending | Select-Object -First 1
+          if (-not $mk) { throw "makeappx.exe introuvable (Windows SDK)" }
+          New-Item -ItemType Directory -Force store-out | Out-Null
+          & $mk.FullName pack /d build\msix /p "store-out\ApexRadio-$v.msix" /o
+          if ($LASTEXITCODE -ne 0) { throw "makeappx a échoué" }
+          Write-Host "Paquet Store : ApexRadio-$v.msix (version $mv, identité $env:ID)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ApexRadio-Store-${{ steps.v.outputs.version }}
+          path: store-out\*.msix
+
       - name: Installateur (Inno Setup)
+        if: ${{ !inputs.essai_store }}
         shell: pwsh
         run: |
           if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) { choco install innosetup -y --no-progress }
@@ -79,13 +117,14 @@ jobs:
           & $iscc "/DAppVersion=${{ steps.v.outputs.version }}" installer\ApexRadio.iss
 
       - uses: actions/upload-artifact@v4
+        if: ${{ !inputs.essai_store }}
         with:
           name: ApexRadio-Setup-${{ steps.v.outputs.version }}
           path: dist\*.exe
 
       - name: Version déjà publiée ?
         id: known
-        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) && !inputs.essai_store
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -95,7 +134,7 @@ jobs:
           exit 0
 
       - name: Publication (Release)
-        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) && !inputs.essai_store
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.v.outputs.version }}
@@ -104,7 +143,7 @@ jobs:
           files: dist/*.exe
 
       - name: Annonce sur Discord (nouvelle version seulement)
-        if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) && steps.known.outputs.existed == 'false'
+        if: ((github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) && steps.known.outputs.existed == 'false') && !inputs.essai_store
         continue-on-error: true
         shell: pwsh
         env:
@@ -113,7 +152,7 @@ jobs:
 
       - name: Version de test déjà publiée ?
         id: knowntest
-        if: github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
+        if: (github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')) && !inputs.essai_store
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -123,7 +162,7 @@ jobs:
           exit 0
 
       - name: Version de test (branche)
-        if: github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
+        if: (github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')) && !inputs.essai_store
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.v.outputs.version }}-test
@@ -135,7 +174,7 @@ jobs:
           files: dist/*.exe
 
       - name: Annonce accès anticipé sur Discord (nouvelle version de test seulement)
-        if: github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/') && steps.knowntest.outputs.existed == 'false'
+        if: (github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/') && steps.knowntest.outputs.existed == 'false') && !inputs.essai_store
         continue-on-error: true
         shell: pwsh
         env:

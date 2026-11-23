@@ -17,7 +17,11 @@ import urllib.request
 from pathlib import Path
 
 HERE = Path(__file__).parent
-OUT = HERE / "lmu_api_probe.json"
+try:   # dossier technique (l'appli installée par le Microsoft Store ne peut pas écrire dans son propre dossier)
+    from paths import LOCAL
+    OUT = LOCAL / "lmu_api_probe.json"
+except Exception:
+    OUT = HERE / "lmu_api_probe.json"
 BASE = "http://localhost:6397"
 _OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))   # jamais de proxy pour le PC local
 ENDPOINTS = [

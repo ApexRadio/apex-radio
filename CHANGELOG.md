@@ -1,5 +1,9 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.4.5
+- 🇫🇷 Atelier setup : la liste des setups ne se ferme plus toute seule (elle disparaissait dès que la radio défilait), et ton choix reste affiché jusqu'au clic sur « C'est ce setup qui est chargé dans le jeu ». Vaut pour toutes les listes déroulantes d'Apex.
+- 🇬🇧 Setup workshop: the setup list no longer closes by itself (it vanished whenever the radio scrolled), and your choice stays until you click "This is the setup loaded in the game". Applies to every dropdown in Apex.
+
 ## 1.4.4
 - 🇫🇷 Automobilista 2 affiché partout : l'écran d'attente et les « Premiers pas » le citent, avec le réglage à activer dans le jeu (Options → Système → Mémoire partagée → « Project CARS 2 »).
 - 🇬🇧 Automobilista 2 shown everywhere: the waiting screen and "Getting started" mention it, with the setting to turn on in the game (Options → System → Shared Memory → "Project CARS 2").

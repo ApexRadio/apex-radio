@@ -1,5 +1,14 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
+## 🆕 1.4.5
+🇫🇷
+- **Atelier setup corrigé** : la liste des setups ne disparaît plus toute seule (elle se fermait dès que la radio défilait), et ton choix reste bien pris. Vaut pour toutes les listes déroulantes d'Apex.
+- Rappel : Automobilista 2 est arrivé avec la 1.4.3 (dans AMS2 : Options → Système → Mémoire partagée → « Project CARS 2 »).
+
+🇬🇧
+- **Setup workshop fixed**: the setup list no longer vanishes by itself (it closed whenever the radio scrolled), and your choice is kept. Applies to every dropdown in Apex.
+- Reminder: Automobilista 2 arrived with 1.4.3 (in AMS2: Options → System → Shared Memory → "Project CARS 2").
+
 ## 🆕 1.4.4
 🇫🇷
 - **Automobilista 2 affiché partout** : l'écran d'attente le cite maintenant, avec le réglage à activer dans AMS2 : Options → Système → Mémoire partagée → « Project CARS 2 ».

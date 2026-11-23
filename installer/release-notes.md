@@ -1,21 +1,25 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
-## 🆕 1.4.2
+## 🆕 1.4.3
 🇫🇷
-- **Mise à jour en 1 clic** : la nouvelle version se télécharge dans Apex, tu cliques sur INSTALLER, et Apex se réinstalle puis se rouvre tout seul.
-- **Endurance** : mode équipier. Quand ton coéquipier roule, Apex suit votre voiture au lieu d'afficher « En attente du jeu ».
-- **Planning des relais** : nom de la course, date, heure de départ, indisponibilités des pilotes, frise, partage Discord.
-- **En course** : voiture plus rapide annoncée plus tôt (5 s, et 10 s pour un prototype sur une GT) ; spotter plus réactif ; drapeaux jaunes dans le bon secteur ; noms des pilotes dans les écarts, et « écart P10 » compris ; noms des virages célèbres (Raidillon, Parabolica…).
-- **Setups** : les setups Apex qui n'apparaissaient pas dans LMU s'affichent de nouveau ; nouveau bouton « Partager » vers Discord.
-- **Affichage** : circuit plus grand au choix, cases à masquer, style néon partout.
+- **Nouveau jeu : Automobilista 2** 🏁 Apex le détecte tout seul (dans AMS2 : Options → Système → Mémoire partagée → « Project CARS 2 »). Noms des pilotes, écarts, essence, pneus, drapeaux, spotter, chronos et conseils.
+- **Un ingé qui parle comme un pro** : plus de mètres ni de km/h, mais « tu freines trop tôt, retarde ton point de freinage », « va chercher le vibreur », « tu sors trop large ».
+- **Stratégie** : énergie virtuelle plus sûre au stand, économie guidée (« lève le pied plus tôt à Signes »), conseil de rentrer sous voiture de sécurité, menu des stands « À la demande » par défaut.
+- **Questions à la radio** : « combien de temps pour réparer ? », « il manquera combien d'énergie ? », « pourquoi pas le plein ? », « écart avec le premier ? »… et un simple « OK » ne déclenche plus tout le point.
+- **Moins de bavardage** : drapeaux jaunes seulement devant toi, un seul conseil d'économie par relais.
+- **Streamers** : overlay transparent pour OBS avec les messages de l'ingé.
+- **Relais** : « Mes courses » pour garder plusieurs courses prêtes.
+- **Corrections** : atelier setup, mode équipier en solo, « tour None », pénalité annoncée après le damier…
 
 🇬🇧
-- **1-click updates**: the new version downloads inside Apex, you click INSTALL, and Apex reinstalls and reopens by itself.
-- **Endurance**: teammate mode. When your teammate drives, Apex follows your car instead of showing "Waiting for the game".
-- **Stint planner**: race name, date, start time, driver unavailability, timeline, Discord sharing.
-- **On track**: faster cars announced earlier (5 s, and 10 s for a prototype closing on a GT); quicker spotter; yellow flags in the right sector; driver names in gaps; famous corner names (Raidillon, Parabolica…).
-- **Setups**: Apex setups that didn't show up in LMU are visible again; new "Share" button to Discord.
-- **Layout**: bigger track map option, cards you can hide, neon style everywhere.
+- **New game: Automobilista 2** 🏁 Apex detects it by itself (in AMS2: Options → System → Shared Memory → "Project CARS 2"). Driver names, gaps, fuel, tyres, flags, spotter, lap times and tips.
+- **An engineer who talks like a pro**: no more metres or km/h, but "you're braking too early, push your braking point later", "use the apex kerb", "running wide on exit".
+- **Strategy**: safer virtual energy at the stop, guided saving ("lift earlier into Signes"), box advice under safety car, pit menu "On request" by default.
+- **Radio questions**: "how long to repair?", "how much energy short?", "why not fill up?", "gap to the leader?"… and a plain "OK" no longer triggers the full update.
+- **Less chatter**: yellow flags only ahead of you, one saving tip per stint.
+- **Streamers**: transparent OBS overlay with the engineer's messages.
+- **Stints**: "My races" to keep several races ready.
+- **Fixes**: setup workshop, teammate mode offline, "lap None", penalty called after the flag…
 
 ## 🇫🇷 Installation
 Télécharge **ApexRadio-Setup.exe** ci-dessous, lance-le, clique sur Suivant. C'est tout : Python et tous les composants sont inclus.

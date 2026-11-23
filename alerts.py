@@ -743,7 +743,8 @@ class Morale:
             lines.append(var("reg", [("Belle régularité, continue sur ce rythme.", "Nice and consistent, keep this pace."),
                                      ("Très régulier, c'est parfait.", "Very consistent, that's perfect."),
                                      ("Même chrono que le tour d'avant, super régularité.", "Same time as last lap, great consistency.")]))
-        if self.trouble_lap is not None and s.laps_done - self.trouble_lap <= 6:
+        if self.trouble_lap is not None and s.laps_done - self.trouble_lap <= 6 and getattr(self, "_trouble_said", None) != self.trouble_lap:
+            self._trouble_said = self.trouble_lap      # une fois par incident (avant : 4 fois de suite, 23/11)
             lines.append(random.choice([
                 L("On a eu un coup dur, mais tu remontes. Continue comme ça !", "We had a tough moment, but you're coming back. Keep it up!"),
                 L("Oublie l'incident, regarde devant, tu vas plus vite qu'eux.", "Forget the incident, look ahead, you're quicker than them."),

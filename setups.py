@@ -527,6 +527,9 @@ class Workshop:
         new = idx + delta
         if new < 0:
             return None
+        # l'affichage dit déjà qu'on est au bout (« P1 (soft) », « 10 (max) ») : pas plus loin dans ce sens
+        if (delta < 0 and re.search(r"\b(soft|min|mini)\b", disp, re.I)) or (delta > 0 and re.search(r"\b(hard|max|maxi)\b", disp, re.I)):
+            return None
         lim = getattr(self, "_limits", {}).get(f"{section}|{key}")
         if lim and (new - lim["at"]) * lim["block"] > 0:
             return None   # LMU n'accepte pas d'aller plus loin sur cette voiture
@@ -544,8 +547,9 @@ class Workshop:
                 to_disp = f"≈ {v:.{max(0, min(2, len(str(step).split('.')[-1]) if '.' in str(round(step, 2)) else 0))}f} {unit}".strip()
             else:
                 n = abs(delta)
-                to_disp = L(f"{'+' if delta > 0 else '−'}{n} cran{'s' if n > 1 else ''} (depuis {disp})",
-                            f"{'+' if delta > 0 else '−'}{n} click{'s' if n > 1 else ''} (from {disp})")
+                # (la valeur actuelle est déjà dite à côté : « de P3 à −1 cran (depuis P3) » faisait doublon)
+                to_disp = L(f"{'+' if delta > 0 else '−'}{n} cran{'s' if n > 1 else ''}",
+                            f"{'+' if delta > 0 else '−'}{n} click{'s' if n > 1 else ''}")
             est = True
         return {"section": section, "key": key, "label": label(section, key), "from": idx, "to": new, "from_disp": disp,
                 "to_disp": to_disp, "est": est}

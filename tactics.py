@@ -83,7 +83,9 @@ class Penalties:
             print(f"  Limites de piste : {last_tl} -> {tl} (pénalité à {tlmax})")
             if tl > last_tl and tlmax and tl >= tlmax:
                 tl_pen = True              # la pénalité tombe (les avertissements sont annoncés par alerts.TrackLimits)
-            elif tl == 0 and last_tl and tlmax and last_tl >= tlmax - max(1, int(getattr(s, 'tl_per_point', 1) or 1)):
+            elif tl == 0 and last_tl and tlmax and last_tl >= tlmax - max(1, int(getattr(s, 'tl_per_point', 1) or 1)) \
+                    and s.game_phase != 8 and not getattr(s, "finish_status", 0):
+                # (après le damier, le compteur repart à zéro tout seul : ce n'est pas une pénalité, 23/11)
                 tl_pen = True              # compteur remis à zéro : la pénalité vient d'être donnée
         self._tl = tl
         if tl_pen:

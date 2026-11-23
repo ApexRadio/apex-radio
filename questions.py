@@ -190,6 +190,9 @@ def tyres(s: Snapshot, p: Plan) -> str:
     if flats:
         out.append(L(f"Crevaison {_tyre_names(flats)} ! Rentre au stand doucement.", f"Puncture {_tyre_names(flats)}! Bring it in slowly."))
     wear = [w * 100 for w in s.tyre_wear]          # LMU : 100 % = pneu neuf
+    if getattr(s, "game", "lmu") == "acevo":
+        wear = []                                  # AC EVO ne donne pas l'usure : ne pas dire « comme neufs »
+        out.append(L("Ce jeu ne me donne pas l'usure des pneus.", "This game doesn't give me tyre wear."))
     if any(wear):
         avg = sum(wear) / 4
         worst = min(range(4), key=lambda i: wear[i])
@@ -1135,8 +1138,9 @@ def _wanted_place(t: str) -> int | None:
 
 def rival(t: str, s: Snapshot) -> str | None:
     """Question sur une voiture précise : « où est P6 ? », « P2 roule plus vite ? », « dans quel secteur P6 est plus rapide ? »."""
-    if re.search(r"\b(je suis|suis je|ma position|ma place)\b", t):
-        return None
+    if re.search(r"\b(je suis|suis je|ma position|ma place)\b", t) \
+            and not re.search(r"distance|ecart|loin|combien|seconde|derriere|devant|rattrap|avance|retard", t):
+        return None      # « je suis P8 ? » = ma position ; « je suis à quelle distance de P8 ? » = la voiture P8
     n = _wanted_place(t)
     if n is None:
         return None

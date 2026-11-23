@@ -575,3 +575,50 @@ class IRacingSource:
         s.gap_ahead = min(ahead_t) if ahead_t else None
         s.gap_behind = min(behind_t) if behind_t else None
         return s
+
+
+# ---------------------------------------------------------------- ordres de stand (SDK : message « IRSDK_BROADCASTMSG »)
+# Mêmes ordres que les commandes du chat (#fuel, #lf…), envoyés comme le font les outils officiels.
+BCAST_PIT = 9                                           # irsdk_BroadcastPitCommand
+PIT_CLEAR, PIT_FUEL, PIT_LF, PIT_RF, PIT_LR, PIT_RR, PIT_CLEAR_TIRES, PIT_FAST_REPAIR, PIT_CLEAR_FUEL = 0, 2, 3, 4, 5, 6, 7, 8, 11
+
+
+def pit_command(cmd: int, value: int = 0) -> bool:
+    """Envoie un ordre de stand à iRacing. value : litres à ajouter (essence), 0 = garder la pression (pneus)."""
+    if sys.platform != "win32":
+        return False
+    user32 = C.windll.user32
+    msg = user32.RegisterWindowMessageW("IRSDK_BROADCASTMSG")
+    if not msg:
+        return False
+    wparam = (BCAST_PIT & 0xFFFF) | ((cmd & 0xFFFF) << 16)
+    return bool(user32.SendNotifyMessageW(0xFFFF, msg, wparam, int(value)))
+
+
+def set_pit(fuel_add: float | None, tyres) -> list[str]:
+    """Règle l'arrêt : essence à AJOUTER (None = on ne touche pas, 0 = pas d'essence) et pneus
+    ("keep", "same"/"dry" = 4 neufs, tuple de roues). Retourne ce qui a été demandé, en clair."""
+    from i18n import L
+    done = []
+    if fuel_add is not None:
+        if fuel_add <= 0.2:
+            pit_command(PIT_CLEAR_FUEL)
+            done.append(L("pas d'essence", "no fuel"))
+        else:
+            n = int(math.ceil(fuel_add))
+            pit_command(PIT_FUEL, n)
+            done.append(L(f"{n} litres d'essence", f"{n} litres of fuel"))
+        time.sleep(0.05)
+    if tyres == "keep":
+        pit_command(PIT_CLEAR_TIRES)
+        done.append(L("on garde les pneus", "keep the tyres"))
+    elif tyres in ("same", "dry", "Wet") or isinstance(tyres, tuple):
+        wheels = {"FL": PIT_LF, "FR": PIT_RF, "RL": PIT_LR, "RR": PIT_RR}
+        want = list(wheels) if not isinstance(tyres, tuple) else [w for w in tyres if w in wheels]
+        pit_command(PIT_CLEAR_TIRES)
+        time.sleep(0.05)
+        for w in want:
+            pit_command(wheels[w], 0)
+            time.sleep(0.05)
+        done.append(L("4 pneus neufs", "4 new tyres") if len(want) == 4 else L(f"{len(want)} pneus neufs", f"{len(want)} new tyres"))
+    return done

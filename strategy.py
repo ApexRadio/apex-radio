@@ -415,7 +415,7 @@ class Engineer:
         if p.laps_until_box is None or s.in_pits or s.game_phase == 8:   # 8 = drapeau à damier : plus d'arrêt
             return
         # hors LMU, Apex ne peut pas régler le menu des stands : c'est le pilote qui le fait
-        hand = getattr(self, "_game", "lmu") != "lmu"
+        hand = getattr(self, "_game", "lmu") not in ("lmu", "iracing")   # iRacing : Apex règle l'arrêt (ordres du SDK)
         if p.laps_until_box <= 1:
             sv = self._pit_service(p)
             if hand:

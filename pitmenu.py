@@ -226,9 +226,9 @@ class PitCrew:
             print(f"  Menu stand : lecture impossible ({e.__class__.__name__}){', nouvel essai dans 30 s' if not self.dumped else ''}")
 
     def update(self, s, p) -> None:
-        if getattr(s, "game", "lmu") != "lmu":   # menu des stands : seulement Le Mans Ultimate pour l'instant
+        if getattr(s, "game", "lmu") not in ("lmu", "iracing"):   # menu des stands : LMU et iRacing
             return
-        if not self.dumped and s.on_track and not self.demo and time.time() >= getattr(self, "dump_at", 0):
+        if getattr(s, "game", "lmu") == "lmu" and not self.dumped and s.on_track and not self.demo and time.time() >= getattr(self, "dump_at", 0):
             self.dumped = True
             threading.Thread(target=self._dump, daemon=True).start()
         if self.mode != "auto" or not s.on_track or s.in_pits or s.session != "course" or s.game_phase == 8:
@@ -238,7 +238,7 @@ class PitCrew:
                 self.prepare(s, p)
 
     def prepare(self, s, p, asked: bool = False, mark_done: bool = True) -> None:
-        if self.busy or s is None or getattr(s, "game", "lmu") != "lmu":
+        if self.busy or s is None or getattr(s, "game", "lmu") not in ("lmu", "iracing"):
             return
         if not p or p.fuel_to_add is None and not asked:
             return
@@ -269,10 +269,32 @@ class PitCrew:
                 fuel_total = litres
                 energy_total = min(1.0, litres * s.energy / s.fuel) if s.energy and s.fuel and s.fuel > 0.5 else None
         self.busy = True
+        if getattr(s, "game", "lmu") == "iracing" and not self.demo:
+            add = None if fuel_total is None else max(0.0, fuel_total - (s.fuel or 0.0))
+            threading.Thread(target=self._run_iracing, args=(add, tyres), daemon=True).start()
+            return
         threading.Thread(target=self._run, args=(fuel_total, energy_total, s.energy, tyres, s.compound,
                                                        ("all" if getattr(p, "repair_all", False) else "body") if getattr(p, "repair", False)
                                                        else False if getattr(p, "no_repair", False) else None),
                          daemon=True).start()
+
+    def _run_iracing(self, fuel_add, tyres) -> None:
+        """iRacing : ordres de stand du SDK (comme #fuel / #lf dans le chat). Pas de réparation rapide
+        automatique : elles sont comptées, le pilote décide lui-même."""
+        try:
+            import iracing
+            done = iracing.set_pit(fuel_add, tyres)
+            if done:
+                self.status = L("✓ Réglé : ", "✓ Set: ") + ", ".join(done)
+                self._say(L("Stand réglé : ", "Pit stop set: ") + ", ".join(done) + ".")
+                print(f"  iRacing, ordres de stand : {done}")
+        except Exception as e:
+            self.status = L(f"⚠ Impossible de régler l'arrêt ({e.__class__.__name__})", f"⚠ Couldn't set the stop ({e.__class__.__name__})")
+            print(f"  iRacing, ordres de stand : erreur {e!r}")
+            self._say(L("Je n'arrive pas à régler l'arrêt dans iRacing, fais-le à la main cette fois.",
+                        "I can't set the stop in iRacing, do it manually this time."))
+        finally:
+            self.busy = False
 
     def _run(self, fuel_total, energy_total, energy_now, tyres, compound, repair) -> None:
         try:

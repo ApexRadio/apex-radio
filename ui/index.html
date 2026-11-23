@@ -309,7 +309,7 @@
     </aside>
 
     <main>
-      <div id="wait" class="card"><div class="logo" style="font-size:34px">APEX//RADIO</div><p id="waitmsg" data-en="Start Le Mans Ultimate or Assetto Corsa EVO and get in your car: the dashboard will show up by itself.">Lance Le Mans Ultimate ou Assetto Corsa EVO et monte dans ta voiture : le tableau de bord s'affichera tout seul.</p>
+      <div id="wait" class="card"><div class="logo" style="font-size:34px">APEX//RADIO</div><p id="waitmsg" data-en="Start Le Mans Ultimate, Assetto Corsa EVO or Automobilista 2 and get in your car: the dashboard will show up by itself.<br><small>Automobilista 2: in the game, Options → System → Shared Memory → &laquo; Project CARS 2 &raquo;.</small>">Lance Le Mans Ultimate, Assetto Corsa EVO ou Automobilista 2 et monte dans ta voiture : le tableau de bord s'affichera tout seul.<br><small>Automobilista 2 : dans le jeu, Options → Système → Mémoire partagée → « Project CARS 2 ».</small></p>
         <div id="teamw" hidden>
           <div class="sub" style="letter-spacing:.2em;color:#FF2E88" data-en="TEAMMATE MODE">MODE ÉQUIPIER</div>
           <div id="tm_who" style="font-size:26px;font-weight:700;margin:6px 0"></div>
@@ -1184,7 +1184,7 @@ function renderOnboard(d) {
     [!!t.button, T("Choisis ton bouton radio (volant ou clavier)", "Pick your radio button (wheel or keyboard)"), "set"],
     [OB.voiceTested, T("Teste la voix de l'ingénieur", "Test the engineer's voice"), "set"],
     [!!t.heard, T("Appuie sur ton bouton radio et dis « tu m'entends ? »", "Hold your radio button and say \"can you hear me?\""), "set"],
-    [!!s.connected, T("Lance ton jeu (Le Mans Ultimate ou Assetto Corsa EVO)", "Start your game (Le Mans Ultimate or Assetto Corsa EVO)"), "lmu"],
+    [!!s.connected, T("Lance ton jeu (Le Mans Ultimate, Assetto Corsa EVO ou Automobilista 2)", "Start your game (Le Mans Ultimate, Assetto Corsa EVO or Automobilista 2)"), "lmu"],
   ];
   if (t.heard) try { localStorage.setItem("apex_heard", "1"); } catch (e) {}
   try { if (localStorage.getItem("apex_heard") === "1") steps[2][0] = true; } catch (e) {}

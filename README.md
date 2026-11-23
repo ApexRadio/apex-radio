@@ -1,7 +1,7 @@
 # APEX//RADIO
 
 **A free voice race engineer for sim racing** · *Un ingénieur de course vocal gratuit pour le sim racing*  
-Le Mans Ultimate and Assetto Corsa EVO, more sims on the way. · *Le Mans Ultimate et Assetto Corsa EVO, d'autres simulateurs arrivent.*
+Le Mans Ultimate, Assetto Corsa EVO and Automobilista 2. · *Le Mans Ultimate, Assetto Corsa EVO et Automobilista 2.*
 
 [![Téléchargements / Downloads](https://img.shields.io/github/downloads/ApexRadio/apex-radio/total?label=t%C3%A9l%C3%A9chargements%20%2F%20downloads&color=00b8d4)](https://github.com/ApexRadio/apex-radio/releases) [![Version](https://img.shields.io/github/v/release/ApexRadio/apex-radio?label=version&color=00b8d4)](https://github.com/ApexRadio/apex-radio/releases/latest)
 
@@ -15,7 +15,7 @@ Le Mans Ultimate and Assetto Corsa EVO, more sims on the way. · *Le Mans Ultima
 
 ## English
 
-Apex Radio reads Le Mans Ultimate (and Assetto Corsa EVO) in real time and talks to you on the radio, like a real race engineer.
+Apex Radio reads Le Mans Ultimate (and Assetto Corsa EVO, Automobilista 2) in real time and talks to you on the radio, like a real race engineer.
 Push a button on your wheel, ask a question, get an answer. Voice and speech recognition run on your PC: no subscription,
 no account. Internet is only needed the first time (to download the voice) and to check for updates.
 
@@ -25,6 +25,7 @@ no account. Internet is only needed the first time (to download the voice) and t
 |---|---|
 | Le Mans Ultimate | ✅ Supported (all features) |
 | Assetto Corsa EVO | ✅ Supported (no pit menu or setup workshop yet) |
+| Automobilista 2 | ✅ Supported (no pit menu or setup workshop yet). In AMS2: Options → System → Shared Memory → "Project CARS 2" |
 | iRacing | 🧪 In testing |
 | Automobilista 2 | 📋 Planned |
 
@@ -46,6 +47,7 @@ Want another sim? Tell us on [Discord](https://discord.gg/ZHg4qXd26g).
 - **Records and debriefs**: best lap per track and class, progress chart, a report for every session.
 - **Phone view**: scan the QR code (📱 button) with your phone, on the same Wi-Fi.
 - **Assetto Corsa EVO**: strategy, gaps and full race order, spotter, track cuts to give back, penalties, tyre temperatures. Pit menu and setup workshop are LMU only for now.
+- **Automobilista 2**: driver names, class positions, gaps, fuel, tyres, brakes, damage, flags, safety car, spotter, lap times and driving tips. Turn on Options → System → Shared Memory → "Project CARS 2" in the game.
 - **French and English**, voice included (button at the top of the dashboard, or set on first launch from Windows language), with several voices to choose from (female and male).
 
 ### Install
@@ -54,7 +56,7 @@ Want another sim? Tell us on [Discord](https://discord.gg/ZHg4qXd26g).
    It's not a virus warning: Windows just doesn't know unsigned apps yet. The installer is built automatically by GitHub from this public code.
 
    ![Installing past the blue Windows message](docs/installation-guide.png)
-2. Launch **Apex Radio** from the desktop icon (its window opens), then start LMU or AC EVO and get in your car: the dashboard fills in by itself.
+2. Launch **Apex Radio** from the desktop icon (its window opens), then start LMU, AC EVO or AMS2 and get in your car: the dashboard fills in by itself.
 3. Click **CHOOSE THE RADIO BUTTON** and press the wheel button you want for push-to-talk.
 
 The **Apex Radio (demo)** shortcut in the Start menu runs a simulated race to try everything without the game.
@@ -76,7 +78,7 @@ if it helps you find a few tenths, you can support its development on [Patreon](
 
 ## Français
 
-Apex Radio lit Le Mans Ultimate (et Assetto Corsa EVO) en direct et te parle à la radio, comme un vrai ingénieur de course.
+Apex Radio lit Le Mans Ultimate (et Assetto Corsa EVO, Automobilista 2) en direct et te parle à la radio, comme un vrai ingénieur de course.
 Tu appuies sur un bouton du volant, tu poses ta question, il te répond. La voix et la reconnaissance vocale tournent sur ton PC :
 pas d'abonnement, pas de compte. Internet sert seulement la première fois (téléchargement de la voix) et pour vérifier les mises à jour.
 
@@ -86,6 +88,7 @@ pas d'abonnement, pas de compte. Internet sert seulement la première fois (tél
 |---|---|
 | Le Mans Ultimate | ✅ Supporté (toutes les fonctions) |
 | Assetto Corsa EVO | ✅ Supporté (sans menu des stands ni atelier setup pour l'instant) |
+| Automobilista 2 | ✅ Supporté (sans menu des stands ni atelier setup pour l'instant). Dans AMS2 : Options → Système → Mémoire partagée → « Project CARS 2 » |
 | iRacing | 🧪 En test |
 | Automobilista 2 | 📋 Prévu |
 
@@ -107,6 +110,7 @@ Tu veux un autre simulateur ? Dis-le sur [Discord](https://discord.gg/ZHg4qXd26g
 - **Records et débriefs** : meilleur tour par circuit et catégorie, courbe de progression, un rapport par session.
 - **Affichage téléphone** : scanne le QR code (bouton 📱) avec ton téléphone, sur le même Wi-Fi.
 - **Assetto Corsa EVO** : stratégie, écarts et classement complet, spotter, coupes de piste à rendre, pénalités, température des pneus. Menu des stands et atelier setup : LMU seulement pour l'instant.
+- **Automobilista 2** : noms des pilotes, positions par catégorie, écarts, essence, pneus, freins, dégâts, drapeaux, voiture de sécurité, spotter, chronos et conseils de pilotage. Active Options → Système → Mémoire partagée → « Project CARS 2 » dans le jeu.
 - **Français et anglais**, voix comprise (bouton en haut du tableau de bord), avec plusieurs voix au choix (femme et homme).
 
 ### Installation
@@ -115,7 +119,7 @@ Tu veux un autre simulateur ? Dis-le sur [Discord](https://discord.gg/ZHg4qXd26g
    Ce n'est pas une alerte virus : Windows ne connaît simplement pas encore les applis non signées. L'installateur est fabriqué automatiquement par GitHub à partir de ce code public.
 
    ![Installer malgré le message bleu de Windows](docs/installation-guide.png)
-2. Ouvre **Apex Radio** avec l'icône du bureau (sa fenêtre s'ouvre), puis lance LMU ou AC EVO et monte dans ta voiture : le tableau de bord se remplit tout seul.
+2. Ouvre **Apex Radio** avec l'icône du bureau (sa fenêtre s'ouvre), puis lance LMU, AC EVO ou AMS2 et monte dans ta voiture : le tableau de bord se remplit tout seul.
 3. Clique sur **CHOISIR LE BOUTON RADIO** et appuie sur le bouton du volant que tu veux utiliser.
 
 Le raccourci **Apex Radio (demo)** du menu Démarrer lance une course simulée pour tout essayer sans le jeu.

@@ -114,7 +114,15 @@
   function scan() { document.querySelectorAll("select").forEach(enhance); }
   // la valeur peut être changée par le code (sel.value = …) sans événement : on remet le texte à jour régulièrement
   setInterval(() => document.querySelectorAll("select").forEach(s => s._fsel && sync(s)), 400);
-  addEventListener("scroll", close, true); addEventListener("resize", close);
+  // on ne ferme la liste que si c'est ce qui la porte qui défile : avant, le moindre défilement ailleurs (la radio
+  // qui descend toute seule à chaque message) la fermait (« le carré des setups disparaît à chaque fois », 23/11)
+  addEventListener("scroll", e => {
+    if (!open) return;
+    const t = e.target;
+    if (open.list.contains(t)) return;
+    if (t === document || t === document.documentElement || t === document.body || (t.contains && t.contains(open.btn))) close();
+  }, true);
+  addEventListener("resize", close);
   document.addEventListener("mousedown", e => { if (open && !open.list.contains(e.target) && e.target !== open.btn) close(); });
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", scan); else scan();
   new MutationObserver(scan).observe(document.documentElement, { childList: true, subtree: true });

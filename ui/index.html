@@ -1084,7 +1084,9 @@ async function wsLoad(keepChecks) {
   const folders = WS.folders || [];
   // pas de reconstruction des listes pendant que tu choisis (avant : toutes les 3 s la liste revenait au setup
   // déjà choisi, et le bouton « c'est ce setup… » renvoyait l'ancien : « ça fait rien », 23/11)
-  if (document.activeElement !== $("wsfolder") && document.activeElement !== $("wsfile")) {
+  const busy = [$("wsfolder"), $("wsfile")].some(x => document.activeElement === x || (x._fsel && document.activeElement === x._fsel))
+    || document.querySelector(".fsel-list");      // une liste déroulante est ouverte : on ne touche à rien
+  if (!busy) {
     const sel = (wsPick && wsPick.folder) || $("wsfolder").value || WS.folder || (folders[0] || {}).name || "";
     $("wsfolder").innerHTML = folders.map(f => `<option ${f.name === sel ? "selected" : ""}>${esc(f.name)}</option>`).join("");
     fillFiles();

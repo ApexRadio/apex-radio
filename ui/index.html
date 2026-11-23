@@ -1063,7 +1063,7 @@ $("quiet").onclick = () => fetch("/api/voice/quiet", { method: "POST" });
 $("vtest").onclick = () => fetch("/api/voice/test", { method: "POST" });
 $("vchoice").onchange = () => { fetch("/api/voice/choose", { method: "POST", body: JSON.stringify({ id: $("vchoice").value }) }); $("vchoice").blur(); };
 // ------------------------------------------------------------ atelier setup
-let WS = null, wsTimer = null, wsSeen = new Set();
+let WS = null, wsTimer = null, wsSeen = new Set(), wsPick = null;   // wsPick : dossier / fichier choisis, pas encore validés
 async function wsSetDir(path) {
   $("wsdirmsg").textContent = T("Recherche…", "Searching…");
   const r = await (await fetch(path ? "/api/setup/dir" : "/api/setup/pickdir", {method: "POST", body: JSON.stringify({dir: path || ""})})).json();
@@ -1082,8 +1082,10 @@ async function wsLoad(keepChecks) {
   $("wsdirbox").hidden = WS.ok !== false;
   document.querySelectorAll(".wsmode").forEach(b => b.classList.toggle("on", b.dataset.m === WS.mode));
   const folders = WS.folders || [];
-  if (document.activeElement !== $("wsfolder")) {
-    const sel = $("wsfolder").value || WS.folder || (folders[0] || {}).name || "";
+  // pas de reconstruction des listes pendant que tu choisis (avant : toutes les 3 s la liste revenait au setup
+  // déjà choisi, et le bouton « c'est ce setup… » renvoyait l'ancien : « ça fait rien », 23/11)
+  if (document.activeElement !== $("wsfolder") && document.activeElement !== $("wsfile")) {
+    const sel = (wsPick && wsPick.folder) || $("wsfolder").value || WS.folder || (folders[0] || {}).name || "";
     $("wsfolder").innerHTML = folders.map(f => `<option ${f.name === sel ? "selected" : ""}>${esc(f.name)}</option>`).join("");
     fillFiles();
   }
@@ -1140,9 +1142,11 @@ function fillFiles() {
   const mine = WS.series || "";
   // les setups de la version en piste (ELMS / WEC) d'abord
   const sorted = mine ? [...files].sort((a, b) => ((tags[b] === mine) - (tags[a] === mine))) : files;
-  $("wsfile").innerHTML = sorted.map(n => `<option value="${esc(n)}" ${n === WS.current ? "selected" : ""}>${esc(n)}${tags[n] && !n.toUpperCase().includes(tags[n]) ? ` (${tags[n]})` : ""}</option>`).join("");
+  const want = wsPick && wsPick.folder === $("wsfolder").value && files.includes(wsPick.file) ? wsPick.file : WS.current;
+  $("wsfile").innerHTML = sorted.map(n => `<option value="${esc(n)}" ${n === want ? "selected" : ""}>${esc(n)}${tags[n] && !n.toUpperCase().includes(tags[n]) ? ` (${tags[n]})` : ""}</option>`).join("");
 }
-$("wsfolder").onchange = fillFiles;
+$("wsfolder").onchange = () => { wsPick = { folder: $("wsfolder").value, file: null }; fillFiles(); };
+$("wsfile").onchange = () => { wsPick = { folder: $("wsfolder").value, file: $("wsfile").value }; };
 function renderRace() {
   const f = WS.fuel || {}, box = $("wsrace");
   if (WS.mode !== "Course") { box.innerHTML = ""; return; }
@@ -1275,7 +1279,13 @@ $("set").onclick = e => { if (e.target.id === "set") $("set").hidden = true; };
 $("wsopen").onclick = () => { $("ws").hidden = false; $("wsresult").textContent = ""; wsLoad(false); clearInterval(wsTimer); wsTimer = setInterval(() => wsLoad(true), 3000); };
 $("wsclose").onclick = () => { $("ws").hidden = true; clearInterval(wsTimer); };
 $("wsuse").onclick = async () => {
-  await fetch("/api/setup/select", { method: "POST", body: JSON.stringify({ folder: $("wsfolder").value, file: $("wsfile").value, mode: WS.mode }) });
+  const pick = { folder: $("wsfolder").value, file: $("wsfile").value };
+  if (!pick.file) return;
+  $("wsuse").disabled = true;
+  try {
+    await fetch("/api/setup/select", { method: "POST", body: JSON.stringify({ ...pick, mode: WS.mode }) });
+  } finally { $("wsuse").disabled = false; }
+  wsPick = null;
   wsLoad(false);
 };
 $("wscreate").onclick = async () => {

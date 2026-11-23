@@ -3,6 +3,8 @@
 Textes à copier dans le Partner Center (Produit → Fiches du Store → Français / English).
 
 ## Infos générales
+- **Store ID :** 9NPPNPFX1LRB — lien : https://apps.microsoft.com/detail/9NPPNPFX1LRB
+- **Identité du paquet :** ApexRadio.ApexRadio · CN=88C68946-6C6E-4F43-94D6-67BA502D811B · Apex Radio
 - **Catégorie :** Sports (sous-catégorie : sports mécaniques s'il y en a une), sinon « Utilitaires et outils »
 - **Prix :** Gratuit
 - **Politique de confidentialité (URL) :** https://github.com/ApexRadio/apex-radio/blob/main/PRIVACY.md

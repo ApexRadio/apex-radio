@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Paquet Microsoft Store d'Apex Radio. Les valeurs __...__ sont remplies par GitHub Actions
-     (variables du dépôt STORE_IDENTITY_NAME, STORE_PUBLISHER, STORE_PUBLISHER_NAME, copiées du Partner Center). -->
+<!-- Paquet Microsoft Store d'Apex Radio (Store ID 9NPPNPFX1LRB). Les valeurs __...__ sont remplies par GitHub Actions
+     (installer.yml, étape « Paquet Microsoft Store ») avec l'identité du Partner Center. -->
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"

@@ -78,11 +78,10 @@ jobs:
       - name: Paquet Microsoft Store (MSIX)
         shell: pwsh
         env:
-          # copiés du Partner Center (Produit → Identité du produit) dans Settings → Variables du dépôt.
-          # Sans eux : paquet d'essai (identité factice), seulement pour vérifier que la construction marche.
-          ID: ${{ vars.STORE_IDENTITY_NAME || 'ApexRadio.Essai' }}
-          PUB: ${{ vars.STORE_PUBLISHER || 'CN=ApexRadioEssai' }}
-          PUBNAME: ${{ vars.STORE_PUBLISHER_NAME || 'Apex Radio' }}
+          # identité du Partner Center (Apex Radio → Identité du produit, Store ID 9NPPNPFX1LRB) : pas secret
+          ID: ApexRadio.ApexRadio
+          PUB: CN=88C68946-6C6E-4F43-94D6-67BA502D811B
+          PUBNAME: Apex Radio
         run: |
           $v = "${{ steps.v.outputs.version }}"
           $p = ($v -split '[^0-9]+' | Where-Object { $_ -ne '' }) + @('0', '0', '0')

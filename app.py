@@ -1263,7 +1263,7 @@ def main() -> None:
     UPD.start()
     url = f"http://localhost:{PORT}"
     print("=" * 56)
-    print(f"  APEX//RADIO {UPD.version} — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate / Assetto Corsa EVO"))
+    print(f"  APEX//RADIO {UPD.version} — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate / Assetto Corsa EVO / Automobilista 2"))
     print(f"  Tableau de bord : {url}")
     print(f"  Sur téléphone : {PHONE_URL}")
     print(f"  Tes données : {DATA}")

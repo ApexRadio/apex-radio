@@ -172,6 +172,8 @@ class AMS2Source:
         self._version_said = False
         self._sm = None
         self._sm_t = 0.0
+        self._radius = [None] * 4      # rayon effectif de chaque roue (m), appris en roue libre
+        self._rad_n = 0
 
     def _get(self) -> Shared | None:
         if not self.page.open():
@@ -235,8 +237,7 @@ class AMS2Source:
         part = sm.mParticipantInfo[pi]
         L = sm.mTrackLength or 0
         speed = max(0.0, float(sm.mSpeed))
-        # AMS2 ne donne pas l'angle de glisse des pneus : on l'estime avec la vitesse de glisse
-        alpha = [min(0.5, abs(float(x)) / max(5.0, speed)) for x in sm.mTyreSlipSpeed]
+        alpha, ratio = self._slip(sm, speed)
         tread = [float(x) - 273.15 for x in sm.mTyreTreadTemp]
         temps = [[float(sm.mTyreTempLeft[k]), float(sm.mTyreTempCenter[k]), float(sm.mTyreTempRight[k])] for k in range(4)]
         if not any(any(t) for t in temps):
@@ -249,7 +250,7 @@ class AMS2Source:
             "lat": float(sm.mLocalAcceleration[0]),
             "steer": float(sm.mSteering), "thr": float(sm.mThrottle), "brk": float(sm.mBrake),
             "alpha": alpha,
-            "ratio": [0.0] * 4,
+            "ratio": ratio,
             "temps": temps, "opt": 85.0,
             "ride": [float(sm.mRideHeight[0]) / 100, float(sm.mRideHeight[2]) / 100],      # cm -> m
             "tc": float(sm.mTractionControlSetting), "abs": float(sm.mAntiLockSetting),
@@ -258,6 +259,30 @@ class AMS2Source:
             "btemp": [float(x) for x in sm.mBrakeTempCelsius],
             "curb": sum(1 for t in sm.mTerrain if int(t) in (TERRAIN_RUMBLE, TERRAIN_EXIT_RUMBLE)),
         }
+
+    LEARN = 100      # échantillons en roue libre avant de faire confiance au rayon des roues
+
+    def _slip(self, sm, speed: float) -> tuple[list, list]:
+        """AMS2 ne donne ni l'angle de dérive ni le taux de glissement des pneus, seulement une vitesse de glisse
+        (qui mélange patinage et dérive) et la vitesse de rotation des roues. On apprend le rayon de chaque roue
+        en roue libre (ni gaz ni frein, en ligne droite), puis : patinage/blocage = rotation × rayon − vitesse,
+        dérive = le reste de la glisse. Tant que le rayon n'est pas appris : rien (pas de faux survirage)."""
+        rps = [abs(float(x)) for x in sm.mTyreRPS]
+        if speed > 15 and sm.mThrottle < 0.05 and sm.mBrake < 0.05 and abs(sm.mLocalAcceleration[0]) < 2 and min(rps) > 1:
+            for i in range(4):
+                r = speed / rps[i]
+                self._radius[i] = r if self._radius[i] is None else self._radius[i] * 0.98 + r * 0.02
+            self._rad_n += 1
+        if self._rad_n < self.LEARN or speed < 5:
+            return [0.0] * 4, [0.0] * 4
+        alpha, ratio = [], []
+        for i in range(4):
+            lg = rps[i] * self._radius[i] - speed
+            slip = abs(float(sm.mTyreSlipSpeed[i]))
+            lat = math.sqrt(max(0.0, slip * slip - lg * lg))
+            alpha.append(min(0.5, math.atan2(lat, max(speed, 1.0))))
+            ratio.append(lg / max(speed, 1.0))
+        return alpha, ratio
 
     def read(self):
         from telemetry import Snapshot, split_sectors
@@ -297,6 +322,7 @@ class AMS2Source:
             self._t0 = time.monotonic()
             self._stops = 0
             self._was_stopped = False
+            self._radius, self._rad_n = [None] * 4, 0      # autre voiture : autres roues
         s.elapsed = float(sm.mCurrentTime) if sm.mCurrentTime > 0 and sm.mSessionState != SESS_RACE else time.monotonic() - self._t0
 
         # durée : au temps (minutes + temps restant) ou au nombre de tours

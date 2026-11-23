@@ -70,6 +70,39 @@ jobs:
           if ($p.ExitCode -ne 7) { throw "ApexRadio.exe ne démarre pas Python correctement (code $($p.ExitCode))" }
           Write-Host "ApexRadio.exe OK"
 
+      - name: Paquet Microsoft Store (MSIX)
+        shell: pwsh
+        env:
+          # copiés du Partner Center (Produit → Identité du produit) dans Settings → Variables du dépôt.
+          # Sans eux : paquet d'essai (identité factice), seulement pour vérifier que la construction marche.
+          ID: ${{ vars.STORE_IDENTITY_NAME || 'ApexRadio.Essai' }}
+          PUB: ${{ vars.STORE_PUBLISHER || 'CN=ApexRadioEssai' }}
+          PUBNAME: ${{ vars.STORE_PUBLISHER_NAME || 'Apex Radio' }}
+        run: |
+          $v = "${{ steps.v.outputs.version }}"
+          $p = ($v -split '[^0-9]+' | Where-Object { $_ -ne '' }) + @('0', '0', '0')
+          $mv = "$($p[0]).$($p[1]).$($p[2]).0"
+          Remove-Item -Recurse -Force build\msix -ErrorAction SilentlyContinue
+          Copy-Item -Recurse build\app build\msix
+          Get-ChildItem build\msix -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
+          Set-Content build\msix\store.txt "Microsoft Store"
+          build\app\python\python.exe store\make_assets.py apex.ico build\msix\Assets
+          $m = Get-Content store\AppxManifest.xml -Raw -Encoding UTF8
+          $esc = { param($x) [Security.SecurityElement]::Escape($x) }
+          $m = $m.Replace('__IDENTITY_NAME__', $env:ID).Replace('__PUBLISHER_NAME__', (& $esc $env:PUBNAME)).Replace('__PUBLISHER__', (& $esc $env:PUB)).Replace('__VERSION__', $mv)
+          [IO.File]::WriteAllText("$PWD\build\msix\AppxManifest.xml", $m, (New-Object Text.UTF8Encoding $false))
+          $mk = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\makeappx.exe" | Sort-Object FullName -Descending | Select-Object -First 1
+          if (-not $mk) { throw "makeappx.exe introuvable (Windows SDK)" }
+          New-Item -ItemType Directory -Force store-out | Out-Null
+          & $mk.FullName pack /d build\msix /p "store-out\ApexRadio-$v.msix" /o
+          if ($LASTEXITCODE -ne 0) { throw "makeappx a échoué" }
+          Write-Host "Paquet Store : ApexRadio-$v.msix (version $mv, identité $env:ID)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ApexRadio-Store-${{ steps.v.outputs.version }}
+          path: store-out\*.msix
+
       - name: Installateur (Inno Setup)
         shell: pwsh
         run: |

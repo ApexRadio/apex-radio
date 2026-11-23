@@ -500,7 +500,8 @@
     </section>
     <section class="setsec"><h2>🔄 <span data-en="Version">Version</span></h2>
       <div class="setrow"><span data-en="Installed version">Version installée</span><div class="setctl"><b id="vernow">–</b></div></div>
-      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="A problem since the last update? Download the previous version and install it over this one: your settings, records and setups are kept.">Un problème depuis la dernière mise à jour ? Télécharge la version précédente et installe-la par-dessus : tes réglages, records et setups sont gardés.</div>
+      <div id="verstore" class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" hidden data-en="Microsoft Store version: updates are installed by the Store.">Version Microsoft Store : les mises à jour sont installées par le Store.</div>
+      <div id="vergit" class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="A problem since the last update? Download the previous version and install it over this one: your settings, records and setups are kept.">Un problème depuis la dernière mise à jour ? Télécharge la version précédente et installe-la par-dessus : tes réglages, records et setups sont gardés.</div>
       <div class="row" style="gap:8px;flex-wrap:wrap;justify-content:flex-start">
         <a id="verprev" class="pill" href="#" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none" hidden></a>
         <a id="verall" class="pill" href="https://github.com/ApexRadio/apex-radio/releases" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none" data-en="All versions">Toutes les versions</a>
@@ -696,6 +697,7 @@ function render(d) {
   const up = d.update || {};
   if (up.version) $("vernow").textContent = up.version;
   if (up.all) $("verall").href = up.all;
+  $("verstore").hidden = !up.store; $("vergit").hidden = !!up.store; $("verall").hidden = !!up.store;
   $("verprev").hidden = !(up.previous && up.previous.version);
   if (up.previous && up.previous.version) {
     $("verprev").textContent = T(`↩ Revenir à la ${up.previous.version}`, `↩ Go back to ${up.previous.version}`);

@@ -67,6 +67,52 @@ def fuel(s: Snapshot, p: Plan) -> str:
     return out
 
 
+def to_finish(s: Snapshot, p: Plan) -> str:
+    """« Il manquera combien d'essence / d'énergie pour finir ? » : le manque, pas juste ce qu'il y a dans le réservoir."""
+    if not p.ready or not p.laps_to_finish:
+        return L("Je calcule encore, donne-moi un ou deux tours propres.", "Still calculating, give me one or two clean laps.")
+    nrg = s.energy is not None and p.energy_per_lap and (p.limited_by == "énergie" or re.search(r"energi", QUESTION_TEXT or ""))
+    if nrg:
+        need = p.laps_to_finish * p.energy_per_lap - s.energy
+        if need <= 0:
+            return L(f"Rien, tu as assez d'énergie pour finir, avec {_f(-need / p.energy_per_lap)} tour de marge.",
+                     f"Nothing, you've got enough energy to finish, with {_f(-need / p.energy_per_lap)} laps to spare.")
+        out = (L("C'est l'énergie virtuelle qui limite, pas l'essence. ", "Virtual energy is the limit, not fuel. ")
+               if re.search(r"essence|carbu|litre", QUESTION_TEXT or "") else "")
+        out += L(f"Il te manque environ {_f(need * 100, 0)} % d'énergie pour aller au bout.",
+                f"You're about {_f(need * 100, 0)} % energy short of the finish.")
+    elif p.fuel_per_lap:
+        need = p.laps_to_finish * p.fuel_per_lap - s.fuel
+        if need <= 0:
+            return L(f"Rien, tu as assez d'essence pour finir, avec {_f(-need / p.fuel_per_lap)} tour de marge.",
+                     f"Nothing, you've got enough fuel to finish, with {_f(-need / p.fuel_per_lap)} laps to spare.")
+        out = L(f"Il te manque environ {_f(need, 0)} litres pour aller au bout.", f"You're about {_f(need, 0)} litres short of the finish.")
+    else:
+        return L("Je n'ai pas encore ta consommation, fais un ou deux tours propres.", "I don't have your consumption yet, do one or two clean laps.")
+    if p.stops_needed:
+        out += " " + pit(s, p)
+    return out
+
+
+def why_strategy(s: Snapshot, p: Plan) -> str:
+    """« Pourquoi tu ne fais pas le plein ? » : on explique le choix, on ne change pas le menu (c'est une question)."""
+    tail = L(" Si tu veux quand même le plein, dis-moi « fais le plein ».", " If you still want a full tank, say \"fill it up\".")
+    if not p.ready:
+        return L("Je n'ai pas encore assez de tours pour choisir, je te dis ça dans un ou deux tours.",
+                 "I don't have enough laps to decide yet, I'll tell you in a lap or two.")
+    if (p.stops_needed or 0) >= 2:
+        return L(f"Parce qu'avec {p.stops_needed} arrêts, chaque ravitaillement est court et la voiture reste légère. "
+                 "Le plein complet, c'est un arrêt plus long et une voiture plus lourde, pour rien : il faudra s'arrêter quand même.",
+                 f"Because with {p.stops_needed} stops, each refuel is short and the car stays light. A full tank means a longer "
+                 "stop and a heavier car for nothing: you'd still have to stop again.") + tail
+    if p.stops_needed == 1:
+        return L("Parce qu'on met juste ce qu'il faut pour finir, avec une marge. Plus, ce serait du temps perdu au stand "
+                 "et des kilos en trop dans la voiture.",
+                 "Because we only put in what's needed to finish, with a margin. More would be time lost in the pits "
+                 "and extra weight in the car.") + tail
+    return L("Parce que tu as déjà de quoi finir : pas besoin de rentrer.", "Because you already have enough to finish: no need to pit.")
+
+
 def energy(s: Snapshot, p: Plan) -> str:
     if s.energy is None:
         return L("Pas d'énergie virtuelle sur cette voiture, c'est l'essence qui compte.",
@@ -109,7 +155,9 @@ def pit(s: Snapshot, p: Plan) -> str:
         return pick("a_nopit", [("Pas besoin de rentrer, tu as de quoi finir.", "No need to pit, you can make the finish."),
                                 ("Aucun arrêt prévu, on va au bout comme ça.", "No stop planned, we go to the end like this."),
                                 ("On ne s'arrête plus, tu as tout ce qu'il faut.", "No more stops, you've got everything you need.")])
-    if p.laps_until_box is not None and p.laps_until_box <= 1:
+    if p.laps_until_box is None or p.box_lap is None:
+        when = ""          # juste après un arrêt : le tour du prochain n'est pas encore recalculé
+    elif p.laps_until_box <= 1:
         when = L("Box ce tour.", "Box this lap.")
     else:
         b, n = p.box_lap, p.laps_until_box
@@ -117,7 +165,7 @@ def pit(s: Snapshot, p: Plan) -> str:
                                   (f"Box dans {n} tours, à la fin du tour {b}.", f"Box in {n} laps, end of lap {b}."),
                                   (f"On t'attend au stand dans {n} tours, tour {b}.", f"We'll see you in the pits in {n} laps, lap {b}.")])
     serv = []
-    if p.fuel_to_add is not None:
+    if p.fuel_to_add is not None and p.energy_target is None:
         serv.append(L(f"{_f(p.fuel_to_add, 0)} litres", f"{_f(p.fuel_to_add, 0)} litres of fuel"))
     if p.energy_target is not None:
         serv.append(L(f"énergie à {_f(p.energy_target * 100, 0)} %", f"energy to {_f(p.energy_target * 100, 0)} %"))
@@ -130,7 +178,7 @@ def pit(s: Snapshot, p: Plan) -> str:
     elif p.change_tyres is False:
         serv.append(L("on garde les pneus", "we keep the tyres"))
     extra = L(f" Il faudra {p.stops_needed} arrêts au total.", f" {p.stops_needed} stops in total.") if p.stops_needed and p.stops_needed > 1 else ""
-    return (L(f"{when} On met {', '.join(serv)}.", f"{when} {', '.join(serv)}.") + extra) if serv else when + extra
+    return ((L(f"{when} On met {', '.join(serv)}.", f"{when} {', '.join(serv)}.") + extra) if serv else when + extra).strip()
 
 
 COLD_TYRE = 55.0   # °C : en dessous, les pneus sont vraiment froids
@@ -142,6 +190,9 @@ def tyres(s: Snapshot, p: Plan) -> str:
     if flats:
         out.append(L(f"Crevaison {_tyre_names(flats)} ! Rentre au stand doucement.", f"Puncture {_tyre_names(flats)}! Bring it in slowly."))
     wear = [w * 100 for w in s.tyre_wear]          # LMU : 100 % = pneu neuf
+    if getattr(s, "game", "lmu") == "acevo":
+        wear = []                                  # AC EVO ne donne pas l'usure : ne pas dire « comme neufs »
+        out.append(L("Ce jeu ne me donne pas l'usure des pneus.", "This game doesn't give me tyre wear."))
     if any(wear):
         avg = sum(wear) / 4
         worst = min(range(4), key=lambda i: wear[i])
@@ -395,12 +446,50 @@ def status(s: Snapshot, p: Plan) -> str:
     return " ".join([position(s, p), laps(s, p), pit(s, p)])
 
 
+def repair_time(s: Snapshot, p: Plan) -> str:
+    """« Combien de temps pour réparer ? » : temps donnés par LMU (équipe de stand de ta voiture).
+    Seulement quand on le demande (pas d'annonce automatique : Laurent ne veut pas surcharger la radio)."""
+    if getattr(s, "game", "lmu") != "lmu":
+        return L("Le jeu ne me donne pas les temps de réparation ici, seulement dans Le Mans Ultimate.",
+                 "The game doesn't give me repair times here, only in Le Mans Ultimate.")
+    damaged = s.repair or s.repair_all or any(d for d in (s.dents or []))
+    if not damaged:
+        return L("Pas de dégâts à réparer pour l'instant.", "No damage to repair right now.")
+    try:
+        import pitmenu
+        st, j = pitmenu._req("GET", "/rest/garage/UIScreen/RepairAndRefuel")
+        times = (j.get("pitStopTimes") or {}).get("times") or {}
+        stop = float((j.get("pitStopLength") or {}).get("timeInSeconds") or 0)
+        dmg = next((it for it in (j.get("pitMenu") or {}).get("pitMenu", []) if it.get("PMC Value") == pitmenu.DAMAGE), None)
+    except Exception:
+        return L("Je n'arrive pas à lire les temps du stand dans le jeu pour l'instant.", "I can't read the pit times from the game right now.")
+    full = bool(s.repair_all)
+    rep = float(times.get("FixAllDamage" if full else "FixAeroDamage") or 0)
+    if rep <= 0:
+        return L("Le jeu ne m'indique pas de temps de réparation pour cette voiture.", "The game gives no repair time for this car.")
+    what = L("tout réparer", "a full repair") if full else L("réparer la carrosserie", "a bodywork repair")
+    chosen = ""
+    if dmg:
+        try:
+            chosen = str(dmg["settings"][dmg.get("currentSetting", 0)]["text"]).lower()
+        except Exception:
+            chosen = ""
+    planned = ("répar" in chosen or "repair" in chosen or "fix" in chosen) and not any(n in chosen for n in ("ne pas", "not", "no "))
+    msg = L(f"Pour {what}, compte jusqu'à {round(rep)} secondes au stand.", f"{what.capitalize()} takes up to {round(rep)} seconds in the pits.")
+    if stop > 0:
+        msg += " " + (L(f"Avec le menu actuel, le jeu estime l'arrêt complet à {round(stop)} secondes.",
+                        f"With the current menu, the game estimates the full stop at {round(stop)} seconds.") if planned else
+                      L(f"Sans réparation, le jeu estime l'arrêt à {round(stop)} secondes.",
+                        f"Without repairs, the game estimates the stop at {round(stop)} seconds."))
+    return msg
+
+
 TOPICS = [
     # (mots-clés, fonction)
     (r"essence|des sens|d sens|carbu|fuel|conso|litre|reservoir|jus|gasoil|\bgas\b|petrol|consumption|\btank", fuel),
     (r"energie|batterie|virtuel|energy|battery|virtual", energy),
     (r"stand|\bbox|arret|rentr|\bpit|ravitaill|strateg|\bstop\b|come in", pit),
-    (r"pneu|pner|peneu|pneumatique|gomme|usure|pression|crev|\betat d(u|e|es)\b(?!.*(voiture|caisse|carrosserie|course|jeu de la))|\btyre|\btire|rubber|\bwear|\bpressure", tyres),
+    (r"pneu|pner|peneu|pneumatique|gomme|usure|pression|crev|\betat (des?|de mes|d) ?(neu|peu|pne|ne|nu|beu|meu)\w*|\bpneus?\b|\bdes p?neus?\b|\betat d(u|e|es)\b(?!.*(voiture|caisse|carrosserie|course|jeu de la))|\btyre|\btire|rubber|\bwear|\bpressure", tyres),
     (r"ecart|devant|derriere|\bgap|attaque|rattrap|revient|remont|rapproch|monte fort|montant fort|ahead|behind|in front|catching|closing", gaps),
     (r"repar|degat|degare|dommage|abime|casse|etat de (la|ma) (voiture|caisse|bagnole)|damage|repair", repairs),
     (r"position|place|classement|placement|cassement|quelle p\b|combien ?t?i?eme|combien siam|combien.*(je suis|suis je)|je suis ou\b|where am i|what p\b", position),
@@ -492,6 +581,7 @@ def penalty(s: Snapshot, p: Plan) -> str:
 
 
 TOPICS[:0] = [
+    (r"(manque|manquer|manquera|manquerait|faut il|faudra|faudrait|besoin|il me faut).{0,40}(finir|jusqu a la fin|aller au bout|l arrivee|la fin de la course)", to_finish),
     (r"penalit|drive through|stop (and|n|et) go|penalty", penalty),
     (r"(prepare|regle|regule|mets|programme|set up|setup the|program).*(stand|arret|box|menu|pit|stop)|(stand|arret).*(prepare|regle)|prepare (moi )?(l arret|tout|la re)|je rentre (ce tour|au stand|maintenant|ce tout)|box this lap|i m pitting|pitting this lap", pit_command),
     (r"comporte|sous vir|sousvir|survir|equilibr|reglage|setup|conseil|satope|sur virage|plus vite|ameliorer|progresser|glisse|bloqu|patin|tient pas|braqu|tourne pas|ralenti|pousse|lourde|decroche|chasse|instable|nerveuse|freinage|\bje freine\b|freine (trop|tot|tard)|balance|understeer|oversteer|handling|advice|sliding|locking|wheelspin|loose|snap|braking|won t turn", behavior),
@@ -652,13 +742,14 @@ def stints(s: Snapshot, p: Plan) -> str:
 
 
 TOPICS[:0] = [
+    (r"(combien de temps|temps|long|secondes|duree).{0,25}(repar|reparation)|(repar|reparation).{0,30}(combien|temps|long|secondes|duree)|how long.{0,20}repair|repair time", repair_time),
     (r"\brelais\b|changement de pilote|change(ment|r) de pilote|qui (roule|conduit|prend le volant) (apres|ensuite)|c est qui apres|\bstints?\b|driver (change|swap)|who s (driving )?next", stints),
     (r"gagner du temps|gagner des dixiemes|ou (est ce que )?je (peux |pourrais |peut )?(gagner|perds|perdre|aller plus vite)|analys.{0,20}(pilotage|conduite)|comment (je pilote|je conduis|est mon pilotage)|ameliorer mon pilotage|where can i (gain|find) time|analy[sz]e my driving", coaching),
     (r"reference|par rapport a (mon|ton) meilleur|compare (a|avec) mon meilleur|best lap reference|my best lap", reference),
     (r"\bfreins?\b(?! a main)|\bdisques? de frein|\bbrakes?\b", brakes),
     (r"limites? de (la )?piste|avertissements?|track limits?|\bwarnings?\b", track_limits),
     (r"(mon |ce |le )?(tour|chrono) (est |il est )?(valide|invalide|compte)|tour valid|valid lap|lap (valid|invalid|count)", lap_valid),
-    (r"\bleader\b|qui (mene|est premier|est en tete|gagne)|en tete de|premier de (la |ma )?(categorie|classe)|ecart (avec|sur|au) (le )?(premier|leader)|who s leading|class leader", leader),
+    (r"\bleader\b|qui (mene|est premier|est en tete|gagne)|en tete de|premier de (la |ma )?(categorie|classe)|ecart (avec|sur|au) (le )?(premier|leader)|(du|au|sur le|avec le) (premier|p1)\b|who s leading|class leader", leader),
     (r"(c est )?qui (est |c est )?devant|who s (ahead|in front)|who is (ahead|in front)", who_ahead),
     (r"(c est )?qui (est |c est )?derriere|who s behind|who is behind", who_behind),
     (r"combien d arrets|nombre d arrets|(arrets|arret) (j ai|deja) fait|how many (stops|pit stops)", stops_count),
@@ -691,6 +782,8 @@ def command(text: str) -> str | None:
         if cmd == "talk" and VOICE is not None:
             VOICE.quiet = False
             return L("C'est noté, je te redonne toutes les infos.", "Copy, back to full info.")
+        if cmd == "repeat" and re.search(r"\b(quel|quelle|quand|combien|a quel|dans combien|pourquoi)\b", t) and len(t.split()) > 4:
+            continue   # « tu peux me répéter à quel tour je m'arrête ? » : c'est la question qui compte
         if cmd == "repeat" and ENG is not None:
             last = next((m["text"] for m in ENG.radio if not m.get("me")), None)
             return L(f"Je répète : {last}", f"I repeat: {last}") if last else L("Je n'ai encore rien dit.", "I haven't said anything yet.")
@@ -718,6 +811,10 @@ def _hello(s: Snapshot) -> str:
 def _thanks(s: Snapshot) -> str:
     return pick("a_thanks", [("Avec plaisir.", "You're welcome."), ("De rien, c'est mon boulot.", "No problem, that's my job."),
                              ("Pas de quoi, on fait équipe.", "Anytime, we're a team.")])
+
+
+def _ack(s: Snapshot) -> str:
+    return pick("a_ack", [("Reçu.", "Copy."), ("Bien reçu.", "Copy that."), ("C'est noté.", "Noted.")])
 
 
 def _who(s: Snapshot) -> str:
@@ -764,6 +861,7 @@ CHAT = [
     (r"\b(t es|tu es|es tu|t es bien) la\b|t es toujours la|\b(tu es|t es|es tu) (pret|prete)s?\b|on y va\b|you there|are you there|are you ready|ready\b", _here),
     (r"^(bonjour|salut|hello|coucou|hey|bonsoir|hi)\b", _hello),
     (r"\bmerci\b|thank", _thanks),
+    (r"^(ok|okay|d accord|dac|recu|bien recu|compris|ca marche|ca roule|c est note|entendu|parfait|super|top|nickel|copy|roger|understood|got it)( (merci|ca marche|recu|compris))?$", _ack),
     (r"qui es tu|t es qui|tu es qui|comment tu t appelles|ton nom|ton prenom|who are you|your name", _who),
     (r"que (peux|sais) tu|qu est ce que tu (peux|sais)|sais faire|tu peux faire quoi|tu fais quoi|\baide\b|\bhelp\b|what can you", _help),
     (r"quelle heure|l heure qu il|what time", _time),
@@ -774,7 +872,7 @@ CHAT = [
 ]
 
 
-FILLER = (_hello, _thanks)   # « salut », « merci » : seulement si la phrase ne demande rien d'autre
+FILLER = (_hello, _thanks, _ack)   # « salut », « merci » : seulement si la phrase ne demande rien d'autre
 
 
 def chat(t: str, s: Snapshot, alone: bool = True) -> list[str]:
@@ -802,6 +900,8 @@ def repair_command(t: str) -> str | None:
     """« pas de réparation » / « répare la voiture » : change le menu des stands."""
     if re.search(r"^(il faut|faut il|est ce qu|on doit|je dois|tu crois|ca vaut)", t):
         return None   # c'est une question (« il faut réparer ? »), pas un ordre
+    if re.search(r"combien de temps|\bcombien\b|\bduree\b|\bhow long\b|repair time|temps de (la )?repar", t):
+        return None   # « combien de temps pour réparer ? » : une question (repair_time), pas un ordre
     if re.search(NO_REPAIR, t):
         want = False
     elif re.search(DO_REPAIR, t) and re.search(r"\b(repare|reparer|reparez|reparte|repart|tout|toutes|carrosserie|fix|repair the|do the|on repare)\b|"
@@ -1038,8 +1138,9 @@ def _wanted_place(t: str) -> int | None:
 
 def rival(t: str, s: Snapshot) -> str | None:
     """Question sur une voiture précise : « où est P6 ? », « P2 roule plus vite ? », « dans quel secteur P6 est plus rapide ? »."""
-    if re.search(r"\b(je suis|suis je|ma position|ma place)\b", t):
-        return None
+    if re.search(r"\b(je suis|suis je|ma position|ma place)\b", t) \
+            and not re.search(r"distance|ecart|loin|combien|seconde|derriere|devant|rattrap|avance|retard", t):
+        return None      # « je suis P8 ? » = ma position ; « je suis à quelle distance de P8 ? » = la voiture P8
     n = _wanted_place(t)
     if n is None:
         return None
@@ -1115,6 +1216,8 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
     if re.fullmatch(r"\s*(les? )?gaps?\s*", t):
         t = "ecart"
     LAST_TEXT = t
+    if re.search(r"\bpourquoi\b|why", t) and re.search(r"plein|essence|energi|carbu|ravitaill|strategi|arret|stand|pneu|50", t):
+        return why_strategy(s, p)
     # ordres pour le prochain arrêt : réparations et/ou essence (« répare mais sans ravitaillement »)
     f = fuel_command(t)
     a = None if f else amount_command(t, s)
@@ -1172,6 +1275,8 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
                 continue
             if fn is gaps and any(r[0] in (who_ahead, who_behind, leader) for r in replies):
                 continue
+            if fn in (repairs, pit) and any(r[0] is repair_time for r in replies):
+                continue
             if fn is pit and any(r[0] is stops_count for r in replies):
                 continue
             if fn is laptimes and any(r[0] in (pace_rank, lap_valid) for r in replies):
@@ -1181,6 +1286,8 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
             if fn is laps and any(r[0] is flags for r in replies):
                 continue
             if fn is behavior and any(r[0] is brakes for r in replies):
+                continue
+            if fn in (fuel, energy, pit, laps) and any(r[0] is to_finish for r in replies):
                 continue
             replies.append((fn, fn(s, p)))
     if not replies and not said:

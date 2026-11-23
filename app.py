@@ -152,6 +152,7 @@ def loop(state: State, demo: bool) -> None:
     source = make_source(demo)
     eng = Engineer()
     eng.on_say = state.voice.say
+    eng.map = state.map   # pour dire où lever le pied quand il faut économiser
     state.eng = eng
     questions.VOICE, questions.ENG = state.voice, eng
     lt = LapTimes()
@@ -389,6 +390,7 @@ def loop(state: State, demo: bool) -> None:
             try:   # mode équipier : voiture d'équipe quand un coéquipier roule
                 import telemetry as _tm
                 _tm.TEAM_DRIVERS = [x for x in (relay.cfg.get("drivers") or []) if x]
+                _tm.TEAM_ON = bool(relay.cfg.get("on"))
                 team.update(snap, say)
             except Exception:
                 traceback.print_exc()
@@ -398,6 +400,11 @@ def loop(state: State, demo: bool) -> None:
             inc.update(snap)
             traffic.update(snap, plan, say)
             beh.game = getattr(snap, "game", "lmu")
+            if snap.on_track and snap.track:
+                bkey = (beh.game, snap.track, snap.car)
+                if getattr(beh, "_key", None) not in (None, bkey):
+                    beh.new_session()
+                beh._key = bkey
             pitlane.update(snap, say)
             trend.update(snap, say)
             limits.update(snap, say)
@@ -601,7 +608,7 @@ def make_handler(state: State):
                 rl = getattr(state, "relay", None)
                 import relais
                 data = rl.info(state.plan, state.snap) if rl else {"cfg": relais.load(), "plan": relais.plan(relais.load()),
-                                                                    "fuel_stint_min": None, "live": None}
+                                                                    "fuel_stint_min": None, "live": None, "races": relais.races()}
                 body, ctype = json.dumps(data, default=lambda o: None).encode(), "application/json"
             elif self.path.startswith("/api/sd"):
                 # état résumé pour le plugin Stream Deck (léger, interrogé chaque seconde)
@@ -618,6 +625,8 @@ def make_handler(state: State):
                 body, ctype = (HERE / "ui" / "fsel.js").read_bytes(), "text/javascript; charset=utf-8"
             elif self.path == "/favicon.ico":
                 body, ctype = (HERE / "apex.ico").read_bytes(), "image/x-icon"
+            elif self.path.split("?")[0].rstrip("/") == "/overlay":   # overlay OBS pour les streamers (fond transparent)
+                body, ctype = (HERE / "ui" / "overlay.html").read_bytes(), "text/html; charset=utf-8"
             elif self.path.rstrip("/") in ("/tel", "/phone"):
                 body, ctype = (HERE / "ui" / "tel.html").read_bytes(), "text/html; charset=utf-8"
             elif self.path in ("/", "/index.html"):
@@ -731,12 +740,20 @@ def make_handler(state: State):
                 cfg = json.loads(self.rfile.read(n) or b"{}")
                 rl = getattr(state, "relay", None)
                 import relais
+                act = cfg.pop("_race", None)
+                if act == "store":
+                    relais.race_store(cfg)          # garde la course… et elle reste la course active
+                elif act == "load":
+                    cfg = relais.race_get(str(cfg.get("key", ""))) or (rl.cfg if rl else relais.load())
+                elif act == "drop":
+                    relais.race_drop(str(cfg.get("key", "")))
+                    cfg = rl.cfg if rl else relais.load()
                 if rl:
                     rl.reload(cfg)
                     data = rl.info(state.plan, state.snap)
                 else:
                     c = relais.save(cfg)
-                    data = {"cfg": c, "plan": relais.plan(c), "fuel_stint_min": None, "live": None}
+                    data = {"cfg": c, "plan": relais.plan(c), "fuel_stint_min": None, "live": None, "races": relais.races()}
                 body = json.dumps(data, default=lambda o: None).encode()
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
@@ -1013,7 +1030,8 @@ class _Tee:
 
 LMU_STEAM_ID = 2399420
 ACEVO_STEAM_ID = 3058630   # Assetto Corsa EVO
-GAME_NAMES = {"lmu": "Le Mans Ultimate", "acevo": "Assetto Corsa EVO"}
+AMS2_STEAM_ID = 1066890    # Automobilista 2
+GAME_NAMES = {"lmu": "Le Mans Ultimate", "acevo": "Assetto Corsa EVO", "ams2": "Automobilista 2"}
 
 
 def _steam_exe() -> str | None:
@@ -1097,6 +1115,8 @@ def launch_lmu(mode: str = "ask", game: str = "lmu") -> bool:
     « normal » / « vr » / « openxr » : on demande directement cette option à Steam (steam://launch/<id>/<type>)."""
     if game == "acevo":
         return launch_steam_game(ACEVO_STEAM_ID, "Assetto Corsa EVO")
+    if game == "ams2":
+        return launch_steam_game(AMS2_STEAM_ID, "Automobilista 2")
     url = f"steam://rungameid/{LMU_STEAM_ID}"
     try:
         if sys.platform == "win32":
@@ -1249,7 +1269,7 @@ def main() -> None:
     UPD.start()
     url = f"http://localhost:{PORT}"
     print("=" * 56)
-    print(f"  APEX//RADIO {UPD.version} — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate / Assetto Corsa EVO"))
+    print(f"  APEX//RADIO {UPD.version} — " + ("MODE DÉMO" if args.demo else "Le Mans Ultimate / Assetto Corsa EVO / Automobilista 2"))
     print(f"  Tableau de bord : {url}")
     print(f"  Sur téléphone : {PHONE_URL}")
     print(f"  Tes données : {DATA}")

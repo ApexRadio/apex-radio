@@ -594,7 +594,7 @@ class Places:
             if s.laps_done == 0:
                 # AC EVO ne donne pas la place sur la grille (il dit P1 à tout le monde avant le départ) :
                 # on ne compare pas avec le départ, on donne juste la place après le 1er tour
-                self.start = 0 if getattr(s, "game", "lmu") == "acevo" else pos
+                self.start = 0 if getattr(s, "game", "lmu") == "acevo" else pos     # AMS2 donne bien la grille
             return
         if not self.told_start:
             if s.laps_done >= 1:
@@ -743,7 +743,8 @@ class Morale:
             lines.append(var("reg", [("Belle régularité, continue sur ce rythme.", "Nice and consistent, keep this pace."),
                                      ("Très régulier, c'est parfait.", "Very consistent, that's perfect."),
                                      ("Même chrono que le tour d'avant, super régularité.", "Same time as last lap, great consistency.")]))
-        if self.trouble_lap is not None and s.laps_done - self.trouble_lap <= 6:
+        if self.trouble_lap is not None and s.laps_done - self.trouble_lap <= 6 and getattr(self, "_trouble_said", None) != self.trouble_lap:
+            self._trouble_said = self.trouble_lap      # une fois par incident (avant : 4 fois de suite, 23/11)
             lines.append(random.choice([
                 L("On a eu un coup dur, mais tu remontes. Continue comme ça !", "We had a tough moment, but you're coming back. Keep it up!"),
                 L("Oublie l'incident, regarde devant, tu vas plus vite qu'eux.", "Forget the incident, look ahead, you're quicker than them."),
@@ -984,7 +985,9 @@ class Damage:
                     self._check = (time.monotonic(), dict(self.wear or {}))   # verdict après lecture des dégâts réels
                     self._last_fetch = 0
             else:
-                if not again:
+                if not again and (s.game_phase == 8 or getattr(s, "finish_status", 0) == 1):
+                    pass        # après le damier : plus d'arrêt, inutile de parler de réparation
+                elif not again:
                     say(None, L("Contact ! ", "Contact! ") + (
                         L("Gros dégâts à la carrosserie, on répare au prochain arrêt.", "Heavy body damage, we'll fix it at the next stop.")
                         if worst >= 2 else L("Rien de grave, on continue.", "Nothing serious, carry on.")), urgent=worst >= 2)

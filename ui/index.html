@@ -467,7 +467,7 @@
           </details>
     </section>
     <section class="setsec"><h2>🏁 <span data-en="Game">Jeu</span></h2>
-      <div class="setrow"><span data-en="My game">Mon jeu</span><div class="setctl"><select id="gamesel" aria-label="Jeu" style="max-width:none;border:0;padding:2px 4px"><option value="lmu">Le Mans Ultimate</option><option value="acevo">Assetto Corsa EVO</option></select></div></div>
+      <div class="setrow"><span data-en="My game">Mon jeu</span><div class="setctl"><select id="gamesel" aria-label="Jeu" style="max-width:none;border:0;padding:2px 4px"><option value="lmu">Le Mans Ultimate</option><option value="acevo">Assetto Corsa EVO</option><option value="ams2">Automobilista 2</option></select></div></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Used for the launch buttons. Apex Radio recognises the running game by itself either way.">Sert pour les boutons de lancement. De toute façon, Apex Radio reconnaît tout seul le jeu lancé.</div>
       <div class="setrow"><label for="autolmu" data-en="Launch my game when Apex opens">Lancer mon jeu à l'ouverture d'Apex</label><div class="setctl"><input type="checkbox" id="autolmu"></div></div>
       <div class="setrow" id="lmumoderow"><span data-en="Launch mode">Mode de lancement</span><div class="setctl"><select id="lmumode" aria-label="Mode de lancement" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
@@ -484,6 +484,8 @@
       <div class="setrow"><span data-en="Show lap times">Afficher les chronos</span><div class="setctl"><input type="checkbox" id="lay_chrono" checked></div></div>
       <div class="setrow"><span data-en="Show driving notes under the map">Remarques de pilotage sous le circuit</span><div class="setctl"><input type="checkbox" id="lay_behav" checked></div></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="The cards you hide leave more room for the track map. Saved for this screen only (the phone has its own view).">Les cases que tu masques laissent plus de place au circuit. Gardé pour cet écran seulement (le téléphone a sa propre vue).</div>
+      <div class="setrow"><span data-en="Stream overlay (OBS)">Overlay pour les streams (OBS)</span><div class="setctl"><button id="ovcopy" data-en="Copy the link">Copier le lien</button></div></div>
+      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="In OBS: add a « Browser » source, paste the link, size 1920 × 1080. Transparent background: only the engineer's radio messages show up. Add ?info=1 at the end for a small position / gaps bar.">Dans OBS : ajoute une source « Navigateur », colle le lien, taille 1920 × 1080. Fond transparent : seuls les messages radio de l'ingénieur s'affichent. Ajoute ?info=1 à la fin pour une petite barre position / écarts.</div>
     </section>
     <section class="setsec"><h2>💬 <span data-en="Discord (team)">Discord (équipe)</span></h2>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Optional. Paste the webhook of your TEAM channel: Apex will post your lap times, setups and race debriefs there by itself. The link stays on this PC. For the public Apex Radio server, the share buttons copy the message and open Discord.">Facultatif. Colle le webhook du salon de TON ÉQUIPE : Apex y postera tout seul tes chronos, setups et débriefs de course. Le lien reste sur ce PC. Pour le serveur public Apex Radio, les boutons de partage copient le message et ouvrent Discord.</div>
@@ -498,7 +500,8 @@
     </section>
     <section class="setsec"><h2>🔄 <span data-en="Version">Version</span></h2>
       <div class="setrow"><span data-en="Installed version">Version installée</span><div class="setctl"><b id="vernow">–</b></div></div>
-      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="A problem since the last update? Download the previous version and install it over this one: your settings, records and setups are kept.">Un problème depuis la dernière mise à jour ? Télécharge la version précédente et installe-la par-dessus : tes réglages, records et setups sont gardés.</div>
+      <div id="verstore" class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" hidden data-en="Microsoft Store version: updates are installed by the Store.">Version Microsoft Store : les mises à jour sont installées par le Store.</div>
+      <div id="vergit" class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="A problem since the last update? Download the previous version and install it over this one: your settings, records and setups are kept.">Un problème depuis la dernière mise à jour ? Télécharge la version précédente et installe-la par-dessus : tes réglages, records et setups sont gardés.</div>
       <div class="row" style="gap:8px;flex-wrap:wrap;justify-content:flex-start">
         <a id="verprev" class="pill" href="#" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none" hidden></a>
         <a id="verall" class="pill" href="https://github.com/ApexRadio/apex-radio/releases" target="_blank" rel="noopener" style="color:var(--text);text-decoration:none" data-en="All versions">Toutes les versions</a>
@@ -694,6 +697,7 @@ function render(d) {
   const up = d.update || {};
   if (up.version) $("vernow").textContent = up.version;
   if (up.all) $("verall").href = up.all;
+  $("verstore").hidden = !up.store; $("vergit").hidden = !!up.store; $("verall").hidden = !!up.store;
   $("verprev").hidden = !(up.previous && up.previous.version);
   if (up.previous && up.previous.version) {
     $("verprev").textContent = T(`↩ Revenir à la ${up.previous.version}`, `↩ Go back to ${up.previous.version}`);
@@ -1011,6 +1015,11 @@ $("tone").innerHTML = [["sobre", "Sobre (juste l'info)", "Plain (just the info)"
 $("tone").onchange = e => fetch("/api/tone", { method: "POST", body: JSON.stringify({ tone: e.target.value }) });
 $("drvname").onchange = e => fetch("/api/driver", { method: "POST", body: JSON.stringify({ name: e.target.value.trim() }) });
 $("pitmode").onchange = e => fetch("/api/pit/mode", { method: "POST", body: JSON.stringify({ mode: e.target.value }) });
+$("ovcopy").onclick = async () => {
+  const url = location.origin + "/overlay";
+  try { await navigator.clipboard.writeText(url); } catch (e) { const a = document.createElement("textarea"); a.value = url; document.body.appendChild(a); a.select(); try { document.execCommand("copy"); } catch (_) {} a.remove(); }
+  $("ovcopy").textContent = T("Copié ✓", "Copied ✓"); setTimeout(() => $("ovcopy").textContent = T("Copier le lien", "Copy the link"), 2500);
+};
 $("coachrace").onchange = e => fetch("/api/coach_race", { method: "POST", body: JSON.stringify({ on: e.target.checked }) });
 $("coaching").onchange = e => fetch("/api/coaching", { method: "POST", body: JSON.stringify({ on: e.target.checked }) });
 $("encourage").onchange = e => fetch("/api/encourage", { method: "POST", body: JSON.stringify({ level: e.target.value }) });
@@ -1054,7 +1063,7 @@ $("quiet").onclick = () => fetch("/api/voice/quiet", { method: "POST" });
 $("vtest").onclick = () => fetch("/api/voice/test", { method: "POST" });
 $("vchoice").onchange = () => { fetch("/api/voice/choose", { method: "POST", body: JSON.stringify({ id: $("vchoice").value }) }); $("vchoice").blur(); };
 // ------------------------------------------------------------ atelier setup
-let WS = null, wsTimer = null, wsSeen = new Set();
+let WS = null, wsTimer = null, wsSeen = new Set(), wsPick = null;   // wsPick : dossier / fichier choisis, pas encore validés
 async function wsSetDir(path) {
   $("wsdirmsg").textContent = T("Recherche…", "Searching…");
   const r = await (await fetch(path ? "/api/setup/dir" : "/api/setup/pickdir", {method: "POST", body: JSON.stringify({dir: path || ""})})).json();
@@ -1073,8 +1082,10 @@ async function wsLoad(keepChecks) {
   $("wsdirbox").hidden = WS.ok !== false;
   document.querySelectorAll(".wsmode").forEach(b => b.classList.toggle("on", b.dataset.m === WS.mode));
   const folders = WS.folders || [];
-  if (document.activeElement !== $("wsfolder")) {
-    const sel = $("wsfolder").value || WS.folder || (folders[0] || {}).name || "";
+  // pas de reconstruction des listes pendant que tu choisis (avant : toutes les 3 s la liste revenait au setup
+  // déjà choisi, et le bouton « c'est ce setup… » renvoyait l'ancien : « ça fait rien », 23/11)
+  if (document.activeElement !== $("wsfolder") && document.activeElement !== $("wsfile")) {
+    const sel = (wsPick && wsPick.folder) || $("wsfolder").value || WS.folder || (folders[0] || {}).name || "";
     $("wsfolder").innerHTML = folders.map(f => `<option ${f.name === sel ? "selected" : ""}>${esc(f.name)}</option>`).join("");
     fillFiles();
   }
@@ -1131,9 +1142,11 @@ function fillFiles() {
   const mine = WS.series || "";
   // les setups de la version en piste (ELMS / WEC) d'abord
   const sorted = mine ? [...files].sort((a, b) => ((tags[b] === mine) - (tags[a] === mine))) : files;
-  $("wsfile").innerHTML = sorted.map(n => `<option value="${esc(n)}" ${n === WS.current ? "selected" : ""}>${esc(n)}${tags[n] && !n.toUpperCase().includes(tags[n]) ? ` (${tags[n]})` : ""}</option>`).join("");
+  const want = wsPick && wsPick.folder === $("wsfolder").value && files.includes(wsPick.file) ? wsPick.file : WS.current;
+  $("wsfile").innerHTML = sorted.map(n => `<option value="${esc(n)}" ${n === want ? "selected" : ""}>${esc(n)}${tags[n] && !n.toUpperCase().includes(tags[n]) ? ` (${tags[n]})` : ""}</option>`).join("");
 }
-$("wsfolder").onchange = fillFiles;
+$("wsfolder").onchange = () => { wsPick = { folder: $("wsfolder").value, file: null }; fillFiles(); };
+$("wsfile").onchange = () => { wsPick = { folder: $("wsfolder").value, file: $("wsfile").value }; };
 function renderRace() {
   const f = WS.fuel || {}, box = $("wsrace");
   if (WS.mode !== "Course") { box.innerHTML = ""; return; }
@@ -1184,7 +1197,7 @@ $("obx").onclick = () => { try { localStorage.setItem("apex_onboard", "done"); }
 $("vtest").addEventListener("click", () => { OB.voiceTested = true; try { localStorage.setItem("apex_vtested", "1"); } catch (e) {} });
 // ---- lancer Le Mans Ultimate (par Steam)
 let lmuClicked = 0, GAME = "lmu";
-const GAME_SHORT = { lmu: "LMU", acevo: "AC EVO" }, GAME_LONG = { lmu: "Le Mans Ultimate", acevo: "Assetto Corsa EVO" };
+const GAME_SHORT = { lmu: "LMU", acevo: "AC EVO", ams2: "AMS2" }, GAME_LONG = { lmu: "Le Mans Ultimate", acevo: "Assetto Corsa EVO", ams2: "Automobilista 2" };
 $("gamesel").onchange = e => { GAME = e.target.value; fetch("/api/game", { method: "POST", body: JSON.stringify({ game: GAME }) }); };
 function launchLMU() { lmuClicked = Date.now(); fetch("/api/lmu/launch", { method: "POST" }); $("lmulaunch").textContent = T("⏳ Lancement…", "⏳ Launching…"); }
 $("lmulaunch").onclick = launchLMU; $("lmulaunch2").onclick = launchLMU;
@@ -1266,7 +1279,13 @@ $("set").onclick = e => { if (e.target.id === "set") $("set").hidden = true; };
 $("wsopen").onclick = () => { $("ws").hidden = false; $("wsresult").textContent = ""; wsLoad(false); clearInterval(wsTimer); wsTimer = setInterval(() => wsLoad(true), 3000); };
 $("wsclose").onclick = () => { $("ws").hidden = true; clearInterval(wsTimer); };
 $("wsuse").onclick = async () => {
-  await fetch("/api/setup/select", { method: "POST", body: JSON.stringify({ folder: $("wsfolder").value, file: $("wsfile").value, mode: WS.mode }) });
+  const pick = { folder: $("wsfolder").value, file: $("wsfile").value };
+  if (!pick.file) return;
+  $("wsuse").disabled = true;
+  try {
+    await fetch("/api/setup/select", { method: "POST", body: JSON.stringify({ ...pick, mode: WS.mode }) });
+  } finally { $("wsuse").disabled = false; }
+  wsPick = null;
   wsLoad(false);
 };
 $("wscreate").onclick = async () => {

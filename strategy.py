@@ -19,13 +19,44 @@ from telemetry import Snapshot
 from i18n import L, dec
 from phrases import pick, dress
 
+ENERGY_MARGIN_LAPS = 1.0  # marge pour l'énergie virtuelle au stand (en tours)
 MARGIN_LAPS = 0.5        # marge de sécurité en tours d'essence / énergie (quantité à mettre, arrêts nécessaires)
 BOX_RESERVE = 0.2        # réserve gardée en arrivant au stand : on roule jusqu'au dernier tour possible
 TYRE_LIMIT = 0.30        # on considère un pneu à changer sous 30 % restant
 AVG_OVER = 5             # moyenne sur les 5 derniers tours propres
 
 
+def lift_hint(tmap) -> str:
+    """Où lever le pied pour économiser : avant les freinages qui suivent les plus longues lignes droites
+    (c'est là que le lift and coast rapporte le plus pour le moins de temps perdu)."""
+    generic = L("Lève un peu plus tôt avant les freinages.", "Lift a bit earlier before braking.")
+    try:
+        cs = sorted(tmap.corners(), key=lambda c: c["start"]) if tmap else []
+    except Exception:
+        cs = []
+    if len(cs) < 3:
+        return generic
+    gaps = []
+    for i, c in enumerate(cs):
+        prev = cs[i - 1]
+        g = (c["start"] - prev["end"]) % 1.0
+        gaps.append((g, c["id"]))
+    top = sorted(gaps, reverse=True)[:2]
+    if top[0][0] < 0.05:
+        return generic
+    ids = [cid for g, cid in top if g >= 0.6 * top[0][0]]
+    import cornernames
+    names_fr = [cornernames.rename(f"au virage {i}") for i in ids]
+    names_en = [cornernames.rename(f"into turn {i}") for i in ids]
+    if len(ids) == 1:
+        return L(f"Lève le pied un peu plus tôt {names_fr[0]}, au bout de la grande ligne droite.",
+                 f"Lift a bit earlier {names_en[0]}, at the end of the long straight.")
+    return L(f"Lève le pied un peu plus tôt {names_fr[0]} et {names_fr[1]}, au bout des lignes droites.",
+             f"Lift a bit earlier {names_en[0]} and {names_en[1]}, at the end of the straights.")
+
+
 @dataclass
+
 class Plan:
     ready: bool = False                 # assez de tours pour calculer
     fuel_per_lap: float | None = None
@@ -209,7 +240,11 @@ class Engineer:
         p.limited_by = "énergie" if energy_range < fuel_range else "essence"
 
         full_stint = min(s.fuel_capacity / fpl if s.fuel_capacity else math.inf, (1.0 / epl) if epl else math.inf)
-        short = p.laps_to_finish + MARGIN_LAPS - p.range_laps
+        # « faut-il s'arrêter ? » : pour l'énergie, avec la consommation prudente. Avec la moyenne, une fin de course
+        # un peu plus gourmande donnait « pas d'arrêt » puis la panne d'énergie dans le dernier tour.
+        epl_safe = (self._per_lap("energy", safe=True) or epl) if epl else None
+        range_safe = min(fuel_range, (s.energy / max(epl, epl_safe)) if (epl and s.energy is not None) else math.inf)
+        short = p.laps_to_finish + MARGIN_LAPS - range_safe
         p.stops_needed = 0 if short <= 0 else math.ceil(short / max(full_stint - MARGIN_LAPS, 1.0))
 
         # tyres
@@ -230,17 +265,22 @@ class Engineer:
         # il manque moins d'un demi-tour d'essence (sans la marge) : un arrêt coûterait bien plus cher
         # que de lever un peu le pied. On ne rentre pas, on économise.
         real_short = p.laps_to_finish - p.range_laps
-        if p.stops_needed == 1 and p.limited_by == "essence" and real_short < 0.5 and p.laps_to_finish >= 1.5:
+        if p.stops_needed == 1 and real_short < 0.5 and p.laps_to_finish >= 1.5 and (p.limited_by == "essence" or epl):
             p.stops_needed = 0
-            p.save_per_lap = max(0.1, (max(real_short, 0.0) + 0.2) * fpl / max(p.laps_to_finish, 1))
-            q = dec(f"{p.save_per_lap:.1f}")
-            self.say("stint:tight", pick("tight", [
-                (f"C'est juste en essence, mais on ne s'arrête pas. Économise environ {q} litre par tour.",
-                 f"Fuel is tight, but we're not stopping. Save about {q} litres a lap."),
-                (f"On va au bout sans s'arrêter, mais il faut gratter {q} litre par tour. Lève un peu plus tôt avant les freinages.",
-                 f"We go to the end without stopping, but find {q} litres a lap. Lift a bit earlier before braking."),
-                (f"Pas d'arrêt : un passage au stand coûterait trop cher. Gagne juste {q} litre par tour.",
-                 f"No stop: pitting would cost too much. Just save {q} litres a lap.")]), elapsed=et)
+            if p.limited_by == "essence":
+                p.save_per_lap = max(0.1, (max(real_short, 0.0) + 0.2) * fpl / max(p.laps_to_finish, 1))
+                q = dec(f"{p.save_per_lap:.1f}") + L(" litre", " litres")
+            else:
+                # énergie virtuelle : même conseil, dans la bonne unité (avant : « 0,8 % d'énergie » puis « 0,1 litre » d'affilée, 21/11)
+                q = dec(f"{max(0.1, (max(real_short, 0.0) + 0.2) * epl * 100 / max(p.laps_to_finish, 1)):.1f}") + L(" % d'énergie", " % energy")
+            # même clé que « économise pour éviter l'arrêt » : un seul conseil d'économie par relais
+            self.say("stint:save", pick("tight", [
+                (f"C'est juste, mais on ne s'arrête pas. Économise environ {q} par tour.",
+                 f"It's tight, but we're not stopping. Save about {q} a lap."),
+                (f"On va au bout sans s'arrêter, mais il faut gratter {q} par tour. " + lift_hint(getattr(self, "map", None)),
+                 f"We go to the end without stopping, but find {q} a lap. " + lift_hint(getattr(self, "map", None))),
+                (f"Pas d'arrêt : un passage au stand coûterait trop cher. Gagne juste {q} par tour.",
+                 f"No stop: pitting would cost too much. Just save {q} a lap.")]), elapsed=et)
             self.plan = p
             return p
         if p.stops_needed == 0:
@@ -274,7 +314,7 @@ class Engineer:
                  f"We're a little short on fuel. Save {q} litres a lap and we can skip the stop."),
                 (f"On est juste en essence. Gagne {q} litre par tour et on va au bout sans s'arrêter.",
                  f"Fuel is tight. Find {q} litres a lap and we go to the end without stopping."),
-                (f"Mode économie : {q} litre par tour à gagner, lève un peu plus tôt avant les freinages, et l'arrêt saute.",
+                (f"Mode économie : {q} litre par tour à gagner, et l'arrêt saute. " + lift_hint(getattr(self, "map", None)),
                  f"Fuel save mode: {q} litres a lap, lift a bit earlier before braking, and we skip the stop."),
                 (f"Si tu veux éviter l'arrêt, il faut {q} litre de moins par tour. Lift and coast, c'est jouable.",
                  f"To skip the stop we need {q} litres less a lap. Lift and coast, it's doable.")]), elapsed=et)
@@ -282,17 +322,17 @@ class Engineer:
             q = dec(f"{p.save_per_lap:.1f}")
             n_now, n_new = p.stops_needed, k
             self.say("stint:save", L(f"Si tu économises {q} litre par tour, on fait {n_new} arrêt{'s' if n_new > 1 else ''} "
-                                     f"au lieu de {n_now}. Lève un peu plus tôt avant les freinages.",
+                                     f"au lieu de {n_now}. " + lift_hint(getattr(self, "map", None)),
                                      f"Save {q} litres a lap and we make {n_new} stop{'s' if n_new > 1 else ''} instead of {n_now}. "
                                      "Lift a bit earlier before braking."), elapsed=et)
         elif ok:
             q = dec(f"{save_e * 100:.1f}")
             if k == 0:
-                txt = L(f"Si tu économises {q} % d'énergie par tour, on évite l'arrêt. Lève un peu plus tôt avant les freinages.",
-                        f"Save {q} % energy a lap and we can skip the stop. Lift a bit earlier before braking.")
+                txt = L(f"Si tu économises {q} % d'énergie par tour, on évite l'arrêt. " + lift_hint(getattr(self, "map", None)),
+                        f"Save {q} % energy a lap and we can skip the stop. " + lift_hint(getattr(self, "map", None)))
             else:
                 txt = L(f"Si tu économises {q} % d'énergie par tour, on fait {k} arrêt{'s' if k > 1 else ''} au lieu de "
-                        f"{p.stops_needed}. Lève un peu plus tôt avant les freinages.",
+                        f"{p.stops_needed}. " + lift_hint(getattr(self, "map", None)),
                         f"Save {q} % energy a lap and we make {k} stop{'s' if k > 1 else ''} instead of {p.stops_needed}. "
                         "Lift a bit earlier before braking.")
             self.say("stint:save", txt, elapsed=et)
@@ -301,6 +341,7 @@ class Engineer:
         k = math.floor(s.lap_frac + p.range_laps - BOX_RESERVE)
         p.laps_until_box = max(0, k)
         p.box_lap = s.laps_done + max(1, k)
+        self._fcy(s, p, full_stint)
 
         # quantités au stand
         laps_driven_before = max(0.0, max(1, k) - s.lap_frac)
@@ -315,7 +356,10 @@ class Engineer:
         p.fuel_to_add = max(0.0, min(need, room))
         p.fuel_total = min(s.fuel_capacity or 999, fuel_at_pit + p.fuel_to_add)
         if epl and s.energy is not None:
-            p.energy_target = min(1.0, (stint_laps + MARGIN_LAPS) * epl)
+            # énergie : valeur prudente (comme l'essence) et un tour entier de marge. Tomber à court d'énergie
+            # virtuelle coûte bien plus cher qu'1 ou 2 % de trop (retour joueur : « pas assez d'énergie au stand »)
+            epl_safe = self._per_lap("energy", safe=True) or epl
+            p.energy_target = min(1.0, (stint_laps + max(MARGIN_LAPS, ENERGY_MARGIN_LAPS)) * max(epl, epl_safe))
 
         stint_after = min(laps_after, full_stint)
         if p.tyre_compound:
@@ -450,6 +494,38 @@ class Engineer:
                           f"Rain {s.raining * 100:.0f} %, track {s.wetness * 100:.0f} % wet")
         else:
             p.weather = L("Sec", "Dry")
+
+    def _fcy(self, s: Snapshot, p: Plan, full_stint: float) -> None:
+        """Drapeau jaune général / voiture de sécurité : si un arrêt arrive bientôt de toute façon, le faire
+        maintenant coûte beaucoup moins de temps (les autres roulent au ralenti). Un conseil, une seule fois
+        par neutralisation ; le menu n'est réglé que si le pilote le demande (« je rentre »)."""
+        if not s.yellow:
+            self._fcy_said = None
+            return
+        if s.in_pits or not s.on_track or s.done or not p.stops_needed or p.laps_until_box is None:
+            return
+        st = getattr(s, "fcy_state", 0)
+        if getattr(self, "_fcy_said", None) == "advice":
+            return
+        window = max(3, 0.5 * full_stint) if full_stint and full_stint != math.inf else 6
+        if p.laps_until_box > window:
+            if getattr(self, "_fcy_said", None) is None:
+                self._fcy_said = "far"
+            return
+        if st == 2:      # stands fermés pour l'instant
+            if getattr(self, "_fcy_said", None) != "closed":
+                self._fcy_said = "closed"
+                self.say(None, L(f"Neutralisation : tu devais t'arrêter dans {p.laps_until_box} tour{'s' if p.laps_until_box > 1 else ''}. "
+                                 "Les stands sont fermés, je te dis dès qu'ils ouvrent.",
+                                 f"Neutralisation: you were due to pit in {p.laps_until_box} lap{'s' if p.laps_until_box != 1 else ''}. "
+                                 "Pits are closed, I'll tell you as soon as they open."), urgent=True, elapsed=s.elapsed)
+            return
+        self._fcy_said = "advice"
+        n = p.laps_until_box
+        self.say(None, L(f"Neutralisation ! Tu devais t'arrêter dans {n} tour{'s' if n > 1 else ''} : rentre maintenant, "
+                         "l'arrêt te coûte beaucoup moins de temps pendant que les autres roulent au ralenti. Dis « je rentre » et je prépare le menu.",
+                         f"Neutralisation! You were due to pit in {n} lap{'s' if n != 1 else ''}: box now, the stop costs far less time "
+                         "while everyone is slow. Say \"I'm pitting\" and I'll set the menu."), urgent=True, elapsed=s.elapsed)
 
     def _flags(self, s: Snapshot) -> None:
         if s.yellow and not self._was_yellow:

@@ -1,5 +1,37 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.4.3
+- 🇫🇷 Nouveau jeu : **Automobilista 2**. Apex le détecte tout seul (dans AMS2 : Options → Système → Mémoire partagée → « Project CARS 2 »). Noms des pilotes, positions par catégorie, écarts, essence, pneus, freins, dégâts, drapeaux, voiture de sécurité, spotter, chronos et conseils de pilotage. Le menu des stands se règle dans le jeu.
+- 🇬🇧 New game: **Automobilista 2**. Apex detects it by itself (in AMS2: Options → System → Shared Memory → "Project CARS 2"). Driver names, class positions, gaps, fuel, tyres, brakes, damage, flags, safety car, spotter, lap times and driving tips. The pit menu is set in the game.
+- 🇫🇷 Conseils de pilotage en mots d'ingénieur, sans mètres ni km/h : « tu freines trop tôt, retarde ton point de freinage », « vitesse de passage en dessous de ta référence », « sortie timide, tu peux accélérer plus tôt ».
+- 🇬🇧 Driving tips in engineer language, no metres or km/h: "you're braking too early, push your braking point later", "minimum speed below your reference", "hesitant exit, get on the power sooner".
+- 🇫🇷 Radio : « pourquoi tu ne fais pas le plein ? » explique la stratégie au lieu de changer le menu ; « il manquera combien d'énergie pour finir ? » donne ce qui manque ; « je suis à combien du premier ? » et « à quelle distance de P8 ? » compris ; « tu peux répéter à quel tour je m'arrête ? » répond à la question ; un simple « OK » = « Reçu ».
+- 🇬🇧 Radio: "why aren't you filling up?" explains the strategy instead of changing the menu; "how much energy short to finish?" gives the shortfall; "gap to the leader?" and "how far to P8?" understood; "repeat which lap I pit?" answers the question; a plain "OK" = "Copy".
+- 🇫🇷 Moins de bavardage : drapeaux jaunes seulement devant toi (pas plus d'une fois par 45 s par secteur), un seul conseil d'économie par relais dans la bonne unité (énergie ou litres), « coup dur » une fois par incident.
+- 🇬🇧 Less chatter: yellow flags only ahead of you (at most once per 45 s per sector), a single saving tip per stint in the right unit (energy or litres), "tough moment" once per incident.
+- 🇫🇷 Corrections : « tour None » et « Stand réglé : . » ; atelier setup (le choix du setup revenait en arrière toutes les 3 s) ; analyse et conseils de setup remis à zéro quand tu changes de circuit, de voiture ou de jeu ; pas de « pénalité » ni de « on répare » après le damier ; mode équipier plus jamais en solo ; AC EVO : plus de « pneus comme neufs » (le jeu ne donne pas l'usure) ; pas de réglage proposé au-delà de « soft » / « max ».
+- 🇬🇧 Fixes: "lap None" and an empty "Pit menu set"; setup workshop (the chosen setup jumped back every 3 s); driving analysis and setup tips reset when you change track, car or game; no "penalty" or "we'll repair" after the flag; teammate mode never offline; AC EVO: no more "tyres like new" (the game gives no wear); no setting suggested past "soft" / "max".
+- 🇫🇷 Économie d'essence / d'énergie guidée : au lieu de « lève un peu plus tôt avant les freinages », l'ingé dit où : « lève le pied un peu plus tôt à la chicane du Mistral et à Signes, au bout des lignes droites » (les freinages après les plus longues lignes droites).
+- 🇬🇧 Guided fuel / energy saving: instead of "lift a bit earlier before braking", the engineer says where: "lift a bit earlier into the Mistral chicane and Signes, at the end of the straights".
+- 🇫🇷 Énergie virtuelle au stand plus sûre : consommation prudente (comme pour l'essence) et un tour de marge. Un arrêt imprévu (dégâts, changement de pilote) complète maintenant l'énergie si elle risque de manquer, au lieu de ne rien remettre. La décision « faut-il s'arrêter ? » utilise aussi la consommation prudente d'énergie.
+- 🇬🇧 Safer virtual energy at the stop: cautious consumption (like fuel) and a full lap of margin. An unplanned stop (damage, driver change) now tops up the energy if it might run short, instead of adding nothing.
+- 🇫🇷 Noms des virages aussi au Paul Ricard (S de la Verrerie, Camp, chicane du Mistral, Signes, double droite du Beausset, Bendor), à Daytona (International et West Horseshoe, Bus Stop) et à Road Atlanta (Esses, chicane).
+- 🇬🇧 Corner names also at Paul Ricard (Verrerie, Le Camp, Mistral chicane, Signes, Beausset, Bendor), Daytona (International and West Horseshoe, Bus Stop) and Road Atlanta (Esses, chicane).
+- 🇫🇷 Conseils de trajectoire, comparés à ton meilleur tour et dits comme un vrai ingé : « tu es loin de la corde, resserre ta trajectoire », « va chercher le vibreur à la corde », « tu sors trop large », « utilise toute la largeur en sortie ». Seulement quand ça te coûte du temps. Démarre au prochain meilleur tour enregistré.
+- 🇬🇧 Line advice, compared to your best lap and phrased like a real engineer: "you're missing the apex", "use the apex kerb", "running wide on exit", "use all the track on exit". Only when it costs you time. Starts from your next recorded best lap.
+- 🇫🇷 « État des pneus » compris même quand la reconnaissance entend « état des neufs », « état des peux »…
+- 🇬🇧 "Tyre condition" (FR « état des pneus ») understood even when speech recognition mishears it.
+- 🇫🇷 Overlay pour les streamers : ⚙️ → Affichage → « Copier le lien », puis source « Navigateur » dans OBS. Les messages radio de l'ingénieur s'affichent en bas du live (fond transparent), avec en option une petite barre position / écarts (?info=1).
+- 🇬🇧 Stream overlay: ⚙️ → Layout → "Copy the link", then a "Browser" source in OBS. The engineer's radio messages show at the bottom of the stream (transparent background), with an optional small position / gaps bar (?info=1).
+- 🇫🇷 Neutralisation (drapeau jaune général, voiture de sécurité) : si tu devais t'arrêter bientôt de toute façon, l'ingé te conseille de rentrer maintenant (l'arrêt coûte beaucoup moins de temps). Il prévient si les stands sont fermés et redit dès qu'ils ouvrent. Un conseil seulement : le menu n'est réglé que si tu dis « je rentre ».
+- 🇬🇧 Neutralisation (full course yellow, safety car): if you were due to pit soon anyway, the engineer advises boxing now (the stop costs far less time). He warns if pits are closed and tells you when they open. Advice only: the menu is set only if you say "I'm pitting".
+- 🇫🇷 Relais : « Mes courses ». Garde plusieurs courses préparées à l'avance (6h de Spa, 4h de Monza…) et recharge-les d'un clic.
+- 🇬🇧 Stints: "My races". Keep several races prepared in advance (Spa 6h, Monza 4h…) and reload them in one click.
+- 🇫🇷 Menu des stands « À la demande » par défaut : Apex ne règle plus le menu tout seul (essence, pneus, réparations) tant que tu ne lui demandes pas (« prépare l'arrêt »). Ceux qui avaient choisi « Auto » le gardent.
+- 🇬🇧 Pit menu "On request" by default: Apex no longer sets the menu by itself (fuel, tyres, repairs) until you ask ("prepare the stop"). Those who had picked "Auto" keep it.
+- 🇫🇷 « Combien de temps pour réparer ? » : l'ingé donne le temps de réparation de l'équipe de stand (lu dans LMU) et la durée estimée de l'arrêt. Seulement quand tu le demandes, pas d'annonce automatique.
+- 🇬🇧 "How long to repair?": the engineer gives the pit crew's repair time (read from LMU) and the estimated stop length. Only when you ask, no automatic call.
+
 ## 1.4.2
 - 🇫🇷 Setups : les setups Apex dont la note contenait « ≈ » n'apparaissaient pas dans la liste de LMU : corrigé (et plus jamais ce caractère).
 - 🇬🇧 Setups: Apex setups whose note contained "≈" didn't show up in LMU's list: fixed (and that character is never written again).

@@ -25,6 +25,7 @@ WHEELS = ("AVG", "AVD", "ARG", "ARD")  # avant gauche, avant droit, arrière gau
 
 
 TEAM_DRIVERS: list[str] = []      # pilotes du planning de relais (app.py), pour retrouver la voiture d'équipe
+TEAM_ON = False                   # planning des relais activé pour cette course (app.py)
 
 
 def _fold(t: str) -> str:
@@ -36,7 +37,7 @@ def _fold(t: str) -> str:
 @dataclass
 class Snapshot:
     connected: bool = False          # le jeu est-il lancé
-    game: str = "lmu"                # jeu lu : "lmu" (Le Mans Ultimate) ou "acevo" (Assetto Corsa EVO)
+    game: str = "lmu"                # jeu lu : "lmu" (Le Mans Ultimate), "acevo" (Assetto Corsa EVO) ou "ams2" (Automobilista 2)
     on_track: bool = False           # le joueur est-il dans une voiture
     track: str = ""
     car: str = ""
@@ -80,6 +81,7 @@ class Snapshot:
     air_temp: float = 0.0
     track_temp: float = 0.0
     yellow: bool = False
+    fcy_state: int = 0               # LMU : état du drapeau jaune général (2 stands fermés, 4 stands ouverts…)
     yellow_sectors: list = field(default_factory=list)   # drapeaux jaunes locaux : numéros de secteur (1, 2, 3)
     blue: bool = False               # drapeau bleu montré à ta voiture (plus rapide derrière qui va te doubler)
     lap_invalid: bool = False        # tour en cours invalidé (limites de piste…)
@@ -152,6 +154,9 @@ def dynamics_sample(tel, sc, info) -> dict:
         "tcslip": tel.mTCSlip, "tccut": tel.mTCCut, "map": tel.mMotorMap,
         "farb": tel.mFrontAntiSway, "rarb": tel.mRearAntiSway,
         "btemp": [w.mBrakeTemp - 273.15 for w in tel.mWheels],
+        # trajectoire : position sur la largeur de la piste et roues sur un vibreur (conseils de ligne)
+        "pl": sc.mPathLateral, "edge": sc.mTrackEdge,
+        "curb": sum(1 for w in tel.mWheels if int(w.mSurfaceType) == 5),
     }
 
 
@@ -171,6 +176,8 @@ def _session_name(code: int) -> str:
 
 class LMUSource:
     """Lecture en direct de la mémoire partagée de LMU."""
+
+    game = "lmu"
 
     def __init__(self) -> None:
         from pyLMUSharedMemory import lmu_data, lmu_mmap
@@ -253,6 +260,16 @@ class LMUSource:
         (la dernière voiture que tu as pilotée, ou celle d'un pilote de ton planning de relais)."""
         n = min(info.mNumVehicles, len(d.scoring.vehScoringInfo))
         if n <= 0:
+            return None
+        # course finie : au retour au garage, LMU rend ta voiture à un pilote IA (« Haerdter roule », 23/11)
+        if int(getattr(info, "mGamePhase", 0)) == 8:
+            return None
+        # un coéquipier, ça n'existe qu'en ligne (client d'un serveur) ou avec le planning des relais activé
+        mode = int(getattr(info, "mGameMode", 0) or 0)
+        if mode != getattr(self, "_mode_logged", None):
+            self._mode_logged = mode
+            print(f"  LMU : mode de jeu {mode} ({'en ligne' if mode == 2 else 'hors ligne ou hôte'})")
+        if mode != 2 and not TEAM_ON:
             return None
         # seulement les voitures pilotées par un autre humain (en ligne) : hors ligne, la voiture que tu
         # as pilotée hier peut être conduite par l'IA (ex. TDS #14 hors ligne -> « Mode équipier » en solo)
@@ -482,6 +499,7 @@ class LMUSource:
         if y > 127:
             y -= 256
         s.yellow = 1 <= y <= 6 or s.game_phase == 6
+        s.fcy_state = y   # 2 = stands fermés, 3 = voie des stands ouverte aux leaders, 4 = stands ouverts
         # jaunes locaux par secteur. L'ordre des cases n'est pas documenté : on pensait « comme mSector »
         # (case 0 = secteur 3), mais un pilote sorti au secteur 1 s'est entendu dire « jaune secteur 3 ».
         # On part donc de l'ordre direct (case 0 = secteur 1) et on vérifie à chaque nouveau jaune avec les
@@ -508,13 +526,18 @@ class LMUSource:
         return s
 
 
+GAME_LABELS = {"lmu": "Le Mans Ultimate", "acevo": "Assetto Corsa EVO", "ams2": "Automobilista 2"}
+
+
 class AutoSource:
-    """Choisit tout seul le jeu lancé : Assetto Corsa EVO s'il tourne, sinon Le Mans Ultimate."""
+    """Choisit tout seul le jeu lancé : Assetto Corsa EVO ou Automobilista 2 s'il tourne, sinon Le Mans Ultimate."""
 
     def __init__(self) -> None:
         from acevo import ACEvoSource
+        from ams2 import AMS2Source
         self.lmu = LMUSource()
         self.acevo = ACEvoSource()
+        self.ams2 = AMS2Source()
         self.cur = self.lmu
         self._check = 0.0
 
@@ -522,12 +545,16 @@ class AutoSource:
         now = time.time()
         if now - self._check > 2:
             self._check = now
-            try:
-                new = self.acevo if self.acevo.alive() else self.lmu
-            except Exception:
-                new = self.lmu
+            new = self.lmu
+            for src in (self.acevo, self.ams2):
+                try:
+                    if src.alive():
+                        new = src
+                        break
+                except Exception:
+                    pass
             if new is not self.cur:
-                print(f"  Jeu détecté : {'Assetto Corsa EVO' if new is self.acevo else 'Le Mans Ultimate'}")
+                print(f"  Jeu détecté : {GAME_LABELS.get(new.game, 'Le Mans Ultimate')}")
                 self.cur = new
         return self.cur
 
@@ -567,7 +594,7 @@ class AutoSource:
         return None if getattr(self, "stale", False) else self.cur.spot_sample()
 
     def close(self) -> None:
-        for src in (self.lmu, self.acevo):
+        for src in (self.lmu, self.acevo, self.ams2):
             try:
                 src.close()
             except Exception:

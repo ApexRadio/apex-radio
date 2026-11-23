@@ -23,6 +23,11 @@ from paths import DATA, LOCAL  # noqa: E402
 DIR = DATA / "debriefs"
 
 
+def game_of(track: str) -> str:
+    """Le jeu d'un circuit enregistré (le nom finit par « (AC EVO) » ou « (AMS2) » hors LMU)."""
+    return "acevo" if track.endswith("(AC EVO)") else "ams2" if track.endswith("(AMS2)") else "lmu"
+
+
 def fmt(t):
     if not t:
         return "–"
@@ -218,7 +223,7 @@ document.addEventListener("click", async e => {
   if (ok) fetch("/api/share/open", { method: "POST", body: JSON.stringify({ kind: "chronos", game: "GAMEID" }) });
   b.classList.toggle("ok", ok); setTimeout(() => { b.textContent = old; b.classList.remove("ok"); }, 5000);
 });</script>""" + TEAM_JS
-    js = js.replace("GAMEID", "acevo" if str(d.get("track", "")).endswith("(AC EVO)") else "lmu")
+    js = js.replace("GAMEID", game_of(str(d.get("track", ""))))
     return _page(L(f"Débrief {d['track']}", f"Debrief {d['track']}"), body + js)
 
 
@@ -368,7 +373,7 @@ def records_page() -> str:
                  + (f"  ({' · '.join(f'S{i + 1} {x:.3f}' for i, x in enumerate(sec))})" if sec else "")
                  + (f"\n🎯 {L('Tour idéal', 'Ideal lap')} {fmt(ideal)}" if ideal else "")
                  + f"\n📅 {r.get('date', '')} · Apex Radio")
-        game = "acevo" if track.endswith("(AC EVO)") else "lmu"
+        game = game_of(track)
         rows.append(f"""<div class="rec" data-game="{game}">{_thumb(track)}
   <div class="info"><div class="tr">{html.escape(track)}</div>
     <div class="muted">{html.escape(class_name(cls))} · {html.escape(r.get('car', ''))} · {html.escape(r.get('date', ''))}</div>
@@ -411,7 +416,7 @@ document.addEventListener("click", async e => {
     picker = (f"<p><label class='muted' for='recgame'>{L('Jeu', 'Game')} </label>"
               f"<select id='recgame' style='font:inherit;padding:4px 8px;border-radius:8px;background:var(--panel);color:inherit;border:1px solid var(--line)'>"
               f"<option value='all'>{L('Tous les jeux', 'All games')}</option><option value='lmu'>Le Mans Ultimate</option>"
-              f"<option value='acevo'>Assetto Corsa EVO</option></select></p>"
+              f"<option value='acevo'>Assetto Corsa EVO</option><option value='ams2'>Automobilista 2</option></select></p>"
               f"<p class='muted' id='recnone' hidden>{L('Pas encore de record sur ce jeu.', 'No record on this game yet.')}</p>")
     body = css + L("<h1>MEILLEURS TOURS</h1><p class='muted'>Ton record sur chaque circuit, par catégorie (tours valides uniquement).</p>",
                    "<h1>BEST LAPS</h1><p class='muted'>Your record on each track, by class (valid laps only).</p>") + picker + \

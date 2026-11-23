@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Paquet Microsoft Store d'Apex Radio (Store ID 9NPPNPFX1LRB). Les valeurs __...__ sont remplies par GitHub Actions
+     (installer.yml, étape « Paquet Microsoft Store ») avec l'identité du Partner Center. -->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6"
+  IgnorableNamespaces="uap rescap desktop6">
+
+  <Identity Name="__IDENTITY_NAME__" Publisher="__PUBLISHER__" Version="__VERSION__" ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>Apex Radio</DisplayName>
+    <PublisherDisplayName>__PUBLISHER_NAME__</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <!-- Apex écrit ses données dans Documents\Apex Radio et %LOCALAPPDATA%\Apex Radio, et ses setups dans le dossier
+         de LMU : sans virtualisation, les fichiers sont au même endroit que dans la version classique. -->
+    <desktop6:FileSystemWriteVirtualization>disabled</desktop6:FileSystemWriteVirtualization>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="fr-FR" />
+    <Resource Language="en-US" />
+  </Resources>
+
+  <Applications>
+    <Application Id="ApexRadio" Executable="ApexRadio.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="Apex Radio"
+        Description="Ingénieur de course vocal pour Le Mans Ultimate, Assetto Corsa EVO et Automobilista 2"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <Capability Name="internetClient" />
+    <!-- page téléphone d'Apex (http://<PC>:8765/tel) sur le réseau de la maison -->
+    <Capability Name="privateNetworkClientServer" />
+    <rescap:Capability Name="runFullTrust" />
+    <rescap:Capability Name="unvirtualizedResources" />
+    <DeviceCapability Name="microphone" />
+  </Capabilities>
+</Package>

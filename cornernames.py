@@ -58,6 +58,27 @@ TABLE = [
         (0.714, "Ascari", "Ascari"),
         (0.905, "la Parabolica", "Parabolica"),
     ]),
+    (r"paul ricard|castellet", [
+        (0.043, "le S de la Verrerie", "the Verrerie S"),
+        (0.268, "le virage du Camp", "Le Camp"),
+        (0.515, "la chicane du Mistral", "the Mistral chicane"),
+        (0.667, "Signes", "Signes"),
+        (0.757, "le double droite du Beausset", "the Beausset double right"),
+        (0.823, "Bendor", "Bendor"),
+    ]),
+    (r"daytona", [
+        (0.168, "l'International Horseshoe", "the International Horseshoe"),
+        (0.307, "le West Horseshoe", "the West Horseshoe"),
+        (0.662, "le Bus Stop", "the Bus Stop"),
+        (0.685, "le Bus Stop", "the Bus Stop"),
+    ]),
+    (r"road atlanta", [
+        (0.2, "les Esses", "the Esses"),
+        (0.233, "les Esses", "the Esses"),
+        (0.275, "les Esses", "the Esses"),
+        (0.855, "la chicane", "the chicane"),
+        (0.882, "la chicane", "the chicane"),
+    ]),
     (r"interlagos|jose carlos pace", [
         (0.098, "le S de Senna", "the Senna S"),
         (0.155, "la Curva do Sol", "Curva do Sol"),

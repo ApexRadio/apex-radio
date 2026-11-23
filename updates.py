@@ -25,6 +25,9 @@ PAGE = f"https://github.com/{REPO}/releases/latest"
 LIST = f"https://api.github.com/repos/{REPO}/releases?per_page=30"
 ALL = f"https://github.com/{REPO}/releases"
 HERE = Path(__file__).resolve().parent
+# version Microsoft Store (fichier store.txt ajouté dans le paquet) : c'est le Store qui met à jour,
+# Apex ne télécharge ni n'installe rien lui-même (le dossier de l'appli est d'ailleurs en lecture seule)
+STORE = (HERE / "store.txt").exists()
 
 
 def _num(v: str) -> tuple[int, ...]:
@@ -89,8 +92,8 @@ class Updates:
     # ------------------------------------------------------------ téléchargement / installation
     @staticmethod
     def can_install() -> bool:
-        """Seulement l'appli installée sous Windows (pas le code source, pas la démo Linux)."""
-        return sys.platform == "win32" and (HERE / "unins000.exe").exists()
+        """Seulement l'appli installée sous Windows (pas le code source, pas la démo Linux, pas le Store)."""
+        return sys.platform == "win32" and not STORE and (HERE / "unins000.exe").exists()
 
     def download(self) -> None:
         if not (self.asset and self.can_install()) or self.dl["state"] in ("downloading", "ready"):
@@ -156,6 +159,9 @@ class Updates:
         return bool(self.latest) and _num(self.latest) > _num(self.version)
 
     def start(self) -> None:
+        if STORE:
+            print("  Version Microsoft Store : les mises à jour arrivent par le Store.")
+            return
         def run() -> None:
             while True:
                 self.check()
@@ -164,5 +170,7 @@ class Updates:
         threading.Thread(target=run, daemon=True).start()
 
     def ui(self) -> dict:
+        if STORE:
+            return {"version": self.version, "latest": None, "url": self.url, "previous": None, "all": ALL, "dl": None, "store": True}
         return {"version": self.version, "latest": self.latest if self.available() else None, "url": self.url,
                 "previous": self.previous, "all": ALL, "dl": self.dl if self.available() else None}

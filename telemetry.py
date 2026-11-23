@@ -25,6 +25,7 @@ WHEELS = ("AVG", "AVD", "ARG", "ARD")  # avant gauche, avant droit, arrière gau
 
 
 TEAM_DRIVERS: list[str] = []      # pilotes du planning de relais (app.py), pour retrouver la voiture d'équipe
+TEAM_ON = False                   # planning des relais activé pour cette course (app.py)
 
 
 def _fold(t: str) -> str:
@@ -257,6 +258,16 @@ class LMUSource:
         (la dernière voiture que tu as pilotée, ou celle d'un pilote de ton planning de relais)."""
         n = min(info.mNumVehicles, len(d.scoring.vehScoringInfo))
         if n <= 0:
+            return None
+        # course finie : au retour au garage, LMU rend ta voiture à un pilote IA (« Haerdter roule », 23/11)
+        if int(getattr(info, "mGamePhase", 0)) == 8:
+            return None
+        # un coéquipier, ça n'existe qu'en ligne (client d'un serveur) ou avec le planning des relais activé
+        mode = int(getattr(info, "mGameMode", 0) or 0)
+        if mode != getattr(self, "_mode_logged", None):
+            self._mode_logged = mode
+            print(f"  LMU : mode de jeu {mode} ({'en ligne' if mode == 2 else 'hors ligne ou hôte'})")
+        if mode != 2 and not TEAM_ON:
             return None
         # seulement les voitures pilotées par un autre humain (en ligne) : hors ligne, la voiture que tu
         # as pilotée hier peut être conduite par l'IA (ex. TDS #14 hors ligne -> « Mode équipier » en solo)

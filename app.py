@@ -390,6 +390,7 @@ def loop(state: State, demo: bool) -> None:
             try:   # mode équipier : voiture d'équipe quand un coéquipier roule
                 import telemetry as _tm
                 _tm.TEAM_DRIVERS = [x for x in (relay.cfg.get("drivers") or []) if x]
+                _tm.TEAM_ON = bool(relay.cfg.get("on"))
                 team.update(snap, say)
             except Exception:
                 traceback.print_exc()

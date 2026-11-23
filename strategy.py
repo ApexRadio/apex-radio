@@ -265,17 +265,22 @@ class Engineer:
         # il manque moins d'un demi-tour d'essence (sans la marge) : un arrêt coûterait bien plus cher
         # que de lever un peu le pied. On ne rentre pas, on économise.
         real_short = p.laps_to_finish - p.range_laps
-        if p.stops_needed == 1 and p.limited_by == "essence" and real_short < 0.5 and p.laps_to_finish >= 1.5:
+        if p.stops_needed == 1 and real_short < 0.5 and p.laps_to_finish >= 1.5 and (p.limited_by == "essence" or epl):
             p.stops_needed = 0
-            p.save_per_lap = max(0.1, (max(real_short, 0.0) + 0.2) * fpl / max(p.laps_to_finish, 1))
-            q = dec(f"{p.save_per_lap:.1f}")
-            self.say("stint:tight", pick("tight", [
-                (f"C'est juste en essence, mais on ne s'arrête pas. Économise environ {q} litre par tour.",
-                 f"Fuel is tight, but we're not stopping. Save about {q} litres a lap."),
-                (f"On va au bout sans s'arrêter, mais il faut gratter {q} litre par tour. " + lift_hint(getattr(self, "map", None)),
-                 f"We go to the end without stopping, but find {q} litres a lap. " + lift_hint(getattr(self, "map", None))),
-                (f"Pas d'arrêt : un passage au stand coûterait trop cher. Gagne juste {q} litre par tour.",
-                 f"No stop: pitting would cost too much. Just save {q} litres a lap.")]), elapsed=et)
+            if p.limited_by == "essence":
+                p.save_per_lap = max(0.1, (max(real_short, 0.0) + 0.2) * fpl / max(p.laps_to_finish, 1))
+                q = dec(f"{p.save_per_lap:.1f}") + L(" litre", " litres")
+            else:
+                # énergie virtuelle : même conseil, dans la bonne unité (avant : « 0,8 % d'énergie » puis « 0,1 litre » d'affilée, 21/11)
+                q = dec(f"{max(0.1, (max(real_short, 0.0) + 0.2) * epl * 100 / max(p.laps_to_finish, 1)):.1f}") + L(" % d'énergie", " % energy")
+            # même clé que « économise pour éviter l'arrêt » : un seul conseil d'économie par relais
+            self.say("stint:save", pick("tight", [
+                (f"C'est juste, mais on ne s'arrête pas. Économise environ {q} par tour.",
+                 f"It's tight, but we're not stopping. Save about {q} a lap."),
+                (f"On va au bout sans s'arrêter, mais il faut gratter {q} par tour. " + lift_hint(getattr(self, "map", None)),
+                 f"We go to the end without stopping, but find {q} a lap. " + lift_hint(getattr(self, "map", None))),
+                (f"Pas d'arrêt : un passage au stand coûterait trop cher. Gagne juste {q} par tour.",
+                 f"No stop: pitting would cost too much. Just save {q} a lap.")]), elapsed=et)
             self.plan = p
             return p
         if p.stops_needed == 0:

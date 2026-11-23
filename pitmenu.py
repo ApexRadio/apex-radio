@@ -303,8 +303,11 @@ class PitCrew:
                             "Careful, I couldn't set the whole pit menu, check it."))
                 print(f"  Menu stand : écart après écriture sur {bad} (statut {status})")
             else:
-                self.status = L("✓ Réglé : ", "✓ Set: ") + ", ".join(changes)
-                self._say(L("Stand réglé : ", "Pit menu set: ") + ", ".join(changes) + ".")
+                self.status = L("✓ Réglé : ", "✓ Set: ") + (", ".join(changes) or L("rien à changer", "nothing to change"))
+                if changes:
+                    self._say(L("Stand réglé : ", "Pit menu set: ") + ", ".join(changes) + ".")
+                else:
+                    self._say(L("Le menu des stands est déjà bon, rien à changer.", "The pit menu is already right, nothing to change."))
                 print(f"  Menu stand réglé : {changes}")
         except Exception as e:
             self.status = L(f"⚠ Impossible de régler le menu ({e.__class__.__name__})", f"⚠ Couldn't set the menu ({e.__class__.__name__})")

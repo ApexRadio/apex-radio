@@ -26,7 +26,37 @@ TYRE_LIMIT = 0.30        # on considère un pneu à changer sous 30 % restant
 AVG_OVER = 5             # moyenne sur les 5 derniers tours propres
 
 
+def lift_hint(tmap) -> str:
+    """Où lever le pied pour économiser : avant les freinages qui suivent les plus longues lignes droites
+    (c'est là que le lift and coast rapporte le plus pour le moins de temps perdu)."""
+    generic = L("Lève un peu plus tôt avant les freinages.", "Lift a bit earlier before braking.")
+    try:
+        cs = sorted(tmap.corners(), key=lambda c: c["start"]) if tmap else []
+    except Exception:
+        cs = []
+    if len(cs) < 3:
+        return generic
+    gaps = []
+    for i, c in enumerate(cs):
+        prev = cs[i - 1]
+        g = (c["start"] - prev["end"]) % 1.0
+        gaps.append((g, c["id"]))
+    top = sorted(gaps, reverse=True)[:2]
+    if top[0][0] < 0.05:
+        return generic
+    ids = [cid for g, cid in top if g >= 0.6 * top[0][0]]
+    import cornernames
+    names_fr = [cornernames.rename(f"au virage {i}") for i in ids]
+    names_en = [cornernames.rename(f"into turn {i}") for i in ids]
+    if len(ids) == 1:
+        return L(f"Lève le pied un peu plus tôt {names_fr[0]}, au bout de la grande ligne droite.",
+                 f"Lift a bit earlier {names_en[0]}, at the end of the long straight.")
+    return L(f"Lève le pied un peu plus tôt {names_fr[0]} et {names_fr[1]}, au bout des lignes droites.",
+             f"Lift a bit earlier {names_en[0]} and {names_en[1]}, at the end of the straights.")
+
+
 @dataclass
+
 class Plan:
     ready: bool = False                 # assez de tours pour calculer
     fuel_per_lap: float | None = None
@@ -242,8 +272,8 @@ class Engineer:
             self.say("stint:tight", pick("tight", [
                 (f"C'est juste en essence, mais on ne s'arrête pas. Économise environ {q} litre par tour.",
                  f"Fuel is tight, but we're not stopping. Save about {q} litres a lap."),
-                (f"On va au bout sans s'arrêter, mais il faut gratter {q} litre par tour. Lève un peu plus tôt avant les freinages.",
-                 f"We go to the end without stopping, but find {q} litres a lap. Lift a bit earlier before braking."),
+                (f"On va au bout sans s'arrêter, mais il faut gratter {q} litre par tour. " + lift_hint(getattr(self, "map", None)),
+                 f"We go to the end without stopping, but find {q} litres a lap. " + lift_hint(getattr(self, "map", None))),
                 (f"Pas d'arrêt : un passage au stand coûterait trop cher. Gagne juste {q} litre par tour.",
                  f"No stop: pitting would cost too much. Just save {q} litres a lap.")]), elapsed=et)
             self.plan = p
@@ -279,7 +309,7 @@ class Engineer:
                  f"We're a little short on fuel. Save {q} litres a lap and we can skip the stop."),
                 (f"On est juste en essence. Gagne {q} litre par tour et on va au bout sans s'arrêter.",
                  f"Fuel is tight. Find {q} litres a lap and we go to the end without stopping."),
-                (f"Mode économie : {q} litre par tour à gagner, lève un peu plus tôt avant les freinages, et l'arrêt saute.",
+                (f"Mode économie : {q} litre par tour à gagner, et l'arrêt saute. " + lift_hint(getattr(self, "map", None)),
                  f"Fuel save mode: {q} litres a lap, lift a bit earlier before braking, and we skip the stop."),
                 (f"Si tu veux éviter l'arrêt, il faut {q} litre de moins par tour. Lift and coast, c'est jouable.",
                  f"To skip the stop we need {q} litres less a lap. Lift and coast, it's doable.")]), elapsed=et)
@@ -287,17 +317,17 @@ class Engineer:
             q = dec(f"{p.save_per_lap:.1f}")
             n_now, n_new = p.stops_needed, k
             self.say("stint:save", L(f"Si tu économises {q} litre par tour, on fait {n_new} arrêt{'s' if n_new > 1 else ''} "
-                                     f"au lieu de {n_now}. Lève un peu plus tôt avant les freinages.",
+                                     f"au lieu de {n_now}. " + lift_hint(getattr(self, "map", None)),
                                      f"Save {q} litres a lap and we make {n_new} stop{'s' if n_new > 1 else ''} instead of {n_now}. "
                                      "Lift a bit earlier before braking."), elapsed=et)
         elif ok:
             q = dec(f"{save_e * 100:.1f}")
             if k == 0:
-                txt = L(f"Si tu économises {q} % d'énergie par tour, on évite l'arrêt. Lève un peu plus tôt avant les freinages.",
-                        f"Save {q} % energy a lap and we can skip the stop. Lift a bit earlier before braking.")
+                txt = L(f"Si tu économises {q} % d'énergie par tour, on évite l'arrêt. " + lift_hint(getattr(self, "map", None)),
+                        f"Save {q} % energy a lap and we can skip the stop. " + lift_hint(getattr(self, "map", None)))
             else:
                 txt = L(f"Si tu économises {q} % d'énergie par tour, on fait {k} arrêt{'s' if k > 1 else ''} au lieu de "
-                        f"{p.stops_needed}. Lève un peu plus tôt avant les freinages.",
+                        f"{p.stops_needed}. " + lift_hint(getattr(self, "map", None)),
                         f"Save {q} % energy a lap and we make {k} stop{'s' if k > 1 else ''} instead of {p.stops_needed}. "
                         "Lift a bit earlier before braking.")
             self.say("stint:save", txt, elapsed=et)

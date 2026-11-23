@@ -1,6 +1,8 @@
 # Apex Radio — historique des versions / changelog
 
 ## 1.4.3 (en préparation)
+- 🇫🇷 Économie d'essence / d'énergie guidée : au lieu de « lève un peu plus tôt avant les freinages », l'ingé dit où : « lève le pied un peu plus tôt à la chicane du Mistral et à Signes, au bout des lignes droites » (les freinages après les plus longues lignes droites).
+- 🇬🇧 Guided fuel / energy saving: instead of "lift a bit earlier before braking", the engineer says where: "lift a bit earlier into the Mistral chicane and Signes, at the end of the straights".
 - 🇫🇷 Énergie virtuelle au stand plus sûre : consommation prudente (comme pour l'essence) et un tour de marge. Un arrêt imprévu (dégâts, changement de pilote) complète maintenant l'énergie si elle risque de manquer, au lieu de ne rien remettre. La décision « faut-il s'arrêter ? » utilise aussi la consommation prudente d'énergie.
 - 🇬🇧 Safer virtual energy at the stop: cautious consumption (like fuel) and a full lap of margin. An unplanned stop (damage, driver change) now tops up the energy if it might run short, instead of adding nothing.
 - 🇫🇷 Noms des virages aussi au Paul Ricard (S de la Verrerie, Camp, chicane du Mistral, Signes, double droite du Beausset, Bendor), à Daytona (International et West Horseshoe, Bus Stop) et à Road Atlanta (Esses, chicane).

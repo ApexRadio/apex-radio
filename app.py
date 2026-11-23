@@ -152,6 +152,7 @@ def loop(state: State, demo: bool) -> None:
     source = make_source(demo)
     eng = Engineer()
     eng.on_say = state.voice.say
+    eng.map = state.map   # pour dire où lever le pied quand il faut économiser
     state.eng = eng
     questions.VOICE, questions.ENG = state.voice, eng
     lt = LapTimes()

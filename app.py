@@ -1024,7 +1024,8 @@ class _Tee:
 
 LMU_STEAM_ID = 2399420
 ACEVO_STEAM_ID = 3058630   # Assetto Corsa EVO
-GAME_NAMES = {"lmu": "Le Mans Ultimate", "acevo": "Assetto Corsa EVO"}
+AMS2_STEAM_ID = 1066890    # Automobilista 2
+GAME_NAMES = {"lmu": "Le Mans Ultimate", "acevo": "Assetto Corsa EVO", "ams2": "Automobilista 2"}
 
 
 def _steam_exe() -> str | None:
@@ -1108,6 +1109,8 @@ def launch_lmu(mode: str = "ask", game: str = "lmu") -> bool:
     « normal » / « vr » / « openxr » : on demande directement cette option à Steam (steam://launch/<id>/<type>)."""
     if game == "acevo":
         return launch_steam_game(ACEVO_STEAM_ID, "Assetto Corsa EVO")
+    if game == "ams2":
+        return launch_steam_game(AMS2_STEAM_ID, "Automobilista 2")
     url = f"steam://rungameid/{LMU_STEAM_ID}"
     try:
         if sys.platform == "win32":

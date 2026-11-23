@@ -594,7 +594,7 @@ class Places:
             if s.laps_done == 0:
                 # AC EVO ne donne pas la place sur la grille (il dit P1 à tout le monde avant le départ) :
                 # on ne compare pas avec le départ, on donne juste la place après le 1er tour
-                self.start = 0 if getattr(s, "game", "lmu") == "acevo" else pos
+                self.start = 0 if getattr(s, "game", "lmu") == "acevo" else pos     # AMS2 donne bien la grille
             return
         if not self.told_start:
             if s.laps_done >= 1:

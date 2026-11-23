@@ -36,7 +36,7 @@ def _fold(t: str) -> str:
 @dataclass
 class Snapshot:
     connected: bool = False          # le jeu est-il lancé
-    game: str = "lmu"                # jeu lu : "lmu" (Le Mans Ultimate) ou "acevo" (Assetto Corsa EVO)
+    game: str = "lmu"                # jeu lu : "lmu" (Le Mans Ultimate), "acevo" (Assetto Corsa EVO) ou "ams2" (Automobilista 2)
     on_track: bool = False           # le joueur est-il dans une voiture
     track: str = ""
     car: str = ""
@@ -175,6 +175,8 @@ def _session_name(code: int) -> str:
 
 class LMUSource:
     """Lecture en direct de la mémoire partagée de LMU."""
+
+    game = "lmu"
 
     def __init__(self) -> None:
         from pyLMUSharedMemory import lmu_data, lmu_mmap
@@ -513,13 +515,18 @@ class LMUSource:
         return s
 
 
+GAME_LABELS = {"lmu": "Le Mans Ultimate", "acevo": "Assetto Corsa EVO", "ams2": "Automobilista 2"}
+
+
 class AutoSource:
-    """Choisit tout seul le jeu lancé : Assetto Corsa EVO s'il tourne, sinon Le Mans Ultimate."""
+    """Choisit tout seul le jeu lancé : Assetto Corsa EVO ou Automobilista 2 s'il tourne, sinon Le Mans Ultimate."""
 
     def __init__(self) -> None:
         from acevo import ACEvoSource
+        from ams2 import AMS2Source
         self.lmu = LMUSource()
         self.acevo = ACEvoSource()
+        self.ams2 = AMS2Source()
         self.cur = self.lmu
         self._check = 0.0
 
@@ -527,12 +534,16 @@ class AutoSource:
         now = time.time()
         if now - self._check > 2:
             self._check = now
-            try:
-                new = self.acevo if self.acevo.alive() else self.lmu
-            except Exception:
-                new = self.lmu
+            new = self.lmu
+            for src in (self.acevo, self.ams2):
+                try:
+                    if src.alive():
+                        new = src
+                        break
+                except Exception:
+                    pass
             if new is not self.cur:
-                print(f"  Jeu détecté : {'Assetto Corsa EVO' if new is self.acevo else 'Le Mans Ultimate'}")
+                print(f"  Jeu détecté : {GAME_LABELS.get(new.game, 'Le Mans Ultimate')}")
                 self.cur = new
         return self.cur
 
@@ -572,7 +583,7 @@ class AutoSource:
         return None if getattr(self, "stale", False) else self.cur.spot_sample()
 
     def close(self) -> None:
-        for src in (self.lmu, self.acevo):
+        for src in (self.lmu, self.acevo, self.ams2):
             try:
                 src.close()
             except Exception:

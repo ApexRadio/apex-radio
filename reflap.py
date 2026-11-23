@@ -3,13 +3,14 @@ Tour de référence : ton meilleur tour propre, virage par virage (étape 1 des 
 
 Pour chaque voiture et chaque circuit, Apex garde ton meilleur tour valide : où tu commences à freiner,
 ta vitesse la plus basse dans le virage et où tu remets les gaz. En roulant, elle compare chaque virage
-à cette référence et te dit à la radio quand tu t'en éloignes nettement (« tu freines 20 mètres plus tôt »).
+à cette référence et te dit à la radio quand tu t'en éloignes nettement (« tu freines trop tôt, retarde ton point de freinage »).
 Tout reste sur ton PC (Documents\\Apex Radio\\references).
 """
 
 from __future__ import annotations
 
 import json
+import random
 import re
 import threading
 import time
@@ -246,20 +247,37 @@ class RefLap:
             if line == "largeur":
                 return L(f"Virage {cid} : utilise toute la largeur en sortie, tu pourras remettre les gaz plus tôt.",
                          f"Turn {cid}: use all the track on exit, you'll get on the power earlier.")
+        # en mots d'ingénieur, jamais en mètres ni en km/h (« tu freines 26 m plus tôt » ne sonne pas pro)
         if e >= 15 and dv < 3:
-            return L(f"Virage {cid} : tu freines {e} mètres plus tôt qu'à ton meilleur tour.",
-                     f"Turn {cid}: you're braking {e} metres earlier than on your best lap.")
+            big = e >= 30
+            return random.choice([
+                L(f"Virage {cid} : tu freines {'beaucoup ' if big else ''}trop tôt, il y a du temps à prendre. Retarde ton point de freinage.",
+                  f"Turn {cid}: you're braking {'way ' if big else ''}too early, there's time there. Push your braking point later."),
+                L(f"Virage {cid} : tu peux freiner plus tard, tu laisses du temps à l'entrée.",
+                  f"Turn {cid}: you can brake later, you're leaving time on entry."),
+                L(f"Virage {cid} : freinage {'nettement ' if big else ''}en avance sur ta référence, attaque plus tard.",
+                  f"Turn {cid}: braking {'well ' if big else ''}ahead of your reference, go in deeper.")])
         if e <= -15 and dv <= -4:
-            return L(f"Virage {cid} : tu freines {-e} mètres plus tard que ta référence mais tu passes {-dv} kilomètres heure "
-                     f"moins vite. Freine un peu plus tôt.",
-                     f"Turn {cid}: you're braking {-e} metres later than your reference but you're {-dv} k p h slower. "
-                     f"Brake a bit earlier.")
+            return random.choice([
+                L(f"Virage {cid} : tu freines trop tard et tu perds de la vitesse au point de corde. Freine un peu plus tôt, tu sortiras plus vite.",
+                  f"Turn {cid}: you're braking too late and losing apex speed. Brake a touch earlier, you'll exit faster."),
+                L(f"Virage {cid} : tu en mets trop à l'entrée, la vitesse de passage chute. Reviens à ton point de freinage habituel.",
+                  f"Turn {cid}: you're overdoing the entry, the minimum speed drops. Go back to your usual braking point.")])
         if dv <= -6:
-            return L(f"Virage {cid} : {-dv} kilomètres heure de moins qu'à ton meilleur tour au point le plus lent.",
-                     f"Turn {cid}: {-dv} k p h slower than your best lap at the slowest point.")
+            big = dv <= -12
+            return random.choice([
+                L(f"Virage {cid} : tu passes {'nettement ' if big else ''}moins vite qu'à ton meilleur tour. Porte plus de vitesse au point de corde.",
+                  f"Turn {cid}: you're {'much ' if big else ''}slower than your best lap through there. Carry more speed to the apex."),
+                L(f"Virage {cid} : vitesse de passage en dessous de ta référence. Relâche le frein plus tôt et laisse rouler la voiture.",
+                  f"Turn {cid}: minimum speed below your reference. Release the brake earlier and let the car roll."),
+                L(f"Virage {cid} : tu es trop lent au milieu du virage, fais-lui confiance, la voiture peut en prendre plus.",
+                  f"Turn {cid}: too slow mid-corner, trust it, the car can take more.")])
         if late >= 20:
-            return L(f"Virage {cid} : tu remets les gaz {late} mètres plus tard qu'à ton meilleur tour.",
-                     f"Turn {cid}: you're back on the throttle {late} metres later than on your best lap.")
+            return random.choice([
+                L(f"Virage {cid} : tu remets les gaz trop tard. Ouvre plus tôt pour mieux sortir.",
+                  f"Turn {cid}: you're late on the throttle. Get on it earlier for a better exit."),
+                L(f"Virage {cid} : sortie timide, tu peux accélérer plus tôt qu'en ce moment.",
+                  f"Turn {cid}: hesitant exit, you can get on the power sooner.")])
         return None
 
     # ------------------------------------------------------------- questions
@@ -280,12 +298,9 @@ class RefLap:
                 if ln:
                     parts.append(L(f"virage {cid}, {ln}", f"turn {cid}, {ln}"))
                 elif d["early"] >= 10:
-                    parts.append(L(f"virage {cid}, tu freines {round(d['early'])} mètres plus tôt",
-                                   f"turn {cid}, braking {round(d['early'])} metres earlier"))
+                    parts.append(L(f"virage {cid}, tu freines trop tôt", f"turn {cid}, braking too early"))
                 elif d["dv"] <= -3:
-                    parts.append(L(f"virage {cid}, {round(-d['dv'])} kilomètres heure de moins",
-                                   f"turn {cid}, {round(-d['dv'])} k p h slower"))
+                    parts.append(L(f"virage {cid}, pas assez de vitesse au point de corde", f"turn {cid}, not enough apex speed"))
                 else:
-                    parts.append(L(f"virage {cid}, tu remets les gaz {round(d['late'])} mètres plus tard",
-                                   f"turn {cid}, throttle {round(d['late'])} metres later"))
+                    parts.append(L(f"virage {cid}, tu remets les gaz trop tard", f"turn {cid}, late on the throttle"))
             return L("Par rapport à ton meilleur tour : ", "Compared to your best lap: ") + " ; ".join(parts) + "."

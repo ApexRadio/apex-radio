@@ -4,6 +4,11 @@ on:
   push:
     tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      essai_store:
+        description: "Construire seulement le paquet Microsoft Store (pas d'installateur, pas de publication, pas d'annonce)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -104,6 +109,7 @@ jobs:
           path: store-out\*.msix
 
       - name: Installateur (Inno Setup)
+        if: ${{ !inputs.essai_store }}
         shell: pwsh
         run: |
           if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) { choco install innosetup -y --no-progress }
@@ -112,13 +118,14 @@ jobs:
           & $iscc "/DAppVersion=${{ steps.v.outputs.version }}" installer\ApexRadio.iss
 
       - uses: actions/upload-artifact@v4
+        if: ${{ !inputs.essai_store }}
         with:
           name: ApexRadio-Setup-${{ steps.v.outputs.version }}
           path: dist\*.exe
 
       - name: Version déjà publiée ?
         id: known
-        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) && !inputs.essai_store
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -128,7 +135,7 @@ jobs:
           exit 0
 
       - name: Publication (Release)
-        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) && !inputs.essai_store
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.v.outputs.version }}
@@ -137,7 +144,7 @@ jobs:
           files: dist/*.exe
 
       - name: Annonce sur Discord (nouvelle version seulement)
-        if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) && steps.known.outputs.existed == 'false'
+        if: ((github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) && steps.known.outputs.existed == 'false') && !inputs.essai_store
         continue-on-error: true
         shell: pwsh
         env:
@@ -146,7 +153,7 @@ jobs:
 
       - name: Version de test déjà publiée ?
         id: knowntest
-        if: github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
+        if: (github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')) && !inputs.essai_store
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -156,7 +163,7 @@ jobs:
           exit 0
 
       - name: Version de test (branche)
-        if: github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
+        if: (github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')) && !inputs.essai_store
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.v.outputs.version }}-test
@@ -168,7 +175,7 @@ jobs:
           files: dist/*.exe
 
       - name: Annonce accès anticipé sur Discord (nouvelle version de test seulement)
-        if: github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/') && steps.knowntest.outputs.existed == 'false'
+        if: (github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/') && steps.knowntest.outputs.existed == 'false') && !inputs.essai_store
         continue-on-error: true
         shell: pwsh
         env:

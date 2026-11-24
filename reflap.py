@@ -19,6 +19,34 @@ from i18n import L
 from paths import DATA
 
 REFS = DATA / "references"
+LAPS = DATA / "laps"          # courbes des tours (meilleur + derniers) pour la page « Comparer mes tours »
+NBIN = 500                    # points par tour (tous les 0,2 % de tour : ~10 m sur un circuit de 5 km)
+RECENT = 10                   # derniers tours propres gardés
+
+
+def _curve(trace) -> dict | None:
+    """Vitesse (km/h), frein et gaz (%) moyennés sur NBIN cases le long du tour (trous bouchés)."""
+    acc = [[0.0, 0.0, 0.0, 0] for _ in range(NBIN)]
+    for x in trace:
+        i = min(NBIN - 1, max(0, int(x[0] * NBIN)))
+        a = acc[i]
+        a[0] += x[1] * 3.6; a[1] += (x[2] or 0) * 100; a[2] += (x[3] or 0) * 100; a[3] += 1
+    have = [i for i in range(NBIN) if acc[i][3]]
+    if len(have) < NBIN * 0.6:
+        return None
+    out = {"v": [None] * NBIN, "b": [None] * NBIN, "t": [None] * NBIN}
+    for i in have:
+        n = acc[i][3]
+        out["v"][i] = round(acc[i][0] / n, 1); out["b"][i] = round(acc[i][1] / n); out["t"][i] = round(acc[i][2] / n)
+    for k in out:                       # cases vides : on recopie la dernière valeur connue
+        arr, last = out[k], None
+        for i in list(range(NBIN)) * 2:
+            if arr[i] is None:
+                if last is not None:
+                    arr[i] = last
+            else:
+                last = arr[i]
+    return out
 
 APPROACH = 0.06      # on cherche le freinage jusqu'à 6 % de tour avant le virage
 EXIT = 0.04          # et la remise des gaz jusqu'à 4 % après
@@ -57,6 +85,27 @@ class RefLap:
             self.ref = json.loads(self._file(key).read_text(encoding="utf-8"))
         except Exception:
             pass
+
+    def _keep_lap(self, trace, lap: float, L_m: float) -> None:
+        """Garde la courbe de ce tour (et du meilleur) pour la page « Comparer mes tours »."""
+        cur = _curve(trace)
+        if not cur:
+            return
+        try:
+            f = LAPS / self._file(self.key).name
+            try:
+                d = json.loads(f.read_text(encoding="utf-8"))
+            except Exception:
+                game, track, car = (self.key.split(" | ") + ["", "", ""])[:3]
+                d = {"key": self.key, "game": game, "track": track, "car": car, "best": None, "recent": []}
+            item = {"lap": round(lap, 3), "date": time.strftime("%Y-%m-%d %H:%M"), "L": round(L_m, 1), **cur}
+            d["recent"] = ([item] + d.get("recent", []))[:RECENT]
+            if not d.get("best") or lap < d["best"]["lap"] - 0.005:
+                d["best"] = item
+            LAPS.mkdir(parents=True, exist_ok=True)
+            f.write_text(json.dumps(d, separators=(",", ":")), encoding="utf-8")
+        except Exception as e:
+            print(f"  Tours : écriture impossible ({e.__class__.__name__})")
 
     def _save(self, ref: dict) -> None:
         try:
@@ -168,6 +217,8 @@ class RefLap:
         if s.last_lap and s.last_lap != before:
             self.pending = None
             lap = s.last_lap
+            if 20 < lap < 1200:
+                self._keep_lap(trace, lap, L_m)
             if not self.ref or lap < self.ref.get("lap", 9e9) - 0.005:
                 corners = self._all_corners(trace, L_m)
                 if len(corners) >= max(1, len(self.beh.map.corners()) // 2):

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<title>Apex Radio · Comparer mes tours</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Chakra+Petch:wght@600;700&family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#06070B; --panel:#0B0F16; --line:#1A2330; --line2:#1E2A38; --text:#E8EDF5; --muted:#9AA6B8;
+    --accent:#00E5FF; --accent-rgb:0,229,255; --b:#FF9F1C; --good:#3DFFA2; --alert:#FF2E88;
+    --mono:"JetBrains Mono",Consolas,monospace; --title:"Chakra Petch","Segoe UI",sans-serif; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.4 Inter,"Segoe UI",system-ui,sans-serif; }
+  header { display:flex; align-items:center; gap:16px; padding:16px 22px; flex-wrap:wrap; }
+  .logo { font-family:Orbitron,var(--title); font-weight:900; font-size:22px; letter-spacing:.12em; color:var(--accent);
+    text-shadow:0 0 14px rgba(var(--accent-rgb),.7); text-decoration:none; }
+  h1 { font-family:var(--title); font-size:20px; letter-spacing:.1em; margin:0; text-transform:uppercase; }
+  main { padding:0 22px 30px; display:grid; gap:14px; grid-template-columns: minmax(0,1fr) 380px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px 16px; min-width:0; }
+  h2 { margin:0 0 8px; font-size:12px; letter-spacing:.14em; color:var(--muted); font-weight:600; text-transform:uppercase; }
+  .pick { display:flex; gap:14px; flex-wrap:wrap; align-items:center; grid-column:1/-1; }
+  .pick label { font-size:12px; letter-spacing:.1em; color:var(--muted); text-transform:uppercase; margin-right:6px; }
+  select { font:inherit; color:var(--text); background:var(--bg); border:1px solid var(--line2); border-radius:8px; padding:6px 8px; }
+  .sw { display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:-1px; margin-right:4px; }
+  .times { display:flex; gap:24px; align-items:baseline; flex-wrap:wrap; font-family:var(--mono); }
+  .times b { font-size:26px; }
+  .gain { color:var(--good); } .loss { color:var(--alert); }
+  svg { display:block; width:100%; }
+  .chart { position:relative; }
+  .chart .lab { display:block; margin:14px 0 4px; font-size:11px; letter-spacing:.12em; color:var(--muted); text-transform:uppercase; pointer-events:none; }
+  #tip { position:fixed; pointer-events:none; background:#0B0F16ee; border:1px solid var(--line2); border-radius:8px; padding:8px 10px;
+    font:12px/1.5 var(--mono); display:none; z-index:10; white-space:nowrap; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  td { padding:6px 4px; border-bottom:1px solid var(--line); }
+  td.n { text-align:right; font-family:var(--mono); }
+  tr.cn { cursor:pointer; } tr.cn:hover td { background:rgba(var(--accent-rgb),.06); }
+  .empty { padding:40px; text-align:center; color:var(--muted); grid-column:1/-1; }
+  .side { display:flex; flex-direction:column; gap:14px; }
+  @media (max-width: 1100px) { main { grid-template-columns: 1fr; } }
+</style></head>
+<body>
+<header>
+  <a class="logo" href="/">APEX//RADIO</a>
+  <h1 id="title">Comparer mes tours</h1>
+</header>
+<main>
+  <div class="card pick">
+    <span><label id="lt">Circuit · voiture</label><select id="sess"></select></span>
+    <span><span class="sw" style="background:var(--accent)"></span><label>A</label><select id="la"></select></span>
+    <span><span class="sw" style="background:var(--b)"></span><label>B</label><select id="lb"></select></span>
+  </div>
+  <div id="none" class="card empty" hidden></div>
+  <div id="charts" class="card" hidden>
+    <div class="times" id="times"></div>
+    <div class="chart"><span class="lab" id="l1">Vitesse (km/h)</span><svg id="cv" height="220"></svg></div>
+    <div class="chart"><span class="lab" id="l2">Écart (s) — au-dessus : B perd du temps</span><svg id="cd" height="120"></svg></div>
+    <div class="chart"><span class="lab" id="l3">Gaz / frein (%)</span><svg id="ct" height="150"></svg></div>
+  </div>
+  <div class="side" id="side" hidden>
+    <div class="card"><h2 id="hmap">Où B gagne / perd</h2><svg id="map" viewBox="0 0 100 100"></svg></div>
+    <div class="card"><h2 id="hcorn">Virage par virage</h2><table id="corn"></table></div>
+  </div>
+</main>
+<div id="tip"></div>
+<script src="/fsel.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+let LANG = "fr";
+const T = (fr, en) => LANG === "en" ? en : fr;
+let D = null, A = null, B = null, cur = null;
+const NB = 500;
+
+function fmt(t) { if (t == null) return "–"; const m = Math.floor(t / 60), s = t - m * 60; return `${m}:${s.toFixed(3).padStart(6, "0")}`; }
+function sgn(x, d = 3) { return (x > 0 ? "+" : x < 0 ? "−" : "±") + Math.abs(x).toFixed(d); }
+function cname(c) { return c.name ? (LANG === "en" ? c.name[1] : c.name[0]) : `${T("Virage", "Turn")} ${c.id}`; }
+
+// temps cumulé le long du tour, recalé sur le vrai chrono
+function cum(l) {
+  const L = l.L || 5000, step = L / NB, out = [0]; let t = 0;
+  for (let i = 0; i < NB; i++) { t += step / Math.max(5, l.v[i]) * 3.6; out.push(t); }
+  const k = l.lap / t; return out.map(x => x * k);
+}
+
+async function init() {
+  try { const st = await (await fetch("/api/state")).json(); LANG = st.lang || "fr"; } catch (e) {}
+  document.documentElement.lang = LANG;
+  $("title").textContent = T("Comparer mes tours", "Compare my laps");
+  $("lt").textContent = T("Circuit · voiture", "Track · car");
+  $("l1").textContent = T("Vitesse (km/h)", "Speed (km/h)");
+  $("l2").textContent = T("Écart (s) · au-dessus de 0 : B perd du temps", "Gap (s) · above 0: B is losing time");
+  $("l3").textContent = T("Gaz / frein (%)", "Throttle / brake (%)");
+  $("hmap").textContent = T("Où B gagne / perd du temps", "Where B gains / loses time");
+  $("hcorn").textContent = T("Virage par virage (B face à A)", "Corner by corner (B vs A)");
+  const list = await (await fetch("/api/laps")).json();
+  if (!list.length) {
+    $("none").hidden = false;
+    $("none").innerHTML = T("Pas encore de tours enregistrés.<br>Roule quelques tours propres : Apex garde ton meilleur tour et tes 10 derniers, circuit par circuit.",
+      "No laps recorded yet.<br>Drive a few clean laps: Apex keeps your best lap and your last 10, track by track.");
+    return;
+  }
+  $("sess").innerHTML = list.map(s => `<option value="${s.id}">${esc(s.track)} · ${esc(s.car)} (${s.game === "acevo" ? "AC EVO" : s.game === "ams2" ? "AMS2" : "LMU"})</option>`).join("");
+  $("sess").onchange = () => load($("sess").value);
+  load(list[0].id);
+}
+function esc(s) { return String(s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+async function load(id) {
+  D = await (await fetch("/api/laps/" + id)).json();
+  const laps = [];
+  if (D.best) laps.push({ k: "best", l: D.best, t: `★ ${T("Meilleur", "Best")} ${fmt(D.best.lap)} (${D.best.date})` });
+  (D.recent || []).forEach((l, i) => laps.push({ k: "r" + i, l, t: `${fmt(l.lap)} (${l.date})` }));
+  const opts = laps.map(x => `<option value="${x.k}">${x.t}</option>`).join("");
+  $("la").innerHTML = opts; $("lb").innerHTML = opts;
+  $("la").value = "best";
+  $("lb").value = laps.length > 1 ? "r0" : "best";
+  if (D.best && D.recent && D.recent[0] && D.recent[0].lap === D.best.lap && laps.length > 2) $("lb").value = "r1";
+  const pick = k => laps.find(x => x.k === k).l;
+  $("la").onchange = $("lb").onchange = () => { A = pick($("la").value); B = pick($("lb").value); draw(); };
+  A = pick($("la").value); B = pick($("lb").value);
+  $("charts").hidden = false; $("side").hidden = false;
+  draw();
+}
+
+function path(arr, w, h, lo, hi) {
+  return arr.map((y, i) => `${i ? "L" : "M"}${(i / (arr.length - 1) * w).toFixed(1)},${(h - (y - lo) / (hi - lo) * h).toFixed(1)}`).join("");
+}
+function bands(w, h) {
+  return (D.corners || []).map(c => {
+    const x1 = c.start * w, x2 = ((c.end - c.start + 1) % 1) * w + x1;
+    return `<rect x="${x1}" y="0" width="${Math.max(2, x2 - x1)}" height="${h}" fill="rgba(255,255,255,.035)"/>` +
+      `<text x="${c.mid * w}" y="${h - 4}" fill="#55657a" font-size="10" text-anchor="middle">${c.id}</text>`;
+  }).join("");
+}
+
+function draw() {
+  const ca = cum(A), cb = cum(B), dl = cb.map((t, i) => t - ca[i]).slice(0, NB);
+  const diff = B.lap - A.lap;
+  $("times").innerHTML = `<span><span class="sw" style="background:var(--accent)"></span>A <b>${fmt(A.lap)}</b></span>` +
+    `<span><span class="sw" style="background:var(--b)"></span>B <b>${fmt(B.lap)}</b></span>` +
+    `<span class="${diff > 0 ? "loss" : "gain"}"><b>${sgn(diff)}</b> s</span>`;
+  const W = $("cv").clientWidth || 900;
+  // vitesse
+  let lo = Math.min(...A.v, ...B.v), hi = Math.max(...A.v, ...B.v); lo = Math.max(0, lo - 10); hi += 10;
+  let H = 220;
+  $("cv").setAttribute("viewBox", `0 0 ${W} ${H}`);
+  $("cv").innerHTML = bands(W, H) + `<path d="${path(A.v, W, H, lo, hi)}" stroke="var(--accent)" fill="none" stroke-width="1.6"/>` +
+    `<path d="${path(B.v, W, H, lo, hi)}" stroke="var(--b)" fill="none" stroke-width="1.6"/>` +
+    `<text x="4" y="11" fill="#55657a" font-size="10">${Math.round(hi)}</text><text x="4" y="${H - 3}" fill="#55657a" font-size="10">${Math.round(lo)}</text><line id="cur1" y1="0" y2="${H}" stroke="#fff4"/>`;
+  // écart
+  H = 120; const m = Math.max(0.2, ...dl.map(Math.abs));
+  $("cd").setAttribute("viewBox", `0 0 ${W} ${H}`);
+  $("cd").innerHTML = bands(W, H) + `<line x1="0" x2="${W}" y1="${H / 2}" y2="${H / 2}" stroke="#ffffff22"/>` +
+    `<path d="${path(dl, W, H, -m, m)}" stroke="#fff" fill="none" stroke-width="1.6"/>` +
+    `<text x="4" y="11" fill="#55657a" font-size="10">${sgn(m, 2)} s</text><text x="4" y="${H - 3}" fill="#55657a" font-size="10">${sgn(-m, 2)} s</text><line id="cur2" y1="0" y2="${H}" stroke="#fff4"/>`;
+  // gaz / frein
+  H = 150;
+  $("ct").setAttribute("viewBox", `0 0 ${W} ${H}`);
+  $("ct").innerHTML = bands(W, H) +
+    `<path d="${path(A.t, W, H, -5, 105)}" stroke="var(--accent)" fill="none" stroke-width="1.3"/>` +
+    `<path d="${path(B.t, W, H, -5, 105)}" stroke="var(--b)" fill="none" stroke-width="1.3"/>` +
+    `<path d="${path(A.b, W, H, -5, 105)}" stroke="var(--accent)" fill="none" stroke-width="1.3" stroke-dasharray="4 3" opacity=".8"/>` +
+    `<path d="${path(B.b, W, H, -5, 105)}" stroke="var(--b)" fill="none" stroke-width="1.3" stroke-dasharray="4 3" opacity=".8"/>` +
+    `<text x="${W - 6}" y="12" fill="#55657a" font-size="10" text-anchor="end">${T("trait plein : gaz · pointillés : frein", "solid: throttle · dashed: brake")}</text>` +
+    `<line id="cur3" y1="0" y2="${H}" stroke="#fff4"/>`;
+  drawMap(dl); drawCorners(dl);
+  ["cv", "cd", "ct"].forEach(id => { const el = $(id); el.onmousemove = e => hover(e, el, ca, cb, dl); el.onmouseleave = () => hover(null); });
+}
+
+function drawMap(dl) {
+  const pts = D.map;
+  if (!pts || pts.filter(Boolean).length < 50) { $("map").innerHTML = `<text x="50" y="50" fill="#55657a" font-size="5" text-anchor="middle">${T("Carte pas encore enregistrée", "Map not recorded yet")}</text>`; return; }
+  const ok = pts.filter(Boolean), xs = ok.map(p => p[0]), zs = ok.map(p => p[1]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), z0 = Math.min(...zs), z1 = Math.max(...zs);
+  const s = 92 / Math.max(x1 - x0, z1 - z0), ox = (100 - (x1 - x0) * s) / 2, oz = (100 - (z1 - z0) * s) / 2;
+  const P = p => [ox + (p[0] - x0) * s, oz + (z1 - p[1]) * s];
+  cur = { P, pts };
+  let seg = ""; const n = pts.length;
+  for (let i = 0; i < n; i++) {
+    const a = pts[i], b = pts[(i + 1) % n]; if (!a || !b) continue;
+    const i0 = Math.floor(i / n * NB), i1 = Math.min(NB - 1, Math.floor((i + 1) / n * NB));
+    const g = dl[i1] - dl[i0];     // > 0 : B perd du temps sur ce bout
+    const k = Math.min(1, Math.abs(g) / 0.03);
+    const col = g > 0.002 ? `rgba(255,46,136,${0.35 + 0.65 * k})` : g < -0.002 ? `rgba(61,255,162,${0.35 + 0.65 * k})` : "#2a3646";
+    const [ax, az] = P(a), [bx, bz] = P(b);
+    seg += `<line x1="${ax.toFixed(2)}" y1="${az.toFixed(2)}" x2="${bx.toFixed(2)}" y2="${bz.toFixed(2)}" stroke="${col}" stroke-width="1.6" stroke-linecap="round"/>`;
+  }
+  const lab = (D.corners || []).map(c => { const p = pts[Math.round(c.mid * n) % n]; if (!p) return ""; const [x, z] = P(p);
+    return `<text x="${x.toFixed(1)}" y="${(z - 2).toFixed(1)}" fill="#9AA6B8" font-size="3" text-anchor="middle">${c.id}</text>`; }).join("");
+  const p0 = pts[0] ? P(pts[0]) : [0, 0];
+  $("map").innerHTML = seg + lab + `<circle cx="${p0[0]}" cy="${p0[1]}" r="1.2" fill="#fff"/><circle id="mdot" r="1.6" fill="var(--b)" visibility="hidden"/>`;
+}
+
+function drawCorners(dl) {
+  const rows = (D.corners || []).map(c => {
+    const i0 = Math.floor(((c.start - 0.03 + 1) % 1) * NB), i1 = Math.min(NB - 1, Math.floor(((c.end + 0.02) % 1) * NB));
+    const g = i1 >= i0 ? dl[i1] - dl[i0] : (dl[NB - 1] - dl[i0]) + dl[i1];
+    const vA = Math.min(...span(A.v, c)), vB = Math.min(...span(B.v, c));
+    return { c, g, vA, vB };
+  });
+  rows.sort((a, b) => b.g - a.g);
+  $("corn").innerHTML = `<tr><td class="muted" style="font-size:12px">${T("Virage", "Corner")}</td><td class="n muted" style="font-size:12px">${T("écart", "gap")}</td><td class="n muted" style="font-size:12px">${T("vit. mini A / B", "min speed A / B")}</td></tr>` +
+    rows.map(r => `<tr class="cn" data-m="${r.c.mid}"><td>${esc(cname(r.c))}</td><td class="n ${r.g > 0.005 ? "loss" : r.g < -0.005 ? "gain" : ""}">${sgn(r.g, 2)} s</td>` +
+      `<td class="n">${Math.round(r.vA)} / ${Math.round(r.vB)}</td></tr>`).join("");
+  document.querySelectorAll("tr.cn").forEach(tr => tr.onmouseenter = () => mark(+tr.dataset.m));
+}
+function span(arr, c) {
+  const i0 = Math.floor(c.start * NB), i1 = Math.floor(c.end * NB), out = [];
+  for (let i = i0; ; i = (i + 1) % NB) { out.push(arr[i]); if (i === i1 || out.length > NB) break; }
+  return out;
+}
+
+function mark(f) {
+  ["cur1", "cur2", "cur3"].forEach(id => { const el = $(id); if (!el) return; const W = +el.ownerSVGElement.getAttribute("viewBox").split(" ")[2]; el.setAttribute("x1", f * W); el.setAttribute("x2", f * W); });
+  if (cur) { const p = cur.pts[Math.floor(f * cur.pts.length) % cur.pts.length]; const d = $("mdot");
+    if (p && d) { const [x, z] = cur.P(p); d.setAttribute("cx", x); d.setAttribute("cy", z); d.setAttribute("visibility", "visible"); } }
+}
+function hover(e, el, ca, cb, dl) {
+  const tip = $("tip");
+  if (!e) { tip.style.display = "none"; return; }
+  const r = el.getBoundingClientRect(), f = Math.min(0.999, Math.max(0, (e.clientX - r.left) / r.width)), i = Math.floor(f * NB);
+  mark(f);
+  const c = (D.corners || []).find(c => f >= c.start - 0.01 && f <= c.end + 0.01);
+  tip.innerHTML = (c ? `<b>${esc(cname(c))}</b><br>` : "") +
+    `<span style="color:var(--accent)">A</span> ${Math.round(A.v[i])} km/h · ${T("gaz", "thr")} ${A.t[i]}% · ${T("frein", "brk")} ${A.b[i]}%<br>` +
+    `<span style="color:var(--b)">B</span> ${Math.round(B.v[i])} km/h · ${T("gaz", "thr")} ${B.t[i]}% · ${T("frein", "brk")} ${B.b[i]}%<br>` +
+    `${T("écart", "gap")} <span class="${dl[i] > 0 ? "loss" : "gain"}">${sgn(dl[i])} s</span>`;
+  tip.style.display = "block"; tip.style.left = Math.min(innerWidth - 300, e.clientX + 14) + "px"; tip.style.top = (e.clientY + 14) + "px";
+}
+addEventListener("resize", () => { if (A && B) draw(); });
+init();
+</script>
+</body></html>

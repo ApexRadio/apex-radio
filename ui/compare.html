@@ -42,6 +42,7 @@
 </style></head>
 <body>
 <header>
+  <a id="back" class="btn" href="/" style="text-decoration:none">← <span id="tback">Tableau de bord</span></a>
   <a class="logo" href="/">APEX//RADIO</a>
   <h1 id="title">Comparer mes tours</h1>
 </header>
@@ -94,6 +95,7 @@ async function init() {
   try { const st = await (await fetch("/api/state")).json(); LANG = st.lang || "fr"; } catch (e) {}
   document.documentElement.lang = LANG;
   $("title").textContent = T("Comparer mes tours", "Compare my laps");
+  $("tback").textContent = T("Tableau de bord", "Dashboard");
   $("lt").textContent = T("Circuit · voiture", "Track · car");
   $("l1").textContent = T("Vitesse (km/h)", "Speed (km/h)");
   $("l2").textContent = T("Écart (s) · au-dessus de 0 : B perd du temps", "Gap (s) · above 0: B is losing time");

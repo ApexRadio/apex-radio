@@ -671,6 +671,22 @@ def make_handler(state: State):
                 v.say(L("Radio en français.", "Radio in English."))
             elif self.path == "/api/voice/quiet":
                 state.toggle_quiet()
+            elif self.path in ("/api/laps/export", "/api/laps/import"):
+                import compare
+                n = int(self.headers.get("Content-Length") or 0)
+                req = json.loads(self.rfile.read(n) or b"{}")
+                if self.path.endswith("export"):
+                    drv = state.radio.cfg.get("driver_name") or getattr(state.snap, "driver", "") or ""
+                    res = compare.export(str(req.get("id") or ""), str(req.get("k") or ""), drv)
+                else:
+                    res = compare.import_lap(req.get("lap") or {})
+                body = json.dumps(res).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+                return
             elif self.path == "/api/setup/race":
                 n = int(self.headers.get("Content-Length") or 0)
                 req = json.loads(self.rfile.read(n) or b"{}")

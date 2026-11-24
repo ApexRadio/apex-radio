@@ -19,6 +19,9 @@
   h2 { margin:0 0 8px; font-size:12px; letter-spacing:.14em; color:var(--muted); font-weight:600; text-transform:uppercase; }
   .pick { display:flex; gap:14px; flex-wrap:wrap; align-items:center; grid-column:1/-1; }
   .pick label { font-size:12px; letter-spacing:.1em; color:var(--muted); text-transform:uppercase; margin-right:6px; }
+  .btn { font:inherit; font-size:13px; color:var(--text); background:#0D1219; border:1px solid var(--line2); border-radius:999px; padding:7px 14px; cursor:pointer; }
+  .btn:hover { border-color:var(--accent); }
+  body.drag main { outline:2px dashed var(--accent); outline-offset:-6px; }
   select { font:inherit; color:var(--text); background:var(--bg); border:1px solid var(--line2); border-radius:8px; padding:6px 8px; }
   .sw { display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:-1px; margin-right:4px; }
   .times { display:flex; gap:24px; align-items:baseline; flex-wrap:wrap; font-family:var(--mono); }
@@ -47,6 +50,13 @@
     <span><label id="lt">Circuit · voiture</label><select id="sess"></select></span>
     <span><span class="sw" style="background:var(--accent)"></span><label>A</label><select id="la"></select></span>
     <span><span class="sw" style="background:var(--b)"></span><label>B</label><select id="lb"></select></span>
+    <span style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
+      <button id="shareA" class="btn">⇪ <span id="tsa">Partager A</span></button>
+      <button id="shareB" class="btn">⇪ <span id="tsb">Partager B</span></button>
+      <button id="imp" class="btn">⇩ <span id="timp">Importer un tour</span></button>
+      <input id="file" type="file" accept=".apexlap,.json" multiple hidden>
+    </span>
+    <div id="msg" style="flex-basis:100%;font-size:13px;color:var(--muted)"></div>
   </div>
   <div id="none" class="card empty" hidden></div>
   <div id="charts" class="card" hidden>
@@ -66,7 +76,7 @@
 const $ = id => document.getElementById(id);
 let LANG = "fr";
 const T = (fr, en) => LANG === "en" ? en : fr;
-let D = null, A = null, B = null, cur = null;
+let D = null, A = null, B = null, cur = null, LAPS = [], want = null, SESS = [];
 const NB = 500;
 
 function fmt(t) { if (t == null) return "–"; const m = Math.floor(t / 60), s = t - m * 60; return `${m}:${s.toFixed(3).padStart(6, "0")}`; }
@@ -90,17 +100,62 @@ async function init() {
   $("l3").textContent = T("Gaz / frein (%)", "Throttle / brake (%)");
   $("hmap").textContent = T("Où B gagne / perd du temps", "Where B gains / loses time");
   $("hcorn").textContent = T("Virage par virage (B face à A)", "Corner by corner (B vs A)");
+  $("tsa").textContent = T("Partager A", "Share A"); $("tsb").textContent = T("Partager B", "Share B");
+  $("timp").textContent = T("Importer un tour", "Import a lap");
+  $("msg").textContent = T("Astuce : glisse un fichier .apexlap d'un autre pilote n'importe où sur cette page pour le comparer au tien.",
+    "Tip: drop another driver's .apexlap file anywhere on this page to compare it with yours.");
   const list = await (await fetch("/api/laps")).json();
   if (!list.length) {
-    $("none").hidden = false;
+    $("none").hidden = false; $("charts").hidden = true;
     $("none").innerHTML = T("Pas encore de tours enregistrés.<br>Roule quelques tours propres : Apex garde ton meilleur tour et tes 10 derniers, circuit par circuit.",
       "No laps recorded yet.<br>Drive a few clean laps: Apex keeps your best lap and your last 10, track by track.");
+    $("shareA").hidden = $("shareB").hidden = true;
     return;
   }
+  SESS = list;
   $("sess").innerHTML = list.map(s => `<option value="${s.id}">${esc(s.track)} · ${esc(s.car)} (${s.game === "acevo" ? "AC EVO" : s.game === "ams2" ? "AMS2" : "LMU"})</option>`).join("");
   $("sess").onchange = () => load($("sess").value);
   load(list[0].id);
 }
+// ------------------------------------------------------------ partage
+async function share(sel) {
+  const r = await (await fetch("/api/laps/export", { method: "POST", body: JSON.stringify({ id: $("sess").value, k: $(sel).value }) })).json();
+  $("msg").innerHTML = r.ok ? (r.clip ? T("✓ Fichier prêt et copié : colle-le dans Discord avec <b>Ctrl+V</b> (salon #tours-de-référence). ",
+      "✓ File ready and copied: paste it in Discord with <b>Ctrl+V</b>. ") : T("✓ Fichier prêt : ", "✓ File ready: ") + `<span class="mono">${esc(r.file)}</span>`)
+    : T("Impossible de créer le fichier.", "Couldn't create the file.");
+}
+async function importFiles(files) {
+  let last = null, bad = 0;
+  for (const f of files) {
+    try {
+      const lap = JSON.parse(await f.text());
+      const r = await (await fetch("/api/laps/import", { method: "POST", body: JSON.stringify({ lap }) })).json();
+      if (r.ok) last = r; else bad++;
+    } catch (e) { bad++; }
+  }
+  if (last) {
+    await reloadList(last.id);
+    $("msg").textContent = T(`✓ Tour importé (${last.track} · ${last.car}). Il est dans la liste avec 👤.`, `✓ Lap imported (${last.track} · ${last.car}). It's in the list with 👤.`);
+  } else if (bad) $("msg").textContent = T("Ce fichier n'est pas un tour Apex Radio (.apexlap).", "This file isn't an Apex Radio lap (.apexlap).");
+}
+async function reloadList(id) {
+  const list = await (await fetch("/api/laps")).json();
+  SESS = list; $("none").hidden = true; $("shareA").hidden = $("shareB").hidden = false;
+  $("sess").innerHTML = list.map(s => `<option value="${s.id}">${esc(s.track)} · ${esc(s.car)} (${s.game === "acevo" ? "AC EVO" : s.game === "ams2" ? "AMS2" : "LMU"})</option>`).join("");
+  $("sess").value = id;
+  D = await (await fetch("/api/laps/" + id)).json();
+  const n = (D.shared || []).length;
+  want = n ? "s0" : null;
+  load(id);
+}
+$("shareA").onclick = () => share("la");
+$("shareB").onclick = () => share("lb");
+$("imp").onclick = () => $("file").click();
+$("file").onchange = e => { importFiles([...e.target.files]); e.target.value = ""; };
+addEventListener("dragover", e => { e.preventDefault(); document.body.classList.add("drag"); });
+addEventListener("dragleave", e => { if (e.target === document.documentElement || e.clientX <= 0) document.body.classList.remove("drag"); });
+addEventListener("drop", e => { e.preventDefault(); document.body.classList.remove("drag"); importFiles([...e.dataTransfer.files]); });
+
 function esc(s) { return String(s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 
 async function load(id) {
@@ -108,10 +163,14 @@ async function load(id) {
   const laps = [];
   if (D.best) laps.push({ k: "best", l: D.best, t: `★ ${T("Meilleur", "Best")} ${fmt(D.best.lap)} (${D.best.date})` });
   (D.recent || []).forEach((l, i) => laps.push({ k: "r" + i, l, t: `${fmt(l.lap)} (${l.date})` }));
+  (D.shared || []).forEach((l, i) => laps.push({ k: "s" + i, l, t: `👤 ${esc(l.driver)} ${fmt(l.lap)}` }));
+  LAPS = laps;
   const opts = laps.map(x => `<option value="${x.k}">${x.t}</option>`).join("");
   $("la").innerHTML = opts; $("lb").innerHTML = opts;
-  $("la").value = "best";
-  $("lb").value = laps.length > 1 ? "r0" : "best";
+  $("la").value = D.best ? "best" : laps[0].k;
+  $("lb").value = laps.length > 1 ? laps[1].k : laps[0].k;
+  if (D.recent && D.recent.length) $("lb").value = "r0";
+  if (want) { $("lb").value = want; want = null; }
   if (D.best && D.recent && D.recent[0] && D.recent[0].lap === D.best.lap && laps.length > 2) $("lb").value = "r1";
   const pick = k => laps.find(x => x.k === k).l;
   $("la").onchange = $("lb").onchange = () => { A = pick($("la").value); B = pick($("lb").value); draw(); };

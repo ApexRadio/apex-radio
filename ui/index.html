@@ -310,6 +310,15 @@
 
     <main>
       <div id="wait" class="card"><div class="logo" style="font-size:34px">APEX//RADIO</div><p id="waitmsg" data-en="Start Le Mans Ultimate, Assetto Corsa EVO or Automobilista 2 and get in your car: the dashboard will show up by itself.<br><small>Automobilista 2: in the game, Options → System → Shared Memory → &laquo; Project CARS 2 &raquo;.</small>">Lance Le Mans Ultimate, Assetto Corsa EVO ou Automobilista 2 et monte dans ta voiture : le tableau de bord s'affichera tout seul.<br><small>Automobilista 2 : dans le jeu, Options → Système → Mémoire partagée → « Project CARS 2 ».</small></p>
+        <div id="waitgames" style="margin-top:18px;display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div style="font-size:12px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase" data-en="My game">Mon jeu</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+            <button class="tog gpick" data-game="lmu">Le Mans Ultimate</button>
+            <button class="tog gpick" data-game="acevo">Assetto Corsa EVO</button>
+            <button class="tog gpick" data-game="ams2">Automobilista 2</button>
+          </div>
+          <button id="waitlaunch" class="act" style="font-size:15px;padding:10px 22px">▶ <span id="waitlaunchtxt">Lancer</span></button>
+        </div>
         <div id="teamw" hidden>
           <div class="sub" style="letter-spacing:.2em;color:#FF2E88" data-en="TEAMMATE MODE">MODE ÉQUIPIER</div>
           <div id="tm_who" style="font-size:26px;font-weight:700;margin:6px 0"></div>
@@ -664,6 +673,8 @@ function render(d) {
   GAME = d.game || GAME;
   if (!s.connected && Date.now() - lmuClicked > 60000) $("lmulaunch").innerHTML = `▶ ${T("Lancer", "Launch")} ${GAME_SHORT[GAME] || "LMU"}`;
   if (document.activeElement !== $("gamesel")) $("gamesel").value = GAME;
+  paintGames();
+  $("waitlaunch").hidden = !!d.demo;
   $("lmumoderow").hidden = GAME !== "lmu";
   $("lmulaunch2").textContent = `▶ ${T("LANCER", "LAUNCH")} ${(GAME_LONG[GAME] || "Le Mans Ultimate").toUpperCase()}`;
   if (document.activeElement !== $("autolmu")) $("autolmu").checked = !!d.autolaunch_lmu;
@@ -1200,7 +1211,19 @@ $("vtest").addEventListener("click", () => { OB.voiceTested = true; try { localS
 // ---- lancer Le Mans Ultimate (par Steam)
 let lmuClicked = 0, GAME = "lmu";
 const GAME_SHORT = { lmu: "LMU", acevo: "AC EVO", ams2: "AMS2" }, GAME_LONG = { lmu: "Le Mans Ultimate", acevo: "Assetto Corsa EVO", ams2: "Automobilista 2" };
-$("gamesel").onchange = e => { GAME = e.target.value; fetch("/api/game", { method: "POST", body: JSON.stringify({ game: GAME }) }); };
+function setGame(g) {
+  GAME = g; $("gamesel").value = g; paintGames();
+  fetch("/api/game", { method: "POST", body: JSON.stringify({ game: GAME }) });
+}
+// choix du jeu aussi sur l'écran d'accueil (avant : seulement dans les réglages, 24/11)
+function paintGames() {
+  document.querySelectorAll(".gpick").forEach(b => b.classList.toggle("on", b.dataset.game === GAME));
+  document.querySelectorAll("#waitmsg small").forEach(x => x.hidden = GAME !== "ams2");   // réglage AMS2 seulement si AMS2
+  if (Date.now() - lmuClicked > 60000) $("waitlaunchtxt").textContent = `${T("Lancer", "Launch")} ${GAME_LONG[GAME] || "Le Mans Ultimate"}`;
+}
+document.querySelectorAll(".gpick").forEach(b => b.onclick = () => setGame(b.dataset.game));
+$("gamesel").onchange = e => setGame(e.target.value);
+$("waitlaunch").onclick = () => { launchLMU(); $("waitlaunchtxt").textContent = T("Lancement…", "Launching…"); };
 function launchLMU() { lmuClicked = Date.now(); fetch("/api/lmu/launch", { method: "POST" }); $("lmulaunch").textContent = T("⏳ Lancement…", "⏳ Launching…"); }
 $("lmulaunch").onclick = launchLMU; $("lmulaunch2").onclick = launchLMU;
 $("autolmu").onchange = e => fetch("/api/lmu/autolaunch", { method: "POST", body: JSON.stringify({ on: e.target.checked }) });

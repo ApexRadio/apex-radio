@@ -120,7 +120,7 @@ async function init() {
 // ------------------------------------------------------------ partage
 async function share(sel) {
   const r = await (await fetch("/api/laps/export", { method: "POST", body: JSON.stringify({ id: $("sess").value, k: $(sel).value }) })).json();
-  $("msg").innerHTML = r.ok ? (r.clip ? T("✓ Fichier prêt et copié : colle-le dans Discord avec <b>Ctrl+V</b> (salon #tours-de-référence). ",
+  $("msg").innerHTML = r.ok ? (r.clip ? T("✓ Fichier prêt et copié : colle-le dans Discord avec <b>Ctrl+V</b> (salon #chronos). ",
       "✓ File ready and copied: paste it in Discord with <b>Ctrl+V</b>. ") : T("✓ Fichier prêt : ", "✓ File ready: ") + `<span class="mono">${esc(r.file)}</span>`)
     : T("Impossible de créer le fichier.", "Couldn't create the file.");
 }

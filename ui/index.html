@@ -264,7 +264,15 @@
     <div class="hright">
       <span class="muted" id="session"></span>
       <span class="pill" id="status"><span class="dot"></span><span id="statustxt">En attente du jeu…</span></span>
-      <button id="lmulaunch" class="act" hidden title="Démarre le jeu par Steam" data-en-title="Starts the game through Steam">▶ <span data-en="Launch LMU">Lancer LMU</span></button>
+      <span id="lmuwrap" style="display:inline-flex;position:relative">
+        <button id="lmulaunch" class="act" hidden title="Démarre le jeu par Steam" data-en-title="Starts the game through Steam" style="border-radius:10px 0 0 10px">▶ <span data-en="Launch LMU">Lancer LMU</span></button>
+        <button id="lmumore" class="act" hidden title="Changer de jeu" data-en-title="Change game" style="border-radius:0 10px 10px 0;border-left:1px solid rgba(0,0,0,.35);padding:0 10px">▾</button>
+        <div id="gamemenu" class="fsel-list" hidden style="position:absolute;top:calc(100% + 6px);left:0;min-width:210px">
+          <div class="fsel-opt gm" data-game="lmu">Le Mans Ultimate</div>
+          <div class="fsel-opt gm" data-game="acevo">Assetto Corsa EVO</div>
+          <div class="fsel-opt gm" data-game="ams2">Automobilista 2</div>
+        </div>
+      </span>
       <div class="racebtns" role="group" aria-label="En course">
         <button id="vtoggle" class="tog" title="Radio : l'ingénieur parle ou se tait" data-en-title="Radio: the engineer talks or stays silent">🔊 Radio</button>
         <button id="quiet" class="tog" title="Mode silence : l'ingénieur ne dit plus que l'urgent (box, drapeau jaune, spotter, réponses). Tu peux aussi dire « silence » ou « reparle » à la radio." data-en-title="Quiet mode: urgent calls only (box, yellow flag, spotter, answers). You can also say &quot;be quiet&quot; or &quot;talk again&quot; on the radio.">🤫 <span data-en="Quiet">Silence</span></button>
@@ -670,6 +678,8 @@ function render(d) {
   if (d.update && d.update.version) $("ver").textContent = "v" + d.update.version;
   $("status").className = "pill" + (s.on_track ? " live" : "");
   $("lmulaunch").hidden = !!s.connected || !!d.demo;
+  $("lmumore").hidden = $("lmulaunch").hidden;
+  if ($("lmumore").hidden) $("gamemenu").hidden = true;
   GAME = d.game || GAME;
   if (!s.connected && Date.now() - lmuClicked > 60000) $("lmulaunch").innerHTML = `▶ ${T("Lancer", "Launch")} ${GAME_SHORT[GAME] || "LMU"}`;
   if (document.activeElement !== $("gamesel")) $("gamesel").value = GAME;
@@ -1218,10 +1228,18 @@ function setGame(g) {
 // choix du jeu aussi sur l'écran d'accueil (avant : seulement dans les réglages, 24/11)
 function paintGames() {
   document.querySelectorAll(".gpick").forEach(b => b.classList.toggle("on", b.dataset.game === GAME));
+  document.querySelectorAll(".gm").forEach(b => b.classList.toggle("sel", b.dataset.game === GAME));
   document.querySelectorAll("#waitmsg small").forEach(x => x.hidden = GAME !== "ams2");   // réglage AMS2 seulement si AMS2
   if (Date.now() - lmuClicked > 60000) $("waitlaunchtxt").textContent = `${T("Lancer", "Launch")} ${GAME_LONG[GAME] || "Le Mans Ultimate"}`;
 }
 document.querySelectorAll(".gpick").forEach(b => b.onclick = () => setGame(b.dataset.game));
+// petit menu ▾ à côté de « Lancer … » en haut (24/11)
+$("lmumore").onclick = e => { e.stopPropagation(); $("gamemenu").hidden = !$("gamemenu").hidden; };
+document.querySelectorAll(".gm").forEach(b => b.onclick = e => {
+  e.stopPropagation(); $("gamemenu").hidden = true; setGame(b.dataset.game);
+  if (Date.now() - lmuClicked > 60000) $("lmulaunch").innerHTML = `▶ ${T("Lancer", "Launch")} ${GAME_SHORT[GAME] || "LMU"}`;
+});
+document.addEventListener("click", e => { if (!$("lmuwrap").contains(e.target)) $("gamemenu").hidden = true; });
 $("gamesel").onchange = e => setGame(e.target.value);
 $("waitlaunch").onclick = () => { launchLMU(); $("waitlaunchtxt").textContent = T("Lancement…", "Launching…"); };
 function launchLMU() { lmuClicked = Date.now(); fetch("/api/lmu/launch", { method: "POST" }); $("lmulaunch").textContent = T("⏳ Lancement…", "⏳ Launching…"); }

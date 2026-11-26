@@ -602,6 +602,90 @@ def share_text(cfg: dict, pl: list[dict]) -> str:
 
 
 # ---------------------------------------------------------------------- page RELAIS
+PW_CSS = """<style>
+details#prep>summary{cursor:pointer;font-family:"Chakra Petch",sans-serif;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgb(0,229,255)}
+details#prep[open]>summary{margin-bottom:8px}
+#pw{--c:61,255,162}
+#pw .top{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:12px}
+#pw .ttl{font-family:Orbitron,sans-serif;font-weight:900;letter-spacing:.14em;color:rgb(61,255,162);text-shadow:0 0 10px rgba(61,255,162,.5)}
+#pw .live{display:inline-flex;align-items:center;gap:6px;font-size:12px;letter-spacing:.14em;color:#FF2E88}
+#pw .live i{width:8px;height:8px;border-radius:50%;background:#FF2E88;box-shadow:0 0 8px #FF2E88;animation:pwb 1.2s infinite}
+@keyframes pwb{50%{opacity:.25}}
+#pw .pos{margin-left:auto;display:flex;gap:18px;align-items:baseline;font-family:"JetBrains Mono",monospace}
+#pw .pos b{font-size:30px;color:#fff} #pw .pos span{color:var(--muted);font-size:13px}
+#pw .grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:12px}
+#pw .box{background:rgba(6,9,14,.6);border:1px solid #1E2A38;border-radius:14px;padding:14px 16px;position:relative;overflow:hidden;min-width:0}
+#pw .box.pwd::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--dc);box-shadow:0 0 14px var(--dc)}
+#pw .who{display:flex;align-items:center;gap:12px}
+#pw .av{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Orbitron,sans-serif;font-weight:900;
+  font-size:18px;color:#06070B;background:var(--dc);box-shadow:0 0 16px var(--dc);flex:none}
+#pw .nm{font-size:20px;font-weight:700} #pw .lbl{font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+#pw .badge{font-size:11px;letter-spacing:.12em;font-weight:700;padding:3px 9px;border-radius:999px;margin-left:auto;white-space:nowrap}
+#pw .badge.run{background:rgba(61,255,162,.15);color:#3DFFA2;border:1px solid rgba(61,255,162,.5)}
+#pw .badge.pit{background:rgba(255,181,71,.15);color:#FFB547;border:1px solid rgba(255,181,71,.5)}
+#pw .bar{height:8px;border-radius:999px;background:#141c27;margin:14px 0 6px;overflow:hidden}
+#pw .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--dc),#fff);border-radius:999px;box-shadow:0 0 10px var(--dc)}
+#pw .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+#pw .stats div b{display:block;font-family:"JetBrains Mono",monospace;font-size:16px;color:#fff}
+#pw .eta{font-family:"JetBrains Mono",monospace;font-size:26px;color:#fff;margin-top:10px}
+#pw .gap{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid #18212D}
+#pw .gap:last-child{border-bottom:0} #pw .gap b{font-family:"JetBrains Mono",monospace;font-size:18px}
+#pw .wait{color:var(--muted);padding:6px 0}
+@media(max-width:900px){#pw .grid{grid-template-columns:1fr}#pw .stats{grid-template-columns:repeat(2,1fr)}}
+</style>"""
+
+PW_HTML = """<div class="card" id="pw"><div class="top"><span class="ttl" id="pwt">PIT WALL</span><span class="live" id="pwlive" hidden><i></i>LIVE</span>
+<div class="pos" id="pwpos"></div></div><div id="pwbody"></div></div>"""
+
+PW_JS = r"""
+const DCOL = ["0,229,255", "255,46,136", "255,210,63", "61,255,162"];
+const fmtL = t => { if (!t) return "–"; const m = Math.floor(t / 60), s = t - m * 60; return `${m}:${s.toFixed(3).padStart(6, "0")}`; };
+const esc2 = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function dIdx(d, name) {
+  const ds = d.cfg.drivers || [], f = x => String(x || "").toLowerCase().split(/[^a-z0-9à-ÿ]+/).filter(w => w.length > 1);
+  const w = f(name); const k = ds.findIndex(x => f(x).some(y => w.includes(y)));
+  return k < 0 ? 0 : k;
+}
+function clockAt(d, min) {
+  const st = (d.cfg.start || "").split(":"); if (st.length < 2) return null;
+  const t = (+st[0]) * 60 + (+st[1]) + Math.round(min); return String(Math.floor(t / 60) % 24).padStart(2, "0") + ":" + String(t % 60).padStart(2, "0");
+}
+function drawPit(d) {
+  $("pwt").textContent = T.pw;
+  const tm = d.team, lv = d.live;
+  $("pwlive").hidden = !tm;
+  if (!tm) { $("pwpos").innerHTML = ""; $("pwbody").innerHTML = `<div class="wait">${T.pw_wait}</div>`; return; }
+  const left = tm.time_left != null ? tm.time_left / 60 : null;
+  const hmS = m => m == null ? "–" : (m >= 60 ? Math.floor(m / 60) + "h" + String(Math.round(m % 60)).padStart(2, "0") : Math.round(m) + " min");
+  $("pwpos").innerHTML = `<span>P</span><b>${tm.place || "–"}</b><span>P${tm.cpos || "–"} ${T.pw_cls} ${esc2(tm.class || "")}</span>` +
+    `<span>${T.pw_left}</span><b>${hmS(left)}</b>`;
+  const name = (lv && lv.driver) || tm.driver || "?";
+  const k = dIdx(d, name), col = DCOL[k % 4];
+  const nxt = lv ? lv.next : null, kn = nxt ? dIdx(d, nxt) : 0;
+  const drv = lv ? lv.driven_min : null;
+  const tgt = lv && lv.target_min ? lv.target_min : (d.cfg.mode === "pleins" && d.fuel_stint_min ? d.cfg.tanks * d.fuel_stint_min : (d.cfg.mode === "temps" ? d.cfg.stint_min : null));
+  const pct = drv != null && tgt ? Math.min(100, drv / tgt * 100) : null;
+  const eta = drv != null && tgt ? Math.max(0, tgt - drv) : null;
+  const now = left != null ? d.cfg.race_min - left : null;
+  const at = eta != null && now != null ? clockAt(d, now + eta) : null;
+  const stats = [[T.pw_laps, tm.laps ?? "–"], [T.pw_stops, tm.stops ?? "–"], [T.pw_last, fmtL(tm.last)], [T.pw_best, fmtL(tm.best)]];
+  if (tm.me && tm.fuel != null) stats[1] = [tm.energy != null ? T.pw_nrg : T.pw_fuel, tm.energy != null ? tm.energy + " %" : tm.fuel + " L"];
+  const gap = (lab, o) => `<div class="gap"><span class="lbl">${lab}</span><span>${o ? esc2(o.name || "") : "–"}</span><b>${o && o.gap != null ? (lab === T.pw_ahead ? "−" : "+") + o.gap.toFixed(1) + " s" : ""}</b></div>`;
+  $("pwbody").innerHTML = `<div class="grid">
+   <div class="box pwd" style="--dc:rgb(${col})"><div class="who"><div class="av">${esc2(name).slice(0, 1).toUpperCase()}</div>
+     <div><div class="lbl">${T.pw_drv}${lv ? " · " + T.pw_stint + " " + lv.stint + (lv.of ? "/" + lv.of : "") : ""}</div><div class="nm">${esc2(name)}${tm.me ? " (" + T.pw_you + ")" : ""}</div></div>
+     <span class="badge ${tm.pits ? "pit" : "run"}">${tm.pits ? T.pw_pits : "● " + T.pw_drv}</span></div>
+     ${pct != null ? `<div class="bar"><i style="width:${pct}%"></i></div><div class="lbl">${T.pw_since} ${drv} / ${tgt} min</div>` : ""}
+     <div class="stats">${stats.map(s => `<div><span class="lbl">${s[0]}</span><b>${s[1]}</b></div>`).join("")}</div>
+     ${tm.penalties ? `<div class="lbl" style="color:#FF2E88;margin-top:8px">⚠ ${tm.penalties} ${T.pw_pen}</div>` : ""}</div>
+   <div class="box pwd" style="--dc:rgb(${DCOL[kn % 4]})"><div class="lbl">${T.pw_next}</div>
+     <div class="who" style="margin-top:8px"><div class="av">${esc2(nxt || "?").slice(0, 1).toUpperCase()}</div><div class="nm">${esc2(nxt || "–")}</div></div>
+     <div class="eta">${eta != null ? T.pw_in + " ~" + hmS(eta) : "–"}</div><div class="lbl">${at ? T.pw_at + " " + at : ""}</div></div>
+   <div class="box">${gap(T.pw_ahead, tm.ahead)}${gap(T.pw_behind, tm.behind)}</div></div>`;
+}
+"""
+
+
 def page() -> str:
     import debrief
     t = {k: L(fr, en) for k, (fr, en) in {
@@ -637,6 +721,14 @@ def page() -> str:
         "plan": ("Le plan", "The plan"), "n": ("Relais", "Stint"), "who": ("Pilote", "Driver"),
         "from": ("Début", "Start"), "to": ("Fin", "End"), "dur": ("Durée", "Length"),
         "live": ("En course", "Live"),
+        "pw": ("MUR DES STANDS", "PIT WALL"), "pw_wait": ("En attente de la course : le mur des stands s'allume dès que ta voiture d'équipe roule en course (toi ou un coéquipier).",
+                                                         "Waiting for the race: the pit wall lights up as soon as your team car is racing (you or a teammate)."),
+        "pw_drv": ("AU VOLANT", "DRIVING"), "pw_pits": ("AUX STANDS", "IN THE PITS"), "pw_next": ("PROCHAIN PILOTE", "NEXT DRIVER"),
+        "pw_in": ("dans", "in"), "pw_at": ("vers", "around"), "pw_stint": ("Relais", "Stint"), "pw_left": ("Restant", "Left"),
+        "pw_laps": ("Tours", "Laps"), "pw_stops": ("Arrêts", "Stops"), "pw_last": ("Dernier tour", "Last lap"), "pw_best": ("Meilleur", "Best"),
+        "pw_ahead": ("DEVANT", "AHEAD"), "pw_behind": ("DERRIÈRE", "BEHIND"), "pw_cls": ("en", "in"), "pw_you": ("toi", "you"),
+        "pw_since": ("au volant depuis", "driving for"), "pw_fuel": ("Essence", "Fuel"), "pw_nrg": ("Énergie", "Energy"),
+        "pw_pen": ("pénalité", "penalty"), "pw_now": ("maintenant", "now"), "prep": ("Préparer la course", "Set up the race"),
         "fuel": ("Un plein dure environ", "A full tank lasts about"),
         "tankmin": ("Durée d'un plein", "One tank lasts"), "tank_auto": ("auto", "auto"),
         "tank_tip": ("Laisse vide : Apex la mesure en roulant et la retient pour ce circuit.",
@@ -680,9 +772,10 @@ button.main{{box-shadow:0 0 16px rgba(0,229,255,.45)}} button.main:hover{{box-sh
 th{{color:rgb(168,85,247)}}
 .dc0{{color:rgb(0,229,255)}} .dc1{{color:rgb(255,46,136)}} .dc2{{color:rgb(255,210,63)}} .dc3{{color:rgb(61,255,162)}}
 #plan td:nth-child(2){{font-weight:700}}
-</style>
+</style>{PW_CSS}
 <h1>{t['title']}</h1><p class="muted">{t['intro']}</p>
-<div class="card">
+{PW_HTML}
+<details id="prep" class="card"><summary>{t['prep']}</summary>
  <div class="f"><label for="on">{t['on']}</label><input type="checkbox" id="on"></div>
  <div class="f"><label>{t['races']}</label><select id="races" style="min-width:260px"></select>
    <button id="keep" style="margin-left:10px">{t['keep']}</button> <button id="dropr">{t['drop']}</button></div>
@@ -699,7 +792,7 @@ th{{color:rgb(168,85,247)}}
  <div class="f" style="align-items:flex-start"><label>{t['drivers']}</label><div><div id="drvs"></div>
    <button id="add">{t['add']}</button><div class="muted" style="font-size:13px;margin-top:6px">{t['tip']}<br>{t['busy_tip']}</div></div></div>
  <div class="f"><button class="main" id="save">{t['save']}</button> <button id="newrace" style="margin-left:10px">{t['new']}</button><span id="ok"></span></div>
-</div>
+</details>
 <div class="card" id="livecard" hidden><h2 style="margin-top:0">{t['live']}</h2><div id="live"></div></div>
 <h2>{t['plan']}</h2><p class="muted" id="fuel"></p>
 <div class="card scroll"><table><thead><tr><th>{t['n']}</th><th>{t['who']}</th><th>{t['from']}</th><th>{t['to']}</th><th>{t['dur']}</th></tr></thead>
@@ -728,6 +821,8 @@ function drawDrivers() {{
   }});
 }}
 function draw(d, form) {{
+  try {{ drawPit(d); }} catch (e) {{ console.error(e); }}
+  if (form && !d.cfg.drivers.length) $("prep").open = true;
   drawRaces(d.races || [], (d.cfg.name || "").trim());
   if (form) {{
     $("on").checked = d.cfg.on; $("rh").value = Math.floor(d.cfg.race_min / 60); $("rm").value = d.cfg.race_min % 60;
@@ -741,7 +836,7 @@ function draw(d, form) {{
   $("plan").innerHTML = d.plan.map(p => {{ if (!order.includes(p.driver)) order.push(p.driver); return `<tr><td>${{p.n}}</td><td class="dc${{order.indexOf(p.driver) % 4}}">${{p.driver.replace(/</g, "&lt;")}}</td><td>${{known ? (p.clock_start || hm(p.start)) : "–"}}</td><td>${{known ? (p.clock_end || hm(p.end)) : "–"}}${{p.clash ? " ⚠️" : ""}}</td><td>${{known ? (p.end - p.start) + " min" : (d.cfg.mode === "pleins" ? d.cfg.tanks + " ⛽" : "–")}}</td></tr>`; }}).join("");
   shareTxt = d.share || ""; drawTL(d, known, order); $("teambtn").hidden = !d.webhook;
   $("fuel").textContent = d.fuel_stint_min ? `${{T.fuel}} ${{d.fuel_stint_min}} min ${{T["src_" + d.fuel_src] || ""}}.` : (known ? "" : T.notime);
-  $("livecard").hidden = !d.live;
+  $("livecard").hidden = !d.live || !!d.team;     // le mur des stands le remplace pendant la course
   if (d.live) $("live").innerHTML = `<span class="big">${{T.n}} ${{d.live.stint}}${{d.live.of ? " / " + d.live.of : ""}}</span> · ${{d.live.driver.replace(/</g, "&lt;")}} · ${{d.live.driven_min}}${{d.live.target_min ? " / " + d.live.target_min : ""}} min → ${{d.live.next.replace(/</g, "&lt;")}}`;
 }}
 const COLORS = ["0,229,255", "255,46,136", "255,210,63", "61,255,162"];
@@ -770,6 +865,11 @@ function drawTL(d, known, order) {{
            + `<text x="${{x(p.start) + 6}}" y="${{y + 21}}" fill="#06070B" font-size="12" font-weight="700">${{p.n}}</text>`;
     }});
   }});
+  if (d.team && d.team.time_left != null) {{     // ligne « maintenant » pendant la course
+    const nowM = total - d.team.time_left / 60, H = (names.length + 1) * rowH + 10;
+    if (nowM >= 0 && nowM <= total) svg += `<line x1="${{x(nowM)}}" y1="14" x2="${{x(nowM)}}" y2="${{H}}" stroke="#3DFFA2" stroke-width="2" style="filter:drop-shadow(0 0 4px #3DFFA2)"/>`
+      + `<text x="${{x(nowM) + 4}}" y="${{H}}" fill="#3DFFA2" font-size="11" font-family="JetBrains Mono,monospace">${{T.pw_now}}</text>`;
+  }}
   svg += "</svg>";
   $("tl").innerHTML = svg;
 }}
@@ -856,6 +956,7 @@ $("dropr").onclick = () => {{
   clearTimeout(armDrop); armDrop = null; $("dropr").textContent = T.drop;
   raceAction({{ _race: "drop", key: k }});
 }};
-load(true); setInterval(() => load(false), 5000);
+{PW_JS}
+load(true); setInterval(() => load(false), 3000);
 </script>"""
     return debrief._page(L("Relais", "Stints"), body)

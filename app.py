@@ -617,6 +617,10 @@ def make_handler(state: State):
                     fm, src = relais.tank_minutes(c, None, state.snap)
                     data = {"cfg": c, "plan": relais.plan(c, fm), "fuel_stint_min": fm, "fuel_src": src, "live": None,
                             "races": relais.races()}
+                try:
+                    data["team"] = live_team(state)
+                except Exception:
+                    data["team"] = None
                 body, ctype = json.dumps(data, default=lambda o: None).encode(), "application/json"
             elif self.path.startswith("/api/sd"):
                 # état résumé pour le plugin Stream Deck (léger, interrogé chaque seconde)
@@ -1054,6 +1058,24 @@ def find_running() -> int | None:
     for port in dict.fromkeys(saved + list(PORTS)):
         if is_apex(port):
             return port
+    return None
+
+
+def live_team(state) -> dict | None:
+    """Voiture d'équipe en direct, pour le « mur des stands » de la page Relais : le coéquipier qui roule
+    (mode équipier), ou toi si c'est toi qui es en piste en course."""
+    s = getattr(state, "snap", None)
+    if not s or not s.connected:
+        return None
+    if s.team:
+        return {**s.team, "me": False}
+    if s.on_track and s.session == "course":
+        side = lambda o, g: {"name": (o or {}).get("name"), "gap": g} if o else None
+        return {"me": True, "driver": s.driver, "place": s.position, "cpos": s.class_position, "class": s.car_class,
+                "laps": s.laps_done, "last": s.last_lap, "best": s.best_lap, "pits": s.in_pits, "stops": s.pit_stops,
+                "penalties": s.penalties, "time_left": s.time_left, "track": s.track,
+                "fuel": round(s.fuel, 1) if s.fuel else None, "energy": round(s.energy * 100) if s.energy else None,
+                "ahead": side(s.ahead, s.gap_class_ahead), "behind": side(s.behind, s.gap_class_behind)}
     return None
 
 

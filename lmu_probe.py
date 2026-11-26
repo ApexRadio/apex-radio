@@ -124,16 +124,22 @@ class Probe:
     def _garage(self, car_class: str, car: str, track: str) -> None:
         import re
         try:
-            time.sleep(4)        # le temps que le menu du garage soit prêt
-            schema = _get("/swagger-schema.json").get("json") or {}
-            paths = _safe_paths(schema)
-            res = {"quand": time.strftime("%d/%m/%Y %H:%M:%S"), "classe": car_class, "voiture": car, "circuit": track,
-                   "chemins": paths, "reponses": {}}
-            for ep in paths:
-                res["reponses"][ep] = _get(ep, 600000)
             GARAGE_DIR.mkdir(parents=True, exist_ok=True)
             name = re.sub(r"[^A-Za-z0-9_-]+", "_", f"{car_class}_{car}")[:80] or "voiture"
-            (GARAGE_DIR / f"{name}.json").write_text(json.dumps(res, indent=1, ensure_ascii=False), encoding="utf-8")
+            dst = GARAGE_DIR / f"{name}.json"
+            best, schema, paths, res = -1, {}, [], {}
+            # plusieurs relevés (5 s, 30 s, 90 s) : certains écrans du garage ne répondent qu'une fois ouverts ;
+            # on garde le relevé le plus complet
+            for wait in (5, 25, 60):
+                time.sleep(wait)
+                schema = _get("/swagger-schema.json").get("json") or schema
+                paths = _safe_paths(schema)
+                cur = {"quand": time.strftime("%d/%m/%Y %H:%M:%S"), "classe": car_class, "voiture": car, "circuit": track,
+                       "chemins": paths, "reponses": {ep: _get(ep, 600000) for ep in paths}}
+                size = sum(len(json.dumps(r)) for r in cur["reponses"].values() if r.get("status") == 200)
+                if size > best:
+                    best, res = size, cur
+                    dst.write_text(json.dumps(res, indent=1, ensure_ascii=False), encoding="utf-8")
             if schema:
                 (GARAGE_DIR / "_schema.json").write_text(json.dumps(schema, indent=1, ensure_ascii=False), encoding="utf-8")
             ok = sum(1 for r in res["reponses"].values() if r.get("status") == 200)

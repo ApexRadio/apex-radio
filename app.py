@@ -44,6 +44,7 @@ from lmu_probe import Probe
 import phrases
 import lmukeys
 from reflap import RefLap
+import annonces
 from alerts import Spotter, Traffic, GapTrend, TrackLimits, Damage, Weather, WarmUp, CarInfo, Places, Morale, car_label, set_encourage, PitLane
 import debrief
 from pitmenu import PitCrew
@@ -179,6 +180,7 @@ def loop(state: State, demo: bool) -> None:
     pitlane = PitLane()
     warmup, carinfo, places, morale = WarmUp(), CarInfo(), Places(), Morale()
     set_encourage(state.radio.cfg.get("encourage", "normal"))
+    annonces.load(state.radio.cfg.get("annonces"))
     import behavior as _bh
     _bh.set_coach(state.radio.cfg.get("coaching", True))
     _bh.set_coach_race(state.radio.cfg.get("coach_race", True))
@@ -460,6 +462,7 @@ def loop(state: State, demo: bool) -> None:
                 "radio": list(eng.radio),
                 "accent": state.radio.cfg.get("accent", "bleu"),
                 "encourage": state.radio.cfg.get("encourage", "normal"),
+                "annonces": annonces.CFG,
                 "coaching": state.radio.cfg.get("coaching", True),
                 "coach_race": state.radio.cfg.get("coach_race", True),
                 "tone": state.radio.cfg.get("tone", "radio"),
@@ -801,6 +804,10 @@ def make_handler(state: State):
                 save_config(state.radio.cfg)
                 import behavior as _bh
                 _bh.set_coach_race(on)
+            elif self.path == "/api/annonces":
+                n = int(self.headers.get("Content-Length") or 0)
+                state.radio.cfg["annonces"] = annonces.load(json.loads(self.rfile.read(n) or b"{}"))
+                save_config(state.radio.cfg)
             elif self.path == "/api/encourage":
                 n = int(self.headers.get("Content-Length") or 0)
                 lv = json.loads(self.rfile.read(n) or b"{}").get("level", "normal")

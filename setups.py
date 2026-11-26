@@ -6,8 +6,8 @@ Atelier setup (partie 3) : setups sur mesure par circuit.
   affichée) à partir de TOUS tes fichiers, pour savoir dans quel sens tourner.
 - Transforme les problèmes détectés en piste (behavior.py) en changements
   précis : "barre antiroulis avant : D18 H-H -> D18 S-H".
-- Crée une NOUVELLE version ("APEX <circuit> v2.svm") : les fichiers existants
-  ne sont jamais modifiés.
+- Écrit UN fichier par voiture, circuit et mode ("APEX Porsche 911 GT3 R Bahrain Course.svm") : tes fichiers
+  ne sont jamais modifiés. Les versions (v1 + les 3 dernières) sont gardées hors du dossier LMU.
 - Garde l'historique des versions et le meilleur tour fait avec chacune.
 """
 
@@ -173,6 +173,24 @@ def series_tag(car_class: str, car: str = "") -> str:
     return ""
 
 
+_MODEL_SKIP = {"LMGT3", "EVO", "LMH", "LMDH", "LMP2", "LMP3", "HYPERCAR", "GTE"}
+
+
+def car_model(vehicle: str) -> str:
+    """Modèle de la voiture écrit dans un .svm : "GT3 Porsche_911_GT3_R_LMGT3 WEC2025" -> "Porsche 911 GT3 R",
+    "ELMS2025 LMP2_ELMS Oreca_07" -> "Oreca 07". Vide si on ne trouve pas."""
+    toks = (vehicle or "").replace('"', " ").split()
+    for tok in toks:
+        if "_" not in tok or tok.upper() in KNOWN_CLASSES:
+            continue
+        words = [re.sub(r"(?<=\w)L[TM]P\d$", "", w) for w in tok.split("_") if w and w.upper() not in _MODEL_SKIP]
+        name = " ".join(words[:4])
+        name = re.sub(r"[^\w .-]", "", name).strip()
+        if name:
+            return name
+    return ""
+
+
 def setup_class(vehicle: str) -> str:
     """Catégorie écrite dans un fichier .svm : VehicleClassSetting="ELMS2025 LMP2_ELMS Oreca_07" -> LMP2_ELMS."""
     for tok in (vehicle or "").replace('"', " ").split():
@@ -257,6 +275,7 @@ class Workshop:
         self._last_active = None
         self.car_class = ""       # catégorie de la voiture en piste (LMP2, LMP2_ELMS…), mise à jour par app.py
         self.car = ""
+        self.model = cfg.get("last_setup_model", "") if isinstance(cfg, dict) else ""   # modèle du setup en cours (« Porsche 911 GT3 R ») : un historique par voiture
         self.mismatch = None      # dernier écart setup / voiture détecté (pour le tableau de bord)
 
     # ----------------------------------------------------------- inventaire
@@ -320,11 +339,49 @@ class Workshop:
     def tag(self) -> str:
         return series_tag(self.car_class, self.car)
 
-    def _hkey(self, folder: str | None) -> str:
+    def _hkey(self, folder: str | None, model: str | None = None) -> str:
         if not folder:
             return ""
-        t = self.tag()
-        return f"{folder} · {t} · {self.mode}" if t else f"{folder} · {self.mode}"
+        m = self.model if model is None else model
+        return " · ".join(x for x in (folder, m, self.tag(), self.mode) if x)
+
+    def _migrate(self, folder: str | None) -> None:
+        """Avant (≤ 1.4) : un seul historique et un seul fichier « APEX <circuit> … » par circuit, toutes voitures
+        confondues. Maintenant c'est par voiture : on rattache l'ancien historique à la bonne voiture et on renomme
+        son fichier APEX (« APEX Porsche 911 GT3 R Bahrain Course.svm »)."""
+        if not folder or not self.model:
+            return
+        new, old = self._hkey(folder), self._hkey(folder, "")
+        if new in self.history or old not in self.history:
+            return
+        h = self.history[old]
+        src = None
+        for f in [self.dir / folder / h["apex_file"]] if h.get("apex_file") else []:
+            if f.exists():
+                src = f
+        if src is None:
+            vers = [v for v in h.get("versions", []) if v.get("backup") and Path(v["backup"]).exists()]
+            src = Path(vers[-1]["backup"]) if vers else None
+        try:
+            if src is None or car_model(Setup(src).vehicle) != self.model:
+                return            # l'ancien historique est celui d'une autre voiture : on n'y touche pas
+        except Exception:
+            return
+        self.history[new] = self.history.pop(old)
+        af = h.get("apex_file")
+        if af and (self.dir / folder / af).exists():
+            try:
+                cur = Setup(self.dir / folder / af)
+                target = self.apex_name(folder, cur)
+                if cur.is_apex() and target != af and not (self.dir / folder / target).exists():
+                    (self.dir / folder / af).rename(self.dir / folder / target)
+                    print(f"  Setup renommé avec la voiture : {af} -> {target}")
+                    if h.get("current") == af:
+                        h["current"] = target
+                    h["apex_file"] = target
+            except Exception as e:
+                print(f"  Renommage du setup APEX impossible : {e!r}")
+        self._save()
 
     LMP2_FAMILY = {"LMP2", "LMP2_ELMS"}
     VEHICLE_DEFAULT = {"LMP2_ELMS": "ELMS2025 LMP2_ELMS Oreca_07", "LMP2": "LMP2 Oreca_07 WEC2026"}
@@ -363,7 +420,8 @@ class Workshop:
             sc = setup_class(base.vehicle)
             if sc and not self.target_vehicle(base):   # converti : le nom suit la voiture en piste
                 t = series_tag(sc)
-        return f"APEX {folder} {t} {self.mode}.svm" if t else f"APEX {folder} {self.mode}.svm"
+        m = (car_model(base.vehicle) if base is not None else "") or self.model
+        return "APEX " + " ".join(x for x in (m, folder, t, self.mode) if x) + ".svm"
 
     def class_mismatch(self, track: str) -> dict | None:
         """Le setup choisi a été fait pour une autre version de la voiture (ex. LMP2 standard sur la LMP2 ELMS) ?"""
@@ -381,6 +439,7 @@ class Workshop:
 
     def state(self, track: str) -> dict:
         folder = self.cfg.get("setup_folder_for", {}).get(track) or self.guess_folder(track)
+        self._migrate(folder)
         h = self.history.get(self._hkey(folder), {})
         return {"ok": self.ok(), "dir": str(self.dir), "track": track, "folder": folder, "mode": self.mode,
                 "current": h.get("current"), "label": self._label(h), "apex_file": h.get("apex_file"),
@@ -405,6 +464,14 @@ class Workshop:
 
     def select(self, track: str, folder: str, file: str) -> None:
         self.cfg.setdefault("setup_folder_for", {})[track] = folder
+        try:
+            m = car_model(Setup(self.dir / folder / file).vehicle)
+        except Exception:
+            m = ""
+        if m:
+            self.model = m        # chaque voiture a son historique et son fichier APEX
+            self.cfg["last_setup_model"] = m
+        self._migrate(folder)
         h = self.history.setdefault(self._hkey(folder), {"versions": [], "results": {}})
         h["current"] = file
         self.factory = False      # un vrai fichier est choisi (par toi ou détecté dans LMU)
@@ -502,6 +569,13 @@ class Workshop:
         file = name if name.endswith(".svm") else name + ".svm"
         if not (self.dir / folder / file).exists():
             return None
+        try:
+            m = car_model(Setup(self.dir / folder / file).vehicle)
+        except Exception:
+            m = ""
+        if m and m != self.model:
+            self.model = m            # changement de voiture : on passe à son historique
+            self.cfg["last_setup_model"] = m
         st = self.state(track)
         if st["folder"] == folder and st["current"] == file:
             return None
@@ -806,7 +880,8 @@ class Workshop:
             return {"error": L(f"Un fichier « {name} » existe déjà et n'a pas été créé par Apex Radio : je n'y touche pas.",
                                f"A file \"{name}\" already exists and wasn't created by Apex Radio: I won't touch it.")}
         h = self.history.setdefault(self._hkey(st["folder"]), {"versions": [], "results": {}})
-        bdir = BACKUPS / re.sub(r"[^A-Za-z0-9_-]+", "_", f"{st['folder']}_{self.mode}")
+        mdl = car_model(base.vehicle) or self.model
+        bdir = BACKUPS / re.sub(r"[^A-Za-z0-9_-]+", "_", "_".join(x for x in (st["folder"], mdl, self.mode) if x))
         bdir.mkdir(parents=True, exist_ok=True)
         # v1 = le setup de départ (le tien), gardé pour pouvoir y revenir
         if not h["versions"]:
@@ -836,10 +911,24 @@ class Workshop:
                               "changes": [{k: c[k] for k in ("label", "key", "section", "from", "to", "from_disp", "to_disp", "why") if k in c}
                                           for c in changes]})
         h["current"], h["apex_file"], h["apex_label"] = name, name, f"v{n}"
+        self._prune(h)
         self._save()
         self.scan(force=True)
         return {"file": name, "version": f"v{n}", "error": None,
                 "converted": (series_tag(setup_class(base.vehicle)), self.tag()) if conv else None}
+
+    KEEP = 3      # versions APEX gardées en plus de la v1 (ton setup de départ, jamais effacé)
+
+    def _prune(self, h: dict) -> None:
+        """Efface les vieilles versions : on garde la v1 (ton setup de départ) et les 3 dernières."""
+        apex = [v for v in h.get("versions", []) if not v.get("origin")]
+        for v in apex[:-self.KEEP]:
+            try:
+                Path(v.get("backup", "")).unlink(missing_ok=True)
+            except Exception:
+                pass
+            h.get("results", {}).pop(v.get("label"), None)
+            h["versions"].remove(v)
 
     def restore(self, track: str, version: int) -> dict:
         """Remet une ancienne version dans le fichier APEX du circuit."""

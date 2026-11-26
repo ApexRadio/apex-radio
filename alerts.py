@@ -415,13 +415,17 @@ class GapTrend:
         self.ahead, self.behind = self.ahead[-4:], self.behind[-4:]
         if s.in_pits or s.laps_done < 2:
             return
+        import annonces
+        mode = annonces.get("ecarts")
+        if mode == "demande":
+            return      # le pilote ne veut les écarts que s'il les demande
         # tendance (on se rapproche, il s'échappe…) : chaque tour en « motivant », 1 sur 2 en normal, 1 sur 4 en discret
-        every = {"discret": 4, "normal": 2, "motivant": 1}[ENCOURAGE]
+        every = 1 if mode == "chaque" else {"discret": 4, "normal": 2, "motivant": 1}[ENCOURAGE]
         msg = None
         if self.count % every == 0:
             msg = self._ahead_msg() or self._behind_msg()
         # sinon, un simple point sur les écarts de temps en temps
-        point_every = {"discret": 6, "normal": 3, "motivant": 2}[ENCOURAGE]
+        point_every = 1 if mode == "chaque" else {"discret": 6, "normal": 3, "motivant": 2}[ENCOURAGE]
         if not msg and self.count - self.last_point >= point_every:
             msg = self._point(s)
         if msg:

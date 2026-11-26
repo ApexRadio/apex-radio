@@ -54,6 +54,10 @@ class Incidents:
             # tu es toi-même arrêté ou au ralenti (sortie, tête-à-queue) : ce jaune, c'est sans doute pour toi
             self._ysecs = secs
             return
+        import annonces
+        if not annonces.get("jaunes"):
+            self._ysecs = secs        # le pilote a coupé les annonces de drapeaux jaunes
+            return
         ann = self.__dict__.setdefault("_yann", set())   # jaunes vraiment annoncés (pour « levés »)
         mine = me.get("s") if me else None
         for sec in new:
@@ -81,7 +85,8 @@ class Incidents:
             # « levés » seulement si on avait annoncé un jaune (sinon « levés » tombait de nulle part)
             self._yann = set()
             self.said["yclear"] = now
-            self.say(None, L("Drapeaux jaunes levés, la piste est dégagée.", "Yellows cleared, the track is clear."))
+            if annonces.get("jaunes_leves"):
+                self.say(None, L("Drapeaux jaunes levés, la piste est dégagée.", "Yellows cleared, the track is clear."))
         self._ysecs = secs
 
     def update(self, s) -> None:

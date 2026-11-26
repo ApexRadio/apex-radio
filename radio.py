@@ -405,6 +405,22 @@ class Radio:
     def _ptt_pressed(self) -> bool:
         return self._pressed(self.cfg.get("ptt")) or self._ext_held()
 
+    def _bip(self) -> None:
+        """Petit bip radio quand le micro s'ouvre : le pilote sait que l'ingé l'écoute (réglable)."""
+        try:
+            import annonces
+            if not annonces.get("bip"):
+                return
+            import numpy as np
+            import sounddevice as sd
+            sr = 22050
+            t = np.arange(int(sr * 0.07)) / sr
+            tone = lambda f: 0.22 * np.sin(2 * np.pi * f * t) * np.minimum(1, np.minimum(t, t[::-1]) / 0.008)
+            beep = np.concatenate([tone(1250), np.zeros(int(sr * 0.025)), tone(1650)]).astype("float32")
+            sd.play(beep, sr)       # sans attendre : l'écoute a déjà commencé
+        except Exception as e:
+            print(f"  [bip] {e!r}")
+
     def ext_ptt(self, down: bool) -> None:
         """Bouton radio externe (touche Stream Deck) : appui / relâchement envoyés par l'API."""
         if down:
@@ -534,6 +550,7 @@ class Radio:
                             hush()          # l'ingé se tait quand le pilote prend la parole
                         self._start_rec()
                         self._rec_t0 = time.time()
+                        self._bip()
                         if toggle:
                             print("  Bouton radio : début d'écoute (parle, j'arrête toute seule à la fin de ta phrase)")
                         self.state = "écoute"

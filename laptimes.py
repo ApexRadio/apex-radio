@@ -14,6 +14,7 @@ import time
 from pathlib import Path
 
 from telemetry import Snapshot
+import annonces
 from i18n import L as tr, dec, en
 
 HERE = Path(__file__).parent
@@ -223,6 +224,7 @@ class LapTimes:
         vs_old = [a - b for a, b in zip(sec, rec0["sectors"])] if (sec and rec0 and rec0.get("sectors")) else None
 
         et = s.elapsed
+        talk = annonces.chrono(s.session)     # réglage « Chrono et secteurs » de cette séance
         rec = self.record(s)
         valid = not invalid and not in_pits
 
@@ -236,8 +238,8 @@ class LapTimes:
             if old:
                 say(None, tr(f"Nouveau record perso ici ! {_say_lap(lap)}, tu gagnes {_dixiemes(old - lap)}.",
                              f"New personal best here! {_say_lap(lap)}, {_dixiemes(old - lap)} quicker.")
-                    + (self._sector_bits(vs_old) if s.session != "course" else ""), elapsed=et)
-            elif self._lap_count > 1:
+                    + (self._sector_bits(vs_old) if s.session != "course" and talk else ""), elapsed=et)
+            elif self._lap_count > 1 and talk:
                 say(None, tr(f"Premier chrono de référence sur ce circuit : {_say_lap(lap)}.",
                              f"First reference lap on this track: {_say_lap(lap)}."), elapsed=et)
         if valid and sec and rec:
@@ -255,7 +257,9 @@ class LapTimes:
 
         if invalid and not in_pits and not told:
             say(None, tr("Tour invalidé, attention aux limites de piste.", "Lap invalidated, watch the track limits."), elapsed=et)
-        elif valid and s.session in ("qualif", "essais") and rec0 and lap >= rec0["lap"] and vs_old:
+        elif not talk:
+            pass      # le pilote ne veut pas le chrono ni les secteurs dans cette séance (il peut toujours demander)
+        elif valid and s.session in ("qualif", "essais", "warmup") and rec0 and lap >= rec0["lap"] and vs_old:
             # qualif / essais : où tu as gagné et perdu par rapport à ton record
             say(None, tr(f"{_say_lap(lap)}, à {_dixiemes(lap - rec0['lap'])} du record.",
                          f"{_say_lap(lap)}, {_dixiemes(lap - rec0['lap'])} off your best.") + self._sector_bits(vs_old), elapsed=et)

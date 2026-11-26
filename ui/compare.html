@@ -5,117 +5,195 @@
 <link rel="icon" href="/favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Chakra+Petch:wght@600;700&family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#06070B; --panel:#0B0F16; --line:#1A2330; --line2:#1E2A38; --text:#E8EDF5; --muted:#9AA6B8;
-    --accent:#00E5FF; --accent-rgb:0,229,255; --b:#FF9F1C; --good:#3DFFA2; --alert:#FF2E88;
+  :root { --bg:#05070B; --panel:#0A0E15; --panel2:#0D121A; --line:#18212D; --line2:#1E2A38; --text:#E8EDF5; --muted:#8C99AC; --dim:#55657a;
+    --accent:#00E5FF; --accent-rgb:0,229,255; --b:#FF9F1C; --b-rgb:255,159,28; --good:#3DFFA2; --alert:#FF2E88; --delta:#B57BFF;
     --mono:"JetBrains Mono",Consolas,monospace; --title:"Chakra Petch","Segoe UI",sans-serif; }
   * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.4 Inter,"Segoe UI",system-ui,sans-serif; }
-  header { display:flex; align-items:center; gap:16px; padding:16px 22px; flex-wrap:wrap; }
-  .logo { font-family:Orbitron,var(--title); font-weight:900; font-size:22px; letter-spacing:.12em; color:var(--accent);
+  body { margin:0; background:radial-gradient(ellipse at 20% -10%,#0D1B26 0%,var(--bg) 45%); color:var(--text);
+    font:14px/1.4 Inter,"Segoe UI",system-ui,sans-serif; min-height:100vh; }
+  header { display:flex; align-items:center; gap:14px; padding:14px 20px 10px; flex-wrap:wrap; }
+  .logo { font-family:Orbitron,var(--title); font-weight:900; font-size:20px; letter-spacing:.12em; color:var(--accent);
     text-shadow:0 0 14px rgba(var(--accent-rgb),.7); text-decoration:none; }
-  h1 { font-family:var(--title); font-size:20px; letter-spacing:.1em; margin:0; text-transform:uppercase; }
-  main { padding:0 22px 30px; display:grid; gap:14px; grid-template-columns: minmax(0,1fr) 380px; }
-  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px 16px; min-width:0; }
-  h2 { margin:0 0 8px; font-size:12px; letter-spacing:.14em; color:var(--muted); font-weight:600; text-transform:uppercase; }
-  .pick { display:flex; gap:14px; flex-wrap:wrap; align-items:center; grid-column:1/-1; }
-  .pick label { font-size:12px; letter-spacing:.1em; color:var(--muted); text-transform:uppercase; margin-right:6px; }
-  .btn { font:inherit; font-size:13px; color:var(--text); background:#0D1219; border:1px solid var(--line2); border-radius:999px; padding:7px 14px; cursor:pointer; }
+  h1 { font-family:var(--title); font-size:16px; letter-spacing:.14em; margin:0; text-transform:uppercase; color:var(--muted); }
+  .btn { font:inherit; font-size:13px; color:var(--text); background:var(--panel2); border:1px solid var(--line2); border-radius:999px;
+    padding:6px 13px; cursor:pointer; text-decoration:none; white-space:nowrap; }
   .btn:hover { border-color:var(--accent); }
-  body.drag main { outline:2px dashed var(--accent); outline-offset:-6px; }
-  select { font:inherit; color:var(--text); background:var(--bg); border:1px solid var(--line2); border-radius:8px; padding:6px 8px; }
-  .sw { display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:-1px; margin-right:4px; }
-  .times { display:flex; gap:24px; align-items:baseline; flex-wrap:wrap; font-family:var(--mono); }
-  .times b { font-size:26px; }
+  .btn.on { background:var(--text); color:#06070B; border-color:var(--text); }
+  select { font:inherit; color:var(--text); background:var(--panel2); border:1px solid var(--line2); border-radius:8px; padding:6px 8px; max-width:100%; }
+  .card { background:linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,0)) var(--panel); border:1px solid var(--line);
+    border-radius:16px; min-width:0; }
+  .lbl { font-size:11px; letter-spacing:.14em; color:var(--muted); font-weight:600; text-transform:uppercase; }
+  .mono { font-family:var(--mono); }
   .gain { color:var(--good); } .loss { color:var(--alert); }
-  svg { display:block; width:100%; }
-  .chart { position:relative; }
-  .chart .lab { display:block; margin:14px 0 4px; font-size:11px; letter-spacing:.12em; color:var(--muted); text-transform:uppercase; pointer-events:none; }
-  #tip { position:fixed; pointer-events:none; background:#0B0F16ee; border:1px solid var(--line2); border-radius:8px; padding:8px 10px;
-    font:12px/1.5 var(--mono); display:none; z-index:10; white-space:nowrap; }
-  table { width:100%; border-collapse:collapse; font-size:14px; }
-  td { padding:6px 4px; border-bottom:1px solid var(--line); }
-  td.n { text-align:right; font-family:var(--mono); }
-  tr.cn { cursor:pointer; } tr.cn:hover td { background:rgba(var(--accent-rgb),.06); }
-  .empty { padding:40px; text-align:center; color:var(--muted); grid-column:1/-1; }
-  .side { display:flex; flex-direction:column; gap:14px; }
-  @media (max-width: 1100px) { main { grid-template-columns: 1fr; } }
+  main { padding:0 20px 24px; display:flex; flex-direction:column; gap:12px; }
+  /* barre de choix */
+  .pick { display:flex; gap:12px; flex-wrap:wrap; align-items:center; padding:10px 14px; }
+  .pick .grp { display:flex; align-items:center; gap:8px; min-width:0; }
+  .dot { width:10px; height:10px; border-radius:50%; display:inline-block; flex:none; }
+  #msg { flex-basis:100%; font-size:12px; color:var(--muted); }
+  body.drag main { outline:2px dashed var(--accent); outline-offset:4px; border-radius:16px; }
+  /* cartes pilotes */
+  .drivers { display:grid; grid-template-columns:1fr 1fr auto; gap:12px; }
+  .drv { display:flex; align-items:center; gap:14px; padding:12px 16px; position:relative; overflow:hidden; }
+  .drv::before { content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--c); box-shadow:0 0 14px var(--c); }
+  .drv .av { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:Orbitron;
+    font-weight:900; color:#06070B; background:var(--c); box-shadow:0 0 16px var(--c); flex:none; }
+  .drv .nm { font-weight:600; font-size:15px; } .drv .sub { color:var(--muted); font-size:12px; }
+  .drv .tm { margin-left:auto; text-align:right; } .drv .tm b { font-family:var(--mono); font-size:24px; letter-spacing:.02em; }
+  .deltabox { display:flex; flex-direction:column; justify-content:center; align-items:center; padding:10px 22px; }
+  .deltabox b { font-family:var(--mono); font-size:26px; }
+  /* zone principale */
+  .work { display:grid; grid-template-columns:minmax(320px,0.9fr) minmax(0,1.3fr); gap:12px; }
+  .left { display:flex; flex-direction:column; gap:12px; min-width:0; }
+  .mapcard { padding:12px 14px; position:relative; }
+  #map { width:100%; aspect-ratio:1.25; display:block; }
+  .maphead { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .legend { font-size:11px; color:var(--muted); display:flex; gap:12px; align-items:center; }
+  .legend i { display:inline-block; width:16px; height:4px; border-radius:2px; vertical-align:middle; margin-right:4px; }
+  /* carte virage */
+  .seg { padding:12px 14px; display:flex; flex-direction:column; gap:10px; }
+  .segnav { display:flex; align-items:center; gap:10px; }
+  .segnav button { width:30px; height:30px; padding:0; border-radius:50%; }
+  .segnav .t { flex:1; text-align:center; font-family:var(--title); font-weight:700; font-size:16px; letter-spacing:.04em; }
+  .segrow { display:grid; grid-template-columns:auto 1fr auto; gap:8px; align-items:center; font-family:var(--mono); font-size:13px; }
+  .advice { display:flex; gap:10px; align-items:flex-start; background:var(--panel2); border:1px solid var(--line2); border-radius:12px; padding:10px 12px; }
+  .advice .ic { font-size:18px; line-height:1; }
+  .advice p { margin:0; font-size:14px; } .advice small { color:var(--muted); display:block; margin-top:4px; font-family:var(--mono); font-size:11.5px; }
+  /* télémétrie */
+  .tele { padding:6px 0 0; display:flex; flex-direction:column; }
+  .tabs { display:flex; gap:4px; padding:4px 14px 8px; border-bottom:1px solid var(--line); }
+  .tabs .t { font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:6px 10px; border-bottom:2px solid transparent; }
+  .tabs .t.on { color:var(--text); border-color:var(--good); }
+  .panel { position:relative; padding:8px 14px 4px; border-bottom:1px solid var(--line); }
+  .panel:last-child { border-bottom:0; }
+  .panel .ph { display:flex; justify-content:space-between; align-items:center; margin-bottom:2px; }
+  .panel .vals { font-family:var(--mono); font-size:12px; display:flex; gap:12px; }
+  .panel svg { display:block; width:100%; cursor:crosshair; }
+  /* lecture */
+  .player { display:flex; align-items:center; gap:12px; padding:10px 14px; flex-wrap:wrap; }
+  #play { width:38px; height:38px; border-radius:50%; padding:0; font-size:15px; background:var(--text); color:#06070B; border:0; cursor:pointer; flex:none; }
+  #clock { font-family:var(--mono); font-size:20px; min-width:110px; }
+  #scrub { flex:1; min-width:160px; accent-color:var(--good); }
+  .seglbl { font-family:var(--mono); font-size:13px; }
+  .toggle { display:flex; background:var(--panel2); border:1px solid var(--line2); border-radius:999px; padding:2px; }
+  .toggle button { border:0; background:transparent; color:var(--muted); font:inherit; font-size:12px; padding:5px 12px; border-radius:999px; cursor:pointer; }
+  .toggle button.on { background:var(--text); color:#06070B; }
+  /* tableau des virages */
+  details.all { padding:8px 14px; }
+  details.all summary { cursor:pointer; color:var(--muted); font-size:12px; letter-spacing:.12em; text-transform:uppercase; }
+  table { width:100%; border-collapse:collapse; font-size:13px; margin-top:8px; }
+  td { padding:6px 4px; border-bottom:1px solid var(--line); } td.n { text-align:right; font-family:var(--mono); }
+  tr.cn { cursor:pointer; } tr.cn:hover td, tr.cn.sel td { background:rgba(var(--accent-rgb),.06); }
+  .empty { padding:40px; text-align:center; color:var(--muted); }
+  @media (max-width:1100px) { .work { grid-template-columns:1fr; } .drivers { grid-template-columns:1fr 1fr; } .deltabox { grid-column:1/-1; } }
+  @media (max-width:640px) { .drivers { grid-template-columns:1fr; } }
 </style></head>
 <body>
 <header>
-  <a id="back" class="btn" href="/" style="text-decoration:none">← <span id="tback">Tableau de bord</span></a>
+  <a id="back" class="btn" href="/">← <span id="tback">Tableau de bord</span></a>
   <a class="logo" href="/">APEX//RADIO</a>
   <h1 id="title">Comparer mes tours</h1>
 </header>
 <main>
   <div class="card pick">
-    <span><label id="lt">Circuit · voiture</label><select id="sess"></select></span>
-    <span><span class="sw" style="background:var(--accent)"></span><label>A</label><select id="la"></select></span>
-    <span><span class="sw" style="background:var(--b)"></span><label>B</label><select id="lb"></select></span>
+    <span class="grp"><span class="lbl" id="lt">Circuit · voiture</span><select id="sess"></select></span>
+    <span class="grp"><span class="dot" style="background:var(--accent)"></span><select id="la"></select></span>
+    <span class="grp"><span class="dot" style="background:var(--b)"></span><select id="lb"></select></span>
     <span style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
       <button id="shareA" class="btn">⇪ <span id="tsa">Partager A</span></button>
       <button id="shareB" class="btn">⇪ <span id="tsb">Partager B</span></button>
       <button id="imp" class="btn">⇩ <span id="timp">Importer un tour</span></button>
       <input id="file" type="file" accept=".apexlap,.json" multiple hidden>
     </span>
-    <div id="msg" style="flex-basis:100%;font-size:13px;color:var(--muted)"></div>
+    <div id="msg"></div>
   </div>
   <div id="none" class="card empty" hidden></div>
-  <div id="charts" class="card" hidden>
-    <div class="times" id="times"></div>
-    <div class="chart"><span class="lab" id="l1">Vitesse (km/h)</span><svg id="cv" height="220"></svg></div>
-    <div class="chart"><span class="lab" id="l2">Écart (s) — au-dessus : B perd du temps</span><svg id="cd" height="120"></svg></div>
-    <div class="chart"><span class="lab" id="l3">Gaz / frein (%)</span><svg id="ct" height="150"></svg></div>
-  </div>
-  <div class="side" id="side" hidden>
-    <div class="card"><h2 id="hmap">Où B gagne / perd</h2><svg id="map" viewBox="0 0 100 100"></svg></div>
-    <div class="card"><h2 id="hcorn">Virage par virage</h2><table id="corn"></table></div>
+  <div id="view" hidden>
+    <div class="drivers">
+      <div class="card drv" style="--c:var(--accent)"><div class="av">A</div><div><div class="nm" id="na">–</div><div class="sub" id="sa"></div></div>
+        <div class="tm"><b id="ta">–</b><div class="sub" id="ra"></div></div></div>
+      <div class="card drv" style="--c:var(--b)"><div class="av">B</div><div><div class="nm" id="nb">–</div><div class="sub" id="sb"></div></div>
+        <div class="tm"><b id="tb">–</b><div class="sub" id="rb"></div></div></div>
+      <div class="card deltabox"><span class="lbl">Δ B − A</span><b id="dt">–</b></div>
+    </div>
+    <div class="work" style="margin-top:12px">
+      <div class="left">
+        <div class="card mapcard">
+          <div class="maphead"><span class="lbl" id="hmap">Circuit</span>
+            <span class="legend"><span><i style="background:var(--good)"></i><span id="lg1">B gagne</span></span><span><i style="background:var(--alert)"></i><span id="lg2">B perd</span></span></span></div>
+          <svg id="map" viewBox="0 0 100 80"></svg>
+        </div>
+        <div class="card seg">
+          <div class="segnav"><button class="btn" id="segprev">‹</button><div class="t" id="segt">–</div><button class="btn" id="segnext">›</button></div>
+          <div class="segrow"><span class="dot" style="background:var(--accent)"></span><span id="segna">A</span><span id="segta">–</span></div>
+          <div class="segrow"><span class="dot" style="background:var(--b)"></span><span id="segnb">B</span><span id="segtb">–</span></div>
+          <div class="advice"><span class="ic">🎙️</span><div><p id="adv">–</p><small id="advd"></small></div></div>
+        </div>
+      </div>
+      <div class="card tele">
+        <div class="tabs"><span class="t on" id="ttel">Télémétrie</span></div>
+        <div class="panel"><div class="ph"><span class="lbl" id="l0">Écart</span><span class="vals" id="v0"></span></div><svg id="c0" height="110"></svg></div>
+        <div class="panel"><div class="ph"><span class="lbl" id="l1">Gaz</span><span class="vals" id="v1"></span></div><svg id="c1" height="86"></svg></div>
+        <div class="panel"><div class="ph"><span class="lbl" id="l2">Frein</span><span class="vals" id="v2"></span></div><svg id="c2" height="86"></svg></div>
+        <div class="panel"><div class="ph"><span class="lbl" id="l3">Vitesse</span><span class="vals" id="v3"></span></div><svg id="c3" height="150"></svg></div>
+        <div class="player">
+          <button id="play" title="Lecture">▶</button>
+          <span id="clock">0:00.000</span>
+          <input id="scrub" type="range" min="0" max="1000" value="0">
+          <span class="seglbl">Δ <span id="cdelta">–</span></span>
+          <div class="toggle"><button id="mt">Temps</button><button id="md" class="on">Distance</button></div>
+          <div class="toggle"><button id="sp1" class="on">×1</button><button id="sp2">×2</button><button id="sp4">×4</button></div>
+        </div>
+      </div>
+    </div>
+    <details class="card all" style="margin-top:12px"><summary id="hcorn">Tous les virages</summary><table id="corn"></table></details>
   </div>
 </main>
-<div id="tip"></div>
 <script src="/fsel.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 let LANG = "fr";
 const T = (fr, en) => LANG === "en" ? en : fr;
-let D = null, A = null, B = null, cur = null, LAPS = [], want = null, SESS = [];
+let D = null, A = null, B = null, LAPS = [], want = null, SESS = [];
+let CA = null, CB = null, DL = null, ROWS = [], SEG = 0, F = 0, MODE = "dist", SPEED = 1, PLAY = null, MAP = null;
 const NB = 500;
 
 function fmt(t) { if (t == null) return "–"; const m = Math.floor(t / 60), s = t - m * 60; return `${m}:${s.toFixed(3).padStart(6, "0")}`; }
 function sgn(x, d = 3) { return (x > 0 ? "+" : x < 0 ? "−" : "±") + Math.abs(x).toFixed(d); }
 function cname(c) { return c.name ? (LANG === "en" ? c.name[1] : c.name[0]) : `${T("Virage", "Turn")} ${c.id}`; }
+function esc(s) { return String(s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+function sessLabel(s) { return `${esc(s.track)}${s.wet ? " 🌧️" : ""} · ${esc(s.car)} (${s.game === "acevo" ? "AC EVO" : s.game === "ams2" ? "AMS2" : "LMU"})`; }
 
-// temps cumulé le long du tour, recalé sur le vrai chrono
+// temps cumulé le long du tour (case par case), recalé sur le vrai chrono
 function cum(l) {
   const L = l.L || 5000, step = L / NB, out = [0]; let t = 0;
   for (let i = 0; i < NB; i++) { t += step / Math.max(5, l.v[i]) * 3.6; out.push(t); }
   const k = l.lap / t; return out.map(x => x * k);
 }
+// case où l'on est à l'instant t (temps depuis la ligne)
+function idxAt(c, t) { let lo = 0, hi = NB; while (lo < hi) { const m = (lo + hi) >> 1; if (c[m] < t) lo = m + 1; else hi = m; } return Math.min(NB - 1, Math.max(0, lo - 1)); }
 
 async function init() {
   try { const st = await (await fetch("/api/state")).json(); LANG = st.lang || "fr"; } catch (e) {}
   document.documentElement.lang = LANG;
-  $("title").textContent = T("Comparer mes tours", "Compare my laps");
-  $("tback").textContent = T("Tableau de bord", "Dashboard");
-  $("lt").textContent = T("Circuit · voiture", "Track · car");
-  $("l1").textContent = T("Vitesse (km/h)", "Speed (km/h)");
-  $("l2").textContent = T("Écart (s) · au-dessus de 0 : B perd du temps", "Gap (s) · above 0: B is losing time");
-  $("l3").textContent = T("Gaz / frein (%)", "Throttle / brake (%)");
-  $("hmap").textContent = T("Où B gagne / perd du temps", "Where B gains / loses time");
-  $("hcorn").textContent = T("Virage par virage (B face à A)", "Corner by corner (B vs A)");
-  $("tsa").textContent = T("Partager A", "Share A"); $("tsb").textContent = T("Partager B", "Share B");
-  $("timp").textContent = T("Importer un tour", "Import a lap");
+  const tx = { title: ["Comparer mes tours", "Compare my laps"], tback: ["Tableau de bord", "Dashboard"], lt: ["Circuit · voiture", "Track · car"],
+    tsa: ["Partager A", "Share A"], tsb: ["Partager B", "Share B"], timp: ["Importer un tour", "Import a lap"], hmap: ["Circuit · à l'instant choisi", "Track · at the chosen moment"],
+    lg1: ["B gagne", "B gains"], lg2: ["B perd", "B loses"], ttel: ["Télémétrie", "Telemetry"], l0: ["Écart B − A (s)", "Gap B − A (s)"],
+    l1: ["Gaz (%)", "Throttle (%)"], l2: ["Frein (%)", "Brake (%)"], l3: ["Vitesse (km/h)", "Speed (km/h)"], hcorn: ["Tous les virages", "All corners"],
+    mt: ["Temps", "Time"], md: ["Distance", "Distance"] };
+  for (const k in tx) $(k).textContent = T(...tx[k]);
   $("msg").textContent = T("Astuce : glisse un fichier .apexlap d'un autre pilote n'importe où sur cette page pour le comparer au tien.",
     "Tip: drop another driver's .apexlap file anywhere on this page to compare it with yours.");
   const list = await (await fetch("/api/laps")).json();
   if (!list.length) {
-    $("none").hidden = false; $("charts").hidden = true;
+    $("none").hidden = false; $("view").hidden = true;
     $("none").innerHTML = T("Pas encore de tours enregistrés.<br>Roule quelques tours propres : Apex garde ton meilleur tour et tes 10 derniers, circuit par circuit.",
       "No laps recorded yet.<br>Drive a few clean laps: Apex keeps your best lap and your last 10, track by track.");
     $("shareA").hidden = $("shareB").hidden = true;
     return;
   }
   SESS = list;
-  $("sess").innerHTML = list.map(s => `<option value="${s.id}">${esc(s.track)}${s.wet ? " 🌧️" : ""} · ${esc(s.car)} (${s.game === "acevo" ? "AC EVO" : s.game === "ams2" ? "AMS2" : "LMU"})</option>`).join("");
+  $("sess").innerHTML = list.map(s => `<option value="${s.id}">${sessLabel(s)}</option>`).join("");
   $("sess").onchange = () => load($("sess").value);
   load(list[0].id);
 }
@@ -143,11 +221,10 @@ async function importFiles(files) {
 async function reloadList(id) {
   const list = await (await fetch("/api/laps")).json();
   SESS = list; $("none").hidden = true; $("shareA").hidden = $("shareB").hidden = false;
-  $("sess").innerHTML = list.map(s => `<option value="${s.id}">${esc(s.track)}${s.wet ? " 🌧️" : ""} · ${esc(s.car)} (${s.game === "acevo" ? "AC EVO" : s.game === "ams2" ? "AMS2" : "LMU"})</option>`).join("");
+  $("sess").innerHTML = list.map(s => `<option value="${s.id}">${sessLabel(s)}</option>`).join("");
   $("sess").value = id;
   D = await (await fetch("/api/laps/" + id)).json();
-  const n = (D.shared || []).length;
-  want = n ? "s0" : null;
+  want = (D.shared || []).length ? "s0" : null;
   load(id);
 }
 $("shareA").onclick = () => share("la");
@@ -158,14 +235,13 @@ addEventListener("dragover", e => { e.preventDefault(); document.body.classList.
 addEventListener("dragleave", e => { if (e.target === document.documentElement || e.clientX <= 0) document.body.classList.remove("drag"); });
 addEventListener("drop", e => { e.preventDefault(); document.body.classList.remove("drag"); importFiles([...e.dataTransfer.files]); });
 
-function esc(s) { return String(s || "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
-
 async function load(id) {
+  stop();
   D = await (await fetch("/api/laps/" + id)).json();
   const laps = [];
-  if (D.best) laps.push({ k: "best", l: D.best, t: `★ ${T("Meilleur", "Best")} ${fmt(D.best.lap)} (${D.best.date})` });
-  (D.recent || []).forEach((l, i) => laps.push({ k: "r" + i, l, t: `${fmt(l.lap)} (${l.date})` }));
-  (D.shared || []).forEach((l, i) => laps.push({ k: "s" + i, l, t: `👤 ${esc(l.driver)} ${fmt(l.lap)}` }));
+  if (D.best) laps.push({ k: "best", l: D.best, who: T("Toi · meilleur tour", "You · best lap"), t: `★ ${T("Meilleur", "Best")} ${fmt(D.best.lap)} (${D.best.date})` });
+  (D.recent || []).forEach((l, i) => laps.push({ k: "r" + i, l, who: T("Toi", "You") + (i === 0 ? T(" · dernier tour", " · last lap") : ""), t: `${fmt(l.lap)} (${l.date})` }));
+  (D.shared || []).forEach((l, i) => laps.push({ k: "s" + i, l, who: "👤 " + (l.driver || "?"), t: `👤 ${esc(l.driver)} ${fmt(l.lap)}` }));
   LAPS = laps;
   const opts = laps.map(x => `<option value="${x.k}">${x.t}</option>`).join("");
   $("la").innerHTML = opts; $("lb").innerHTML = opts;
@@ -174,119 +250,225 @@ async function load(id) {
   if (D.recent && D.recent.length) $("lb").value = "r0";
   if (want) { $("lb").value = want; want = null; }
   if (D.best && D.recent && D.recent[0] && D.recent[0].lap === D.best.lap && laps.length > 2) $("lb").value = "r1";
-  const pick = k => laps.find(x => x.k === k).l;
-  $("la").onchange = $("lb").onchange = () => { A = pick($("la").value); B = pick($("lb").value); draw(); };
-  A = pick($("la").value); B = pick($("lb").value);
-  $("charts").hidden = false; $("side").hidden = false;
-  draw();
+  $("la").onchange = $("lb").onchange = () => { pick(); draw(); };
+  pick(); $("view").hidden = false; draw();
+}
+function pick() {
+  const a = LAPS.find(x => x.k === $("la").value), b = LAPS.find(x => x.k === $("lb").value);
+  A = a.l; B = b.l; A.who = a.who; B.who = b.who;
 }
 
+// ------------------------------------------------------------ analyse virage par virage
+function win(c) {   // cases de l'approche (freinage) à la sortie du virage
+  const i0 = Math.floor(((c.start - 0.035 + 1) % 1) * NB), i1 = Math.floor(((c.end + 0.02) % 1) * NB), out = [];
+  for (let i = i0; ; i = (i + 1) % NB) { out.push(i); if (i === i1 || out.length > NB) break; }
+  return out;
+}
+function corners() {
+  const step = (A.L || B.L || 4000) / NB;
+  return (D.corners || []).map(c => {
+    const w = win(c), i0 = w[0], i1 = w[w.length - 1];
+    const g = i1 >= i0 ? DL[i1] - DL[i0] : (DL[NB - 1] - DL[i0]) + DL[i1];
+    const tA = i1 >= i0 ? CA[i1] - CA[i0] : CA[NB] - CA[i0] + CA[i1], tB = i1 >= i0 ? CB[i1] - CB[i0] : CB[NB] - CB[i0] + CB[i1];
+    const an = l => {
+      const bk = w.findIndex(i => l.b[i] > 12);                          // début du freinage
+      let ap = 0; w.forEach((i, k) => { if (l.v[i] < l.v[w[ap]]) ap = k; });   // point le plus lent (corde)
+      const th = w.findIndex((i, k) => k > ap && l.t[i] > 90);           // gaz à fond en sortie
+      const peak = Math.max(...w.map(i => l.b[i]));
+      return { bk, ap, th, vmin: l.v[w[ap]], peak };
+    };
+    return { c, w, g, tA, tB, a: an(A), b: an(B), step };
+  });
+}
+function advice(r) {
+  const m = k => Math.max(5, Math.round(Math.abs(k) * r.step / 5) * 5);   // mètres, arrondis à 5
+  const out = [], det = [];
+  const dB = (r.a.bk >= 0 && r.b.bk >= 0) ? r.b.bk - r.a.bk : null;        // < 0 : B freine plus tôt
+  const dV = r.b.vmin - r.a.vmin;
+  const dT = (r.a.th >= 0 && r.b.th >= 0) ? r.b.th - r.a.th : null;        // > 0 : B remet les gaz plus tard
+  if (dB !== null) det.push(T(`freinage ${dB < 0 ? m(dB) + " m plus tôt" : dB > 0 ? m(dB) + " m plus tard" : "au même endroit"}`,
+                              `braking ${dB < 0 ? m(dB) + " m earlier" : dB > 0 ? m(dB) + " m later" : "at the same spot"}`));
+  det.push(T(`corde ${Math.round(r.b.vmin)} km/h (${dV >= 0 ? "+" : "−"}${Math.abs(Math.round(dV))})`, `apex ${Math.round(r.b.vmin)} km/h (${dV >= 0 ? "+" : "−"}${Math.abs(Math.round(dV))})`));
+  if (dT !== null) det.push(T(`gaz ${dT > 0 ? m(dT) + " m plus tard" : dT < 0 ? m(dT) + " m plus tôt" : "au même endroit"}`,
+                              `throttle ${dT > 0 ? m(dT) + " m later" : dT < 0 ? m(dT) + " m earlier" : "at the same spot"}`));
+  // tête-à-queue, sortie de piste, voiture presque arrêtée : ce n'est pas un problème de pilotage « normal »
+  const inc = l => l.vmin < 35 || false;
+  if (inc(r.b) && !inc(r.a)) return { text: T(`Incident ici sur le tour B (tête-à-queue ou sortie : ${Math.round(r.b.vmin)} km/h au plus lent) : ce virage ne compte pas vraiment. Regarde plutôt les autres.`,
+    `Incident here on lap B (spin or off: ${Math.round(r.b.vmin)} km/h at the slowest): this corner doesn't really count. Look at the others.`), det, inc: true };
+  if (inc(r.a) && !inc(r.b)) return { text: T("Incident sur le tour A ici : la comparaison n'a pas de sens dans ce virage.", "Incident on lap A here: comparing this corner makes no sense."), det, inc: true };
+  if (Math.abs(r.g) < 0.04) return { text: T("Virage bien négocié : même temps que A, garde ce rythme.", "Well taken: same time as A, keep it up."), det };
+  if (r.g < 0) {
+    const why = dV > 2 ? T(`tu passes ${Math.round(dV)} km/h plus vite à la corde`, `you carry ${Math.round(dV)} km/h more at the apex`)
+      : dB > 0 ? T(`tu freines ${m(dB)} m plus tard`, `you brake ${m(dB)} m later`)
+      : dT < 0 ? T(`tu remets les gaz ${m(dT)} m plus tôt`, `you get on the throttle ${m(dT)} m earlier`) : T("ta trajectoire est plus efficace", "your line is more efficient");
+    return { text: T(`B est plus rapide ici (${sgn(r.g, 2)} s) : ${why}. À garder !`, `B is quicker here (${sgn(r.g, 2)} s): ${why}. Keep it!`), det };
+  }
+  // B perd du temps : la cause qui pèse le plus
+  const c = [];
+  if (dB !== null && dB < -1) c.push([Math.abs(dB) * 1.0, T(`Freine environ ${m(dB)} m plus tard, en relâchant la pédale progressivement à mesure que tu tournes.`,
+                                                      `Brake about ${m(dB)} m later, easing off the pedal as you turn in.`)]);
+  if (dV < -2) c.push([Math.abs(dV) * 0.9, T(`Garde plus de vitesse au point de corde : ${Math.abs(Math.round(dV))} km/h de moins que A. Relâche le frein plus tôt et laisse rouler la voiture.`,
+                                            `Carry more speed to the apex: ${Math.abs(Math.round(dV))} km/h less than A. Release the brake earlier and let the car roll.`)]);
+  if (dT !== null && dT > 1) c.push([dT * 1.0, T(`Remets les gaz environ ${m(dT)} m plus tôt en sortie, dès que la voiture est en ligne.`,
+                                                `Get on the throttle about ${m(dT)} m earlier on exit, as soon as the car is straight.`)]);
+  if (dB !== null && dB > 1 && dV < 0) c.push([dB * 0.8, T(`Tu freines ${m(dB)} m plus tard mais tu perds la sortie : freine un peu plus tôt pour mieux ressortir.`,
+                                                           `You brake ${m(dB)} m later but lose the exit: brake a bit earlier to get a better exit.`)]);
+  if (r.b.peak < r.a.peak - 15) c.push([8, T(`Appuie plus fort au début du freinage (${Math.round(r.b.peak)} % contre ${Math.round(r.a.peak)} %), puis relâche.`,
+                                             `Hit the brake harder at the start (${Math.round(r.b.peak)}% vs ${Math.round(r.a.peak)}%), then release.`)]);
+  c.sort((x, y) => y[0] - x[0]);
+  return { text: c.length ? c[0][1] : T("Le temps se perd sur la trajectoire : regarde la courbe de vitesse dans ce virage.", "Time is lost on the line: check the speed trace in this corner."), det };
+}
+
+// ------------------------------------------------------------ dessin
+let XS = null;   // abscisse de chaque case (distance ou temps de A), 0..1
+function xs() { return Array.from({ length: NB }, (_, i) => MODE === "time" ? CA[i] / CA[NB] : i / (NB - 1)); }
 function path(arr, w, h, lo, hi) {
-  return arr.map((y, i) => `${i ? "L" : "M"}${(i / (arr.length - 1) * w).toFixed(1)},${(h - (y - lo) / (hi - lo) * h).toFixed(1)}`).join("");
+  return arr.map((y, i) => `${i ? "L" : "M"}${(XS[i] * w).toFixed(1)},${(h - (y - lo) / (hi - lo) * h).toFixed(1)}`).join("");
+}
+function area(arr, w, h, lo, hi, base) {
+  const y0 = (h - (base - lo) / (hi - lo) * h).toFixed(1);
+  return path(arr, w, h, lo, hi) + `L${(XS[NB - 1] * w).toFixed(1)},${y0}L0,${y0}Z`;
 }
 function bands(w, h) {
   return (D.corners || []).map(c => {
-    const x1 = c.start * w, x2 = ((c.end - c.start + 1) % 1) * w + x1;
-    return `<rect x="${x1}" y="0" width="${Math.max(2, x2 - x1)}" height="${h}" fill="rgba(255,255,255,.035)"/>` +
-      `<text x="${c.mid * w}" y="${h - 4}" fill="#55657a" font-size="10" text-anchor="middle">${c.id}</text>`;
+    const a = XS[Math.floor(c.start * NB) % NB], b = XS[Math.floor(c.end * NB) % NB];
+    const x1 = a * w, x2 = (b >= a ? b : 1) * w;
+    return `<rect x="${x1}" y="0" width="${Math.max(2, x2 - x1)}" height="${h}" fill="rgba(255,255,255,.028)"/>` +
+      `<text x="${(x1 + x2) / 2}" y="${h - 3}" fill="#3d4a5c" font-size="9" text-anchor="middle">${c.id}</text>`;
   }).join("");
 }
-
-function draw() {
-  const ca = cum(A), cb = cum(B), dl = cb.map((t, i) => t - ca[i]).slice(0, NB);
-  const diff = B.lap - A.lap;
-  $("times").innerHTML = `<span><span class="sw" style="background:var(--accent)"></span>A <b>${fmt(A.lap)}</b></span>` +
-    `<span><span class="sw" style="background:var(--b)"></span>B <b>${fmt(B.lap)}</b></span>` +
-    `<span class="${diff > 0 ? "loss" : "gain"}"><b>${sgn(diff)}</b> s</span>`;
-  const W = $("cv").clientWidth || 900;
-  // vitesse
-  let lo = Math.min(...A.v, ...B.v), hi = Math.max(...A.v, ...B.v); lo = Math.max(0, lo - 10); hi += 10;
-  let H = 220;
-  $("cv").setAttribute("viewBox", `0 0 ${W} ${H}`);
-  $("cv").innerHTML = bands(W, H) + `<path d="${path(A.v, W, H, lo, hi)}" stroke="var(--accent)" fill="none" stroke-width="1.6"/>` +
-    `<path d="${path(B.v, W, H, lo, hi)}" stroke="var(--b)" fill="none" stroke-width="1.6"/>` +
-    `<text x="4" y="11" fill="#55657a" font-size="10">${Math.round(hi)}</text><text x="4" y="${H - 3}" fill="#55657a" font-size="10">${Math.round(lo)}</text><line id="cur1" y1="0" y2="${H}" stroke="#fff4"/>`;
-  // écart
-  H = 120; const m = Math.max(0.2, ...dl.map(Math.abs));
-  $("cd").setAttribute("viewBox", `0 0 ${W} ${H}`);
-  $("cd").innerHTML = bands(W, H) + `<line x1="0" x2="${W}" y1="${H / 2}" y2="${H / 2}" stroke="#ffffff22"/>` +
-    `<path d="${path(dl, W, H, -m, m)}" stroke="#fff" fill="none" stroke-width="1.6"/>` +
-    `<text x="4" y="11" fill="#55657a" font-size="10">${sgn(m, 2)} s</text><text x="4" y="${H - 3}" fill="#55657a" font-size="10">${sgn(-m, 2)} s</text><line id="cur2" y1="0" y2="${H}" stroke="#fff4"/>`;
-  // gaz / frein
-  H = 150;
-  $("ct").setAttribute("viewBox", `0 0 ${W} ${H}`);
-  $("ct").innerHTML = bands(W, H) +
-    `<path d="${path(A.t, W, H, -5, 105)}" stroke="var(--accent)" fill="none" stroke-width="1.3"/>` +
-    `<path d="${path(B.t, W, H, -5, 105)}" stroke="var(--b)" fill="none" stroke-width="1.3"/>` +
-    `<path d="${path(A.b, W, H, -5, 105)}" stroke="var(--accent)" fill="none" stroke-width="1.3" stroke-dasharray="4 3" opacity=".8"/>` +
-    `<path d="${path(B.b, W, H, -5, 105)}" stroke="var(--b)" fill="none" stroke-width="1.3" stroke-dasharray="4 3" opacity=".8"/>` +
-    `<text x="${W - 6}" y="12" fill="#55657a" font-size="10" text-anchor="end">${T("trait plein : gaz · pointillés : frein", "solid: throttle · dashed: brake")}</text>` +
-    `<line id="cur3" y1="0" y2="${H}" stroke="#fff4"/>`;
-  drawMap(dl); drawCorners(dl);
-  ["cv", "cd", "ct"].forEach(id => { const el = $(id); el.onmousemove = e => hover(e, el, ca, cb, dl); el.onmouseleave = () => hover(null); });
+function chart(id, inner, H) {
+  const el = $(id), W = el.clientWidth || 800;
+  el.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  el.innerHTML = bands(W, H) + inner(W, H) + `<line class="cur" y1="0" y2="${H}" stroke="#fff" stroke-opacity=".55" stroke-width="1"/>`;
+  el.onmousemove = e => { const r = el.getBoundingClientRect(); setX((e.clientX - r.left) / r.width); };
+  el.onclick = e => { const r = el.getBoundingClientRect(); setX((e.clientX - r.left) / r.width); };
 }
-
-function drawMap(dl) {
+function draw() {
+  CA = cum(A); CB = cum(B); DL = CB.map((t, i) => t - CA[i]).slice(0, NB); XS = xs();
+  const diff = B.lap - A.lap;
+  $("na").textContent = A.who; $("nb").textContent = B.who;
+  $("sa").textContent = A.date || ""; $("sb").textContent = B.date || "";
+  $("ta").textContent = fmt(A.lap); $("tb").textContent = fmt(B.lap);
+  $("ra").textContent = T("référence", "reference"); $("rb").innerHTML = `<span class="${diff > 0 ? "loss" : "gain"}">${sgn(diff)} s</span>`;
+  $("dt").textContent = sgn(diff) + " s"; $("dt").className = diff > 0 ? "loss" : "gain";
+  const m = Math.max(0.2, ...DL.map(Math.abs)) * 1.1;
+  chart("c0", (W, H) => `<line x1="0" x2="${W}" y1="${H / 2}" y2="${H / 2}" stroke="#ffffff1a"/>` +
+    `<defs><linearGradient id="gd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B57BFF" stop-opacity=".55"/><stop offset="1" stop-color="#B57BFF" stop-opacity=".05"/></linearGradient></defs>` +
+    `<path d="${area(DL, W, H, -m, m, 0)}" fill="url(#gd)"/><path d="${path(DL, W, H, -m, m)}" stroke="var(--delta)" fill="none" stroke-width="1.8"/>` +
+    `<text x="4" y="11" fill="#55657a" font-size="10">${sgn(m, 2)}</text><text x="4" y="${H - 14}" fill="#55657a" font-size="10">${sgn(-m, 2)}</text>`, 110);
+  const two = (key, W, H, lo, hi, col) => `<path d="${area(A[key], W, H, lo, hi, lo)}" fill="rgba(var(--accent-rgb),.10)"/>` +
+    `<path d="${path(B[key], W, H, lo, hi)}" stroke="var(--b)" fill="none" stroke-width="1.7"/>` +
+    `<path d="${path(A[key], W, H, lo, hi)}" stroke="var(--accent)" fill="none" stroke-width="1.4" stroke-dasharray="3 3"/>`;
+  chart("c1", (W, H) => two("t", W, H, -3, 103), 86);
+  chart("c2", (W, H) => two("b", W, H, -3, 103), 86);
+  let lo = Math.min(...A.v, ...B.v), hi = Math.max(...A.v, ...B.v); lo = Math.max(0, lo - 8); hi += 8;
+  chart("c3", (W, H) => two("v", W, H, lo, hi) +
+    `<text x="4" y="11" fill="#55657a" font-size="10">${Math.round(hi)}</text><text x="4" y="${H - 14}" fill="#55657a" font-size="10">${Math.round(lo)}</text>`, 150);
+  ROWS = corners();
+  drawMap(); drawTable();
+  let worst = -1;
+  ROWS.forEach((r, i) => { if (!advice(r).inc && (worst < 0 || r.g > ROWS[worst].g)) worst = i; });
+  if (worst < 0) worst = 0;
+  showSeg(ROWS.length ? worst : -1, true);
+}
+function drawMap() {
   const pts = D.map;
-  if (!pts || pts.filter(Boolean).length < 50) { $("map").innerHTML = `<text x="50" y="50" fill="#55657a" font-size="5" text-anchor="middle">${T("Carte pas encore enregistrée", "Map not recorded yet")}</text>`; return; }
-  const ok = pts.filter(Boolean), xs = ok.map(p => p[0]), zs = ok.map(p => p[1]);
-  const x0 = Math.min(...xs), x1 = Math.max(...xs), z0 = Math.min(...zs), z1 = Math.max(...zs);
-  const s = 92 / Math.max(x1 - x0, z1 - z0), ox = (100 - (x1 - x0) * s) / 2, oz = (100 - (z1 - z0) * s) / 2;
+  if (!pts || pts.filter(Boolean).length < 50) { MAP = null; $("map").innerHTML = `<text x="50" y="40" fill="#55657a" font-size="4" text-anchor="middle">${T("Carte pas encore enregistrée", "Map not recorded yet")}</text>`; return; }
+  const ok = pts.filter(Boolean), xs_ = ok.map(p => p[0]), zs = ok.map(p => p[1]);
+  const x0 = Math.min(...xs_), x1 = Math.max(...xs_), z0 = Math.min(...zs), z1 = Math.max(...zs);
+  const s = Math.min(92 / (x1 - x0), 72 / (z1 - z0)), ox = (100 - (x1 - x0) * s) / 2, oz = (80 - (z1 - z0) * s) / 2;
   const P = p => [ox + (p[0] - x0) * s, oz + (z1 - p[1]) * s];
-  cur = { P, pts };
-  let seg = ""; const n = pts.length;
+  MAP = { P, pts };
+  const n = pts.length; let base = "", seg = "";
   for (let i = 0; i < n; i++) {
     const a = pts[i], b = pts[(i + 1) % n]; if (!a || !b) continue;
-    const i0 = Math.floor(i / n * NB), i1 = Math.min(NB - 1, Math.floor((i + 1) / n * NB));
-    const g = dl[i1] - dl[i0];     // > 0 : B perd du temps sur ce bout
-    const k = Math.min(1, Math.abs(g) / 0.03);
-    const col = g > 0.002 ? `rgba(255,46,136,${0.35 + 0.65 * k})` : g < -0.002 ? `rgba(61,255,162,${0.35 + 0.65 * k})` : "#2a3646";
     const [ax, az] = P(a), [bx, bz] = P(b);
-    seg += `<line x1="${ax.toFixed(2)}" y1="${az.toFixed(2)}" x2="${bx.toFixed(2)}" y2="${bz.toFixed(2)}" stroke="${col}" stroke-width="1.6" stroke-linecap="round"/>`;
+    base += `M${ax.toFixed(2)},${az.toFixed(2)}L${bx.toFixed(2)},${bz.toFixed(2)}`;
+    const i0 = Math.floor(i / n * NB), i1 = Math.min(NB - 1, Math.floor((i + 1) / n * NB));
+    const g = DL[i1] - DL[i0], k = Math.min(1, Math.abs(g) / 0.025);
+    const col = g > 0.002 ? `rgba(255,46,136,${0.3 + 0.7 * k})` : g < -0.002 ? `rgba(61,255,162,${0.3 + 0.7 * k})` : "rgba(140,153,172,.35)";
+    seg += `<line x1="${ax.toFixed(2)}" y1="${az.toFixed(2)}" x2="${bx.toFixed(2)}" y2="${bz.toFixed(2)}" stroke="${col}" stroke-width="1.1" stroke-linecap="round"/>`;
   }
   const lab = (D.corners || []).map(c => { const p = pts[Math.round(c.mid * n) % n]; if (!p) return ""; const [x, z] = P(p);
-    return `<text x="${x.toFixed(1)}" y="${(z - 2).toFixed(1)}" fill="#9AA6B8" font-size="3" text-anchor="middle">${c.id}</text>`; }).join("");
+    return `<g class="cl" data-id="${c.id}" style="cursor:pointer"><circle cx="${x.toFixed(1)}" cy="${z.toFixed(1)}" r="2.1" fill="#0A0E15" stroke="#2a3646" stroke-width=".35"/>` +
+      `<text x="${x.toFixed(1)}" y="${(z + 0.9).toFixed(1)}" fill="#9AA6B8" font-size="2.3" text-anchor="middle" font-family="JetBrains Mono">${c.id}</text></g>`; }).join("");
   const p0 = pts[0] ? P(pts[0]) : [0, 0];
-  $("map").innerHTML = seg + lab + `<circle cx="${p0[0]}" cy="${p0[1]}" r="1.2" fill="#fff"/><circle id="mdot" r="1.6" fill="var(--b)" visibility="hidden"/>`;
+  $("map").innerHTML = `<path d="${base}" stroke="#141c27" stroke-width="5" stroke-linecap="round" fill="none"/>` +
+    `<path d="${base}" stroke="#1d2836" stroke-width="3.6" stroke-linecap="round" fill="none"/>` + seg +
+    `<path id="mseg" d="" stroke="#fff" stroke-opacity=".9" stroke-width="2.2" stroke-linecap="round" fill="none"/>` + lab +
+    `<rect x="${(p0[0] - 0.4).toFixed(2)}" y="${(p0[1] - 2).toFixed(2)}" width=".8" height="4" fill="#fff"/>` +
+    `<circle id="ma" r="1.5" fill="var(--accent)" stroke="#06070B" stroke-width=".4" style="filter:drop-shadow(0 0 1.5px var(--accent))"/>` +
+    `<circle id="mb" r="1.5" fill="var(--b)" stroke="#06070B" stroke-width=".4" style="filter:drop-shadow(0 0 1.5px var(--b))"/>`;
+  document.querySelectorAll("#map .cl").forEach(g => g.onclick = () => { const i = ROWS.findIndex(r => String(r.c.id) === g.dataset.id); if (i >= 0) showSeg(i); });
 }
+function mapPos(i) { if (!MAP) return null; const p = MAP.pts[Math.floor(i / NB * MAP.pts.length) % MAP.pts.length]; return p ? MAP.P(p) : null; }
+function drawTable() {
+  const rows = ROWS.map((r, i) => ({ r, i })).sort((x, y) => y.r.g - x.r.g);
+  $("corn").innerHTML = `<tr><td class="lbl">${T("Virage", "Corner")}</td><td class="n lbl">${T("écart", "gap")}</td><td class="n lbl">${T("vit. corde A / B", "apex speed A / B")}</td><td class="lbl">${T("conseil", "tip")}</td></tr>` +
+    rows.map(({ r, i }) => `<tr class="cn" data-i="${i}"><td>${esc(cname(r.c))}</td><td class="n ${r.g > 0.005 ? "loss" : r.g < -0.005 ? "gain" : ""}">${sgn(r.g, 2)} s</td>` +
+      `<td class="n">${Math.round(r.a.vmin)} / ${Math.round(r.b.vmin)}</td><td style="color:var(--muted)">${esc(advice(r).text)}</td></tr>`).join("");
+  document.querySelectorAll("tr.cn").forEach(tr => tr.onclick = () => { showSeg(+tr.dataset.i); scrollTo({ top: 0, behavior: "smooth" }); });
+}
+function showSeg(i, quiet) {
+  if (i < 0 || !ROWS.length) { $("segt").textContent = T("Pas de virages connus", "No corners known yet"); return; }
+  SEG = (i + ROWS.length) % ROWS.length;
+  const r = ROWS[SEG], ad = advice(r);
+  $("segt").innerHTML = `${esc(cname(r.c))} <span class="${r.g > 0.005 ? "loss" : r.g < -0.005 ? "gain" : ""}" style="font-family:var(--mono);font-size:14px">${sgn(r.g, 3)}</span>`;
+  $("segna").textContent = A.who; $("segnb").textContent = B.who;
+  $("segta").textContent = r.tA.toFixed(3) + " s"; $("segtb").textContent = r.tB.toFixed(3) + " s";
+  $("adv").textContent = ad.text; $("advd").textContent = "B : " + ad.det.join(" · ");
+  if (MAP) { let d = ""; r.w.forEach((k, j) => { const p = mapPos(k); if (p) d += (j ? "L" : "M") + p[0].toFixed(2) + "," + p[1].toFixed(2); }); $("mseg").setAttribute("d", d); }
+  document.querySelectorAll("tr.cn").forEach(tr => tr.classList.toggle("sel", +tr.dataset.i === SEG));
+  if (!quiet) { stop(); setIdx(r.w[0]); }
+  else setIdx(r.w[0]);
+}
+$("segprev").onclick = () => showSeg(SEG - 1);
+$("segnext").onclick = () => showSeg(SEG + 1);
 
-function drawCorners(dl) {
-  const rows = (D.corners || []).map(c => {
-    const i0 = Math.floor(((c.start - 0.03 + 1) % 1) * NB), i1 = Math.min(NB - 1, Math.floor(((c.end + 0.02) % 1) * NB));
-    const g = i1 >= i0 ? dl[i1] - dl[i0] : (dl[NB - 1] - dl[i0]) + dl[i1];
-    const vA = Math.min(...span(A.v, c)), vB = Math.min(...span(B.v, c));
-    return { c, g, vA, vB };
-  });
-  rows.sort((a, b) => b.g - a.g);
-  $("corn").innerHTML = `<tr><td class="muted" style="font-size:12px">${T("Virage", "Corner")}</td><td class="n muted" style="font-size:12px">${T("écart", "gap")}</td><td class="n muted" style="font-size:12px">${T("vit. mini A / B", "min speed A / B")}</td></tr>` +
-    rows.map(r => `<tr class="cn" data-m="${r.c.mid}"><td>${esc(cname(r.c))}</td><td class="n ${r.g > 0.005 ? "loss" : r.g < -0.005 ? "gain" : ""}">${sgn(r.g, 2)} s</td>` +
-      `<td class="n">${Math.round(r.vA)} / ${Math.round(r.vB)}</td></tr>`).join("");
-  document.querySelectorAll("tr.cn").forEach(tr => tr.onmouseenter = () => mark(+tr.dataset.m));
+// ------------------------------------------------------------ curseur (souris, barre, lecture)
+function setX(x) {   // x = abscisse 0..1 dans le graphique
+  x = Math.min(0.999, Math.max(0, x));
+  let i = 0; while (i < NB - 1 && XS[i + 1] <= x) i++;
+  setIdx(i);
 }
-function span(arr, c) {
-  const i0 = Math.floor(c.start * NB), i1 = Math.floor(c.end * NB), out = [];
-  for (let i = i0; ; i = (i + 1) % NB) { out.push(arr[i]); if (i === i1 || out.length > NB) break; }
-  return out;
+function setIdx(i) {
+  F = i;
+  const x = XS[i];
+  document.querySelectorAll("line.cur").forEach(l => { const W = +l.ownerSVGElement.getAttribute("viewBox").split(" ")[2]; l.setAttribute("x1", x * W); l.setAttribute("x2", x * W); });
+  const t = CB[i], j = idxAt(CA, t);      // où était A au même instant
+  const pb = mapPos(i), pa = mapPos(j);
+  if (pb) { $("mb").setAttribute("cx", pb[0]); $("mb").setAttribute("cy", pb[1]); }
+  if (pa) { $("ma").setAttribute("cx", pa[0]); $("ma").setAttribute("cy", pa[1]); }
+  const d = DL[i];
+  $("v0").innerHTML = `<span class="${d > 0 ? "loss" : "gain"}">${sgn(d)} s</span>`;
+  const v = (k, u) => `<span style="color:var(--accent)">${Math.round(A[k][i])}${u}</span><span style="color:var(--b)">${Math.round(B[k][i])}${u}</span>`;
+  $("v1").innerHTML = v("t", "%"); $("v2").innerHTML = v("b", "%"); $("v3").innerHTML = v("v", "");
+  $("clock").textContent = fmt(MODE === "time" ? CA[i] : CB[i]);
+  $("cdelta").innerHTML = `<span class="${d > 0 ? "loss" : "gain"}">${sgn(d)}</span>`;
+  if (!PLAY) $("scrub").value = Math.round(x * 1000);
 }
-
-function mark(f) {
-  ["cur1", "cur2", "cur3"].forEach(id => { const el = $(id); if (!el) return; const W = +el.ownerSVGElement.getAttribute("viewBox").split(" ")[2]; el.setAttribute("x1", f * W); el.setAttribute("x2", f * W); });
-  if (cur) { const p = cur.pts[Math.floor(f * cur.pts.length) % cur.pts.length]; const d = $("mdot");
-    if (p && d) { const [x, z] = cur.P(p); d.setAttribute("cx", x); d.setAttribute("cy", z); d.setAttribute("visibility", "visible"); } }
-}
-function hover(e, el, ca, cb, dl) {
-  const tip = $("tip");
-  if (!e) { tip.style.display = "none"; return; }
-  const r = el.getBoundingClientRect(), f = Math.min(0.999, Math.max(0, (e.clientX - r.left) / r.width)), i = Math.floor(f * NB);
-  mark(f);
-  const c = (D.corners || []).find(c => f >= c.start - 0.01 && f <= c.end + 0.01);
-  tip.innerHTML = (c ? `<b>${esc(cname(c))}</b><br>` : "") +
-    `<span style="color:var(--accent)">A</span> ${Math.round(A.v[i])} km/h · ${T("gaz", "thr")} ${A.t[i]}% · ${T("frein", "brk")} ${A.b[i]}%<br>` +
-    `<span style="color:var(--b)">B</span> ${Math.round(B.v[i])} km/h · ${T("gaz", "thr")} ${B.t[i]}% · ${T("frein", "brk")} ${B.b[i]}%<br>` +
-    `${T("écart", "gap")} <span class="${dl[i] > 0 ? "loss" : "gain"}">${sgn(dl[i])} s</span>`;
-  tip.style.display = "block"; tip.style.left = Math.min(innerWidth - 300, e.clientX + 14) + "px"; tip.style.top = (e.clientY + 14) + "px";
-}
-addEventListener("resize", () => { if (A && B) draw(); });
+$("scrub").oninput = e => { stop(); setX(e.target.value / 1000); };
+function stop() { if (PLAY) { cancelAnimationFrame(PLAY.raf); PLAY = null; } $("play").textContent = "▶"; }
+$("play").onclick = () => {
+  if (PLAY) { stop(); return; }
+  if (F >= NB - 2) setIdx(0);
+  $("play").textContent = "❚❚";
+  const t0 = performance.now(), start = CB[F];
+  const tick = now => {
+    const t = start + (now - t0) / 1000 * SPEED;
+    if (t >= CB[NB]) { setIdx(NB - 1); stop(); return; }
+    setIdx(idxAt(CB, t)); $("scrub").value = Math.round(XS[F] * 1000);
+    PLAY.raf = requestAnimationFrame(tick);
+  };
+  PLAY = { raf: requestAnimationFrame(tick) };
+};
+function setMode(m) { MODE = m; $("mt").classList.toggle("on", m === "time"); $("md").classList.toggle("on", m === "dist"); const f = F; draw(); setIdx(f); }
+$("mt").onclick = () => setMode("time"); $("md").onclick = () => setMode("dist");
+[1, 2, 4].forEach(k => $("sp" + k).onclick = () => { SPEED = k; [1, 2, 4].forEach(q => $("sp" + q).classList.toggle("on", q === k)); if (PLAY) { stop(); $("play").click(); } });
+addEventListener("keydown", e => { if (e.target.tagName === "SELECT" || e.target.tagName === "INPUT") return;
+  if (e.code === "Space") { e.preventDefault(); $("play").click(); } else if (e.key === "ArrowRight") showSeg(SEG + 1); else if (e.key === "ArrowLeft") showSeg(SEG - 1); });
+addEventListener("resize", () => { if (A && B) { const f = F; draw(); setIdx(f); } });
 init();
 </script>
 </body></html>

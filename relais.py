@@ -221,6 +221,37 @@ def tank_minutes(cfg: dict, live: float | None = None, snap=None) -> tuple[int |
     return (r, "memo") if r else (None, "")
 
 
+RACE_DIR = DATA / "courses partagées"
+
+
+def race_export(cfg: dict) -> dict:
+    """« Envoyer la course à l'équipe » : un fichier .apexrace (Documents\\Apex Radio\\courses partagées), copié pour
+    être collé dans Discord. Les coéquipiers le glissent dans leur page Relais : même course, rien à recopier."""
+    c = clean(cfg)
+    out = {"apexrace": 1, "cfg": {k: v for k, v in c.items() if k != "on"}}
+    nm = re.sub(r'[<>:"/\\|?*\x00-\x1f]+', " ", c.get("name") or L("Course", "Race")).strip()[:50] or "Course"
+    fn = f"{nm}{(' - ' + c['date']) if c.get('date') else ''}.apexrace"
+    try:
+        RACE_DIR.mkdir(parents=True, exist_ok=True)
+        dst = RACE_DIR / fn
+        dst.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    except OSError as e:
+        return {"ok": False, "error": e.__class__.__name__}
+    from compare import reveal
+    return {"ok": True, "clip": reveal(dst), "file": fn}
+
+
+def race_import(x: dict) -> dict | None:
+    """Course reçue d'un coéquipier : réglages vérifiés, activée pour la prochaine course et gardée dans « Mes courses »."""
+    if not isinstance(x, dict) or x.get("apexrace") != 1 or not isinstance(x.get("cfg"), dict):
+        return None
+    cfg = clean({**x["cfg"], "on": True})
+    if not cfg["drivers"]:
+        return None
+    race_store(cfg)
+    return cfg
+
+
 def names(cfg: dict) -> list[str]:
     return cfg["drivers"] or [L("Pilote 1", "Driver 1"), L("Pilote 2", "Driver 2")]
 
@@ -593,6 +624,14 @@ def page() -> str:
         "new": ("Nouvelle course", "New race"),
         "races": ("Mes courses", "My races"), "races_none": ("— aucune course gardée —", "— no saved race —"),
         "races_pick": ("— choisir une course —", "— pick a race —"),
+        "send": ("📤 Envoyer la course à l'équipe", "📤 Send the race to the team"),
+        "imp": ("📥 Importer une course", "📥 Import a race"),
+        "sent": ("✓ Fichier copié : colle-le (Ctrl+V) dans le salon de l'équipe sur Discord. Tes coéquipiers le glissent dans leur page Relais.",
+                 "✓ File copied: paste it (Ctrl+V) in the team channel on Discord. Your teammates drop it on their Stints page."),
+        "sent2": ("✓ Fichier créé (dossier ouvert) : envoie-le à ton équipe sur Discord.", "✓ File created (folder opened): send it to your team on Discord."),
+        "imported": ("✓ Course importée et activée pour la prochaine course.", "✓ Race imported and set for the next race."),
+        "badrace": ("Ce fichier n'est pas une course Apex Radio (.apexrace).", "This file isn't an Apex Radio race (.apexrace)."),
+        "droptip": ("Astuce : glisse ici le fichier .apexrace envoyé par un coéquipier.", "Tip: drop a teammate's .apexrace file here."),
         "keep": ("Garder cette course", "Keep this race"), "kept": ("Course gardée ✓", "Race kept ✓"),
         "drop": ("Supprimer", "Delete"), "drop_sure": ("Sûr ?", "Sure?"), "new_sure": ("Sûr ? Re-clique pour effacer", "Sure? Click again to clear"),
         "plan": ("Le plan", "The plan"), "n": ("Relais", "Stint"), "who": ("Pilote", "Driver"),
@@ -667,6 +706,8 @@ th{{color:rgb(168,85,247)}}
 <tbody id="plan"></tbody></table></div>
 <div class="card" id="tlcard" hidden><h2 style="margin-top:0">{t['tl']}</h2><div id="tl"></div></div>
 <div style="margin:12px 0"><button id="sharebtn">{t['share']}</button> <button id="teambtn" hidden>{t['team']}</button> <span id="sharemsg" class="muted"></span></div>
+<div class="card" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button id="sendrace">{t['send']}</button> <button id="imprace">{t['imp']}</button>
+ <input id="racefile" type="file" accept=".apexrace,.json" hidden> <span id="racemsg" class="muted" style="font-size:13px">{t['droptip']}</span></div>
 <script>
 const T = {json.dumps(t, ensure_ascii=False)};
 const $ = id => document.getElementById(id);
@@ -782,6 +823,26 @@ function drawRaces(list, current) {{
 }}
 async function raceAction(body) {{ draw(await (await fetch("/api/relais", {{ method: "POST", body: JSON.stringify(body) }})).json(), true); }}
 $("races").onchange = () => {{ $("dropr").disabled = !$("races").value; if ($("races").value) raceAction({{ _race: "load", key: $("races").value }}); }};
+// ---- envoyer / recevoir une course entre coéquipiers (.apexrace)
+$("sendrace").onclick = async () => {{
+  const cfg = {{ race_min: (+$("rh").value || 0) * 60 + (+$("rm").value || 0), stint_min: +$("st").value, tanks: +$("tk").value, tank_min: +$("tm").value || 0, tyres: $("ty").checked, mode: $("mode").value, drivers,
+    name: $("rn").value, date: $("rd").value, start: $("rs").value, unavail: busy }};
+  $("racemsg").textContent = "…";
+  try {{ const r = await (await fetch("/api/relais/export", {{ method: "POST", body: JSON.stringify(cfg) }})).json();
+    $("racemsg").textContent = r.ok ? (r.clip ? T.sent : T.sent2) : "✗"; }} catch (_) {{ $("racemsg").textContent = "✗"; }}
+}};
+async function importRace(file) {{
+  let x = null;
+  try {{ x = JSON.parse(await file.text()); }} catch (_) {{}}
+  if (!x || x.apexrace !== 1) {{ $("racemsg").textContent = T.badrace; return; }}
+  const d = await (await fetch("/api/relais", {{ method: "POST", body: JSON.stringify({{ _race: "import", race: x }}) }})).json();
+  if (d.error) {{ $("racemsg").textContent = T.badrace; return; }}
+  draw(d, true); $("racemsg").textContent = T.imported;
+}}
+$("imprace").onclick = () => $("racefile").click();
+$("racefile").onchange = e => {{ if (e.target.files[0]) importRace(e.target.files[0]); e.target.value = ""; }};
+addEventListener("dragover", e => e.preventDefault());
+addEventListener("drop", e => {{ e.preventDefault(); const f = [...e.dataTransfer.files].find(f => /\\.(apexrace|json)$/i.test(f.name)); if (f) importRace(f); }});
 $("keep").onclick = async () => {{
   const cfg = {{ on: $("on").checked, race_min: (+$("rh").value || 0) * 60 + (+$("rm").value || 0), stint_min: +$("st").value, tanks: +$("tk").value, tank_min: +$("tm").value || 0, tyres: $("ty").checked, mode: $("mode").value, drivers,
     name: $("rn").value, date: $("rd").value, start: $("rs").value, unavail: busy }};

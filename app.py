@@ -681,6 +681,16 @@ def make_handler(state: State):
                 v.say(L("Radio en français.", "Radio in English."))
             elif self.path == "/api/voice/quiet":
                 state.toggle_quiet()
+            elif self.path == "/api/relais/export":
+                import relais
+                n = int(self.headers.get("Content-Length") or 0)
+                body = json.dumps(relais.race_export(json.loads(self.rfile.read(n) or b"{}"))).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+                return
             elif self.path in ("/api/laps/export", "/api/laps/import"):
                 import compare
                 n = int(self.headers.get("Content-Length") or 0)
@@ -777,7 +787,12 @@ def make_handler(state: State):
                 rl = getattr(state, "relay", None)
                 import relais
                 act = cfg.pop("_race", None)
-                if act == "store":
+                bad = False
+                if act == "import":
+                    got = relais.race_import(cfg.get("race"))
+                    bad = got is None
+                    cfg = got or (rl.cfg if rl else relais.load())
+                elif act == "store":
                     relais.race_store(cfg)          # garde la course… et elle reste la course active
                 elif act == "load":
                     cfg = relais.race_get(str(cfg.get("key", ""))) or (rl.cfg if rl else relais.load())
@@ -792,6 +807,8 @@ def make_handler(state: State):
                     fm, src = relais.tank_minutes(c, None, state.snap)
                     data = {"cfg": c, "plan": relais.plan(c, fm), "fuel_stint_min": fm, "fuel_src": src, "live": None,
                             "races": relais.races()}
+                if bad:
+                    data["error"] = "format"
                 body = json.dumps(data, default=lambda o: None).encode()
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")

@@ -59,6 +59,26 @@ def _safe(s: str) -> str:
     return re.sub(r'[<>:"/\\|?*\x00-\x1f]+', " ", str(s or "")).strip()[:60] or "?"
 
 
+def reveal(dst) -> bool:
+    """Met le fichier dans le presse-papiers (Ctrl+V dans Discord) et le montre dans l'Explorateur."""
+    clip = False
+    import sys
+    if sys.platform == "win32":
+        import subprocess
+        flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+        try:
+            p = str(dst).replace("'", "''")
+            clip = subprocess.run(["powershell", "-NoProfile", "-Command", f"Set-Clipboard -LiteralPath '{p}'"],
+                                  creationflags=flags, timeout=15).returncode == 0
+        except Exception:
+            pass
+        try:
+            subprocess.Popen(["explorer", "/select,", str(dst)], creationflags=flags)
+        except Exception:
+            pass
+    return clip
+
+
 def export(name: str, k: str, driver: str) -> dict:
     """« Partager ce tour » : un petit fichier .apexlap dans Documents\\Apex Radio\\tours partagés, mis dans le
     presse-papiers (Ctrl+V dans Discord) et montré dans l'Explorateur."""
@@ -86,21 +106,7 @@ def export(name: str, k: str, driver: str) -> dict:
         dst.write_text(json.dumps(out, separators=(",", ":")), encoding="utf-8")
     except OSError as e:
         return {"ok": False, "error": e.__class__.__name__}
-    clip = False
-    import sys
-    if sys.platform == "win32":
-        import subprocess
-        flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
-        try:
-            p = str(dst).replace("'", "''")
-            clip = subprocess.run(["powershell", "-NoProfile", "-Command", f"Set-Clipboard -LiteralPath '{p}'"],
-                                  creationflags=flags, timeout=15).returncode == 0
-        except Exception:
-            pass
-        try:
-            subprocess.Popen(["explorer", "/select,", str(dst)], creationflags=flags)
-        except Exception:
-            pass
+    clip = reveal(dst)
     return {"ok": True, "clip": clip, "file": fn}
 
 

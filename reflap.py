@@ -96,8 +96,9 @@ class RefLap:
             try:
                 d = json.loads(f.read_text(encoding="utf-8"))
             except Exception:
-                game, track, car = (self.key.split(" | ") + ["", "", ""])[:3]
-                d = {"key": self.key, "game": game, "track": track, "car": car, "best": None, "recent": []}
+                game, track, car, cond = (self.key.split(" | ") + ["", "", "", ""])[:4]
+                d = {"key": self.key, "game": game, "track": track, "car": car, "best": None, "recent": [],
+                     "wet": cond == "pluie"}
             item = {"lap": round(lap, 3), "date": time.strftime("%Y-%m-%d %H:%M"), "L": round(L_m, 1), **cur}
             d["recent"] = ([item] + d.get("recent", []))[:RECENT]
             if not d.get("best") or lap < d["best"]["lap"] - 0.005:
@@ -176,7 +177,9 @@ class RefLap:
         if not m or not s or not s.track or not s.track_len:
             return
         with self.lock:
-            key = f"{getattr(s, 'game', 'lmu')} | {s.track} | {s.car or s.car_class}"
+            import conditions
+            # au mouillé : tour de référence et conseils à part (on ne compare pas un virage sous la pluie au sec)
+            key = f"{getattr(s, 'game', 'lmu')} | {s.track} | {s.car or s.car_class}" + conditions.tag(conditions.wet(s))
             if key != self.key:
                 self._load(key)
                 self.lap, self.trace, self.pending = None, [], None

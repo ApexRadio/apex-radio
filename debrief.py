@@ -362,6 +362,8 @@ def records_page() -> str:
     rows = []
     for key, r in sorted(recs.items(), key=lambda kv: kv[0].lower()):
         track, _, cls = key.partition(" | ")
+        wet = cls.endswith(" | pluie")          # record fait sur piste mouillée (gardé à part du sec)
+        cls = cls.replace(" | pluie", "")
         if "démo" in track.lower():
             continue
         sec = r.get("sectors") or []
@@ -369,15 +371,15 @@ def records_page() -> str:
         ideal = sum(best) if len(best) == 3 else None
         sec_html = " · ".join(f"S{i + 1} {x:.3f}" for i, x in enumerate(sec)) if sec else ""
         # message prêt à coller dans le Discord (#chronos-laptimes)
-        share = (f"🏁 {track} · {class_name(cls)}" + (f" · {r.get('car')}" if r.get('car') else "") + f"\n⏱️ {fmt(r.get('lap'))}"
+        share = (f"🏁 {track}{' 🌧️' if wet else ''} · {class_name(cls)}" + (f" · {r.get('car')}" if r.get('car') else "") + f"\n⏱️ {fmt(r.get('lap'))}"
                  + (f"  ({' · '.join(f'S{i + 1} {x:.3f}' for i, x in enumerate(sec))})" if sec else "")
                  + (f"\n🎯 {L('Tour idéal', 'Ideal lap')} {fmt(ideal)}" if ideal else "")
                  + f"\n📅 {r.get('date', '')} · Apex Radio")
         game = game_of(track)
         rows.append(f"""<div class="rec" data-game="{game}">{_thumb(track)}
-  <div class="info"><div class="tr">{html.escape(track)}</div>
+  <div class="info"><div class="tr">{html.escape(track)}{(" · 🌧️ " + L("pluie", "wet")) if wet else ""}</div>
     <div class="muted">{html.escape(class_name(cls))} · {html.escape(r.get('car', ''))} · {html.escape(r.get('date', ''))}</div>
-    <div class="muted mono" style="font-size:13px">{sec_html}</div>{_spark(prog.get((track, cls), []))}</div>
+    <div class="muted mono" style="font-size:13px">{sec_html}</div>{_spark([] if wet else prog.get((track, cls), []))}</div>
   <div class="best"><div class="lab">{L('Meilleur tour', 'Best lap')}</div><div class="val">{fmt(r.get('lap'))}</div>
     <div class="sub">{L('tour idéal', 'ideal lap')} {fmt(ideal)}</div>
     <button class="share" data-share="{html.escape(share, quote=True)}">📋 {L('Partager sur Discord', 'Share on Discord')}</button>{_team_btn(share)}</div></div>""")

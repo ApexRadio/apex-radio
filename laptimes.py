@@ -15,6 +15,7 @@ from pathlib import Path
 
 from telemetry import Snapshot
 import annonces
+import conditions
 from i18n import L as tr, dec, en
 
 HERE = Path(__file__).parent
@@ -80,6 +81,10 @@ class LapTimes:
         self.ref_key = None
         self.session_best = None
         self.delta = None
+        self._wet_lap = False           # clé du tour en cours : piste mouillée ?
+        self._wet_n = [0, 0]            # [échantillons mouillés, total] sur le tour en cours
+        self._mixed = False             # tour fini à moitié sec, à moitié mouillé : on ne le compare à rien
+        self._wet_said = None
 
     # ------------------------------------------------------------- delta en direct
     def _trace_file(self, key: str) -> Path:
@@ -144,7 +149,8 @@ class LapTimes:
             self.session_best = lap
 
     def key(self, s: Snapshot) -> str:
-        return f"{s.track} | {s.car_class or 'Inconnue'}"
+        # au mouillé, records et tour de référence à part : on ne compare pas un tour sous la pluie au record du sec
+        return f"{s.track} | {s.car_class or 'Inconnue'}" + conditions.tag(self._wet_lap)
 
     def record(self, s: Snapshot) -> dict | None:
         return self.records.get(self.key(s))
@@ -192,11 +198,24 @@ class LapTimes:
     def update(self, s: Snapshot, say) -> None:
         if not s.on_track:
             return
+        now_wet = conditions.wet(s)
+        self._wet_n[0] += now_wet
+        self._wet_n[1] += 1
+        if self._wet_said is None:
+            self._wet_said = now_wet
+        elif now_wet != self._wet_said and not s.in_pits:
+            self._wet_said = now_wet
+            if annonces.chrono(s.session):
+                say(None, tr("Piste mouillée : je compare tes chronos avec tes tours sous la pluie, pas avec le sec.",
+                             "Wet track: I'm comparing your laps with your wet laps, not the dry ones.") if now_wet else
+                          tr("La piste sèche : on repart sur tes références du sec.",
+                             "Track's drying: back to your dry references."))
         if s.laps_done == self._laps_seen:
             self._feed_trace(s)
         if self._laps_seen is None or s.laps_done < self._laps_seen:
             self._laps_seen = s.laps_done
             self._invalid = self._in_pits = False
+            self._wet_lap, self._wet_n = now_wet, [0, 0]
             self.trace = [None] * BINS
             return
         if s.laps_done == self._laps_seen:
@@ -205,7 +224,17 @@ class LapTimes:
             self._in_pits |= s.in_pits
             return
 
-        # un tour vient d'être bouclé
+        # un tour vient d'être bouclé : sec, mouillé ou mixte selon la part du tour roulée sur piste mouillée
+        ratio = self._wet_n[0] / self._wet_n[1] if self._wet_n[1] else float(now_wet)
+        self._wet_lap = ratio >= 0.5
+        self._mixed = 0.15 < ratio < 0.85
+        try:
+            self._lap_done(s, say)
+        finally:
+            self._wet_lap, self._wet_n, self._mixed = now_wet, [0, 0], False   # le nouveau tour : état actuel
+            self._load_ref(s)
+
+    def _lap_done(self, s: Snapshot, say) -> None:
         invalid, in_pits = self._invalid, self._in_pits
         told, self._told = getattr(self, "_told", False), False
         self._lap_t0 = time.monotonic()
@@ -215,10 +244,10 @@ class LapTimes:
         self._lap_count += 1
         lap, sec = s.last_lap, s.sectors
         rec0 = self.record(s)
-        is_rec = bool(lap) and not invalid and not in_pits and s.laps_done > 1 and (rec0 is None or lap < rec0["lap"])
+        is_rec = (bool(lap) and not invalid and not in_pits and s.laps_done > 1 and not self._mixed
+                  and (rec0 is None or lap < rec0["lap"]))
         if lap:
             self._close_trace(s, lap, not invalid and not in_pits, is_rec)
-        self._feed_trace(s)
         if not lap or s.laps_done <= 1:
             return
         vs_old = [a - b for a, b in zip(sec, rec0["sectors"])] if (sec and rec0 and rec0.get("sectors")) else None
@@ -228,8 +257,8 @@ class LapTimes:
         rec = self.record(s)
         valid = not invalid and not in_pits
 
-        # --- record perso
-        if valid and (rec is None or lap < rec["lap"]):
+        # --- record perso (pas sur un tour mi-sec mi-mouillé : il ne vaut ni pour l'un ni pour l'autre)
+        if valid and not self._mixed and (rec is None or lap < rec["lap"]):
             old = rec["lap"] if rec else None
             new = {"lap": lap, "sectors": sec, "car": s.car, "date": time.strftime("%d/%m/%Y"),
                    "best_sectors": (rec or {}).get("best_sectors") or sec}
@@ -240,9 +269,11 @@ class LapTimes:
                              f"New personal best here! {_say_lap(lap)}, {_dixiemes(old - lap)} quicker.")
                     + (self._sector_bits(vs_old) if s.session != "course" and talk else ""), elapsed=et)
             elif self._lap_count > 1 and talk:
-                say(None, tr(f"Premier chrono de référence sur ce circuit : {_say_lap(lap)}.",
+                say(None, tr(f"Premier chrono de référence sur piste mouillée : {_say_lap(lap)}." if self._wet_lap else
+                             f"Premier chrono de référence sur ce circuit : {_say_lap(lap)}.",
+                             f"First wet-track reference lap: {_say_lap(lap)}." if self._wet_lap else
                              f"First reference lap on this track: {_say_lap(lap)}."), elapsed=et)
-        if valid and sec and rec:
+        if valid and sec and rec and not self._mixed:
             best = rec.get("best_sectors") or sec
             rec["best_sectors"] = [min(a, b) for a, b in zip(best, sec)]
         if valid:
@@ -257,8 +288,8 @@ class LapTimes:
 
         if invalid and not in_pits and not told:
             say(None, tr("Tour invalidé, attention aux limites de piste.", "Lap invalidated, watch the track limits."), elapsed=et)
-        elif not talk:
-            pass      # le pilote ne veut pas le chrono ni les secteurs dans cette séance (il peut toujours demander)
+        elif not talk or self._mixed:
+            pass      # pas d'annonce voulue dans cette séance, ou tour mixte sec / mouillé (comparer n'aurait pas de sens)
         elif valid and s.session in ("qualif", "essais", "warmup") and rec0 and lap >= rec0["lap"] and vs_old:
             # qualif / essais : où tu as gagné et perdu par rapport à ton record
             say(None, tr(f"{_say_lap(lap)}, à {_dixiemes(lap - rec0['lap'])} du record.",
@@ -278,7 +309,7 @@ class LapTimes:
             if abs(x) < 0.1:
                 continue
             q = _dixiemes(x)
-            pl = "s" if q.endswith("s") else ""
+            pl = ("e" if "seconde" in q else "") + ("s" if q.endswith("s") else "")   # « 1,3 seconde perdue », « 3 dixièmes perdus »
             parts.append(tr(f"{q} gagné{pl} au secteur {i + 1}", f"{q} gained in sector {i + 1}") if x < 0 else
                          tr(f"{q} perdu{pl} au secteur {i + 1}", f"{q} lost in sector {i + 1}"))
         return (" " + ", ".join(parts).capitalize() + ".") if parts else ""

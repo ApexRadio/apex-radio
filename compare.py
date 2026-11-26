@@ -16,7 +16,7 @@ def listing() -> list[dict]:
     for f in sorted(LAPS.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True):
         try:
             d = json.loads(f.read_text(encoding="utf-8"))
-            out.append({"id": f.stem, "game": d.get("game"), "track": d.get("track"), "car": d.get("car"),
+            out.append({"id": f.stem, "game": d.get("game"), "track": d.get("track"), "car": d.get("car"), "wet": bool(d.get("wet")),
                         "best": (d.get("best") or {}).get("lap"), "n": len(d.get("recent") or []),
                         "shared": len(d.get("shared") or []),
                         "date": ((d.get("recent") or [{}])[0]).get("date")})
@@ -76,7 +76,7 @@ def export(name: str, k: str, driver: str) -> dict:
         lap = None
     if not lap:
         return {"ok": False}
-    out = {"apexlap": 1, "game": d.get("game"), "track": d.get("track"), "car": d.get("car"),
+    out = {"apexlap": 1, "game": d.get("game"), "track": d.get("track"), "car": d.get("car"), "wet": bool(d.get("wet")),
            "driver": (driver or "Pilote")[:40], **{x: lap.get(x) for x in ("lap", "date", "L", "v", "b", "t")}}
     m, s = divmod(out["lap"] or 0, 60)
     fn = f"{_safe(out['track'])} - {_safe(out['car'])} - {int(m)}'{s:06.3f} - {_safe(out['driver'])}.apexlap"
@@ -116,12 +116,13 @@ def import_lap(x: dict) -> dict:
     except Exception:
         return {"ok": False, "error": "format"}
     from reflap import RefLap
-    key = f"{x.get('game') or 'lmu'} | {x['track']} | {x['car']}"
+    key = f"{x.get('game') or 'lmu'} | {x['track']} | {x['car']}" + (" | pluie" if x.get("wet") else "")
     f = LAPS / RefLap._file(key).name
     try:
         d = json.loads(f.read_text(encoding="utf-8"))
     except Exception:
-        d = {"key": key, "game": x.get("game") or "lmu", "track": x["track"], "car": x["car"], "best": None, "recent": []}
+        d = {"key": key, "game": x.get("game") or "lmu", "track": x["track"], "car": x["car"], "best": None, "recent": [],
+             "wet": bool(x.get("wet"))}
     item = {"lap": round(lap, 3), "date": str(x.get("date") or "")[:16], "L": float(x.get("L") or 0) or None,
             "driver": str(x.get("driver") or "?")[:40], **arrs}
     sh = [s for s in (d.get("shared") or []) if not (s.get("driver") == item["driver"] and abs(s["lap"] - item["lap"]) < 0.001)]

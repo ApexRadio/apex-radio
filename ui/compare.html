@@ -115,7 +115,7 @@ async function init() {
     return;
   }
   SESS = list;
-  $("sess").innerHTML = list.map(s => `<option value="${s.id}">${esc(s.track)} · ${esc(s.car)} (${s.game === "acevo" ? "AC EVO" : s.game === "ams2" ? "AMS2" : "LMU"})</option>`).join("");
+  $("sess").innerHTML = list.map(s => `<option value="${s.id}">${esc(s.track)}${s.wet ? " 🌧️" : ""} · ${esc(s.car)} (${s.game === "acevo" ? "AC EVO" : s.game === "ams2" ? "AMS2" : "LMU"})</option>`).join("");
   $("sess").onchange = () => load($("sess").value);
   load(list[0].id);
 }
@@ -143,7 +143,7 @@ async function importFiles(files) {
 async function reloadList(id) {
   const list = await (await fetch("/api/laps")).json();
   SESS = list; $("none").hidden = true; $("shareA").hidden = $("shareB").hidden = false;
-  $("sess").innerHTML = list.map(s => `<option value="${s.id}">${esc(s.track)} · ${esc(s.car)} (${s.game === "acevo" ? "AC EVO" : s.game === "ams2" ? "AMS2" : "LMU"})</option>`).join("");
+  $("sess").innerHTML = list.map(s => `<option value="${s.id}">${esc(s.track)}${s.wet ? " 🌧️" : ""} · ${esc(s.car)} (${s.game === "acevo" ? "AC EVO" : s.game === "ams2" ? "AMS2" : "LMU"})</option>`).join("");
   $("sess").value = id;
   D = await (await fetch("/api/laps/" + id)).json();
   const n = (D.shared || []).length;

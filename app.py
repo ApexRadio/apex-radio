@@ -625,6 +625,8 @@ def make_handler(state: State):
                 with state.lock:
                     body = state.payload
                 ctype = "application/json"
+            elif self.path.startswith("/api/ping"):         # « c'est bien Apex Radio sur ce port ? »
+                body, ctype = json.dumps({"app": "apex-radio", "version": UPD.version}).encode(), "application/json"
             elif self.path.startswith("/api/phone"):         # adresse de la vue téléphone (pour le QR code)
                 body, ctype = json.dumps({"url": PHONE_URL}).encode(), "application/json"
             elif self.path.split("?")[0] == "/qrcode.js":       # QR code de la vue téléphone (MIT, Kazuhiko Arase)
@@ -998,13 +1000,53 @@ class ApexServer(ThreadingHTTPServer):
         super().server_bind()
 
 
-def already_running() -> bool:
-    """Un Apex Radio répond déjà sur le port ?"""
+PORTS = range(8765, 8776)          # 8765, sinon le suivant libre (Pimax Play occupe aussi le 8765)
+PORT_FILE = LOCAL / "port.txt"
+
+
+def _port_busy(port: int) -> bool:
     try:
-        with socket.create_connection(("127.0.0.1", PORT), timeout=0.5):
+        with socket.create_connection(("127.0.0.1", port), timeout=0.5):
             return True
     except OSError:
         return False
+
+
+def is_apex(port: int) -> bool:
+    """Ce qui répond sur ce port est bien Apex Radio (et pas un autre logiciel, ex. Pimax Play) ?"""
+    import urllib.request
+    if not _port_busy(port):
+        return False
+    for path, test in (("/api/ping", lambda d: d.get("app") == "apex-radio"),
+                       ("/api/state", lambda d: "snap" in d or "demo" in d)):     # (versions sans /api/ping)
+        try:
+            with urllib.request.urlopen(f"http://127.0.0.1:{port}{path}", timeout=2) as r:
+                if test(json.load(r)):
+                    return True
+        except Exception:
+            pass
+    return False
+
+
+def find_running() -> int | None:
+    """Port d'un Apex Radio déjà lancé, ou None."""
+    try:
+        saved = [int(PORT_FILE.read_text().strip())]
+    except Exception:
+        saved = []
+    for port in dict.fromkeys(saved + list(PORTS)):
+        if is_apex(port):
+            return port
+    return None
+
+
+def already_running() -> bool:
+    """Un Apex Radio répond déjà (sur 8765 ou sur le port de secours) ?"""
+    global PORT
+    p = find_running()
+    if p:
+        PORT = p
+    return p is not None
 
 
 def replace_other_mode(demo: bool) -> bool:
@@ -1025,7 +1067,7 @@ def replace_other_mode(demo: bool) -> bool:
         pass
     for _ in range(40):
         time.sleep(0.25)
-        if not already_running():
+        if not is_apex(PORT):
             return True
     return False
 
@@ -1268,6 +1310,7 @@ def send_journal() -> dict:
 
 
 def main() -> None:
+    global PHONE_URL, PORT
     # une 2e fenêtre lancée pendant qu'Apex tourne ne doit pas effacer le journal de celui qui tourne
     if already_running() and "--demo" not in sys.argv:
         print("\n  Apex Radio tourne déjà : j'ouvre le tableau de bord existant.")
@@ -1287,7 +1330,6 @@ def main() -> None:
     ap.add_argument("--no-tray", action="store_true", help="pas d'icône près de l'horloge")
     args = ap.parse_args()
 
-    global PHONE_URL
     PHONE_URL = f"http://{local_ip()}:{PORT}/tel"
     if already_running() and not replace_other_mode(args.demo):
         # avant de charger la voix : on rouvre juste la fenêtre existante
@@ -1296,13 +1338,30 @@ def main() -> None:
         sys.exit(0)
     state = State()
     state.demo = args.demo
+    server = None
+    for port in PORTS:
+        if _port_busy(port):
+            if is_apex(port):
+                print("\n  Apex Radio tourne déjà : j'ouvre le tableau de bord existant.")
+                print("  (pour passer en démo ou en direct, clique d'abord sur QUITTER dans le tableau de bord)\n")
+                desktop.show_existing(f"http://localhost:{port}")
+                sys.exit(0)
+            print(f"  Le port {port} est déjà pris par un autre logiciel (ex. Pimax Play) : j'essaie le suivant.")
+            continue
+        try:
+            server = ApexServer(("0.0.0.0", port), make_handler(state))
+            PORT = port
+            break
+        except OSError:
+            print(f"  Le port {port} est déjà pris : j'essaie le suivant.")
+    if server is None:
+        print("  Aucun port libre entre 8765 et 8775 : ferme les autres logiciels et relance Apex Radio.")
+        sys.exit(1)
     try:
-        server = ApexServer(("0.0.0.0", PORT), make_handler(state))
+        PORT_FILE.write_text(str(PORT))
     except OSError:
-        print("\n  Apex Radio tourne déjà : j'ouvre le tableau de bord existant.")
-        print("  (pour passer en démo ou en direct, clique d'abord sur QUITTER dans le tableau de bord)\n")
-        desktop.show_existing(f"http://localhost:{PORT}")
-        sys.exit(0)
+        pass
+    PHONE_URL = f"http://{local_ip()}:{PORT}/tel"
     threading.Thread(target=loop, args=(state, args.demo), daemon=True).start()
     if not args.demo:
         threading.Thread(target=autolaunch_lmu, args=(state,), daemon=True).start()

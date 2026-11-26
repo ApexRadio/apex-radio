@@ -491,7 +491,7 @@ TOPICS = [
     (r"stand|\bbox|arret|rentr|\bpit|ravitaill|strateg|\bstop\b|come in", pit),
     (r"pneu|pner|peneu|pneumatique|gomme|usure|pression|crev|\betat (des?|de mes|d) ?(neu|peu|pne|ne|nu|beu|meu)\w*|\bpneus?\b|\bdes p?neus?\b|\betat d(u|e|es)\b(?!.*(voiture|caisse|carrosserie|course|jeu de la))|\btyre|\btire|rubber|\bwear|\bpressure", tyres),
     (r"ecart|devant|derriere|\bgap|attaque|rattrap|revient|remont|rapproch|monte fort|montant fort|ahead|behind|in front|catching|closing", gaps),
-    (r"repar|degat|degare|dommage|abime|casse|etat de (la|ma) (voiture|caisse|bagnole)|damage|repair", repairs),
+    (r"repar(?!ti)|degat|degare|dommage|abime|casse|etat (de |d |est )?(la|ma) (voiture|caisse|bagnole)|(voiture|caisse|bagnole) (est )?(en|dans) quel etat|comment (va|est) (la|ma) (voiture|caisse)|damage|repair", repairs),
     (r"position|place|classement|placement|cassement|quelle p\b|combien ?t?i?eme|combien siam|combien.*(je suis|suis je)|je suis ou\b|where am i|what p\b", position),
     (r"meteo|pluie|pleut|pleuvoir|mouill|humid|sec\b|temperature (de la piste|piste|de l air|exterieur)|nuage|quel temps|temps qu il fait|temps il fait|sous la pluie|a la pluie|qualif|calif|weather|\brain|\bwet\b|\bdry\b|cloud", weather),
     (r"chrono|dernier tour|meilleur tour|temps au tour|mon tour|rythme|tourne en|je tourne|lap time|last lap|best lap|\bpace\b", laptimes),
@@ -618,6 +618,33 @@ def brakes(s: Snapshot, p: Plan) -> str:
     return txt
 
 
+def brake_bias(s: Snapshot, p: Plan) -> str:
+    """« Mon brake bias est bon ? » : la répartition actuelle, et ce que disent les blocages et l'équilibre au freinage."""
+    b = (getattr(s, "car_state", None) or {}).get("bias")
+    head = L(f"Répartition à {dec(f'{b:g}')} % sur l'avant.", f"Brake bias at {b}% front.") if b else ""
+    beh = BEHAVIOR
+    if not beh or getattr(beh, "laps_seen", 0) < 3:
+        return (head + " " + L("Il me faut encore deux ou trois tours propres pour juger.",
+                               "I need two or three more clean laps to judge.")).strip()
+    iss = list(getattr(beh, "issues", []) or [])
+    lock = [i for i in iss if i.get("kind") == "blocage"]
+    front = [i for i in lock if i.get("where") == "avant"]
+    rear = [i for i in lock if i.get("where") == "arrière"]
+    if len(front) > len(rear):
+        tip = L("Tu bloques l'avant au freinage : recule-la d'un demi-point.", "You're locking the fronts: move it back half a point.")
+    elif rear:
+        tip = L("Tu bloques l'arrière au freinage : avance-la d'un demi-point.", "You're locking the rears: move it forward half a point.")
+    elif any(i.get("kind") == "survirage" and i.get("where") == "entrée" for i in iss):
+        tip = L("L'arrière bouge à l'entrée des virages : un demi-point vers l'avant le calmera.",
+                "The rear moves on corner entry: half a point forward will settle it.")
+    elif any(i.get("kind") == "sous-virage" and i.get("where") == "entrée" for i in iss):
+        tip = L("Ça sous-vire à l'entrée : un demi-point vers l'arrière aidera la voiture à tourner.",
+                "Understeer on entry: half a point back will help it turn in.")
+    else:
+        tip = L("Elle me paraît bonne : pas de blocage qui se répète.", "Looks good to me: no repeated lock-ups.")
+    return (head + " " + tip).strip()
+
+
 def track_limits(s: Snapshot, p: Plan) -> str:
     k = max(1, int(getattr(s, "tl_per_point", 1) or 1))
     pts, mx = s.tl_steps / k, s.tl_per_penalty / k
@@ -742,10 +769,12 @@ def stints(s: Snapshot, p: Plan) -> str:
 
 
 TOPICS[:0] = [
-    (r"(combien de temps|temps|long|secondes|duree).{0,25}(repar|reparation)|(repar|reparation).{0,30}(combien|temps|long|secondes|duree)|how long.{0,20}repair|repair time", repair_time),
+    (r"(combien de temps|temps|long|secondes|duree).{0,25}(repar(?!ti)|reparation)|(repar(?!ti)|reparation).{0,30}(combien|temps|long|secondes|duree)|how long.{0,20}repair|repair time", repair_time),
     (r"\brelais\b|changement de pilote|change(ment|r) de pilote|qui (roule|conduit|prend le volant) (apres|ensuite)|c est qui apres|\bstints?\b|driver (change|swap)|who s (driving )?next", stints),
     (r"gagner du temps|gagner des dixiemes|ou (est ce que )?je (peux |pourrais |peut )?(gagner|perds|perdre|aller plus vite)|analys.{0,20}(pilotage|conduite)|comment (je pilote|je conduis|est mon pilotage)|ameliorer mon pilotage|where can i (gain|find) time|analy[sz]e my driving", coaching),
     (r"reference|par rapport a (mon|ton) meilleur|compare (a|avec) mon meilleur|best lap reference|my best lap", reference),
+    (r"brake ?bias|\bbia[sz]\b|\bbaya?s\b|repartition (de |du |des )?(freinage|frein|freins)|balance (de |des )?freins?|"
+     r"brake balance", brake_bias),
     (r"\bfreins?\b(?! a main)|\bdisques? de frein|\bbrakes?\b", brakes),
     (r"limites? de (la )?piste|avertissements?|track limits?|\bwarnings?\b", track_limits),
     (r"(mon |ce |le )?(tour|chrono) (est |il est )?(valide|invalide|compte)|tour valid|valid lap|lap (valid|invalid|count)", lap_valid),
@@ -850,6 +879,15 @@ def _car(s: Snapshot) -> str:
     return car_sentence(s.car_class, s.car)
 
 
+def _day(s: Snapshot) -> str:
+    return pick("a_day", [("Une journée d'IA bien remplie : j'ai compté des tours et surveillé ta conso. Le meilleur moment, c'est maintenant.",
+                           "A busy AI day: counting laps and watching your fuel. Best part is right now."),
+                          ("Très bonne, merci ! Je n'ai pas de week-end, mais j'ai des courses. Et toi, prêt à attaquer ?",
+                           "Great, thanks! No weekends for me, but plenty of races. You ready to push?"),
+                          ("Tranquille, j'ai fait le plein de données. On se concentre sur la tienne de journée !",
+                           "Easy, I've filled up on data. Let's focus on your day!")])
+
+
 def _joke(s: Snapshot) -> str:
     return L("Les blagues, c'est après le drapeau à damier. Reste concentré !",
              "Jokes are for after the chequered flag. Stay focused!")
@@ -867,6 +905,8 @@ CHAT = [
     (r"quelle heure|l heure qu il|what time", _time),
     (r"\bca va\b|comment vas tu|how are you", _how_are_you),
     (r"blague|joke|funny", _joke),
+    (r"(ta|ta bonne|ta petite) journee|bonne journee (toi|de ton cote)|(bien|bonne) passee? (ta|la) journee|"
+     r"tu (as|a) passe une bonne journee|how was your day|your day", _day),
     (r"\belms\b|\be l m s\b|\belm\b|\bwec\b|\bw e c\b|\bwc\b|quelle voiture|quelle categorie|quel championnat|"
      r"which car|what car|which class|which championship", _car),
 ]
@@ -1286,6 +1326,8 @@ def answer(text: str, s: Snapshot, p: Plan) -> str:
             if fn is laps and any(r[0] is flags for r in replies):
                 continue
             if fn is behavior and any(r[0] is brakes for r in replies):
+                continue
+            if fn in (brakes, behavior) and any(r[0] is brake_bias for r in replies):
                 continue
             if fn in (fuel, energy, pit, laps) and any(r[0] is to_finish for r in replies):
                 continue

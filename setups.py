@@ -609,6 +609,10 @@ class Workshop:
             return None   # LMU n'accepte pas d'aller plus loin sur cette voiture
         if known and new > max(known) + 3:
             return None
+        if key == "CamberSetting" and new not in known:
+            # le carrossage a des butées serrées (LMGT3 : −1,8° avant au minimum) : on ne propose que des valeurs
+            # déjà vues dans tes setups de cette voiture, sinon LMU refuse et remet l'ancienne valeur
+            return None
         to_disp, est = known.get(new), False
         if to_disp is None:
             # pas encore vu dans tes fichiers : on l'estime à partir des valeurs connues (crans réguliers), sinon on dit « 1 cran de plus / de moins »

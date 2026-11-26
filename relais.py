@@ -26,7 +26,8 @@ from i18n import L
 from paths import DATA
 
 CFG = DATA / "relais.json"
-DEFAULT = {"on": False, "drivers": ["", ""], "race_min": 360, "stint_min": 60, "mode": "pleins", "tanks": 2, "tyres": True,
+TANKS = DATA / "relais_pleins.json"     # durée d'un plein retenue par circuit + voiture (le planning reste jeu fermé)
+DEFAULT = {"on": False, "drivers": ["", ""], "race_min": 360, "stint_min": 60, "mode": "pleins", "tanks": 2, "tank_min": 0, "tyres": True,
            "name": "", "date": "", "start": "", "unavail": {}}
 
 
@@ -52,6 +53,10 @@ def clean(cfg: dict) -> dict:
         tanks = max(1, min(10, int(float(cfg.get("tanks") or 2))))
     except (TypeError, ValueError):
         tanks = 2
+    try:
+        tank_min = max(0, min(300, int(float(cfg.get("tank_min") or 0))))    # 0 = automatique
+    except (TypeError, ValueError):
+        tank_min = 0
     mode = "temps" if cfg.get("mode") == "temps" else "pleins"
     start = str(cfg.get("start") or "").strip()
     start = start if re.fullmatch(r"([01]?\d|2[0-3])[:h][0-5]\d", start) else ""
@@ -60,7 +65,7 @@ def clean(cfg: dict) -> dict:
     un = cfg.get("unavail") or {}
     un = {str(k)[:24]: str(v)[:120] for k, v in (un.items() if isinstance(un, dict) else []) if str(k).strip() and str(v).strip()}
     return {"on": bool(cfg.get("on")), "drivers": drivers, "race_min": race, "stint_min": stint,
-            "mode": mode, "tanks": tanks, "tyres": cfg.get("tyres", True) is not False,
+            "mode": mode, "tanks": tanks, "tank_min": tank_min, "tyres": cfg.get("tyres", True) is not False,
             "name": str(cfg.get("name") or "").strip()[:60], "date": date, "start": start.replace("h", ":"), "unavail": un}
 
 
@@ -171,6 +176,49 @@ def save(cfg: dict) -> dict:
     except OSError:
         pass
     return cfg
+
+
+def _tank_key(snap) -> str:
+    return f"{getattr(snap, 'track', '') or ''}|{getattr(snap, 'car', '') or ''}"
+
+
+def tank_remember(snap, minutes: float) -> None:
+    """Retient la durée d'un plein mesurée en roulant (par circuit + voiture, et la dernière)."""
+    try:
+        d = json.loads(TANKS.read_text(encoding="utf-8"))
+    except Exception:
+        d = {}
+    m = round(minutes)
+    k = _tank_key(snap)
+    if d.get(k) == m and d.get("_last") == m:
+        return
+    if k != "|":
+        d[k] = m
+    d["_last"] = m
+    try:
+        TANKS.write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding="utf-8")
+    except OSError:
+        pass
+
+
+def tank_recall(snap=None) -> int | None:
+    """Dernière durée d'un plein connue : pour ce circuit + cette voiture, sinon la dernière mesurée."""
+    try:
+        d = json.loads(TANKS.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    v = d.get(_tank_key(snap)) if snap is not None else None
+    return v or d.get("_last")
+
+
+def tank_minutes(cfg: dict, live: float | None = None, snap=None) -> tuple[int | None, str]:
+    """Durée d'un plein pour le planning : celle tapée à la main, sinon mesurée en roulant, sinon la dernière retenue."""
+    if cfg.get("tank_min"):
+        return cfg["tank_min"], "manuel"
+    if live:
+        return round(live), "live"
+    r = tank_recall(snap)
+    return (r, "memo") if r else (None, "")
 
 
 def names(cfg: dict) -> list[str]:
@@ -411,7 +459,7 @@ class Relay:
         """Pilote prévu pour le relais k (0 = premier) quand le plan tient compte des indisponibilités."""
         if not self.cfg.get("unavail") or not self.cfg.get("start"):
             return None
-        p = plan(self.cfg, self._fullmin)
+        p = plan(self.cfg, tank_minutes(self.cfg, self._fullmin)[0])
         d = names(self.cfg)
         if k < len(p) and p[k].get("start") is not None and p[k]["driver"] in d:
             return d.index(p[k]["driver"])
@@ -477,6 +525,9 @@ class Relay:
         full_min = None
         if p is not None and snap is not None and p.fuel_per_lap and p.avg_lap and getattr(snap, "fuel_capacity", 0):
             full_min = round(snap.fuel_capacity / p.fuel_per_lap * p.avg_lap / 60)
+            if full_min >= 5:
+                tank_remember(snap, full_min)
+        full_min, src = tank_minutes(self.cfg, full_min, snap)
         live = None
         if self.stint_start is not None:
             d = names(self.cfg)
@@ -491,7 +542,7 @@ class Relay:
             hook = bool(share.webhook())
         except Exception:
             hook = False
-        return {"cfg": self.cfg, "plan": pl, "fuel_stint_min": full_min, "live": live, "share": share_text(self.cfg, pl),
+        return {"cfg": self.cfg, "plan": pl, "fuel_stint_min": full_min, "fuel_src": src, "live": live, "share": share_text(self.cfg, pl),
                 "busy": {x: windows(self.cfg, x) for x in names(self.cfg)}, "webhook": hook, "races": races()}
 
 
@@ -548,6 +599,11 @@ def page() -> str:
         "from": ("Début", "Start"), "to": ("Fin", "End"), "dur": ("Durée", "Length"),
         "live": ("En course", "Live"),
         "fuel": ("Un plein dure environ", "A full tank lasts about"),
+        "tankmin": ("Durée d'un plein", "One tank lasts"), "tank_auto": ("auto", "auto"),
+        "tank_tip": ("Laisse vide : Apex la mesure en roulant et la retient pour ce circuit.",
+                     "Leave empty: Apex measures it while driving and remembers it for this track."),
+        "src_manuel": ("(tapée à la main)", "(typed by you)"), "src_live": ("(mesurée en roulant)", "(measured on track)"),
+        "src_memo": ("(retenue de ta dernière séance)", "(remembered from your last session)"),
         "fuel2": ("", ""),
         "name": ("Prénom (comme dans le jeu, si possible)", "Name (as in the game, if possible)"),
         "tip": ("Astuce : écris les noms comme dans le jeu, Apex reconnaîtra qui est au volant.",
@@ -597,6 +653,8 @@ th{{color:rgb(168,85,247)}}
    <input type="number" id="rm" min="0" max="59" step="5"> {t['min']}</div>
  <div class="f"><label>{t['mode']}</label><select id="mode"><option value="pleins">{t['mp']}</option><option value="temps">{t['mt']}</option></select></div>
  <div class="f" id="rowtanks"><label>{t['tanks']}</label><input type="number" id="tk" min="1" max="10"></div>
+ <div class="f" id="rowtm"><label>{t['tankmin']}</label><input type="number" id="tm" min="0" max="300" step="1" placeholder="{t['tank_auto']}"> {t['min']}
+   <span class="muted" style="font-size:13px;margin-left:10px">{t['tank_tip']}</span></div>
  <div class="f" id="rowst"><label>{t['stint']}</label><input type="number" id="st" min="10" max="360" step="5"> {t['min']}</div>
  <div class="f"><label for="ty">{t['tyres']}</label><input type="checkbox" id="ty"></div>
  <div class="f" style="align-items:flex-start"><label>{t['drivers']}</label><div><div id="drvs"></div>
@@ -632,7 +690,7 @@ function draw(d, form) {{
   drawRaces(d.races || [], (d.cfg.name || "").trim());
   if (form) {{
     $("on").checked = d.cfg.on; $("rh").value = Math.floor(d.cfg.race_min / 60); $("rm").value = d.cfg.race_min % 60;
-    $("st").value = d.cfg.stint_min; $("tk").value = d.cfg.tanks; $("ty").checked = d.cfg.tyres; $("mode").value = d.cfg.mode; modeRows();
+    $("st").value = d.cfg.stint_min; $("tk").value = d.cfg.tanks; $("tm").value = d.cfg.tank_min || ""; $("ty").checked = d.cfg.tyres; $("mode").value = d.cfg.mode; modeRows();
     busy = Object.assign({{}}, d.cfg.unavail || {{}});
     $("rn").value = d.cfg.name || ""; $("rd").value = d.cfg.date || ""; $("rs").value = d.cfg.start || "";
     drivers = d.cfg.drivers.length ? d.cfg.drivers.slice() : ["", ""]; drawDrivers();
@@ -641,7 +699,7 @@ function draw(d, form) {{
   const order = [];
   $("plan").innerHTML = d.plan.map(p => {{ if (!order.includes(p.driver)) order.push(p.driver); return `<tr><td>${{p.n}}</td><td class="dc${{order.indexOf(p.driver) % 4}}">${{p.driver.replace(/</g, "&lt;")}}</td><td>${{known ? (p.clock_start || hm(p.start)) : "–"}}</td><td>${{known ? (p.clock_end || hm(p.end)) : "–"}}${{p.clash ? " ⚠️" : ""}}</td><td>${{known ? (p.end - p.start) + " min" : (d.cfg.mode === "pleins" ? d.cfg.tanks + " ⛽" : "–")}}</td></tr>`; }}).join("");
   shareTxt = d.share || ""; drawTL(d, known, order); $("teambtn").hidden = !d.webhook;
-  $("fuel").textContent = d.fuel_stint_min ? `${{T.fuel}} ${{d.fuel_stint_min}} min.` : (known ? "" : T.notime);
+  $("fuel").textContent = d.fuel_stint_min ? `${{T.fuel}} ${{d.fuel_stint_min}} min ${{T["src_" + d.fuel_src] || ""}}.` : (known ? "" : T.notime);
   $("livecard").hidden = !d.live;
   if (d.live) $("live").innerHTML = `<span class="big">${{T.n}} ${{d.live.stint}}${{d.live.of ? " / " + d.live.of : ""}}</span> · ${{d.live.driver.replace(/</g, "&lt;")}} · ${{d.live.driven_min}}${{d.live.target_min ? " / " + d.live.target_min : ""}} min → ${{d.live.next.replace(/</g, "&lt;")}}`;
 }}
@@ -689,11 +747,11 @@ $("teambtn").onclick = async () => {{
   $("sharemsg").textContent = ok ? "✓" : "✗";
 }};
 async function load(form) {{ draw(await (await fetch("/api/relais")).json(), form); }}
-function modeRows() {{ const p = $("mode").value === "pleins"; $("rowtanks").hidden = !p; $("rowst").hidden = p; }}
+function modeRows() {{ const p = $("mode").value === "pleins"; $("rowtanks").hidden = !p; $("rowtm").hidden = !p; $("rowst").hidden = p; }}
 $("mode").onchange = modeRows;
 $("add").onclick = () => {{ if (drivers.length < 8) {{ drivers.push(""); drawDrivers(); }} }};
 $("save").onclick = async () => {{
-  const cfg = {{ on: $("on").checked, race_min: (+$("rh").value || 0) * 60 + (+$("rm").value || 0), stint_min: +$("st").value, tanks: +$("tk").value, tyres: $("ty").checked, mode: $("mode").value, drivers,
+  const cfg = {{ on: $("on").checked, race_min: (+$("rh").value || 0) * 60 + (+$("rm").value || 0), stint_min: +$("st").value, tanks: +$("tk").value, tank_min: +$("tm").value || 0, tyres: $("ty").checked, mode: $("mode").value, drivers,
     name: $("rn").value, date: $("rd").value, start: $("rs").value, unavail: busy }};
   draw(await (await fetch("/api/relais", {{ method: "POST", body: JSON.stringify(cfg) }})).json(), true);
   $("ok").textContent = T.saved; setTimeout(() => $("ok").textContent = "", 2500);
@@ -725,7 +783,7 @@ function drawRaces(list, current) {{
 async function raceAction(body) {{ draw(await (await fetch("/api/relais", {{ method: "POST", body: JSON.stringify(body) }})).json(), true); }}
 $("races").onchange = () => {{ $("dropr").disabled = !$("races").value; if ($("races").value) raceAction({{ _race: "load", key: $("races").value }}); }};
 $("keep").onclick = async () => {{
-  const cfg = {{ on: $("on").checked, race_min: (+$("rh").value || 0) * 60 + (+$("rm").value || 0), stint_min: +$("st").value, tanks: +$("tk").value, tyres: $("ty").checked, mode: $("mode").value, drivers,
+  const cfg = {{ on: $("on").checked, race_min: (+$("rh").value || 0) * 60 + (+$("rm").value || 0), stint_min: +$("st").value, tanks: +$("tk").value, tank_min: +$("tm").value || 0, tyres: $("ty").checked, mode: $("mode").value, drivers,
     name: $("rn").value, date: $("rd").value, start: $("rs").value, unavail: busy }};
   await raceAction(Object.assign({{ _race: "store" }}, cfg));
   $("ok").textContent = T.kept; setTimeout(() => $("ok").textContent = "", 2500);

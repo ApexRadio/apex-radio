@@ -156,7 +156,7 @@ class Spotter:
         state = "both" if left and right else "left" if left else "right" if right else "clear"
         if state != self.state and not quiet:
             msg = {"both": L("Des deux côtés !", "Three wide!"), "left": L("À gauche !", "Car left!"),
-                   "right": L("À droite !", "Car right!"), "clear": L("Dégagé.", "Clear.")}[state]
+                   "right": L("À droite !", "Car right!"), "clear": L("C'est libre !", "Clear.")}[state]
             # pas deux fois la même annonce en quelques secondes ; « dégagé » seulement après une vraie annonce
             if now - self.last_said.get(state, -99) >= self.SAME_SIDE_GAP and (state != "clear" or self.state != "clear"):
                 self.last_said[state] = now

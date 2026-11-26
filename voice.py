@@ -324,7 +324,7 @@ class Voice:
         if self._piper is None:
             return
         fr = voice_lang() == "fr"
-        for t in (["À gauche !", "À droite !", "Des deux côtés !", "Dégagé."] if fr else
+        for t in (["À gauche !", "À droite !", "Des deux côtés !", "C'est libre !"] if fr else
                   ["Car left!", "Car right!", "Three wide!", "Clear."]):
             try:
                 self._wav(t, True)

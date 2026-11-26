@@ -288,7 +288,7 @@ class Voice:
             self.last_text = text          # pour « répète » (touche Stream Deck)
         import time as _t
         self._q.put((-1 if spot else 0 if urgent else 1, self._n, text, _t.monotonic(), spot, False))
-        if spot and self._busy == "info" and text.strip(" .!").lower() not in ("dégagé", "clear"):
+        if spot and self._busy == "info" and text.strip(" .!").lower() not in ("dégagé", "clear", "c'est libre"):
             self._cut.set()   # (« Dégagé » ne coupe personne : il attend la fin de la phrase)      # « à gauche ! » ne doit pas attendre la fin d'une phrase d'info
 
     # ------------------------------------------------------------ rendu

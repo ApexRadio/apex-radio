@@ -110,6 +110,21 @@
   body.lay-xl .leftcol { flex-basis: clamp(200px, 14vw, 240px) !important; }
   body.no-tyres .tyrecard, body.no-weather .weathercard, body.no-chrono .chrono, body.no-behav #behav, body.no-behav #mapnote { display: none !important; }
   body.no-tyres.no-weather .leftcol { display: none !important; }
+  body.no-map .mapcard { display: none !important; }
+  body.no-map .leftcol { flex: 1 1 auto !important; flex-direction: row !important; flex-wrap: wrap; }
+  body.no-map .leftcol > .card { flex: 1 1 260px; max-width: 560px; }
+  body.no-map .mid { align-items: flex-start; }
+  body.lay-s #map { max-height: 26vh; min-height: 150px; }
+  .hidecard { position: relative; }
+  .cardx { position: absolute; top: 8px; right: 10px; width: 22px; height: 22px; padding: 0; border-radius: 6px; font-size: 13px; line-height: 20px;
+    background: transparent; border: 1px solid transparent; color: var(--muted); opacity: .45; cursor: pointer; z-index: 2; }
+  .hidecard:hover .cardx { opacity: 1; border-color: var(--line); }
+  .cardx:hover { color: var(--alert); }
+  .mapzoom { display: inline-flex; gap: 4px; margin-left: auto; margin-right: 30px; }
+  .mapzoom button { width: 24px; height: 22px; padding: 0; font-size: 14px; line-height: 20px; border-radius: 6px; }
+  #dock { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; }
+  #dock[hidden] { display: none; }
+  #dock button { font-size: 12px; padding: 3px 10px; border-radius: 999px; }
   .mapcard { flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
   #map { width: 100%; flex-grow: 1; min-height: 240px; max-height: 44vh; }
   .chrono { flex-grow: 1; }
@@ -369,14 +384,15 @@
           </section>
         </div>
 
+        <div id="dock" hidden><span class="muted" data-en="Hidden:">Masqué :</span></div>
         <div class="mid">
           <div class="leftcol">
-            <section class="card tyrecard">
+            <section class="card tyrecard hidecard"><button class="cardx" data-hide="tyres" title="Masquer" data-en-title="Hide">✕</button>
               <h2><span data-en="Tyres">Pneus</span> <span id="compound"></span></h2>
               <div class="tyres" id="tyres"></div>
               <div class="row" style="margin-top:10px"><span data-en="Before critical wear">Avant usure critique</span><span id="tyrelaps">–</span></div>
             </section>
-            <section class="card weathercard">
+            <section class="card weathercard hidecard"><button class="cardx" data-hide="weather" title="Masquer" data-en-title="Hide">✕</button>
               <h2 data-en="Weather">Météo</h2>
               <div style="font-family:var(--title);font-weight:700;font-size:20px" id="weather">–</div>
               <div class="row" style="margin-top:6px"><span data-en="Air / track">Air / piste</span><span id="temps">–</span></div>
@@ -384,15 +400,16 @@
               <div id="fc" class="sub" style="margin-top:6px"></div>
             </section>
           </div>
-          <section class="card mapcard">
-            <div class="row" style="align-items:baseline;flex-wrap:wrap"><h2 style="margin:0"><span data-en="Track">Circuit</span> <span id="trackname"></span></h2><span class="sub" style="margin:0" id="maplegend"></span></div>
+          <section class="card mapcard hidecard"><button class="cardx" data-hide="map" title="Masquer le circuit" data-en-title="Hide the track">✕</button>
+            <div class="row" style="align-items:baseline;flex-wrap:wrap"><h2 style="margin:0"><span data-en="Track">Circuit</span> <span id="trackname"></span></h2><span class="sub" style="margin:0" id="maplegend"></span>
+              <span class="mapzoom"><button id="mapsmall" title="Circuit plus petit" data-en-title="Smaller track">−</button><button id="mapbig" title="Circuit plus grand" data-en-title="Bigger track">+</button></span></div>
             <svg id="map" role="img" aria-label="Carte du circuit avec les voitures en direct" data-en-aria="Live track map with all cars" preserveAspectRatio="xMidYMid meet"></svg>
             <div class="sub" id="mapnote"></div>
             <div id="behav"></div>
           </section>
         </div>
 
-        <section class="card chrono">
+        <section class="card chrono hidecard"><button class="cardx" data-hide="chrono" title="Masquer" data-en-title="Hide">✕</button>
           <div class="row" style="align-items:baseline;flex-wrap:wrap"><h2 style="margin:0" data-en="Lap times · sectors">Chronos · secteurs</h2><span class="sub" style="margin:0"><span data-en="Last / best">Dernier / meilleur</span> <span id="laps">–</span> · Record <span id="rec" style="color:var(--accent)">–</span> · <span data-en="ideal">idéal</span> <span id="ideal">–</span></span></div>
           <div class="scroll" style="margin-top:8px">
             <table>
@@ -498,7 +515,8 @@
       <div class="setrow"><span data-en="Language">Langue</span><div class="setctl"><select id="lang" title="Langue / Language" aria-label="Langue / Language"></select></div></div>
     </section>
     <section class="setsec"><h2>🖥️ <span data-en="Layout">Affichage</span></h2>
-      <div class="setrow"><span data-en="Track map size">Taille du circuit</span><div class="setctl"><select id="lay_map" aria-label="Taille du circuit" style="max-width:none;border:0;padding:2px 4px"><option value="n" data-en="Normal">Normale</option><option value="l" data-en="Large">Grande</option><option value="xl" data-en="Extra large">Très grande</option></select></div></div>
+      <div class="setrow"><span data-en="Track map size">Taille du circuit</span><div class="setctl"><select id="lay_map" aria-label="Taille du circuit" style="max-width:none;border:0;padding:2px 4px"><option value="s" data-en="Small">Petite</option><option value="n" data-en="Normal">Normale</option><option value="l" data-en="Large">Grande</option><option value="xl" data-en="Extra large">Très grande</option></select></div></div>
+      <div class="setrow"><span data-en="Show the track map">Afficher le circuit</span><div class="setctl"><input type="checkbox" id="lay_mapon" checked></div></div>
       <div class="setrow"><span data-en="Show tyres">Afficher les pneus</span><div class="setctl"><input type="checkbox" id="lay_tyres" checked></div></div>
       <div class="setrow"><span data-en="Show weather">Afficher la météo</span><div class="setctl"><input type="checkbox" id="lay_weather" checked></div></div>
       <div class="setrow"><span data-en="Show lap times">Afficher les chronos</span><div class="setctl"><input type="checkbox" id="lay_chrono" checked></div></div>
@@ -1274,7 +1292,16 @@ $("setopen").onclick = () => { $("set").hidden = false; };
 function layLoad() { try { return JSON.parse(localStorage.getItem("apex-layout") || "{}"); } catch (e) { return {}; } }
 function layApply() {
   const L = layLoad(), b = document.body.classList;
-  b.toggle("lay-l", L.map === "l"); b.toggle("lay-xl", L.map === "xl");
+  b.toggle("lay-s", L.map === "s"); b.toggle("lay-l", L.map === "l"); b.toggle("lay-xl", L.map === "xl");
+  b.toggle("no-map", L.mapon === false); $("lay_mapon").checked = L.mapon !== false;
+  // cases masquées : une pastille par case pour la remettre
+  const NAMES = { mapon: ["Circuit", "Track"], tyres: ["Pneus", "Tyres"], weather: ["Météo", "Weather"], chrono: ["Chronos", "Lap times"],
+                  behav: ["Remarques de pilotage", "Driving notes"] };
+  const hid = Object.keys(NAMES).filter(k => L[k] === false);
+  $("dock").hidden = !hid.length;
+  $("dock").querySelectorAll("button").forEach(x => x.remove());
+  for (const k of hid) { const bt = document.createElement("button"); bt.textContent = "＋ " + T(...NAMES[k]);
+    bt.title = T("Réafficher", "Show again"); bt.onclick = () => laySet(k, true); $("dock").appendChild(bt); }
   b.toggle("no-tyres", L.tyres === false); b.toggle("no-weather", L.weather === false);
   b.toggle("no-chrono", L.chrono === false); b.toggle("no-behav", L.behav === false);
   $("lay_map").value = L.map || "n";
@@ -1284,7 +1311,11 @@ function layApply() {
 }
 function laySet(k, v) { const L = layLoad(); L[k] = v; try { localStorage.setItem("apex-layout", JSON.stringify(L)); } catch (e) {} layApply(); }
 $("lay_map").onchange = e => laySet("map", e.target.value);
-for (const k of ["tyres", "weather", "chrono", "behav"]) $("lay_" + k).onchange = e => laySet(k, e.target.checked);
+for (const k of ["tyres", "weather", "chrono", "behav", "mapon"]) $("lay_" + k).onchange = e => laySet(k, e.target.checked);
+document.querySelectorAll(".cardx").forEach(x => x.onclick = () => laySet(x.dataset.hide === "map" ? "mapon" : x.dataset.hide, false));
+const MAPSIZES = ["s", "n", "l", "xl"];
+function mapStep(d) { const i = MAPSIZES.indexOf(layLoad().map || "n"); laySet("map", MAPSIZES[Math.max(0, Math.min(3, i + d))]); }
+$("mapsmall").onclick = () => mapStep(-1); $("mapbig").onclick = () => mapStep(1);
 layApply();
 // --- partage Discord
 async function sharePost(what, data) {

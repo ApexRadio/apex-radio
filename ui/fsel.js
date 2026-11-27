@@ -11,6 +11,7 @@
     border-bottom:2px solid currentColor;transform:rotate(45deg);opacity:.7}
   .fsel:focus{outline:1px solid rgba(var(--accent-rgb,0,229,255),.7);outline-offset:1px}
   .fsel[aria-disabled=true]{opacity:.5;cursor:default}
+  .fsel-grp{padding:8px 12px 4px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.55;pointer-events:none}
   .fsel-list{position:fixed;z-index:99999;max-height:320px;overflow-y:auto;background:var(--panel,#0B0F16);
     border:1px solid rgba(var(--accent-rgb,0,229,255),.45);border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.6);padding:4px;
     font-size:13px;color:var(--text,#E8EDF5)}
@@ -49,12 +50,19 @@
     if (sel.disabled) return;
     const list = document.createElement("div");
     list.className = "fsel-list"; list.setAttribute("role", "listbox");
+    const els = []; let grp = null;
     [...sel.options].forEach((o, i) => {
+      const g = o.parentElement && o.parentElement.tagName === "OPTGROUP" ? o.parentElement : null;
+      if (g && g !== grp) {            // titre de groupe (pas cliquable, ne compte pas dans les index)
+        const h = document.createElement("div");
+        h.className = "fsel-grp"; h.textContent = g.label; list.appendChild(h);
+      }
+      grp = g;
       const d = document.createElement("div");
       d.className = "fsel-opt" + (i === sel.selectedIndex ? " sel on" : "") + (o.disabled ? " dis" : "");
       d.textContent = o.textContent; d.setAttribute("role", "option");
       d.addEventListener("mousedown", e => { e.preventDefault(); choose(sel, i); close(); btn.focus(); });
-      list.appendChild(d);
+      list.appendChild(d); els.push(d);
     });
     document.body.appendChild(list);
     const r = btn.getBoundingClientRect();
@@ -63,8 +71,8 @@
     list.style.left = Math.min(r.left, innerWidth - list.offsetWidth - 8) + "px";
     list.style.top = (h > below && r.top > below ? Math.max(8, r.top - h - 4) : r.bottom + 4) + "px";
     btn.setAttribute("aria-expanded", "true");
-    open = { sel, btn, list, idx: sel.selectedIndex };
-    const cur = list.children[sel.selectedIndex]; if (cur) cur.scrollIntoView({ block: "nearest" });
+    open = { sel, btn, list, els, idx: sel.selectedIndex };
+    const cur = els[sel.selectedIndex]; if (cur) cur.scrollIntoView({ block: "nearest" });
   }
 
   function move(d) {
@@ -72,8 +80,8 @@
     const n = open.sel.options.length; let i = open.idx;
     for (let k = 0; k < n; k++) { i = (i + d + n) % n; if (!open.sel.options[i].disabled) break; }
     open.idx = i;
-    [...open.list.children].forEach((c, j) => c.classList.toggle("on", j === i));
-    open.list.children[i].scrollIntoView({ block: "nearest" });
+    open.els.forEach((c, j) => c.classList.toggle("on", j === i));
+    open.els[i].scrollIntoView({ block: "nearest" });
   }
 
   function sync(sel) {

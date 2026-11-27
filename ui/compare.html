@@ -250,11 +250,18 @@ async function load(id) {
   stop();
   D = await (await fetch("/api/laps/" + id)).json();
   const laps = [];
-  if (D.best) laps.push({ k: "best", l: D.best, who: T("Toi · meilleur tour", "You · best lap"), t: `★ ${T("Meilleur", "Best")} ${fmt(D.best.lap)} (${D.best.date})` });
-  (D.recent || []).forEach((l, i) => laps.push({ k: "r" + i, l, who: T("Toi", "You") + (i === 0 ? T(" · dernier tour", " · last lap") : ""), t: `${fmt(l.lap)} (${l.date})` }));
-  (D.shared || []).forEach((l, i) => laps.push({ k: "s" + i, l, who: "👤 " + (l.driver || "?"), t: `👤 ${esc(l.driver)} ${fmt(l.lap)}` }));
+  // « 2026-11-27 10:17 » -> « 27/11 à 10h17 »
+  const quand = d => { const m = /(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/.exec(d || ""); return m ? `${m[3]}/${m[2]} ${T("à", "at")} ${m[4]}h${m[5]}` : (d || ""); };
+  const ecart = l => D.best && l.lap !== D.best.lap ? ` (+${(l.lap - D.best.lap).toFixed(3)})` : "";
+  if (D.best) laps.push({ k: "best", g: 0, l: D.best, who: T("Toi · meilleur tour", "You · best lap"), t: `★ ${fmt(D.best.lap)} — ${quand(D.best.date)}` });
+  (D.recent || []).forEach((l, i) => laps.push({ k: "r" + i, g: 1, l, who: T("Toi", "You") + (i === 0 ? T(" · dernier tour", " · last lap") : ""),
+    t: `${i === 0 ? T("Dernier · ", "Last · ") : ""}${fmt(l.lap)}${ecart(l)}${D.best && l.lap === D.best.lap ? " ★" : ""} — ${quand(l.date)}` }));
+  (D.shared || []).forEach((l, i) => laps.push({ k: "s" + i, g: 2, l, who: "👤 " + (l.driver || "?"), t: `👤 ${esc(l.driver)} · ${fmt(l.lap)}${ecart(l)}` }));
   LAPS = laps;
-  const opts = laps.map(x => `<option value="${x.k}">${x.t}</option>`).join("");
+  const groupes = [T("Ton meilleur tour (record)", "Your best lap (record)"), T("Tes derniers tours (récent en haut)", "Your latest laps (newest first)"),
+                   T("Tours d'autres pilotes", "Other drivers' laps")];
+  const opts = [0, 1, 2].map(g => { const xs = laps.filter(x => x.g === g); return xs.length ?
+    `<optgroup label="${groupes[g]}">${xs.map(x => `<option value="${x.k}">${x.t}</option>`).join("")}</optgroup>` : ""; }).join("");
   $("la").innerHTML = opts; $("lb").innerHTML = opts;
   $("la").value = D.best ? "best" : laps[0].k;
   $("lb").value = laps.length > 1 ? laps[1].k : laps[0].k;

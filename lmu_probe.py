@@ -38,7 +38,6 @@ ENDPOINTS = [
     "/rest/sessions",
     "/rest/watch/sessionInfo",
     "/rest",
-    "/swagger-schema.json",
     "/swagger/index.html",
     "/swagger/swagger-initializer.js",
     "/swagger/v1/swagger.json",
@@ -68,6 +67,9 @@ def _get(path: str, limit: int = 60000) -> dict:
     return out
 
 
+# Relevé complet du garage : COUPÉ. Le 27/11/2026, LMU a planté 5 fois pendant les relevés (jamais en 2 semaines avant) :
+# trop de demandes au jeu pendant qu'il charge le garage. Les limites des voitures sont déjà relevées (lmu_garage/).
+GARAGE_ON = False
 GARAGE_DIR = OUT.parent / "lmu_garage"     # un fichier par voiture : tout le menu des réglages vu par le jeu
 # jamais d'appel qui pourrait AGIR dans le jeu, même en GET (charger, enregistrer, quitter…)
 DENY = ("load", "save", "delete", "remove", "reset", "set", "send", "apply", "start", "stop", "exit", "quit",
@@ -110,7 +112,7 @@ class Probe:
         if not s.connected or self.busy:
             return
         stage = "au_stand" if s.in_pits else "en_piste" if s.on_track else "menu"
-        if getattr(s, "game", "lmu") == "lmu" and s.in_pits and s.car and f"garage|{s.car}" not in self.done:
+        if GARAGE_ON and getattr(s, "game", "lmu") == "lmu" and s.in_pits and s.car and f"garage|{s.car}" not in self.done:
             # au garage avec une voiture : on relève tout le menu des réglages (crans, mini, maxi) de CETTE voiture
             self.done.add(f"garage|{s.car}")
             self.busy = True

@@ -134,12 +134,13 @@ _WORDS = ("tour", "seconde", "minute", "litre", "arrêt", "place", "pénalité",
 _PL_RE = re.compile(r"(?<![\d,.])(\d+(?:[.,]\d+)?)\s(" + "|".join(_WORDS) + r")s?\b")
 _SPELL = [
     (re.compile(r"\bsetups\b", re.I), "sétups"), (re.compile(r"\bsetup\b", re.I), "sétup"),
-    (re.compile(r"\bELMS\b"), "E L M S"),
+    # lettres seules : écrites comme on les dit (un « é » seul était lu « e accent aigu », « E » seul disparaissait)
+    (re.compile(r"\bELMS\b"), "eu èl èm èss"), (re.compile(r"\bABS\b"), "a bé èss"),
     (re.compile(r"\bHypercars?\b", re.I), "Hyper car"),
     # « GT 3 » était lu « gé 3 » par la voix : on épelle
-    (re.compile(r"\b(LM)?GT(\d)\b"), r"gé té \2"), (re.compile(r"\b(LM)?GTE\b"), "gé té é"),
+    (re.compile(r"\b(LM)?GT(\d)\b"), r"gé té \2"), (re.compile(r"\b(LM)?GTE\b"), "gé té euh"),
     (re.compile(r"\bLMP(\d)\b"), r"L M P \1"),
-    (re.compile(r"\bLMDh\b", re.I), "L M D H"), (re.compile(r"\bLMH\b"), "L M H"),
+    (re.compile(r"\bLMDh\b", re.I), "L M D H"), (re.compile(r"\bLMH\b"), "èl èm ache"),
 ]
 
 

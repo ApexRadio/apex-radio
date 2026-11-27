@@ -47,8 +47,20 @@ class Incidents:
             return
         old = getattr(self, "_ysecs", set())
         now = time.monotonic()
+        # Un jaune n'est annoncé que s'il TIENT (2,5 s) : le jeu envoie parfois des jaunes d'une fraction de seconde.
+        # Et un secteur qui « clignote » en jaune au même endroit à chaque tour sans voiture arrêtée (remarque d'un
+        # joueur au Mans, à Mulsanne) n'est plus annoncé après 2 fois : c'est une fausse info du jeu.
+        first = self.__dict__.setdefault("_yfirst", {})
+        for x in list(first):
+            if x not in secs:
+                del first[x]
+        for x in secs:
+            first.setdefault(x, now)
+        done = self.__dict__.setdefault("_ydone", set())      # jaunes déjà traités (annoncés ou écartés) tant qu'ils durent
+        done &= secs
+        ghost = self.__dict__.setdefault("_yghost", {})      # secteur -> nombre de jaunes sans voiture arrêtée
         # un même secteur n'est pas réannoncé avant 45 s (course hors ligne à Portimão : 40 jaunes en 30 min, 23/11)
-        new = [x for x in sorted(secs - old) if now - self.said.get(f"y{x}", -99) > 45]
+        new = [x for x in sorted(secs) if x not in done and now - first[x] >= 2.5 and now - self.said.get(f"y{x}", -99) > 45]
         me = next((c for c in s.cars if c.get("me")), None)
         if me and me.get("spd", 99) < 15:
             # tu es toi-même arrêté ou au ralenti (sortie, tête-à-queue) : ce jaune, c'est sans doute pour toi
@@ -61,15 +73,22 @@ class Incidents:
         ann = self.__dict__.setdefault("_yann", set())   # jaunes vraiment annoncés (pour « levés »)
         mine = me.get("s") if me else None
         for sec in new:
+            done.add(sec)
             # seulement les jaunes devant toi (ton secteur ou le suivant) : les autres sont sur la carte,
             # pas besoin de les dire à la radio
             if mine is not None and (sec - 1 - mine) % 3 not in (0, 1):
                 continue
-            ann.add(sec)
-            self.said[f"y{sec}"] = now
             where = ""
             stopped = [c for c in s.cars if not c.get("me") and not c.get("pits") and c.get("s") == sec - 1
-                       and c.get("spd", 99) < SLOW]
+                       and (c.get("spd", 99) < SLOW or c.get("off"))]
+            if not stopped:
+                ghost[sec] = ghost.get(sec, 0) + 1
+                if ghost[sec] > 2:
+                    if ghost[sec] == 3:
+                        print(f"  Jaune secteur {sec} : signalé à chaque tour sans voiture arrêtée, je ne l'annonce plus")
+                    continue
+            ann.add(sec)
+            self.said[f"y{sec}"] = now
             if stopped and self.beh:
                 if me:
                     stopped.sort(key=lambda c: (c["f"] - me["f"]) % 1)

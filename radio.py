@@ -164,6 +164,11 @@ class Radio:
 
     def set_mic(self, index) -> None:
         self.cfg["mic"] = index
+        try:
+            import sounddevice as sd
+            self.cfg["mic_name"] = sd.query_devices(index)["name"] if index is not None else None
+        except Exception:
+            self.cfg["mic_name"] = None
         save_config(self.cfg)
         print(f"  Micro choisi : {index}")
 
@@ -301,9 +306,24 @@ class Radio:
                                      "No microphone found. Plug in your mic or headset, then pick it in the list."))
             dev = mics[0]["index"]
             print(f"  Pas de micro par défaut dans Windows : j'utilise « {mics[0]['name']} »")
-        name = sd.query_devices(dev if dev is not None else sd.default.device[0])["name"]
-        print(f"  Écoute sur le micro : {name}")
-        self._rec = sd.InputStream(samplerate=RATE, channels=1, dtype="float32", callback=cb, device=dev)
+        # le micro est retenu par son NOM : son numéro change quand on branche / débranche un appareil
+        want = self.cfg.get("mic_name")
+        if want and dev is not None:
+            try:
+                cur = sd.query_devices(dev)["name"] if dev < len(sd.query_devices()) else ""
+            except Exception:
+                cur = ""
+            if cur != want:
+                again = next((m["index"] for m in self.mics() if m["name"] == want), None)
+                if again is not None:
+                    print(f"  Micro « {want} » retrouvé (numéro {dev} -> {again})")
+                    dev = again
+        info = sd.query_devices(dev if dev is not None else sd.default.device[0])
+        name = info["name"]
+        # 2 voies si le micro en a : certains casques / micros USB mettent la voix sur la 2e (on gardait la 1re = silence)
+        ch = 2 if info.get("max_input_channels", 1) >= 2 else 1
+        print(f"  Écoute sur le micro : {name} ({ch} voie{'s' if ch > 1 else ''})")
+        self._rec = sd.InputStream(samplerate=RATE, channels=ch, dtype="float32", callback=cb, device=dev)
         self._rec.start()
 
     def _stop_rec(self):
@@ -313,7 +333,12 @@ class Radio:
         self._rec.stop(); self._rec.close(); self._rec = None
         if not self._frames:
             return None
-        return np.concatenate(self._frames)[:, 0]
+        a = np.concatenate(self._frames)
+        if a.shape[1] > 1:
+            # on garde la voie où l'on entend quelque chose (la plus forte)
+            k = int(np.argmax(np.abs(a).max(axis=0)))
+            return a[:, k]
+        return a[:, 0]
 
     def _process(self, audio) -> None:
         try:
@@ -324,11 +349,13 @@ class Radio:
             print(f"  Niveau micro max : {peak * 100:.1f} %  ({len(audio) / RATE:.1f} s)")
             if peak < 0.01:
                 self.state = "prêt"
-                self.detail = L("Le micro n'enregistre que du silence. Choisis ton micro dans la liste ci-dessous, "
-                                "et vérifie Paramètres Windows > Confidentialité > Microphone "
-                                "(« Autoriser les applications de bureau »).",
-                                "The mic is only recording silence. Pick your mic in the list below, "
-                                "and check Windows Settings > Privacy > Microphone (\"Let desktop apps access your microphone\").")
+                self.detail = L("Le micro n'enregistre que du silence. Vérifie : 1) le bon micro dans la liste ci-dessous "
+                                "(essaie les autres si besoin), 2) le bouton « mute » de ton casque, 3) Paramètres Windows > "
+                                "Son > Entrée : parle, la barre doit bouger et le volume ne pas être à 0, 4) Confidentialité > "
+                                "Microphone : « Autoriser les applications de bureau ».",
+                                "The mic is only recording silence. Check: 1) the right mic in the list below (try the others "
+                                "if needed), 2) your headset's mute button, 3) Windows Settings > Sound > Input: speak, the bar "
+                                "should move and the volume mustn't be 0, 4) Privacy > Microphone: \"Let desktop apps access\".")
                 self.on_question("")
                 return
             self.detail = ""

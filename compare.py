@@ -97,7 +97,8 @@ def export(name: str, k: str, driver: str) -> dict:
     if not lap:
         return {"ok": False}
     out = {"apexlap": 1, "game": d.get("game"), "track": d.get("track"), "car": d.get("car"), "wet": bool(d.get("wet")),
-           "driver": (driver or "Pilote")[:40], **{x: lap.get(x) for x in ("lap", "date", "L", "v", "b", "t")}}
+           "driver": (driver or "Pilote")[:40], **{x: lap.get(x) for x in ("lap", "date", "L", "v", "b", "t")},
+           **{x: lap[x] for x in ("s", "x", "z") if lap.get(x)}}      # volant et trajectoire (tours récents)
     m, s = divmod(out["lap"] or 0, 60)
     fn = f"{_safe(out['track'])} - {_safe(out['car'])} - {int(m)}'{s:06.3f} - {_safe(out['driver'])}.apexlap"
     try:
@@ -119,6 +120,9 @@ def import_lap(x: dict) -> dict:
         arrs = {k: [float(v) for v in x[k]][:600] for k in ("v", "b", "t")}
         if not (10 < lap < 3600) or min(len(a) for a in arrs.values()) < 400:
             return {"ok": False, "error": "format"}
+        for k in ("s", "x", "z"):          # facultatif : volant et trajectoire
+            if isinstance(x.get(k), list) and len(x[k]) >= 400:
+                arrs[k] = [None if v is None else float(v) for v in x[k]][:600]
     except Exception:
         return {"ok": False, "error": "format"}
     from reflap import RefLap

@@ -66,11 +66,16 @@ jobs:
         working-directory: build\app
         run: |
           Copy-Item python\pythonw.exe python\ApexRadio.exe
+          # la signature de pythonw.exe serait abîmée par rcedit (Store : erreur 0x800700C1) : on l'enlève avant
+          python\python.exe ..\..\.github\scripts\strip_signature.py python\ApexRadio.exe
+          if ($LASTEXITCODE -ne 0) { throw "signature de ApexRadio.exe non enlevée" }
           try {
             Invoke-WebRequest "https://github.com/electron/rcedit/releases/download/v2.0.0/rcedit-x64.exe" -OutFile rcedit.exe
             .\rcedit.exe python\ApexRadio.exe --set-version-string FileDescription "Apex Radio" --set-version-string ProductName "Apex Radio" --set-version-string OriginalFilename "ApexRadio.exe" --set-version-string InternalName "ApexRadio" --set-icon ..\..\apex.ico
             Remove-Item rcedit.exe
           } catch { Write-Warning "rcedit indisponible : nom de fichier seulement ($_)" }
+          python\python.exe ..\..\.github\scripts\strip_signature.py python\ApexRadio.exe --check
+          if ($LASTEXITCODE -ne 0) { throw "ApexRadio.exe a une signature abîmée : le Microsoft Store le refuserait" }
           $p = Start-Process python\ApexRadio.exe -ArgumentList '-c "import webview, piper, sys; sys.exit(7)"' -Wait -PassThru
           if ($p.ExitCode -ne 7) { throw "ApexRadio.exe ne démarre pas Python correctement (code $($p.ExitCode))" }
           Write-Host "ApexRadio.exe OK"

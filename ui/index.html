@@ -464,68 +464,69 @@
 <div id="set" hidden>
   <div class="wsbox setbox">
     <div class="row" style="align-items:center"><div class="logo" style="font-size:20px" data-en="SETTINGS">RÉGLAGES</div><button id="setclose" aria-label="Fermer">✕</button></div>
-    <section class="setsec"><h2>🎙️ <span data-en="Voice">Voix</span></h2>
+    <section class="setsec"><h2>🎙️ <span data-en="Engineer">Ingénieur</span></h2>
       <div class="setrow"><span data-en="Engineer's voice">Voix de l'ingénieur</span><div class="setctl"><select id="vchoice" aria-label="Voix" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><span data-en="Volume">Volume</span><div class="setctl"><input type="range" id="vol" min="0.6" max="1.6" step="0.1" aria-label="Volume de la radio" style="width:90px;padding:0"></div></div>
       <div class="setrow"><span data-en="Test">Tester</span><div class="setctl"><button id="vtest" title="Tester la voix" data-en-title="Test the voice" data-en="Voice test">Test voix</button></div></div>
-    </section>
-    <section class="setsec"><h2>💬 <span data-en="Engineer">Ingénieur</span></h2>
-      <div class="setrow"><span data-en="Encouragement">Encouragements</span><div class="setctl"><select id="encourage" aria-label="Encouragements" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
-      <div class="setrow"><label for="coaching" data-en="Driving tips on track">Conseils de pilotage en piste</label><div class="setctl"><input type="checkbox" id="coaching"></div></div>
-      <div class="setrow"><label for="coachrace" data-en="Corner time loss also in races">Temps perdu par virage aussi en course</label><div class="setctl"><input type="checkbox" id="coachrace"></div></div>
-      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Untick if you don't want tips while driving (braking, corners…). The engineer still answers if you ask.">Décoche si tu ne veux pas de conseils en roulant (freinage, virages…). L'ingénieur répond toujours si tu lui demandes.</div>
-      <div class="setrow"><span data-en="Pit menu (LMU)">Menu des stands (LMU)</span><div class="setctl"><select id="pitmode" aria-label="Menu des stands" style="max-width:none;border:0;padding:2px 4px"><option value="auto" data-en="Auto">Auto</option><option value="demande" data-en="On request">À la demande</option><option value="off" data-en="Off">Off</option></select></div></div>
-      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Auto: Apex sets fuel / energy, tyres and repairs in the LMU pit menu about a lap before your stop. On request: only when you say &quot;prepare the stop&quot;.">Auto : Apex règle l'essence / l'énergie, les pneus et les réparations dans le menu des stands de LMU environ un tour avant ton arrêt. À la demande : seulement quand tu dis « prépare l'arrêt ».</div>
-      <div class="setrow"><span data-en="Radio tone">Ton de la radio</span><div class="setctl"><select id="tone" aria-label="Ton de la radio" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
+      <div class="setrow"><span data-en="How much he talks">Ce qu'il dit de lui-même</span><div class="setctl"><select id="talk" aria-label="Ce qu'il dit de lui-même" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
+      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" id="talknote"></div>
+      <div class="setrow"><span data-en="Driving coach">Coach de pilotage</span><div class="setctl"><select id="coachsel" aria-label="Coach" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
+      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Corner-by-corner tips (braking, entry, exit) and the time lost compared to your best lap.">Conseils virage par virage (freinage, entrée, sortie) et temps perdu par rapport à ton meilleur tour.</div>
       <div class="setrow"><span data-en="Your first name">Ton prénom</span><div class="setctl"><input id="drvname" maxlength="24" placeholder="ex. Laurent" data-en-placeholder="e.g. Laurent" aria-label="Ton prénom" style="max-width:160px"></div></div>
-      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="The engineer calls you by your first name now and then. Leave empty if you don't want it.">L'ingénieur t'appelle de temps en temps par ton prénom. Laisse vide si tu ne veux pas.</div>
-    </section>
-    <section class="setsec"><h2>📣 <span data-en="Engineer's calls">Annonces de l'ingé</span></h2>
-      <div class="setrow"><span data-en="Lap time and sectors">Chrono et secteurs à chaque tour</span><div class="setctl" style="gap:10px">
+      <details id="talkdetail" style="font-size:13px">
+        <summary style="cursor:pointer;color:var(--muted)" data-en="Customise call by call">Personnaliser annonce par annonce</summary>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+          <div class="setrow"><span data-en="Encouragement">Encouragements</span><div class="setctl"><select id="encourage" aria-label="Encouragements" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
+          <div class="setrow"><span data-en="Lap time and sectors">Chrono et secteurs à chaque tour</span><div class="setctl" style="gap:10px">
         <label><input type="checkbox" id="an_ch_essais"> <span data-en="Practice">Essais</span></label>
         <label><input type="checkbox" id="an_ch_qualif"> <span data-en="Quali">Qualif</span></label>
         <label><input type="checkbox" id="an_ch_course"> <span data-en="Race">Course</span></label></div></div>
-      <div class="setrow"><span data-en="Gaps ahead / behind (race)">Écarts devant / derrière (course)</span><div class="setctl"><select id="an_ecarts" aria-label="Écarts" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
-      <div class="setrow"><label for="an_jaunes" data-en="Yellow flags ahead of me">Drapeaux jaunes devant moi</label><div class="setctl"><input type="checkbox" id="an_jaunes"></div></div>
-      <div class="setrow"><label for="an_leves" data-en="&quot;Yellows cleared&quot;">« Drapeaux jaunes levés »</label><div class="setctl"><input type="checkbox" id="an_leves"></div></div>
-      <div class="setrow"><label for="an_bip" data-en="Beep when I press the radio button">Bip quand j'appuie sur le bouton radio</label><div class="setctl"><input type="checkbox" id="an_bip"></div></div>
-      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Only what the engineer says on his own. If you ask (&quot;what's my gap?&quot;, &quot;my sectors?&quot;), he always answers.">Seulement ce que l'ingé dit de lui-même. Si tu demandes (« mon écart ? », « mes secteurs ? »), il répond toujours.</div>
+          <div class="setrow"><span data-en="Gaps ahead / behind (race)">Écarts devant / derrière (course)</span><div class="setctl"><select id="an_ecarts" aria-label="Écarts" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
+          <div class="setrow"><label for="an_jaunes" data-en="Yellow flags ahead of me">Drapeaux jaunes devant moi</label><div class="setctl"><input type="checkbox" id="an_jaunes"></div></div>
+          <div class="setrow"><label for="an_leves" data-en="&quot;Yellows cleared&quot;">« Drapeaux jaunes levés »</label><div class="setctl"><input type="checkbox" id="an_leves"></div></div>
+          <div class="setrow"><label for="an_bip" data-en="Beep when I press the radio button">Bip quand j'appuie sur le bouton radio</label><div class="setctl"><input type="checkbox" id="an_bip"></div></div>
+          <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Only what the engineer says on his own. If you ask (&quot;what's my gap?&quot;, &quot;my sectors?&quot;), he always answers.">Seulement ce que l'ingé dit de lui-même. Si tu demandes (« mon écart ? », « mes secteurs ? »), il répond toujours.</div>
+        </div>
+      </details>
+      <div hidden><div class="setrow"><label for="coaching" data-en="Driving tips on track">Conseils de pilotage en piste</label><div class="setctl"><input type="checkbox" id="coaching"></div></div><div class="setrow"><label for="coachrace" data-en="Corner time loss also in races">Temps perdu par virage aussi en course</label><div class="setctl"><input type="checkbox" id="coachrace"></div></div></div>
     </section>
     <section class="setsec"><h2>🎮 <span data-en="Radio &amp; wheel">Radio et volant</span></h2>
       <div class="setrow" style="align-items:center"><span data-en="Mic">Micro</span><select id="mic" aria-label="Micro"></select></div>
       <div class="setrow"><span data-en="Radio button">Bouton radio</span><div class="setctl"><span id="pttbtn2" style="color:var(--accent)">–</span></div></div>
       <button class="act" id="learn" data-en="CHOOSE THE RADIO BUTTON">CHOISIR LE BOUTON RADIO</button>
-      <div class="setrow"><span data-en="Voice recognition">Reconnaissance vocale</span><div class="setctl"><select id="asr" aria-label="Reconnaissance vocale" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
-      <div class="sub" id="asrnote" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Precise: understands you better, but answers ~2× slower (1.5 GB download the first time).">Précise : te comprend mieux, mais répond environ 2 fois moins vite (1,5 Go à télécharger la première fois).</div>
       <div class="setrow"><span data-en="Button use">Utilisation du bouton</span><div class="setctl"><select id="pttmode" aria-label="Bouton radio" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
-      <details id="shortcuts" open style="font-size:13px">
+      <details id="shortcuts" style="font-size:13px">
             <summary style="cursor:pointer;color:var(--muted)" data-en="Shortcuts (wheel / keyboard)">Raccourcis (volant / clavier)</summary>
             <div id="sclist" style="display:flex;flex-direction:column;gap:6px;margin-top:8px"></div>
           </details>
     </section>
     <section class="setsec"><h2>🏁 <span data-en="Game">Jeu</span></h2>
       <div class="setrow"><span data-en="My game">Mon jeu</span><div class="setctl"><select id="gamesel" aria-label="Jeu" style="max-width:none;border:0;padding:2px 4px"><option value="lmu">Le Mans Ultimate</option><option value="acevo">Assetto Corsa EVO</option><option value="ams2">Automobilista 2</option></select></div></div>
-      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Used for the launch buttons. Apex Radio recognises the running game by itself either way.">Sert pour les boutons de lancement. De toute façon, Apex Radio reconnaît tout seul le jeu lancé.</div>
       <div class="setrow"><label for="autolmu" data-en="Launch my game when Apex opens">Lancer mon jeu à l'ouverture d'Apex</label><div class="setctl"><input type="checkbox" id="autolmu"></div></div>
-      <div class="setrow" id="lmumoderow"><span data-en="Launch mode">Mode de lancement</span><div class="setctl"><select id="lmumode" aria-label="Mode de lancement" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <button id="lmulaunch2" data-en="▶ LAUNCH LE MANS ULTIMATE">▶ LANCER LE MANS ULTIMATE</button>
     </section>
     <section class="setsec"><h2>🎨 <span data-en="Look">Apparence</span></h2>
       <div class="setrow"><span data-en="Colour">Couleur</span><div class="setctl"><select id="accent" aria-label="Couleur" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><span data-en="Language">Langue</span><div class="setctl"><select id="lang" title="Langue / Language" aria-label="Langue / Language"></select></div></div>
+      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="To hide a card of the dashboard, hover it and click its ✕. The − / + under the track map change its size.">Pour masquer une case du tableau de bord, passe la souris dessus et clique sur sa croix ✕. Les boutons − / + sous le circuit changent sa taille.</div>
+      <div hidden><div class="setrow"><span data-en="Track map size">Taille du circuit</span><div class="setctl"><select id="lay_map" aria-label="Taille du circuit" style="max-width:none;border:0;padding:2px 4px"><option value="s" data-en="Small">Petite</option><option value="n" data-en="Normal">Normale</option><option value="l" data-en="Large">Grande</option><option value="xl" data-en="Extra large">Très grande</option></select></div></div>
+<div class="setrow"><span data-en="Show the track map">Afficher le circuit</span><div class="setctl"><input type="checkbox" id="lay_mapon" checked></div></div>
+<div class="setrow"><span data-en="Show tyres">Afficher les pneus</span><div class="setctl"><input type="checkbox" id="lay_tyres" checked></div></div>
+<div class="setrow"><span data-en="Show weather">Afficher la météo</span><div class="setctl"><input type="checkbox" id="lay_weather" checked></div></div>
+<div class="setrow"><span data-en="Show lap times">Afficher les chronos</span><div class="setctl"><input type="checkbox" id="lay_chrono" checked></div></div>
+<div class="setrow"><span data-en="Show driving notes under the map">Remarques de pilotage sous le circuit</span><div class="setctl"><input type="checkbox" id="lay_behav" checked></div></div></div>
     </section>
-    <section class="setsec"><h2>🖥️ <span data-en="Layout">Affichage</span></h2>
-      <div class="setrow"><span data-en="Track map size">Taille du circuit</span><div class="setctl"><select id="lay_map" aria-label="Taille du circuit" style="max-width:none;border:0;padding:2px 4px"><option value="s" data-en="Small">Petite</option><option value="n" data-en="Normal">Normale</option><option value="l" data-en="Large">Grande</option><option value="xl" data-en="Extra large">Très grande</option></select></div></div>
-      <div class="setrow"><span data-en="Show the track map">Afficher le circuit</span><div class="setctl"><input type="checkbox" id="lay_mapon" checked></div></div>
-      <div class="setrow"><span data-en="Show tyres">Afficher les pneus</span><div class="setctl"><input type="checkbox" id="lay_tyres" checked></div></div>
-      <div class="setrow"><span data-en="Show weather">Afficher la météo</span><div class="setctl"><input type="checkbox" id="lay_weather" checked></div></div>
-      <div class="setrow"><span data-en="Show lap times">Afficher les chronos</span><div class="setctl"><input type="checkbox" id="lay_chrono" checked></div></div>
-      <div class="setrow"><span data-en="Show driving notes under the map">Remarques de pilotage sous le circuit</span><div class="setctl"><input type="checkbox" id="lay_behav" checked></div></div>
-      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="The cards you hide leave more room for the track map. Saved for this screen only (the phone has its own view).">Les cases que tu masques laissent plus de place au circuit. Gardé pour cet écran seulement (le téléphone a sa propre vue).</div>
+    <section class="setsec"><details id="advanced"><summary style="cursor:pointer"><h2 style="display:inline">⚙️ <span data-en="Advanced">Avancé</span></h2> <span class="sub" style="font-family:inherit;letter-spacing:0" data-en="(set once and forget)">(à régler une fois)</span></summary>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px">
+      <div class="setrow"><span data-en="Pit menu (LMU)">Menu des stands (LMU)</span><div class="setctl"><select id="pitmode" aria-label="Menu des stands" style="max-width:none;border:0;padding:2px 4px"><option value="auto" data-en="Auto">Auto</option><option value="demande" data-en="On request">À la demande</option><option value="off" data-en="Off">Off</option></select></div></div>
+      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Auto: Apex sets fuel / energy, tyres and repairs in the LMU pit menu about a lap before your stop. On request: only when you say &quot;prepare the stop&quot;.">Auto : Apex règle l'essence / l'énergie, les pneus et les réparations dans le menu des stands de LMU environ un tour avant ton arrêt. À la demande : seulement quand tu dis « prépare l'arrêt ».</div>
+      <div class="setrow"><span data-en="Radio tone">Ton de la radio</span><div class="setctl"><select id="tone" aria-label="Ton de la radio" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
+      <div class="setrow"><span data-en="Voice recognition">Reconnaissance vocale</span><div class="setctl"><select id="asr" aria-label="Reconnaissance vocale" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
+      <div class="sub" id="asrnote" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Precise: understands you better, but answers ~2× slower (1.5 GB download the first time).">Précise : te comprend mieux, mais répond environ 2 fois moins vite (1,5 Go à télécharger la première fois).</div>
+      <div class="setrow" id="lmumoderow"><span data-en="Launch mode">Mode de lancement</span><div class="setctl"><select id="lmumode" aria-label="Mode de lancement" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><span data-en="Stream overlay (OBS)">Overlay pour les streams (OBS)</span><div class="setctl"><button id="ovcopy" data-en="Copy the link">Copier le lien</button></div></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="In OBS: add a « Browser » source, paste the link, size 1920 × 1080. Transparent background: only the engineer's radio messages show up. Add ?info=1 at the end for a small position / gaps bar.">Dans OBS : ajoute une source « Navigateur », colle le lien, taille 1920 × 1080. Fond transparent : seuls les messages radio de l'ingénieur s'affichent. Ajoute ?info=1 à la fin pour une petite barre position / écarts.</div>
-    </section>
-    <section class="setsec"><h2>💬 <span data-en="Discord (team)">Discord (équipe)</span></h2>
+      <h3 style="margin:8px 0 0;font-size:14px">💬 <span data-en="Discord (team)">Discord (équipe)</span></h3>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Optional. Paste the webhook of your TEAM channel: Apex will post your lap times, setups and race debriefs there by itself. The link stays on this PC. For the public Apex Radio server, the share buttons copy the message and open Discord.">Facultatif. Colle le webhook du salon de TON ÉQUIPE : Apex y postera tout seul tes chronos, setups et débriefs de course. Le lien reste sur ce PC. Pour le serveur public Apex Radio, les boutons de partage copient le message et ouvrent Discord.</div>
       <div class="setrow"><input id="hook" type="password" autocomplete="off" spellcheck="false" style="flex:1;min-width:0" placeholder="https://discord.com/api/webhooks/…" aria-label="Webhook Discord"></div>
       <div class="row" style="gap:8px;justify-content:flex-start;flex-wrap:wrap"><button id="hooksave" class="pill" data-en="Save and test">Enregistrer et tester</button><button id="hookdel" class="pill" data-en="Remove">Retirer</button><span id="hookmsg" class="sub" style="font-family:inherit;letter-spacing:0;margin:0"></span></div>
@@ -535,6 +536,7 @@
           <li data-en="Integrations → Webhooks → New webhook.">Intégrations → Webhooks → Nouveau webhook.</li>
           <li data-en="Click the webhook, then Copy webhook URL, and paste it here.">Clique sur le webhook, puis Copier l'URL du webhook, et colle-la ici.</li>
         </ol><span data-en="Never post this link in public: anyone who has it can write in the channel.">Ne poste jamais ce lien en public : n'importe qui qui l'a peut écrire dans le salon.</span></details>
+      </div></details>
     </section>
     <section class="setsec"><h2>🔄 <span data-en="Version">Version</span></h2>
       <div class="setrow"><span data-en="Installed version">Version installée</span><div class="setctl"><b id="vernow">–</b></div></div>
@@ -796,6 +798,7 @@ function render(d) {
   if (d.pit && document.activeElement !== $("pitmode")) $("pitmode").value = d.pit.mode;
   if (d.encourage && document.activeElement !== $("encourage")) $("encourage").value = d.encourage;
   if (d.annonces) paintAnnonces(d.annonces);
+  if (typeof paintTalk === "function") { paintTalk(); paintCoach(); }
   if (d.tone && document.activeElement !== $("tone")) $("tone").value = d.tone;
   if (d.driver_name !== undefined && document.activeElement !== $("drvname")) $("drvname").value = d.driver_name;
   if (d.ptt_mode && document.activeElement !== $("pttmode")) $("pttmode").value = d.ptt_mode;
@@ -1087,6 +1090,57 @@ function sendAnnonces() {
     jaunes: $("an_jaunes").checked, jaunes_leves: $("an_leves").checked, bip: $("an_bip").checked }) });
 }
 AN_IDS.forEach(id => $(id).addEventListener("change", sendAnnonces));
+
+// ---- réglage simple : « Ce qu'il dit de lui-même » (regroupe encouragements + annonces)
+const TALK = {
+  discret: { encourage: "discret", essais: false, qualif: false, course: false, ecarts: "demande", jaunes: true, leves: false },
+  normal:  { encourage: "normal", essais: true, qualif: true, course: false, ecarts: "normal", jaunes: true, leves: true },
+  bavard:  { encourage: "motivant", essais: true, qualif: true, course: true, ecarts: "chaque", jaunes: true, leves: true }};
+const TALK_NOTE = {
+  discret: () => T("Le strict nécessaire : drapeaux jaunes, alertes, stands. Tu lui demandes le reste.", "Only the essentials: yellow flags, warnings, pits. Ask him for the rest."),
+  normal: () => T("Chrono en essais et qualif, écarts de temps en temps en course, quelques encouragements.", "Lap times in practice and quali, gaps now and then in races, some encouragement."),
+  bavard: () => T("Chrono à chaque tour, écarts à chaque tour, beaucoup d'encouragements.", "Lap time every lap, gaps every lap, lots of encouragement."),
+  perso: () => T("Réglé à ta façon (voir « Personnaliser » plus bas).", "Your own mix (see « Customise » below).")};
+function talkOptions(withPerso) {
+  const o = [["discret", "Discret", "Quiet"], ["normal", "Normal", "Normal"], ["bavard", "Bavard", "Chatty"]];
+  if (withPerso) o.push(["perso", "Personnalisé", "Custom"]);
+  return o.map(e => `<option value="${e[0]}">${T(e[1], e[2])}</option>`).join("");
+}
+function talkNow() {
+  const v = { encourage: $("encourage").value, essais: $("an_ch_essais").checked, qualif: $("an_ch_qualif").checked,
+    course: $("an_ch_course").checked, ecarts: $("an_ecarts").value, jaunes: $("an_jaunes").checked, leves: $("an_leves").checked };
+  return Object.keys(TALK).find(k => Object.keys(TALK[k]).every(x => TALK[k][x] === v[x])) || "perso";
+}
+function paintTalk() {
+  if (document.activeElement === $("talk")) return;
+  const k = talkNow();
+  if ((k === "perso") !== !!$("talk").querySelector('option[value="perso"]')) $("talk").innerHTML = talkOptions(k === "perso");
+  $("talk").value = k;
+  $("talknote").textContent = TALK_NOTE[k]();
+}
+$("talk").innerHTML = talkOptions(false);
+$("talk").onchange = e => {
+  const p = TALK[e.target.value]; if (!p) return;
+  if ($("encourage").value !== p.encourage) { $("encourage").value = p.encourage; $("encourage").dispatchEvent(new Event("change")); }
+  AN_SESS.forEach(x => $("an_ch_" + x).checked = p[x]);
+  $("an_ecarts").value = p.ecarts; $("an_jaunes").checked = p.jaunes; $("an_leves").checked = p.leves;
+  sendAnnonces(); $("talk").blur(); paintTalk();
+};
+["encourage", ...AN_IDS].forEach(id => $(id).addEventListener("change", paintTalk));
+
+// ---- réglage simple : coach (pilote les 2 anciennes cases cachées)
+$("coachsel").innerHTML = [["non", "Non", "Off"], ["essais", "En essais et qualif", "In practice and quali"],
+  ["toujours", "Toujours (aussi en course)", "Always (races too)"]].map(e => `<option value="${e[0]}">${T(e[1], e[2])}</option>`).join("");
+function paintCoach() {
+  if (document.activeElement === $("coachsel")) return;
+  $("coachsel").value = !$("coaching").checked ? "non" : ($("coachrace").checked ? "toujours" : "essais");
+}
+$("coachsel").onchange = e => {
+  const on = e.target.value !== "non", race = e.target.value === "toujours";
+  if ($("coaching").checked !== on) { $("coaching").checked = on; $("coaching").dispatchEvent(new Event("change")); }
+  if (on && $("coachrace").checked !== race) { $("coachrace").checked = race; $("coachrace").dispatchEvent(new Event("change")); }
+  $("coachsel").blur();
+};
 
 // ---- raccourcis : spotter, radio, mode silence
 const SC = [["spotter", "Spotter on / off", "Spotter on / off"], ["radio", "Radio on / off", "Radio on / off"],

@@ -296,7 +296,21 @@ SYS_PLUGIN = {
 def entry(uuid_, name, plugin_uuid, plugin_name, plugin_version, settings, st):
     return {"ActionID": str(uuid.uuid4()), "LinkedTitle": True, "Name": name,
             "Plugin": {"Name": plugin_name, "UUID": plugin_uuid, "Version": plugin_version},
-            "Resources": None, "Settings": settings, "State": 0, "States": [st], "UUID": uuid_}
+            "Resources": None, "Settings": settings, "State": 0, "States": st if isinstance(st, list) else [st],
+            "UUID": uuid_}
+
+
+# Plugin officiel « OBS Studio » d'Elgato (gratuit, à installer depuis le Marketplace).
+# On ne met pas d'image : le plugin OBS dessine lui-même ses touches (rouge pendant l'enregistrement, etc.).
+OBS_NAMES = {"record": "Record", "record.pause": "Pause Recording", "record.addchapter": "Chapter Marker",
+             "stream": "Stream", "replaybuffer": "Replay Buffer", "replaybuffer.save": "Save Replay Buffer",
+             "screenshot": "Screenshot", "mixeraudio": "Audio Mixer", "scene": "Scene"}
+OBS_STATES = {"record": 2, "record.pause": 2, "stream": 2, "replaybuffer": 2, "mixeraudio": 2}
+
+
+def obs(kind, title=None):
+    st = [({"Title": title} if title else {}) for _ in range(OBS_STATES.get(kind, 1))]
+    return entry(f"com.elgato.obsstudio.{kind}", OBS_NAMES[kind], "com.elgato.obsstudio", "OBS Studio", "6.0", {}, st)
 
 
 def sys_action(uuid_, name, image, settings=None):
@@ -325,7 +339,7 @@ def apex(kind, **settings):
     names = {"radio": "Radio (talk)", "info": "Live info", "spotter": "Spotter on/off", "quiet": "Quiet mode",
              "voice": "Radio on/off", "repeat": "Repeat", "ask": "Question", "launch": "Start LMU",
              "car": "Car command", "chat": "Quick chat"}
-    return entry(f"{PLUGIN}.{kind}", names[kind], PLUGIN, "Apex Radio", "0.3.0", settings, state())
+    return entry(f"{PLUGIN}.{kind}", names[kind], PLUGIN, "Apex Radio", "0.4.0", settings, state())
 
 
 def build():
@@ -335,6 +349,7 @@ def build():
     car = Page("5b0c1a52-7d3e-4c1e-9a51-3c8f2e6a1001")
     aids = Page("5b0c1a52-7d3e-4c1e-9a51-3c8f2e6a1002")
     chat = Page("5b0c1a52-7d3e-4c1e-9a51-3c8f2e6a1003")
+    obsp = Page("5b0c1a52-7d3e-4c1e-9a51-3c8f2e6a1004")
 
     # accueil : la livrée Apex Radio sur les 15 touches ; la touche MENU (en haut à gauche) ouvre le menu
     import home_styles
@@ -351,7 +366,7 @@ def build():
     m.put(4, 0, apex("quiet"))
     m.put(0, 1, apex("ask", q="fais-moi le point", label="Le point"))
     m.put(1, 1, apex("ask", q="l'état de mes pneus", label="Pneus"))
-    m.put(2, 1, apex("ask", q="la météo pour la course", label="Météo"))
+    m.put(2, 1, folder(m, obsp, tile("video", "OBS", PINK, kind="folder")))   # la météo reste dans LIVE
     m.put(3, 1, apex("repeat"))
     m.put(4, 1, apex("voice"))
     m.put(0, 2, apex("launch"))
@@ -409,8 +424,23 @@ def build():
                                   (3, 2): ("À +", "See you next race!"), (4, 2): ("BONNE NUIT", "Good night all!")}.items():
         t.put(c, r, apex("chat", label=label, text=text))
 
+    # OBS : enregistrer, streamer, garder les beaux moments ; les scènes et les sons se choisissent sous chaque touche
+    o = obsp
+    o.put(0, 0, back(o))
+    o.put(1, 0, obs("record"))
+    o.put(2, 0, obs("record.pause"))
+    o.put(3, 0, obs("record.addchapter"))
+    o.put(4, 0, obs("stream"))
+    o.put(0, 1, obs("replaybuffer"))
+    o.put(1, 1, obs("replaybuffer.save"))
+    o.put(2, 1, obs("screenshot"))
+    o.put(3, 1, obs("mixeraudio", "MICRO"))
+    o.put(4, 1, obs("mixeraudio", "SON JEU"))
+    for c in range(5):
+        o.put(c, 2, obs("scene", f"SCÈNE {c + 1}"))
+
     empty = Page("4722c796-e705-4a70-aabf-4440297ba767")   # page « par défaut » vide, comme dans les profils du logiciel
-    pages = [home, menu, live, car, aids, chat, empty]
+    pages = [home, menu, live, car, aids, chat, obsp, empty]
     prof_id = "71DB85AF-2AC5-484C-88C3-4494522CC216"
     base = f"{prof_id}.sdProfile/"
     OUT.parent.mkdir(parents=True, exist_ok=True)

@@ -118,11 +118,69 @@ class Probe:
             self.busy = True
             threading.Thread(target=self._garage, args=(s.car_class, s.car, s.track), daemon=True).start()
             return
+        if getattr(s, "game", "lmu") == "lmu":
+            self._light_tick(s)
+            if self.busy:
+                return
         if stage in self.done:
             return
         self.done.add(stage)
         self.busy = True
         threading.Thread(target=self._run, args=(stage, s.session, s.track, s.car), daemon=True).start()
+
+    # ---------------------------------------------------------- sonde LÉGÈRE (sans risque)
+    def _light_tick(self, s) -> None:
+        """Au garage, voiture immobile depuis 45 s : on relève UNE fois le menu des réglages de cette voiture
+        (2 petites questions au jeu, les mêmes que la sonde « au stand » posait depuis des semaines sans souci)."""
+        if not s.in_pits or not s.car or getattr(s, "speed", 0) > 1:
+            self._lt = None
+            return
+        if getattr(self, "_lt", None) is None or self._lt[0] != s.car:
+            self._lt = (s.car, time.monotonic())
+            return
+        ld = self.__dict__.setdefault("light_done", set())
+        tries = self.__dict__.setdefault("light_tries", {})      # voiture -> (essais, dernier essai)
+        n, last = tries.get(s.car, (0, -1e9))
+        now = time.monotonic()
+        if s.car in ld or now - self._lt[1] < 45 or n >= 5 or now - last < 30:
+            return
+        tries[s.car] = (n + 1, now)
+        ld.add(s.car)
+        self.busy = True
+        threading.Thread(target=self._light, args=(s.car,), daemon=True).start()
+
+    def _light(self, car: str) -> None:
+        import re
+        try:
+            sm = _get("/rest/garage/summary", 400000).get("json") or {}
+            disp = ((sm.get("car") or {}).get("displayProperties") or {})
+            if disp.get("displayName") != car:
+                print(f"  Sonde légère : le garage montre encore « {disp.get('displayName')} », pas « {car} » : je réessaierai")
+                self.light_done.discard(car)
+                return
+            tree = disp.get("fullTreePath") or ""
+            model = tree.split(",")[-1].strip()
+            dst = GARAGE_DIR / ("light_" + re.sub(r"[^A-Za-z0-9_-]+", "_", model)[:80] + ".json")
+            if not model or dst.exists():
+                return
+            time.sleep(1)
+            g = _get("/rest/garage/getPlayerGarageData", 400000).get("json")
+            if not isinstance(g, dict) or len(g) < 20:
+                self.light_done.discard(car)
+                return
+            sm2 = _get("/rest/garage/summary", 400000).get("json") or {}
+            if (((sm2.get("car") or {}).get("displayProperties") or {}).get("displayName")) != car:
+                self.light_done.discard(car)          # la voiture a changé pendant le relevé : on recommencera
+                return
+            keep = {k: {x: v.get(x) for x in ("available", "minValue", "maxValue")} for k, v in g.items() if isinstance(v, dict)}
+            GARAGE_DIR.mkdir(parents=True, exist_ok=True)
+            dst.write_text(json.dumps({"tree": tree, "car": car, "quand": time.strftime("%d/%m/%Y %H:%M"), "garage": keep},
+                                      ensure_ascii=False), encoding="utf-8")
+            print(f"  Limites des réglages relevées : {model} ({len(keep)} réglages)")
+        except Exception as e:
+            print(f"  Sonde légère : {e!r}")
+        finally:
+            self.busy = False
 
     def _garage(self, car_class: str, car: str, track: str) -> None:
         import re

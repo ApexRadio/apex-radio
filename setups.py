@@ -201,20 +201,16 @@ def car_model(vehicle: str) -> str:
     return ""
 
 
-_GAME_LIMITS = None
-
-
 def game_limits(vehicle: str) -> dict | None:
-    """Vraies limites des réglages de cette voiture, relevées dans le garage de LMU (lmu_limits.json) :
+    """Vraies limites des réglages de cette voiture, relevées dans le garage de LMU :
     {"SECTION/Clé": [premier cran, dernier cran]}. None si la voiture n'a pas encore été relevée."""
-    global _GAME_LIMITS
-    if _GAME_LIMITS is None:
-        try:
-            _GAME_LIMITS = json.loads((Path(__file__).resolve().parent / "lmu_limits.json").read_text(encoding="utf-8"))
-        except Exception:
-            _GAME_LIMITS = {}
+    try:
+        from garage_limits import all_limits
+        table = all_limits()
+    except Exception:
+        return None
     for tok in (vehicle or "").replace('"', " ").split():
-        c = _GAME_LIMITS.get(re.sub(r"[^a-z0-9]", "", tok.lower()))
+        c = table.get(re.sub(r"[^a-z0-9]", "", tok.lower()))
         if c:
             return c["limits"]
     return None

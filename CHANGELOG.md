@@ -1,5 +1,11 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.5.1
+- 🇫🇷 **Documents bloqués par Windows** : si Windows refuse qu'Apex écrive dans tes Documents (OneDrive non synchronisé, protection des dossiers de Windows Defender), Apex range maintenant tes réglages et tes setups dans un autre dossier au lieu de les perdre.
+- 🇬🇧 **Documents blocked by Windows**: if Windows won't let Apex write to your Documents (OneDrive not synced, Windows Defender folder protection), Apex now stores your settings and setups in another folder instead of losing them.
+- 🇫🇷 **Plus de sécurité avec LMU** : Apex ne pose plus de questions au jeu en arrière-plan, seulement celles dont il a besoin.
+- 🇬🇧 **Safer with LMU**: Apex no longer asks the game things in the background, only what it needs.
+
 ## 1.5.0
 - 🇫🇷 **Comparer mes tours, version pro** : panneaux Écart / Gaz / Frein / Vitesse, carte du circuit avec les deux voitures au même instant, lecture ▶ du tour (×1 / ×2 / ×4), et un conseil d'ingé virage par virage (« freine environ 10 m plus tard »). Tu peux aussi **partager tes tours** et importer ceux d'autres pilotes (fichier .apexlap).
 - 🇬🇧 **Compare my laps, pro version**: Gap / Throttle / Brake / Speed panels, track map with both cars at the same moment, lap replay ▶ (×1 / ×2 / ×4), and an engineer tip for each corner ("brake about 10 m later"). You can also **share your laps** and import other drivers' laps (.apexlap file).

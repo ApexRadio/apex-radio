@@ -1,25 +1,13 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
-## 🆕 1.5.0
+## 🆕 1.5.1
 🇫🇷
-- **Comparer mes tours, version pro** : panneaux Écart / Gaz / Frein / Vitesse, carte du circuit avec les deux voitures au même instant, lecture ▶ du tour (×1 / ×2 / ×4), et un conseil d'ingé virage par virage (« freine environ 10 m plus tard »). Tu peux aussi **partager tes tours** et importer ceux d'autres pilotes (fichier .apexlap).
-- **Atelier setup bien plus fin** : vraies limites de 16 voitures relevées dans LMU (plus jamais de valeur refusée par le jeu). L'atelier règle aussi les ressorts, les amortisseurs, le pincement et le TC Cut / TC Slip, et ne repropose plus un réglage qui t'a rendu plus lent. Les fichiers portent le nom de la voiture (« APEX Porsche 911 GT3 R Bahrain Course »), et seules la v1 et les 3 dernières versions sont gardées.
-- **Pluie** : sous la pluie, l'ingé te compare à tes tours sous la pluie, plus à ton record du sec.
-- **Tu choisis ce que l'ingé annonce** (Réglages → 📣 Annonces de l'ingé) : chronos et secteurs par séance, écarts en course, drapeaux jaunes, et un **bip** quand tu appuies sur le bouton radio.
-- **Relais** : un **mur des stands** en direct (pilote au volant, progression du relais, prochain pilote, carte, météo, tours du relais). Tu peux **envoyer la course à l'équipe** en un fichier, et le planning reste affiché même jeu fermé.
-- **Tableau de bord à ta façon** : une croix ✕ pour masquer chaque case, les boutons − / + pour la taille du circuit, et un menu ▾ pour changer de jeu.
-- **Radio** : plus de faux drapeaux jaunes répétés, « C'est libre ! » du spotter, « Radio coupée » quand on coupe la radio, nouvelles questions comprises (« mon brake bias est bon ? », « dans quel état est ma voiture ? »), GTE, ABS et LMH bien prononcés.
-- **Corrections** : tableau de bord bloqué quand Pimax Play est lancé, micro qui « n'entendait que du silence » avec certains casques.
+- **Documents bloqués par Windows** : si Windows refuse qu'Apex écrive dans tes Documents (OneDrive non synchronisé, protection des dossiers de Windows Defender), Apex range maintenant tes réglages et tes setups dans un autre dossier au lieu de les perdre.
+- **Plus de sécurité avec LMU** : Apex ne pose plus de questions au jeu en arrière-plan, seulement celles dont il a besoin.
 
 🇬🇧
-- **Compare my laps, pro version**: Gap / Throttle / Brake / Speed panels, track map with both cars at the same moment, lap replay ▶ (×1 / ×2 / ×4), and an engineer tip for each corner ("brake about 10 m later"). You can also **share your laps** and import other drivers' laps (.apexlap file).
-- **Much finer setup workshop**: real limits of 16 cars read from LMU (never again a value the game refuses). The workshop also tunes springs, dampers, toe and TC Cut / TC Slip, and never suggests again a change that made you slower. Files carry the car name, and only v1 plus the last 3 versions are kept.
-- **Rain**: in the wet, the engineer compares you with your wet laps, not your dry record.
-- **You choose what the engineer calls out** (Settings → 📣 Engineer's calls): lap times and sectors per session, race gaps, yellow flags, and a **beep** when you press the radio button.
-- **Stints**: a live **pit wall** (driver at the wheel, stint progress, next driver, map, weather, stint laps). **Send the race to your team** as a file, and the plan stays visible with the game closed.
-- **Your own dashboard**: an ✕ to hide each panel, − / + for the track map size, and a ▾ menu to switch game.
-- **Radio**: no more repeated fake yellow flags, "Clear!" from the spotter, "Radio off" when you turn the radio off, new questions understood ("is my brake bias good?", "what state is my car in?"), GTE, ABS and LMH pronounced properly.
-- **Fixes**: dashboard stuck when Pimax Play is running, mic "only hearing silence" with some headsets.
+- **Documents blocked by Windows**: if Windows won't let Apex write to your Documents (OneDrive not synced, Windows Defender folder protection), Apex now stores your settings and setups in another folder instead of losing them.
+- **Safer with LMU**: Apex no longer asks the game things in the background, only what it needs.
 
 ## 1.4.5
 🇫🇷

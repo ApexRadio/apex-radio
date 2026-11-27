@@ -1,25 +1,76 @@
 // Plugin Stream Deck pour Apex Radio.
-// Il parle à l'appli Apex Radio sur le même PC (http://127.0.0.1:8765) : rien ne passe par Internet.
+// Il parle à l'appli Apex Radio sur le même PC (http://127.0.0.1:8765 à 8775) : rien ne passe par Internet.
 import streamDeck, { SingletonAction } from "@elgato/streamdeck";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { homedir } from "node:os";
 import { keyImage } from "./images.js";
 
-const APEX = "http://127.0.0.1:8765";
+// Apex prend le port 8765, ou le suivant libre si un autre logiciel l'occupe (ex. Pimax Play).
+// Il écrit le port choisi dans %LOCALAPPDATA%\Apex Radio\port.txt.
+const PORTS = Array.from({ length: 11 }, (_, i) => 8765 + i);
+let APEX = "http://127.0.0.1:8765";
+let found = false;        // APEX vient d'être confirmé par /api/ping
+let searching = null;
+
+function savedPort() {
+    try {
+        const dir = process.env.LOCALAPPDATA || join(homedir(), "AppData", "Local");
+        const n = parseInt(readFileSync(join(dir, "Apex Radio", "port.txt"), "utf8").trim(), 10);
+        return PORTS.includes(n) ? n : null;
+    } catch {
+        return null;
+    }
+}
+
+async function isApex(port) {
+    try {
+        const base = `http://127.0.0.1:${port}`;
+        const r = await fetch(base + "/api/ping", { signal: AbortSignal.timeout(400) });
+        if (r.ok) return (await r.json())?.app === "apex-radio";
+        if (r.status !== 404) return false;
+        // Apex plus ancien que la 1.5.0 (pas de /api/ping) : il répond à /api/sd.
+        const s = await fetch(base + "/api/sd", { signal: AbortSignal.timeout(600) });
+        return s.ok;
+    } catch {
+        return false;
+    }
+}
+
+async function findApex() {
+    // Une seule recherche à la fois ; le fichier port.txt d'abord, puis les ports dans l'ordre.
+    searching ??= (async () => {
+        const first = savedPort();
+        for (const port of first ? [first, ...PORTS.filter((p) => p !== first)] : PORTS) {
+            if (await isApex(port)) {
+                APEX = `http://127.0.0.1:${port}`;
+                found = true;
+                return true;
+            }
+        }
+        return false;
+    })().finally(() => { searching = null; });
+    return searching;
+}
 const ID = "com.apexradio.streamdeck";
 
 let sd = null;            // dernier état reçu d'Apex (null = Apex fermé)
 const shown = new Map();  // contexte de touche -> dernière image envoyée (on n'envoie que les changements)
 const settingsOf = new Map();
 
-async function get(path) {
+async function get(path, retry = true) {
+    if (!found && !(await findApex())) return null;
     try {
         const r = await fetch(APEX + path, { signal: AbortSignal.timeout(900) });
         return r.ok ? await r.json() : null;
     } catch {
-        return null;
+        found = false;    // Apex fermé ou relancé sur un autre port : on cherche à nouveau
+        return retry ? get(path, false) : null;
     }
 }
 
 async function post(path, body) {
+    if (!found && !(await findApex())) return false;
     try {
         const r = await fetch(APEX + path, {
             method: "POST",
@@ -29,6 +80,7 @@ async function post(path, body) {
         });
         return r.ok;
     } catch {
+        found = false;
         return false;
     }
 }

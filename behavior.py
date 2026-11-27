@@ -173,6 +173,8 @@ class Behavior:
         self.corner_v = {}                      # virage -> vitesse mini habituelle (m/s), pour virages lents / rapides
         self.brake_peaks = None                 # [avant, arrière] : pic de température des freins par tour (médiane)
         self.brake_hist: deque = deque(maxlen=3)
+        self.engine_peaks = None                # [eau, huile] : pic de température moteur par tour (médiane)
+        self.engine_hist: deque = deque(maxlen=3)
         self.sgn = {1: 0, -1: 0}                # sens habituel volant / virage (pour repérer le contre-braquage)
         self.driver_issue = None                # ce que le pilote a signalé lui-même (« l'arrière glisse »)
         self.game = "lmu"                       # l'atelier setup n'existe que pour LMU
@@ -223,6 +225,8 @@ class Behavior:
             self.sgn = {1: 0, -1: 0}
             self.brake_peaks = None
             self.brake_hist.clear()
+            self.engine_peaks = None
+            self.engine_hist.clear()
             self.bias_done = False
             self.hold_until = 0
             self.last_say = -99
@@ -239,6 +243,7 @@ class Behavior:
         self.over = defaultdict(int)            # virage -> mesures en surbraquage
         self.vmin = {}                          # virage -> vitesse mini sur ce tour
         self.bpeak = [0.0, 0.0]                 # pic de température des freins avant / arrière sur ce tour
+        self.epeak = [0.0, 0.0]                 # pic de température eau / huile sur ce tour
         self.csteer = defaultdict(int)          # (virage, phase) -> mesures en contre-braquage (l'arrière décroche)
         self.dirty = False
 
@@ -275,6 +280,10 @@ class Behavior:
             f = m["f"]
             a = m["alpha"]
             # freinage : on rattache au virage qui arrive (zone de freinage avant le virage)
+            et = m.get("eng")
+            if et and len(et) == 2:
+                self.epeak[0] = max(self.epeak[0], et[0])
+                self.epeak[1] = max(self.epeak[1], et[1])
             bt = m.get("btemp")
             if bt:
                 self.bpeak[0] = max(self.bpeak[0], bt[0], bt[1])
@@ -430,6 +439,9 @@ class Behavior:
                 found.add(("blocage", c, "avant" if w < 2 else "arrière"))
         for c, v in self.vmin.items():
             self.corner_v[c] = v if c not in self.corner_v else 0.7 * self.corner_v[c] + 0.3 * v
+        if min(self.epeak) > 40:
+            self.engine_hist.append(list(self.epeak))
+            self.engine_peaks = [sorted(x[i] for x in self.engine_hist)[len(self.engine_hist) // 2] for i in (0, 1)]
         if min(self.bpeak) > 50:
             self.brake_hist.append(list(self.bpeak))
             self.brake_peaks = [sorted(x[i] for x in self.brake_hist)[len(self.brake_hist) // 2] for i in (0, 1)]

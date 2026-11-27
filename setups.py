@@ -792,7 +792,7 @@ class Workshop:
                 "why": L("essence pour la course : ", "fuel for the race: ") + fuel.get("why", "")}
 
     def propose(self, track: str, issues: list, findings: list, live: dict | None = None,
-                fuel: dict | None = None, brakes: list | None = None) -> dict:
+                fuel: dict | None = None, brakes: list | None = None, engine: list | None = None) -> dict:
         self.scan()
         st = self.state_full(track)
         if self.factory:
@@ -890,7 +890,8 @@ class Workshop:
                 clicks = 1
             elif k == "patinage":
                 cands = [("CONTROLS", "TractionControlMapSetting", +1), ("CONTROLS", "TCPowerCutMapSetting", +1),
-                         ("DRIVELINE", "DiffPowerSetting", -power), ("R*", "SpringSetting", -1), ("R*", "SlowBumpSetting", -1)]
+                         ("DRIVELINE", "DiffPowerSetting", -power), ("DRIVELINE", "DiffPreloadSetting", +1),
+                         ("R*", "SpringSetting", -1), ("R*", "SlowBumpSetting", -1)]
             elif k == "sous-virage":
                 # de la correction la plus douce à la plus forte ; « F* » / « R* » = les deux roues de l'essieu
                 if w == "entrée":
@@ -904,7 +905,8 @@ class Workshop:
                     cands += [("F*", "SpringSetting", -1), ("SUSPENSION", "RearAntiSwaySetting", +1),
                               ("R*", "SpringSetting", +1), ("REARWING", "RWSetting", -1)]
                 else:
-                    cands = [("DRIVELINE", "DiffPowerSetting", -power), ("SUSPENSION", "FrontAntiSwaySetting", -1),
+                    cands = [("DRIVELINE", "DiffPowerSetting", -power), ("DRIVELINE", "DiffPreloadSetting", -1),
+                             ("SUSPENSION", "FrontAntiSwaySetting", -1),
                              ("F*", "SlowReboundSetting", -1), ("R*", "SlowBumpSetting", +1),
                              ("SUSPENSION", "RearAntiSwaySetting", +1)]
             elif k == "survirage":
@@ -945,6 +947,15 @@ class Workshop:
                     add("BODYAERO", sec_key, -1, L(f"freins {axle} trop chauds ({t:.0f} °C)", f"{axle} brakes too hot ({t:.0f} °C)"))
                 elif 0 < t < cold:
                     add("BODYAERO", sec_key, +1, L(f"freins {axle} trop froids ({t:.0f} °C)", f"{axle} brakes too cold ({t:.0f} °C)"))
+
+        # 3) radiateurs : moteur trop chaud = on ouvre, trop froid = on ferme (cran 0 = « Open » dans LMU)
+        if engine and len(engine) == 2:
+            for t, key, hot, cold, what in ((engine[0], "WaterRadiatorSetting", 108.0, 75.0, L("eau", "water")),
+                                            (engine[1], "OilRadiatorSetting", 128.0, 85.0, L("huile", "oil"))):
+                if t > hot:
+                    add("BODYAERO", key, -1, L(f"moteur trop chaud ({what} {t:.0f} °C)", f"engine too hot ({what} {t:.0f} °C)"))
+                elif 0 < t < cold:
+                    add("BODYAERO", key, +1, L(f"moteur trop froid ({what} {t:.0f} °C)", f"engine too cold ({what} {t:.0f} °C)"))
 
         sym = (s.get("GENERAL", "Symmetric") or (0,))[0] == 1
         names = L("avant gauche|avant droit|arrière gauche|arrière droit", "front left|front right|rear left|rear right").split("|")

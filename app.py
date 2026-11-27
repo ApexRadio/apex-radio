@@ -221,7 +221,7 @@ def loop(state: State, demo: bool) -> None:
             if not ws.state(tr).get("current"):
                 return None
             prop = ws.propose(tr, state.beh.issues, state.beh.tyre_findings, state.beh.live_controls(tr),
-                              state.fuel.suggest(tr), state.beh.brake_peaks)
+                              state.fuel.suggest(tr), state.beh.brake_peaks, state.beh.engine_peaks)
         except Exception:
             return None
         if prop.get("error"):
@@ -614,7 +614,7 @@ def make_handler(state: State):
                 else:
                     tr = state.track()
                     fuel = state.fuel.suggest(tr)
-                    data = {**ws.propose(tr, beh.issues, beh.tyre_findings, beh.live_controls(tr), fuel, beh.brake_peaks),
+                    data = {**ws.propose(tr, beh.issues, beh.tyre_findings, beh.live_controls(tr), fuel, beh.brake_peaks, beh.engine_peaks),
                             "folders": ws.folders(), "analysis_laps": beh.laps_seen, "fuel": fuel}
                 body = json.dumps(data, default=lambda o: None).encode()
                 self.send_response(200)
@@ -960,7 +960,7 @@ def make_handler(state: State):
                     out = {"error": None}
                 else:
                     prop = ws.propose(tr, state.beh.issues, state.beh.tyre_findings, state.beh.live_controls(tr),
-                                      state.fuel.suggest(tr), state.beh.brake_peaks)
+                                      state.fuel.suggest(tr), state.beh.brake_peaks, state.beh.engine_peaks)
                     keep = set(req.get("keys") or [])
                     chosen = [c for c in prop["changes"] if f"{c['section']}|{c['key']}" in keep]
                     out = ws.create(tr, chosen)

@@ -154,6 +154,7 @@ def dynamics_sample(tel, sc, info) -> dict:
         "tcslip": tel.mTCSlip, "tccut": tel.mTCCut, "map": tel.mMotorMap,
         "farb": tel.mFrontAntiSway, "rarb": tel.mRearAntiSway,
         "btemp": [w.mBrakeTemp - 273.15 for w in tel.mWheels],
+        "eng": [float(tel.mEngineWaterTemp), float(tel.mEngineOilTemp)],     # °C (eau, huile)
         # trajectoire : position sur la largeur de la piste et roues sur un vibreur (conseils de ligne)
         "pl": sc.mPathLateral, "edge": sc.mTrackEdge,
         "curb": sum(1 for w in tel.mWheels if int(w.mSurfaceType) == 5),

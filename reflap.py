@@ -24,6 +24,36 @@ NBIN = 500                    # points par tour (tous les 0,2 % de tour : ~10 m 
 RECENT = 10                   # derniers tours propres gardés
 
 
+def _extra(trace, extra) -> dict:
+    """Angle du volant (-100 à 100 %) et position de la voiture (x, z en m) sur les mêmes NBIN cases."""
+    if not extra or len(extra) != len(trace):
+        return {}
+    acc = [[0.0, 0.0, 0.0, 0, 0] for _ in range(NBIN)]
+    for x, e in zip(trace, extra):
+        st, px, pz = e
+        i = min(NBIN - 1, max(0, int(x[0] * NBIN)))
+        a = acc[i]
+        if st is not None:
+            a[0] += st * 100; a[3] += 1
+        if px is not None and pz is not None:
+            a[1] += px; a[2] += pz; a[4] += 1
+    out = {}
+    if sum(1 for a in acc if a[3]) >= NBIN * 0.6:
+        out["s"] = [round(a[0] / a[3]) if a[3] else None for a in acc]
+    if sum(1 for a in acc if a[4]) >= NBIN * 0.6:
+        out["x"] = [round(a[1] / a[4], 1) if a[4] else None for a in acc]
+        out["z"] = [round(a[2] / a[4], 1) if a[4] else None for a in acc]
+    for k in out:                       # cases vides : on recopie la dernière valeur connue
+        arr, last = out[k], None
+        for i in list(range(NBIN)) * 2:
+            if arr[i] is None:
+                if last is not None:
+                    arr[i] = last
+            else:
+                last = arr[i]
+    return out
+
+
 def _curve(trace) -> dict | None:
     """Vitesse (km/h), frein et gaz (%) moyennés sur NBIN cases le long du tour (trous bouchés)."""
     acc = [[0.0, 0.0, 0.0, 0] for _ in range(NBIN)]
@@ -67,6 +97,7 @@ class RefLap:
         self.ref = None              # {"lap": s, "L": m, "corners": {id: {...}}}
         self.lap = None
         self.trace = []              # tour en cours : (f, vitesse m/s, frein, gaz)
+        self.extra = []              # en parallèle : (volant -1..1, x, z) pour la page Comparer
         self.clean = False
         self.pending = None          # tour terminé, en attente de son chrono officiel
         self.done = set()            # virages déjà comparés sur ce tour
@@ -86,11 +117,12 @@ class RefLap:
         except Exception:
             pass
 
-    def _keep_lap(self, trace, lap: float, L_m: float) -> None:
+    def _keep_lap(self, trace, lap: float, L_m: float, extra=None) -> None:
         """Garde la courbe de ce tour (et du meilleur) pour la page « Comparer mes tours »."""
         cur = _curve(trace)
         if not cur:
             return
+        cur.update(_extra(trace, extra))
         try:
             f = LAPS / self._file(self.key).name
             try:
@@ -182,14 +214,15 @@ class RefLap:
             key = f"{getattr(s, 'game', 'lmu')} | {s.track} | {s.car or s.car_class}" + conditions.tag(conditions.wet(s))
             if key != self.key:
                 self._load(key)
-                self.lap, self.trace, self.pending = None, [], None
+                self.lap, self.trace, self.extra, self.pending = None, [], [], None
             self._resolve(s)
             if self.lap is None:
                 self.lap = m["lap"]
             if m["lap"] != self.lap:
                 if m["lap"] > self.lap and self.clean and len(self.trace) > 200 and self.trace[0][0] < 0.03:
-                    self.pending = (self.trace, getattr(self, "mid_last", None), time.monotonic(), s.track_len)
-                self.lap, self.trace, self.done = m["lap"], [], set()
+                    self.pending = (self.trace, getattr(self, "mid_last", None), time.monotonic(), s.track_len,
+                                    self.extra)
+                self.lap, self.trace, self.extra, self.done = m["lap"], [], [], set()
                 self.clean, self.lap_t0 = not m["pits"], time.monotonic()
             # « tour invalide » du jeu : lu 5 fois/s, il traîne un instant après la ligne (c'était l'ancien tour)
             if m["pits"] or (s.lap_invalid and time.monotonic() - getattr(self, "lap_t0", 0) > 1.5):
@@ -200,6 +233,10 @@ class RefLap:
                 self.mid_last = s.last_lap      # chrono du tour PRÉCÉDENT : il changera quand ce tour-ci sera fini
             self.trace.append((m["f"], m["speed"], m.get("brk") or 0.0, m.get("thr") or 0.0,
                                m.get("pl"), m.get("edge"), m.get("curb") or 0))
+            me = next((o for o in (s.cars or []) if o.get("me")), None)
+            st = m.get("steer")
+            self.extra.append((float(st) if isinstance(st, (int, float)) else None,
+                               me.get("x") if me else None, me.get("z") if me else None))
             # bataille / trafic : une voiture à moins de ~150 m devant ou ~100 m derrière. On le retient quelques
             # secondes pour ne pas comparer un virage pris en défense, en attaque ou côte à côte.
             L_m, f = s.track_len, m["f"]
@@ -216,12 +253,12 @@ class RefLap:
         """Le chrono du tour arrive un peu après le passage de la ligne : on attend qu'il change."""
         if not self.pending:
             return
-        trace, before, t0, L_m = self.pending
+        trace, before, t0, L_m, extra = (tuple(self.pending) + (None,))[:5]
         if s.last_lap and s.last_lap != before:
             self.pending = None
             lap = s.last_lap
             if 20 < lap < 1200:
-                self._keep_lap(trace, lap, L_m)
+                self._keep_lap(trace, lap, L_m, extra)
             if not self.ref or lap < self.ref.get("lap", 9e9) - 0.005:
                 corners = self._all_corners(trace, L_m)
                 if len(corners) >= max(1, len(self.beh.map.corners()) // 2):

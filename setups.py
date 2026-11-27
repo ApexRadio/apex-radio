@@ -66,6 +66,11 @@ LABELS = {
     "RideHeightSetting": "Hauteur de caisse", "AntilockBrakeSystemMapSetting": "ABS",
     "BrakePressureSetting": "Pression de freinage", "BrakeDuctSetting": "Écopes de frein avant",
     "BrakeDuctRearSetting": "Écopes de frein arrière",
+    "SpringSetting": "Ressort", "SlowBumpSetting": "Compression lente", "FastBumpSetting": "Compression rapide",
+    "SlowReboundSetting": "Détente lente", "FastReboundSetting": "Détente rapide", "PackerSetting": "Butée",
+    "FrontToeInSetting": "Pincement avant", "RearToeInSetting": "Pincement arrière",
+    "TCPowerCutMapSetting": "TC coupure", "TCSlipAngleMapSetting": "TC glissement", "DiffPreloadSetting": "Précharge du différentiel",
+    "WaterRadiatorSetting": "Radiateur eau", "OilRadiatorSetting": "Radiateur huile",
 }
 SECTION_FR = {"FRONTLEFT": "AVG", "FRONTRIGHT": "AVD", "REARLEFT": "ARG", "REARRIGHT": "ARD"}
 LABELS_EN = {
@@ -76,6 +81,11 @@ LABELS_EN = {
     "RideHeightSetting": "Ride height", "AntilockBrakeSystemMapSetting": "ABS",
     "BrakePressureSetting": "Brake pressure", "BrakeDuctSetting": "Front brake ducts",
     "BrakeDuctRearSetting": "Rear brake ducts",
+    "SpringSetting": "Spring", "SlowBumpSetting": "Slow bump", "FastBumpSetting": "Fast bump",
+    "SlowReboundSetting": "Slow rebound", "FastReboundSetting": "Fast rebound", "PackerSetting": "Packer",
+    "FrontToeInSetting": "Front toe", "RearToeInSetting": "Rear toe",
+    "TCPowerCutMapSetting": "TC cut", "TCSlipAngleMapSetting": "TC slip", "DiffPreloadSetting": "Diff preload",
+    "WaterRadiatorSetting": "Water radiator", "OilRadiatorSetting": "Oil radiator",
 }
 SECTION_EN = {"FRONTLEFT": "FL", "FRONTRIGHT": "FR", "REARLEFT": "RL", "REARRIGHT": "RR"}
 
@@ -189,6 +199,25 @@ def car_model(vehicle: str) -> str:
         if name:
             return name
     return ""
+
+
+_GAME_LIMITS = None
+
+
+def game_limits(vehicle: str) -> dict | None:
+    """Vraies limites des réglages de cette voiture, relevées dans le garage de LMU (lmu_limits.json) :
+    {"SECTION/Clé": [premier cran, dernier cran]}. None si la voiture n'a pas encore été relevée."""
+    global _GAME_LIMITS
+    if _GAME_LIMITS is None:
+        try:
+            _GAME_LIMITS = json.loads((Path(__file__).resolve().parent / "lmu_limits.json").read_text(encoding="utf-8"))
+        except Exception:
+            _GAME_LIMITS = {}
+    for tok in (vehicle or "").replace('"', " ").split():
+        c = _GAME_LIMITS.get(re.sub(r"[^a-z0-9]", "", tok.lower()))
+        if c:
+            return c["limits"]
+    return None
 
 
 def setup_class(vehicle: str) -> str:
@@ -594,26 +623,38 @@ class Workshop:
         known = self.catalog.get((setup.vehicle, section, key), {})
         if disp.startswith("APEX"):
             disp = known.get(idx, f"cran {idx}")
-        if not disp or disp.lower() in FIXED or any(f in disp.lower() for f in FIXED):
-            return None
-        if len(known) <= 1 and _num(disp) is None:
-            return None   # réglage peut-être fixe sur cette voiture : on n'y touche pas
         new = idx + delta
+        game = game_limits(setup.vehicle)
+        if game is not None:
+            # voiture relevée dans le garage de LMU : on connaît la VRAIE plage, plus besoin de deviner
+            rng = game.get(f"{section}/{key}")
+            if rng is None or not rng[0] <= new <= rng[1]:
+                return None    # pas réglable sur cette voiture, ou on sortirait de la plage permise par le jeu
+        else:
+            if not disp or disp.lower() in FIXED or any(f in disp.lower() for f in FIXED):
+                return None
+            if len(known) <= 1 and _num(disp) is None:
+                return None   # réglage peut-être fixe sur cette voiture : on n'y touche pas
         if new < 0:
             return None
         # l'affichage dit déjà qu'on est au bout (« P1 (soft) », « 10 (max) ») : pas plus loin dans ce sens
         if (delta < 0 and re.search(r"\b(soft|min|mini)\b", disp, re.I)) or (delta > 0 and re.search(r"\b(hard|max|maxi)\b", disp, re.I)):
             return None
         lim = getattr(self, "_limits", {}).get(f"{section}|{key}")
-        if lim and (new - lim["at"]) * lim["block"] > 0:
+        if game is None and lim and (new - lim["at"]) * lim["block"] > 0:
             return None   # LMU n'accepte pas d'aller plus loin sur cette voiture
-        if known and new > max(known) + 3:
+        if game is None and known and new > max(known) + 3:
             return None
-        if key == "CamberSetting" and new not in known:
+        if game is None and key == "CamberSetting" and new not in known:
             # le carrossage a des butées serrées (LMGT3 : −1,8° avant au minimum) : on ne propose que des valeurs
             # déjà vues dans tes setups de cette voiture, sinon LMU refuse et remet l'ancienne valeur
             return None
         to_disp, est = known.get(new), False
+        if to_disp is None:
+            # affichage = le numéro du cran (« P5 », « 6 ») : la nouvelle valeur se déduit sans deviner
+            m = re.fullmatch(r"([A-Za-z]*)(\d+)", (disp or "").strip())
+            if m and int(m.group(2)) == idx:
+                to_disp = f"{m.group(1)}{new}"
         if to_disp is None:
             # pas encore vu dans tes fichiers : on l'estime à partir des valeurs connues (crans réguliers), sinon on dit « 1 cran de plus / de moins »
             pts = sorted((i, _num(d)) for i, d in known.items() if _num(d) is not None)
@@ -631,6 +672,24 @@ class Workshop:
             est = True
         return {"section": section, "key": key, "label": label(section, key), "from": idx, "to": new, "from_disp": disp,
                 "to_disp": to_disp, "est": est}
+
+    def _bad_moves(self, st: dict) -> set:
+        """Changements déjà essayés sur cette voiture qui ont rendu plus lent (≥ 2 dixièmes sur le meilleur tour,
+        3 tours au moins) : {(essieu + clé, sens)}. L'atelier apprend ce qui ne marche pas pour TA voiture."""
+        h = self.history.get(self._hkey(st.get("folder")), {})
+        res, out = h.get("results", {}), set()
+        for v in h.get("versions", []):
+            if v.get("origin"):
+                continue
+            cur, base = res.get(v["label"]) or {}, res.get(v.get("base")) or {}
+            if cur.get("laps", 0) < 3 or not cur.get("best") or not base.get("best") or cur["best"] - base["best"] < 0.2:
+                continue
+            for c in v.get("changes", []):
+                sec = c.get("section", "")
+                axle = "F" if sec.startswith("FRONT") and sec != "FRONTWING" else "R" if sec.startswith("REAR") and sec != "REARWING" else ""
+                if c.get("to") is not None and c.get("from") is not None and c["to"] != c["from"]:
+                    out.add((axle + c["key"], 1 if c["to"] > c["from"] else -1))
+        return out
 
     def _learn_limits(self, st: dict, s: Setup) -> dict:
         """Si LMU a remis un réglage à son ancienne valeur, c'est qu'Apex avait dépassé la plage permise sur cette voiture
@@ -756,7 +815,7 @@ class Workshop:
                 used.add(("GENERAL", "FuelSetting"))
 
         def add(section, key, delta, why):
-            if (section, key) in used:
+            if (section, key) in used or tried_bad(section, key, delta):
                 return
             old = conflict.get((section, key))
             if old is not None and old != delta:
@@ -767,6 +826,27 @@ class Workshop:
                 changes.append(ch)
                 used.add((section, key))
                 conflict[(section, key)] = delta
+
+        # ce qui a déjà été essayé sur cette voiture et a rendu plus lent : on ne le repropose pas
+        bad = self._bad_moves(st)
+
+        def tried_bad(section, key, delta):
+            axle = ("F" if section.startswith("FRONT") and section != "FRONTWING" else
+                    "R" if section.startswith("REAR") and section != "REARWING" else "")
+            return (axle + key, 1 if delta > 0 else -1) in bad
+
+        def add_axle(axle, key, delta, why):
+            """Réglage par roue (ressorts, amortisseurs…) : les deux roues d'un même essieu ensemble, ou rien."""
+            secs = ("FRONTLEFT", "FRONTRIGHT") if axle == "F" else ("REARLEFT", "REARRIGHT")
+            if any((sec, key) in used for sec in secs) or tried_bad(secs[0], key, delta):
+                return
+            got = [self._step(s, sec, key, delta) for sec in secs]
+            if not all(got):
+                return
+            for ch in got:
+                ch["why"] = why
+                changes.append(ch)
+                used.add((ch["section"], ch["key"]))
 
         # répartition de freinage : on raisonne en "% à l'avant"
         bias_dir = self._direction(s, "CONTROLS", "RearBrakeSetting", -1)   # index↑ = moins d'avant (Oreca)
@@ -804,33 +884,48 @@ class Workshop:
                     cands = [("DRIVELINE", "DiffCoastSetting", coast), ("CONTROLS", "RearBrakeSetting", bias_dir)]
                 clicks = 1
             elif k == "patinage":
-                cands = [("CONTROLS", "TractionControlMapSetting", +1), ("DRIVELINE", "DiffPowerSetting", -power)]
+                cands = [("CONTROLS", "TractionControlMapSetting", +1), ("CONTROLS", "TCPowerCutMapSetting", +1),
+                         ("DRIVELINE", "DiffPowerSetting", -power), ("R*", "SpringSetting", -1), ("R*", "SlowBumpSetting", -1)]
             elif k == "sous-virage":
+                # de la correction la plus douce à la plus forte ; « F* » / « R* » = les deux roues de l'essieu
                 if w == "entrée":
                     cands = [("SUSPENSION", "FrontAntiSwaySetting", -1), ("DRIVELINE", "DiffCoastSetting", -coast),
+                             ("F*", "SlowBumpSetting", -1), ("R*", "SlowReboundSetting", +1),
+                             ("SUSPENSION", "FrontToeInSetting", -1),
                              ("SUSPENSION", "RearAntiSwaySetting", +1), ("CONTROLS", "RearBrakeSetting", -bias_dir)]
                 elif w == "milieu":
                     cands = ([("FRONTWING", "FWSetting", +1), ("SUSPENSION", "FrontAntiSwaySetting", -1)] if fast else
                              [("SUSPENSION", "FrontAntiSwaySetting", -1), ("FRONTWING", "FWSetting", +1)])
-                    cands += [("SUSPENSION", "RearAntiSwaySetting", +1), ("REARWING", "RWSetting", -1)]
+                    cands += [("F*", "SpringSetting", -1), ("SUSPENSION", "RearAntiSwaySetting", +1),
+                              ("R*", "SpringSetting", +1), ("REARWING", "RWSetting", -1)]
                 else:
                     cands = [("DRIVELINE", "DiffPowerSetting", -power), ("SUSPENSION", "FrontAntiSwaySetting", -1),
+                             ("F*", "SlowReboundSetting", -1), ("R*", "SlowBumpSetting", +1),
                              ("SUSPENSION", "RearAntiSwaySetting", +1)]
             elif k == "survirage":
                 if w == "entrée":
-                    cands = [("DRIVELINE", "DiffCoastSetting", coast), ("CONTROLS", "RearBrakeSetting", bias_dir)]
+                    cands = [("DRIVELINE", "DiffCoastSetting", coast), ("CONTROLS", "RearBrakeSetting", bias_dir),
+                             ("R*", "SlowReboundSetting", -1), ("F*", "SlowBumpSetting", +1),
+                             ("SUSPENSION", "RearToeInSetting", +1)]
                 elif w == "milieu":
                     cands = ([("REARWING", "RWSetting", +1), ("SUSPENSION", "RearAntiSwaySetting", -1)] if fast else
                              [("SUSPENSION", "RearAntiSwaySetting", -1), ("REARWING", "RWSetting", +1)])
-                    cands += [("SUSPENSION", "FrontAntiSwaySetting", +1)]
+                    cands += [("R*", "SpringSetting", -1), ("SUSPENSION", "FrontAntiSwaySetting", +1),
+                              ("SUSPENSION", "RearToeInSetting", +1), ("F*", "SpringSetting", +1)]
                 else:
                     cands = [("CONTROLS", "TractionControlMapSetting", +1), ("SUSPENSION", "RearAntiSwaySetting", -1),
-                             ("DRIVELINE", "DiffPowerSetting", -power), ("SUSPENSION", "FrontAntiSwaySetting", +1)]
+                             ("DRIVELINE", "DiffPowerSetting", -power), ("R*", "SlowBumpSetting", -1),
+                             ("F*", "SlowReboundSetting", +1), ("CONTROLS", "TCSlipAngleMapSetting", +1),
+                             ("SUSPENSION", "FrontAntiSwaySetting", +1)]
             for sec, key, d in cands:
                 before = len(changes)
-                add(sec, key, d * clicks, why)
-                if len(changes) == before and clicks > 1:
-                    add(sec, key, d, why)             # pas de 2e cran possible : on en met un
+                put = (lambda dd: add_axle(sec[0], key, dd, why)) if sec in ("F*", "R*") else (lambda dd: add(sec, key, dd, why))
+                if sec in ("F*", "R*"):
+                    put(d)                            # suspension : un seul cran à la fois
+                else:
+                    put(d * clicks)
+                    if len(changes) == before and clicks > 1:
+                        put(d)                        # pas de 2e cran possible : on en met un
                 if len(changes) > before:
                     balance += 1
                     break

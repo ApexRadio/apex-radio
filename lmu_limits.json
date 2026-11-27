@@ -1,0 +1,3416 @@
+{
+ "lexusrcflmgt3": {
+  "name": "Lexus RCF LMGT3",
+  "class": "GT3",
+  "limits": {
+   "BODYAERO/BrakeDuctRearSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/BrakeDuctSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/OilRadiatorSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/WaterRadiatorSetting": [
+    0,
+    10
+   ],
+   "CONTROLS/AntilockBrakeSystemMapSetting": [
+    0,
+    9
+   ],
+   "CONTROLS/BrakePressureSetting": [
+    0,
+    80
+   ],
+   "CONTROLS/RearBrakeSetting": [
+    0,
+    56
+   ],
+   "CONTROLS/SteerLockSetting": [
+    0,
+    6
+   ],
+   "CONTROLS/TCPowerCutMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TCSlipAngleMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TractionControlMapSetting": [
+    0,
+    11
+   ],
+   "DRIVELINE/DiffPreloadSetting": [
+    0,
+    200
+   ],
+   "ENGINE/EngineMixtureSetting": [
+    0,
+    1
+   ],
+   "FRONTLEFT/CamberSetting": [
+    0,
+    32
+   ],
+   "FRONTLEFT/CompoundSetting": [
+    0,
+    3
+   ],
+   "FRONTLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/PackerSetting": [
+    0,
+    50
+   ],
+   "FRONTLEFT/PressureSetting": [
+    0,
+    74
+   ],
+   "FRONTLEFT/RideHeightSetting": [
+    0,
+    35
+   ],
+   "FRONTLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SpringSetting": [
+    0,
+    5
+   ],
+   "FRONTRIGHT/CamberSetting": [
+    0,
+    32
+   ],
+   "FRONTRIGHT/CompoundSetting": [
+    0,
+    3
+   ],
+   "FRONTRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/PackerSetting": [
+    0,
+    50
+   ],
+   "FRONTRIGHT/PressureSetting": [
+    0,
+    74
+   ],
+   "FRONTRIGHT/RideHeightSetting": [
+    0,
+    35
+   ],
+   "FRONTRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SpringSetting": [
+    0,
+    5
+   ],
+   "REARLEFT/CamberSetting": [
+    0,
+    28
+   ],
+   "REARLEFT/CompoundSetting": [
+    0,
+    3
+   ],
+   "REARLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/PackerSetting": [
+    0,
+    60
+   ],
+   "REARLEFT/PressureSetting": [
+    0,
+    74
+   ],
+   "REARLEFT/RideHeightSetting": [
+    0,
+    50
+   ],
+   "REARLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SpringSetting": [
+    0,
+    5
+   ],
+   "REARRIGHT/CamberSetting": [
+    0,
+    28
+   ],
+   "REARRIGHT/CompoundSetting": [
+    0,
+    3
+   ],
+   "REARRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/PackerSetting": [
+    0,
+    60
+   ],
+   "REARRIGHT/PressureSetting": [
+    0,
+    74
+   ],
+   "REARRIGHT/RideHeightSetting": [
+    0,
+    50
+   ],
+   "REARRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SpringSetting": [
+    0,
+    5
+   ],
+   "REARWING/RWSetting": [
+    0,
+    6
+   ],
+   "SUSPENSION/FrontAntiSwaySetting": [
+    0,
+    7
+   ],
+   "SUSPENSION/FrontToeInSetting": [
+    0,
+    32
+   ],
+   "SUSPENSION/RearAntiSwaySetting": [
+    0,
+    7
+   ],
+   "SUSPENSION/RearToeInSetting": [
+    0,
+    32
+   ]
+  }
+ },
+ "astonmartinvantageamrlmgt3": {
+  "name": "Aston Martin Vantage AMR LMGT3",
+  "class": "GT3",
+  "limits": {
+   "BODYAERO/BrakeDuctRearSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/BrakeDuctSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/OilRadiatorSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/WaterRadiatorSetting": [
+    0,
+    10
+   ],
+   "CONTROLS/AntilockBrakeSystemMapSetting": [
+    0,
+    9
+   ],
+   "CONTROLS/BrakePressureSetting": [
+    0,
+    80
+   ],
+   "CONTROLS/RearBrakeSetting": [
+    0,
+    56
+   ],
+   "CONTROLS/SteerLockSetting": [
+    0,
+    6
+   ],
+   "CONTROLS/TCPowerCutMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TCSlipAngleMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TractionControlMapSetting": [
+    0,
+    11
+   ],
+   "DRIVELINE/DiffPreloadSetting": [
+    0,
+    40
+   ],
+   "ENGINE/EngineMixtureSetting": [
+    0,
+    1
+   ],
+   "FRONTLEFT/CamberSetting": [
+    0,
+    32
+   ],
+   "FRONTLEFT/CompoundSetting": [
+    0,
+    3
+   ],
+   "FRONTLEFT/FastBumpSetting": [
+    0,
+    50
+   ],
+   "FRONTLEFT/FastReboundSetting": [
+    0,
+    50
+   ],
+   "FRONTLEFT/PackerSetting": [
+    0,
+    50
+   ],
+   "FRONTLEFT/PressureSetting": [
+    0,
+    74
+   ],
+   "FRONTLEFT/RideHeightSetting": [
+    0,
+    35
+   ],
+   "FRONTLEFT/SlowBumpSetting": [
+    0,
+    40
+   ],
+   "FRONTLEFT/SlowReboundSetting": [
+    0,
+    40
+   ],
+   "FRONTLEFT/SpringSetting": [
+    0,
+    5
+   ],
+   "FRONTRIGHT/CamberSetting": [
+    0,
+    32
+   ],
+   "FRONTRIGHT/CompoundSetting": [
+    0,
+    3
+   ],
+   "FRONTRIGHT/FastBumpSetting": [
+    0,
+    50
+   ],
+   "FRONTRIGHT/FastReboundSetting": [
+    0,
+    50
+   ],
+   "FRONTRIGHT/PackerSetting": [
+    0,
+    50
+   ],
+   "FRONTRIGHT/PressureSetting": [
+    0,
+    74
+   ],
+   "FRONTRIGHT/RideHeightSetting": [
+    0,
+    35
+   ],
+   "FRONTRIGHT/SlowBumpSetting": [
+    0,
+    40
+   ],
+   "FRONTRIGHT/SlowReboundSetting": [
+    0,
+    40
+   ],
+   "FRONTRIGHT/SpringSetting": [
+    0,
+    5
+   ],
+   "REARLEFT/CamberSetting": [
+    0,
+    28
+   ],
+   "REARLEFT/CompoundSetting": [
+    0,
+    3
+   ],
+   "REARLEFT/FastBumpSetting": [
+    0,
+    50
+   ],
+   "REARLEFT/FastReboundSetting": [
+    0,
+    50
+   ],
+   "REARLEFT/PackerSetting": [
+    0,
+    60
+   ],
+   "REARLEFT/PressureSetting": [
+    0,
+    74
+   ],
+   "REARLEFT/RideHeightSetting": [
+    0,
+    50
+   ],
+   "REARLEFT/SlowBumpSetting": [
+    0,
+    40
+   ],
+   "REARLEFT/SlowReboundSetting": [
+    0,
+    40
+   ],
+   "REARLEFT/SpringSetting": [
+    0,
+    5
+   ],
+   "REARRIGHT/CamberSetting": [
+    0,
+    28
+   ],
+   "REARRIGHT/CompoundSetting": [
+    0,
+    3
+   ],
+   "REARRIGHT/FastBumpSetting": [
+    0,
+    50
+   ],
+   "REARRIGHT/FastReboundSetting": [
+    0,
+    50
+   ],
+   "REARRIGHT/PackerSetting": [
+    0,
+    60
+   ],
+   "REARRIGHT/PressureSetting": [
+    0,
+    74
+   ],
+   "REARRIGHT/RideHeightSetting": [
+    0,
+    50
+   ],
+   "REARRIGHT/SlowBumpSetting": [
+    0,
+    40
+   ],
+   "REARRIGHT/SlowReboundSetting": [
+    0,
+    40
+   ],
+   "REARRIGHT/SpringSetting": [
+    0,
+    5
+   ],
+   "REARWING/RWSetting": [
+    0,
+    6
+   ],
+   "SUSPENSION/FrontAntiSwaySetting": [
+    0,
+    18
+   ],
+   "SUSPENSION/FrontToeInSetting": [
+    0,
+    32
+   ],
+   "SUSPENSION/RearAntiSwaySetting": [
+    0,
+    18
+   ],
+   "SUSPENSION/RearToeInSetting": [
+    0,
+    32
+   ]
+  }
+ },
+ "mercedesamglmgt3": {
+  "name": "Mercedes-AMG LMGT3",
+  "class": "GT3",
+  "limits": {
+   "BODYAERO/BrakeDuctRearSetting": [
+    0,
+    5
+   ],
+   "BODYAERO/BrakeDuctSetting": [
+    0,
+    6
+   ],
+   "BODYAERO/OilRadiatorSetting": [
+    0,
+    3
+   ],
+   "BODYAERO/WaterRadiatorSetting": [
+    0,
+    4
+   ],
+   "CONTROLS/AntilockBrakeSystemMapSetting": [
+    0,
+    9
+   ],
+   "CONTROLS/BrakePressureSetting": [
+    0,
+    80
+   ],
+   "CONTROLS/RearBrakeSetting": [
+    0,
+    56
+   ],
+   "CONTROLS/SteerLockSetting": [
+    0,
+    6
+   ],
+   "CONTROLS/TCPowerCutMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TCSlipAngleMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TractionControlMapSetting": [
+    0,
+    11
+   ],
+   "DRIVELINE/DiffPreloadSetting": [
+    0,
+    120
+   ],
+   "ENGINE/EngineMixtureSetting": [
+    0,
+    1
+   ],
+   "FRONTLEFT/CamberSetting": [
+    0,
+    45
+   ],
+   "FRONTLEFT/CompoundSetting": [
+    0,
+    3
+   ],
+   "FRONTLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/PackerSetting": [
+    0,
+    40
+   ],
+   "FRONTLEFT/PressureSetting": [
+    0,
+    74
+   ],
+   "FRONTLEFT/RideHeightSetting": [
+    0,
+    25
+   ],
+   "FRONTLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SpringSetting": [
+    0,
+    5
+   ],
+   "FRONTRIGHT/CamberSetting": [
+    0,
+    45
+   ],
+   "FRONTRIGHT/CompoundSetting": [
+    0,
+    3
+   ],
+   "FRONTRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/PackerSetting": [
+    0,
+    40
+   ],
+   "FRONTRIGHT/PressureSetting": [
+    0,
+    74
+   ],
+   "FRONTRIGHT/RideHeightSetting": [
+    0,
+    25
+   ],
+   "FRONTRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SpringSetting": [
+    0,
+    5
+   ],
+   "REARLEFT/CamberSetting": [
+    0,
+    35
+   ],
+   "REARLEFT/CompoundSetting": [
+    0,
+    3
+   ],
+   "REARLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/PackerSetting": [
+    0,
+    40
+   ],
+   "REARLEFT/PressureSetting": [
+    0,
+    74
+   ],
+   "REARLEFT/RideHeightSetting": [
+    0,
+    60
+   ],
+   "REARLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SpringSetting": [
+    0,
+    5
+   ],
+   "REARRIGHT/CamberSetting": [
+    0,
+    35
+   ],
+   "REARRIGHT/CompoundSetting": [
+    0,
+    3
+   ],
+   "REARRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/PackerSetting": [
+    0,
+    40
+   ],
+   "REARRIGHT/PressureSetting": [
+    0,
+    74
+   ],
+   "REARRIGHT/RideHeightSetting": [
+    0,
+    60
+   ],
+   "REARRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SpringSetting": [
+    0,
+    5
+   ],
+   "REARWING/RWSetting": [
+    0,
+    7
+   ],
+   "SUSPENSION/FrontAntiSwaySetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/FrontToeInSetting": [
+    0,
+    32
+   ],
+   "SUSPENSION/RearAntiSwaySetting": [
+    0,
+    14
+   ],
+   "SUSPENSION/RearToeInSetting": [
+    0,
+    32
+   ]
+  }
+ },
+ "porsche911gt3rlmgt3": {
+  "name": "Porsche 911 GT3 R LMGT3",
+  "class": "GT3",
+  "limits": {
+   "BODYAERO/BrakeDuctRearSetting": [
+    0,
+    4
+   ],
+   "BODYAERO/BrakeDuctSetting": [
+    0,
+    5
+   ],
+   "BODYAERO/OilRadiatorSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/WaterRadiatorSetting": [
+    0,
+    10
+   ],
+   "CONTROLS/AntilockBrakeSystemMapSetting": [
+    0,
+    9
+   ],
+   "CONTROLS/BrakePressureSetting": [
+    0,
+    80
+   ],
+   "CONTROLS/RearBrakeSetting": [
+    0,
+    56
+   ],
+   "CONTROLS/SteerLockSetting": [
+    0,
+    7
+   ],
+   "CONTROLS/TCPowerCutMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TCSlipAngleMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TractionControlMapSetting": [
+    0,
+    11
+   ],
+   "DRIVELINE/DiffPreloadSetting": [
+    0,
+    270
+   ],
+   "ENGINE/EngineMixtureSetting": [
+    0,
+    1
+   ],
+   "FRONTLEFT/CamberSetting": [
+    0,
+    26
+   ],
+   "FRONTLEFT/CompoundSetting": [
+    0,
+    3
+   ],
+   "FRONTLEFT/FastBumpSetting": [
+    0,
+    18
+   ],
+   "FRONTLEFT/FastReboundSetting": [
+    0,
+    18
+   ],
+   "FRONTLEFT/PackerSetting": [
+    0,
+    40
+   ],
+   "FRONTLEFT/PressureSetting": [
+    0,
+    74
+   ],
+   "FRONTLEFT/RideHeightSetting": [
+    0,
+    30
+   ],
+   "FRONTLEFT/SlowBumpSetting": [
+    0,
+    18
+   ],
+   "FRONTLEFT/SlowReboundSetting": [
+    0,
+    18
+   ],
+   "FRONTLEFT/SpringSetting": [
+    0,
+    14
+   ],
+   "FRONTRIGHT/CamberSetting": [
+    0,
+    26
+   ],
+   "FRONTRIGHT/CompoundSetting": [
+    0,
+    3
+   ],
+   "FRONTRIGHT/FastBumpSetting": [
+    0,
+    18
+   ],
+   "FRONTRIGHT/FastReboundSetting": [
+    0,
+    18
+   ],
+   "FRONTRIGHT/PackerSetting": [
+    0,
+    40
+   ],
+   "FRONTRIGHT/PressureSetting": [
+    0,
+    74
+   ],
+   "FRONTRIGHT/RideHeightSetting": [
+    0,
+    30
+   ],
+   "FRONTRIGHT/SlowBumpSetting": [
+    0,
+    18
+   ],
+   "FRONTRIGHT/SlowReboundSetting": [
+    0,
+    18
+   ],
+   "FRONTRIGHT/SpringSetting": [
+    0,
+    14
+   ],
+   "REARLEFT/CamberSetting": [
+    0,
+    30
+   ],
+   "REARLEFT/CompoundSetting": [
+    0,
+    3
+   ],
+   "REARLEFT/FastBumpSetting": [
+    0,
+    18
+   ],
+   "REARLEFT/FastReboundSetting": [
+    0,
+    18
+   ],
+   "REARLEFT/PackerSetting": [
+    0,
+    40
+   ],
+   "REARLEFT/PressureSetting": [
+    0,
+    74
+   ],
+   "REARLEFT/RideHeightSetting": [
+    0,
+    50
+   ],
+   "REARLEFT/SlowBumpSetting": [
+    0,
+    18
+   ],
+   "REARLEFT/SlowReboundSetting": [
+    0,
+    18
+   ],
+   "REARLEFT/SpringSetting": [
+    0,
+    14
+   ],
+   "REARRIGHT/CamberSetting": [
+    0,
+    30
+   ],
+   "REARRIGHT/CompoundSetting": [
+    0,
+    3
+   ],
+   "REARRIGHT/FastBumpSetting": [
+    0,
+    18
+   ],
+   "REARRIGHT/FastReboundSetting": [
+    0,
+    18
+   ],
+   "REARRIGHT/PackerSetting": [
+    0,
+    40
+   ],
+   "REARRIGHT/PressureSetting": [
+    0,
+    74
+   ],
+   "REARRIGHT/RideHeightSetting": [
+    0,
+    50
+   ],
+   "REARRIGHT/SlowBumpSetting": [
+    0,
+    18
+   ],
+   "REARRIGHT/SlowReboundSetting": [
+    0,
+    18
+   ],
+   "REARRIGHT/SpringSetting": [
+    0,
+    14
+   ],
+   "REARWING/RWSetting": [
+    0,
+    6
+   ],
+   "SUSPENSION/FrontAntiSwaySetting": [
+    0,
+    7
+   ],
+   "SUSPENSION/FrontToeInSetting": [
+    0,
+    32
+   ],
+   "SUSPENSION/RearAntiSwaySetting": [
+    0,
+    7
+   ],
+   "SUSPENSION/RearToeInSetting": [
+    0,
+    32
+   ]
+  }
+ },
+ "fordmustanglmgt3": {
+  "name": "Ford Mustang LMGT3",
+  "class": "GT3",
+  "limits": {
+   "BODYAERO/BrakeDuctRearSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/BrakeDuctSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/OilRadiatorSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/WaterRadiatorSetting": [
+    0,
+    10
+   ],
+   "CONTROLS/AntilockBrakeSystemMapSetting": [
+    0,
+    9
+   ],
+   "CONTROLS/BrakePressureSetting": [
+    0,
+    80
+   ],
+   "CONTROLS/RearBrakeSetting": [
+    0,
+    56
+   ],
+   "CONTROLS/SteerLockSetting": [
+    0,
+    5
+   ],
+   "CONTROLS/TCPowerCutMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TCSlipAngleMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TractionControlMapSetting": [
+    0,
+    11
+   ],
+   "DRIVELINE/DiffPreloadSetting": [
+    0,
+    200
+   ],
+   "ENGINE/EngineMixtureSetting": [
+    0,
+    1
+   ],
+   "FRONTLEFT/CamberSetting": [
+    0,
+    32
+   ],
+   "FRONTLEFT/CompoundSetting": [
+    0,
+    3
+   ],
+   "FRONTLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/PackerSetting": [
+    0,
+    50
+   ],
+   "FRONTLEFT/PressureSetting": [
+    0,
+    74
+   ],
+   "FRONTLEFT/RideHeightSetting": [
+    0,
+    35
+   ],
+   "FRONTLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SpringSetting": [
+    0,
+    14
+   ],
+   "FRONTRIGHT/CamberSetting": [
+    0,
+    32
+   ],
+   "FRONTRIGHT/CompoundSetting": [
+    0,
+    3
+   ],
+   "FRONTRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/PackerSetting": [
+    0,
+    50
+   ],
+   "FRONTRIGHT/PressureSetting": [
+    0,
+    74
+   ],
+   "FRONTRIGHT/RideHeightSetting": [
+    0,
+    35
+   ],
+   "FRONTRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SpringSetting": [
+    0,
+    14
+   ],
+   "REARLEFT/CamberSetting": [
+    0,
+    28
+   ],
+   "REARLEFT/CompoundSetting": [
+    0,
+    3
+   ],
+   "REARLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/PackerSetting": [
+    0,
+    60
+   ],
+   "REARLEFT/PressureSetting": [
+    0,
+    74
+   ],
+   "REARLEFT/RideHeightSetting": [
+    0,
+    50
+   ],
+   "REARLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SpringSetting": [
+    0,
+    14
+   ],
+   "REARRIGHT/CamberSetting": [
+    0,
+    28
+   ],
+   "REARRIGHT/CompoundSetting": [
+    0,
+    3
+   ],
+   "REARRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/PackerSetting": [
+    0,
+    60
+   ],
+   "REARRIGHT/PressureSetting": [
+    0,
+    74
+   ],
+   "REARRIGHT/RideHeightSetting": [
+    0,
+    50
+   ],
+   "REARRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SpringSetting": [
+    0,
+    14
+   ],
+   "REARWING/RWSetting": [
+    0,
+    7
+   ],
+   "SUSPENSION/FrontAntiSwaySetting": [
+    0,
+    18
+   ],
+   "SUSPENSION/FrontToeInSetting": [
+    0,
+    32
+   ],
+   "SUSPENSION/RearAntiSwaySetting": [
+    0,
+    15
+   ],
+   "SUSPENSION/RearToeInSetting": [
+    0,
+    32
+   ]
+  }
+ },
+ "chevroletcorvettez06lmgt3r": {
+  "name": "Chevrolet Corvette Z06 LMGT3.R",
+  "class": "GT3",
+  "limits": {
+   "BODYAERO/BrakeDuctRearSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/BrakeDuctSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/OilRadiatorSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/WaterRadiatorSetting": [
+    0,
+    10
+   ],
+   "CONTROLS/AntilockBrakeSystemMapSetting": [
+    0,
+    9
+   ],
+   "CONTROLS/BrakePressureSetting": [
+    0,
+    80
+   ],
+   "CONTROLS/RearBrakeSetting": [
+    0,
+    56
+   ],
+   "CONTROLS/SteerLockSetting": [
+    0,
+    6
+   ],
+   "CONTROLS/TCPowerCutMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TCSlipAngleMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TractionControlMapSetting": [
+    0,
+    11
+   ],
+   "DRIVELINE/DiffPreloadSetting": [
+    0,
+    40
+   ],
+   "ENGINE/EngineMixtureSetting": [
+    0,
+    1
+   ],
+   "FRONTLEFT/CamberSetting": [
+    0,
+    30
+   ],
+   "FRONTLEFT/CompoundSetting": [
+    0,
+    3
+   ],
+   "FRONTLEFT/FastBumpSetting": [
+    0,
+    29
+   ],
+   "FRONTLEFT/FastReboundSetting": [
+    0,
+    29
+   ],
+   "FRONTLEFT/PackerSetting": [
+    0,
+    60
+   ],
+   "FRONTLEFT/PressureSetting": [
+    0,
+    74
+   ],
+   "FRONTLEFT/RideHeightSetting": [
+    0,
+    20
+   ],
+   "FRONTLEFT/SlowBumpSetting": [
+    0,
+    22
+   ],
+   "FRONTLEFT/SlowReboundSetting": [
+    0,
+    22
+   ],
+   "FRONTLEFT/SpringSetting": [
+    0,
+    3
+   ],
+   "FRONTRIGHT/CamberSetting": [
+    0,
+    30
+   ],
+   "FRONTRIGHT/CompoundSetting": [
+    0,
+    3
+   ],
+   "FRONTRIGHT/FastBumpSetting": [
+    0,
+    29
+   ],
+   "FRONTRIGHT/FastReboundSetting": [
+    0,
+    29
+   ],
+   "FRONTRIGHT/PackerSetting": [
+    0,
+    60
+   ],
+   "FRONTRIGHT/PressureSetting": [
+    0,
+    74
+   ],
+   "FRONTRIGHT/RideHeightSetting": [
+    0,
+    20
+   ],
+   "FRONTRIGHT/SlowBumpSetting": [
+    0,
+    22
+   ],
+   "FRONTRIGHT/SlowReboundSetting": [
+    0,
+    22
+   ],
+   "FRONTRIGHT/SpringSetting": [
+    0,
+    3
+   ],
+   "REARLEFT/CamberSetting": [
+    0,
+    35
+   ],
+   "REARLEFT/CompoundSetting": [
+    0,
+    3
+   ],
+   "REARLEFT/FastBumpSetting": [
+    0,
+    29
+   ],
+   "REARLEFT/FastReboundSetting": [
+    0,
+    29
+   ],
+   "REARLEFT/PackerSetting": [
+    0,
+    60
+   ],
+   "REARLEFT/PressureSetting": [
+    0,
+    74
+   ],
+   "REARLEFT/RideHeightSetting": [
+    0,
+    35
+   ],
+   "REARLEFT/SlowBumpSetting": [
+    0,
+    22
+   ],
+   "REARLEFT/SlowReboundSetting": [
+    0,
+    22
+   ],
+   "REARLEFT/SpringSetting": [
+    0,
+    5
+   ],
+   "REARRIGHT/CamberSetting": [
+    0,
+    35
+   ],
+   "REARRIGHT/CompoundSetting": [
+    0,
+    3
+   ],
+   "REARRIGHT/FastBumpSetting": [
+    0,
+    29
+   ],
+   "REARRIGHT/FastReboundSetting": [
+    0,
+    29
+   ],
+   "REARRIGHT/PackerSetting": [
+    0,
+    60
+   ],
+   "REARRIGHT/PressureSetting": [
+    0,
+    74
+   ],
+   "REARRIGHT/RideHeightSetting": [
+    0,
+    35
+   ],
+   "REARRIGHT/SlowBumpSetting": [
+    0,
+    22
+   ],
+   "REARRIGHT/SlowReboundSetting": [
+    0,
+    22
+   ],
+   "REARRIGHT/SpringSetting": [
+    0,
+    5
+   ],
+   "REARWING/RWSetting": [
+    0,
+    8
+   ],
+   "SUSPENSION/FrontAntiSwaySetting": [
+    0,
+    28
+   ],
+   "SUSPENSION/FrontToeInSetting": [
+    0,
+    16
+   ],
+   "SUSPENSION/RearAntiSwaySetting": [
+    0,
+    28
+   ],
+   "SUSPENSION/RearToeInSetting": [
+    0,
+    16
+   ]
+  }
+ },
+ "ferrari296lmgt3evo": {
+  "name": "Ferrari 296 LMGT3 Evo",
+  "class": "GT3",
+  "limits": {
+   "BODYAERO/BrakeDuctRearSetting": [
+    0,
+    3
+   ],
+   "BODYAERO/BrakeDuctSetting": [
+    0,
+    3
+   ],
+   "BODYAERO/OilRadiatorSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/WaterRadiatorSetting": [
+    0,
+    10
+   ],
+   "CONTROLS/AntilockBrakeSystemMapSetting": [
+    0,
+    9
+   ],
+   "CONTROLS/BrakePressureSetting": [
+    0,
+    80
+   ],
+   "CONTROLS/RearBrakeSetting": [
+    0,
+    56
+   ],
+   "CONTROLS/SteerLockSetting": [
+    0,
+    6
+   ],
+   "CONTROLS/TCPowerCutMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TCSlipAngleMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TractionControlMapSetting": [
+    0,
+    11
+   ],
+   "DRIVELINE/DiffPreloadSetting": [
+    0,
+    200
+   ],
+   "ENGINE/EngineMixtureSetting": [
+    0,
+    1
+   ],
+   "FRONTLEFT/CamberSetting": [
+    0,
+    26
+   ],
+   "FRONTLEFT/CompoundSetting": [
+    0,
+    3
+   ],
+   "FRONTLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/PackerSetting": [
+    0,
+    40
+   ],
+   "FRONTLEFT/PressureSetting": [
+    0,
+    74
+   ],
+   "FRONTLEFT/RideHeightSetting": [
+    0,
+    25
+   ],
+   "FRONTLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SpringSetting": [
+    0,
+    8
+   ],
+   "FRONTRIGHT/CamberSetting": [
+    0,
+    26
+   ],
+   "FRONTRIGHT/CompoundSetting": [
+    0,
+    3
+   ],
+   "FRONTRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/PackerSetting": [
+    0,
+    40
+   ],
+   "FRONTRIGHT/PressureSetting": [
+    0,
+    74
+   ],
+   "FRONTRIGHT/RideHeightSetting": [
+    0,
+    25
+   ],
+   "FRONTRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SpringSetting": [
+    0,
+    8
+   ],
+   "REARLEFT/CamberSetting": [
+    0,
+    29
+   ],
+   "REARLEFT/CompoundSetting": [
+    0,
+    3
+   ],
+   "REARLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/PackerSetting": [
+    0,
+    40
+   ],
+   "REARLEFT/PressureSetting": [
+    0,
+    74
+   ],
+   "REARLEFT/RideHeightSetting": [
+    0,
+    25
+   ],
+   "REARLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SpringSetting": [
+    0,
+    8
+   ],
+   "REARRIGHT/CamberSetting": [
+    0,
+    29
+   ],
+   "REARRIGHT/CompoundSetting": [
+    0,
+    3
+   ],
+   "REARRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/PackerSetting": [
+    0,
+    40
+   ],
+   "REARRIGHT/PressureSetting": [
+    0,
+    74
+   ],
+   "REARRIGHT/RideHeightSetting": [
+    0,
+    25
+   ],
+   "REARRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SpringSetting": [
+    0,
+    8
+   ],
+   "REARWING/RWSetting": [
+    0,
+    6
+   ],
+   "SUSPENSION/FrontAntiSwaySetting": [
+    0,
+    7
+   ],
+   "SUSPENSION/FrontToeInSetting": [
+    0,
+    32
+   ],
+   "SUSPENSION/RearAntiSwaySetting": [
+    0,
+    7
+   ],
+   "SUSPENSION/RearToeInSetting": [
+    0,
+    32
+   ]
+  }
+ },
+ "alpinea424": {
+  "name": "Alpine A424",
+  "class": "Hypercar",
+  "limits": {
+   "BODYAERO/BrakeDuctRearSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/BrakeDuctSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/OilRadiatorSetting": [
+    0,
+    4
+   ],
+   "BODYAERO/WaterRadiatorSetting": [
+    0,
+    4
+   ],
+   "CONTROLS/BrakeMigrationSetting": [
+    0,
+    5
+   ],
+   "CONTROLS/BrakePressureSetting": [
+    0,
+    80
+   ],
+   "CONTROLS/RearBrakeSetting": [
+    0,
+    44
+   ],
+   "CONTROLS/TCPowerCutMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TCSlipAngleMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TractionControlMapSetting": [
+    0,
+    11
+   ],
+   "DRIVELINE/DiffCoastSetting": [
+    0,
+    18
+   ],
+   "DRIVELINE/DiffPowerSetting": [
+    0,
+    18
+   ],
+   "DRIVELINE/DiffPreloadSetting": [
+    0,
+    60
+   ],
+   "ENGINE/ElectricMotorMapSetting": [
+    0,
+    5
+   ],
+   "ENGINE/RegenerationMapSetting": [
+    0,
+    10
+   ],
+   "FRONTLEFT/CamberSetting": [
+    0,
+    30
+   ],
+   "FRONTLEFT/CompoundSetting": [
+    0,
+    5
+   ],
+   "FRONTLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/PackerSetting": [
+    0,
+    20
+   ],
+   "FRONTLEFT/PressureSetting": [
+    0,
+    35
+   ],
+   "FRONTLEFT/RideHeightSetting": [
+    0,
+    30
+   ],
+   "FRONTLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SpringSetting": [
+    0,
+    9
+   ],
+   "FRONTRIGHT/CamberSetting": [
+    0,
+    30
+   ],
+   "FRONTRIGHT/CompoundSetting": [
+    0,
+    5
+   ],
+   "FRONTRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/PackerSetting": [
+    0,
+    20
+   ],
+   "FRONTRIGHT/PressureSetting": [
+    0,
+    35
+   ],
+   "FRONTRIGHT/RideHeightSetting": [
+    0,
+    30
+   ],
+   "FRONTRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SpringSetting": [
+    0,
+    9
+   ],
+   "REARLEFT/CamberSetting": [
+    0,
+    20
+   ],
+   "REARLEFT/CompoundSetting": [
+    0,
+    5
+   ],
+   "REARLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/PackerSetting": [
+    0,
+    25
+   ],
+   "REARLEFT/PressureSetting": [
+    0,
+    35
+   ],
+   "REARLEFT/RideHeightSetting": [
+    0,
+    25
+   ],
+   "REARLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SpringSetting": [
+    0,
+    8
+   ],
+   "REARRIGHT/CamberSetting": [
+    0,
+    20
+   ],
+   "REARRIGHT/CompoundSetting": [
+    0,
+    5
+   ],
+   "REARRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/PackerSetting": [
+    0,
+    25
+   ],
+   "REARRIGHT/PressureSetting": [
+    0,
+    35
+   ],
+   "REARRIGHT/RideHeightSetting": [
+    0,
+    25
+   ],
+   "REARRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SpringSetting": [
+    0,
+    8
+   ],
+   "REARWING/RWSetting": [
+    0,
+    17
+   ],
+   "SUSPENSION/Front3rdFastBumpSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdFastReboundSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdPackerSetting": [
+    0,
+    20
+   ],
+   "SUSPENSION/Front3rdSlowBumpSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdSlowReboundSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdSpringSetting": [
+    0,
+    15
+   ],
+   "SUSPENSION/FrontAntiSwaySetting": [
+    0,
+    16
+   ],
+   "SUSPENSION/FrontToeInSetting": [
+    0,
+    32
+   ],
+   "SUSPENSION/Rear3rdFastBumpSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Rear3rdFastReboundSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Rear3rdPackerSetting": [
+    0,
+    25
+   ],
+   "SUSPENSION/Rear3rdSlowBumpSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Rear3rdSlowReboundSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Rear3rdSpringSetting": [
+    0,
+    15
+   ],
+   "SUSPENSION/RearAntiSwaySetting": [
+    0,
+    12
+   ],
+   "SUSPENSION/RearToeInSetting": [
+    0,
+    32
+   ]
+  }
+ },
+ "astonmartinvalkyrielmh": {
+  "name": "Aston Martin Valkyrie LMH",
+  "class": "Hypercar",
+  "limits": {
+   "BODYAERO/BrakeDuctRearSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/BrakeDuctSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/OilRadiatorSetting": [
+    0,
+    4
+   ],
+   "BODYAERO/WaterRadiatorSetting": [
+    0,
+    4
+   ],
+   "CONTROLS/BrakeMigrationSetting": [
+    0,
+    5
+   ],
+   "CONTROLS/BrakePressureSetting": [
+    0,
+    80
+   ],
+   "CONTROLS/RearBrakeSetting": [
+    0,
+    44
+   ],
+   "CONTROLS/SteerLockSetting": [
+    0,
+    5
+   ],
+   "CONTROLS/TCPowerCutMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TCSlipAngleMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TractionControlMapSetting": [
+    0,
+    11
+   ],
+   "DRIVELINE/DiffCoastSetting": [
+    0,
+    18
+   ],
+   "DRIVELINE/DiffPowerSetting": [
+    0,
+    18
+   ],
+   "DRIVELINE/DiffPreloadSetting": [
+    0,
+    51
+   ],
+   "ENGINE/EngineMixtureSetting": [
+    0,
+    1
+   ],
+   "FRONTLEFT/CamberSetting": [
+    0,
+    30
+   ],
+   "FRONTLEFT/CompoundSetting": [
+    0,
+    5
+   ],
+   "FRONTLEFT/FastBumpSetting": [
+    0,
+    40
+   ],
+   "FRONTLEFT/FastReboundSetting": [
+    0,
+    40
+   ],
+   "FRONTLEFT/PackerSetting": [
+    0,
+    20
+   ],
+   "FRONTLEFT/PressureSetting": [
+    0,
+    35
+   ],
+   "FRONTLEFT/RideHeightSetting": [
+    0,
+    35
+   ],
+   "FRONTLEFT/SlowBumpSetting": [
+    0,
+    40
+   ],
+   "FRONTLEFT/SlowReboundSetting": [
+    0,
+    40
+   ],
+   "FRONTLEFT/SpringSetting": [
+    0,
+    12
+   ],
+   "FRONTRIGHT/CamberSetting": [
+    0,
+    30
+   ],
+   "FRONTRIGHT/CompoundSetting": [
+    0,
+    5
+   ],
+   "FRONTRIGHT/FastBumpSetting": [
+    0,
+    40
+   ],
+   "FRONTRIGHT/FastReboundSetting": [
+    0,
+    40
+   ],
+   "FRONTRIGHT/PackerSetting": [
+    0,
+    20
+   ],
+   "FRONTRIGHT/PressureSetting": [
+    0,
+    35
+   ],
+   "FRONTRIGHT/RideHeightSetting": [
+    0,
+    35
+   ],
+   "FRONTRIGHT/SlowBumpSetting": [
+    0,
+    40
+   ],
+   "FRONTRIGHT/SlowReboundSetting": [
+    0,
+    40
+   ],
+   "FRONTRIGHT/SpringSetting": [
+    0,
+    12
+   ],
+   "FRONTWING/FWSetting": [
+    0,
+    18
+   ],
+   "REARLEFT/CamberSetting": [
+    0,
+    20
+   ],
+   "REARLEFT/CompoundSetting": [
+    0,
+    5
+   ],
+   "REARLEFT/FastBumpSetting": [
+    0,
+    40
+   ],
+   "REARLEFT/FastReboundSetting": [
+    0,
+    40
+   ],
+   "REARLEFT/PackerSetting": [
+    0,
+    20
+   ],
+   "REARLEFT/PressureSetting": [
+    0,
+    35
+   ],
+   "REARLEFT/RideHeightSetting": [
+    0,
+    50
+   ],
+   "REARLEFT/SlowBumpSetting": [
+    0,
+    40
+   ],
+   "REARLEFT/SlowReboundSetting": [
+    0,
+    40
+   ],
+   "REARLEFT/SpringSetting": [
+    0,
+    12
+   ],
+   "REARRIGHT/CamberSetting": [
+    0,
+    20
+   ],
+   "REARRIGHT/CompoundSetting": [
+    0,
+    5
+   ],
+   "REARRIGHT/FastBumpSetting": [
+    0,
+    40
+   ],
+   "REARRIGHT/FastReboundSetting": [
+    0,
+    40
+   ],
+   "REARRIGHT/PackerSetting": [
+    0,
+    20
+   ],
+   "REARRIGHT/PressureSetting": [
+    0,
+    35
+   ],
+   "REARRIGHT/RideHeightSetting": [
+    0,
+    50
+   ],
+   "REARRIGHT/SlowBumpSetting": [
+    0,
+    40
+   ],
+   "REARRIGHT/SlowReboundSetting": [
+    0,
+    40
+   ],
+   "REARRIGHT/SpringSetting": [
+    0,
+    12
+   ],
+   "SUSPENSION/Front3rdFastBumpSetting": [
+    0,
+    40
+   ],
+   "SUSPENSION/Front3rdFastReboundSetting": [
+    0,
+    40
+   ],
+   "SUSPENSION/Front3rdPackerSetting": [
+    0,
+    30
+   ],
+   "SUSPENSION/Front3rdSlowBumpSetting": [
+    0,
+    40
+   ],
+   "SUSPENSION/Front3rdSlowReboundSetting": [
+    0,
+    40
+   ],
+   "SUSPENSION/Front3rdSpringSetting": [
+    0,
+    15
+   ],
+   "SUSPENSION/FrontAntiSwaySetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/FrontToeInSetting": [
+    0,
+    32
+   ],
+   "SUSPENSION/Rear3rdFastBumpSetting": [
+    0,
+    40
+   ],
+   "SUSPENSION/Rear3rdFastReboundSetting": [
+    0,
+    40
+   ],
+   "SUSPENSION/Rear3rdPackerSetting": [
+    0,
+    30
+   ],
+   "SUSPENSION/Rear3rdSlowBumpSetting": [
+    0,
+    40
+   ],
+   "SUSPENSION/Rear3rdSlowReboundSetting": [
+    0,
+    40
+   ],
+   "SUSPENSION/Rear3rdSpringSetting": [
+    0,
+    19
+   ],
+   "SUSPENSION/RearAntiSwaySetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/RearToeInSetting": [
+    0,
+    32
+   ]
+  }
+ },
+ "genesisgmr001": {
+  "name": "Genesis GMR-001",
+  "class": "Hypercar",
+  "limits": {
+   "BODYAERO/BrakeDuctRearSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/BrakeDuctSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/OilRadiatorSetting": [
+    0,
+    4
+   ],
+   "BODYAERO/WaterRadiatorSetting": [
+    0,
+    4
+   ],
+   "CONTROLS/BrakeMigrationSetting": [
+    0,
+    5
+   ],
+   "CONTROLS/BrakePressureSetting": [
+    0,
+    80
+   ],
+   "CONTROLS/RearBrakeSetting": [
+    0,
+    44
+   ],
+   "CONTROLS/TCPowerCutMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TCSlipAngleMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TractionControlMapSetting": [
+    0,
+    11
+   ],
+   "DRIVELINE/DiffCoastSetting": [
+    0,
+    18
+   ],
+   "DRIVELINE/DiffPowerSetting": [
+    0,
+    18
+   ],
+   "DRIVELINE/DiffPreloadSetting": [
+    0,
+    60
+   ],
+   "ENGINE/ElectricMotorMapSetting": [
+    0,
+    5
+   ],
+   "ENGINE/RegenerationMapSetting": [
+    0,
+    10
+   ],
+   "FRONTLEFT/CamberSetting": [
+    0,
+    30
+   ],
+   "FRONTLEFT/CompoundSetting": [
+    0,
+    5
+   ],
+   "FRONTLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/PackerSetting": [
+    0,
+    30
+   ],
+   "FRONTLEFT/PressureSetting": [
+    0,
+    35
+   ],
+   "FRONTLEFT/RideHeightSetting": [
+    0,
+    30
+   ],
+   "FRONTLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SpringSetting": [
+    0,
+    15
+   ],
+   "FRONTRIGHT/CamberSetting": [
+    0,
+    30
+   ],
+   "FRONTRIGHT/CompoundSetting": [
+    0,
+    5
+   ],
+   "FRONTRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/PackerSetting": [
+    0,
+    30
+   ],
+   "FRONTRIGHT/PressureSetting": [
+    0,
+    35
+   ],
+   "FRONTRIGHT/RideHeightSetting": [
+    0,
+    30
+   ],
+   "FRONTRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SpringSetting": [
+    0,
+    15
+   ],
+   "REARLEFT/CamberSetting": [
+    0,
+    20
+   ],
+   "REARLEFT/CompoundSetting": [
+    0,
+    5
+   ],
+   "REARLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/PackerSetting": [
+    0,
+    30
+   ],
+   "REARLEFT/PressureSetting": [
+    0,
+    35
+   ],
+   "REARLEFT/RideHeightSetting": [
+    0,
+    25
+   ],
+   "REARLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SpringSetting": [
+    0,
+    10
+   ],
+   "REARRIGHT/CamberSetting": [
+    0,
+    20
+   ],
+   "REARRIGHT/CompoundSetting": [
+    0,
+    5
+   ],
+   "REARRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/PackerSetting": [
+    0,
+    30
+   ],
+   "REARRIGHT/PressureSetting": [
+    0,
+    35
+   ],
+   "REARRIGHT/RideHeightSetting": [
+    0,
+    25
+   ],
+   "REARRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SpringSetting": [
+    0,
+    10
+   ],
+   "REARWING/RWSetting": [
+    0,
+    17
+   ],
+   "SUSPENSION/Front3rdFastBumpSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdFastReboundSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdPackerSetting": [
+    0,
+    20
+   ],
+   "SUSPENSION/Front3rdSlowBumpSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdSlowReboundSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdSpringSetting": [
+    0,
+    15
+   ],
+   "SUSPENSION/FrontAntiSwaySetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/FrontToeInSetting": [
+    0,
+    32
+   ],
+   "SUSPENSION/Rear3rdFastBumpSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Rear3rdFastReboundSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Rear3rdPackerSetting": [
+    0,
+    20
+   ],
+   "SUSPENSION/Rear3rdSlowBumpSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Rear3rdSlowReboundSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Rear3rdSpringSetting": [
+    0,
+    15
+   ],
+   "SUSPENSION/RearAntiSwaySetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/RearToeInSetting": [
+    0,
+    32
+   ]
+  }
+ },
+ "peugeot9x8": {
+  "name": "Peugeot 9x8",
+  "class": "Hypercar",
+  "limits": {
+   "BODYAERO/BrakeDuctRearSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/BrakeDuctSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/OilRadiatorSetting": [
+    0,
+    4
+   ],
+   "BODYAERO/WaterRadiatorSetting": [
+    0,
+    4
+   ],
+   "CONTROLS/BrakeMigrationSetting": [
+    0,
+    5
+   ],
+   "CONTROLS/BrakePressureSetting": [
+    0,
+    80
+   ],
+   "CONTROLS/RearBrakeSetting": [
+    0,
+    44
+   ],
+   "CONTROLS/TCPowerCutMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TCSlipAngleMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TractionControlMapSetting": [
+    0,
+    11
+   ],
+   "DRIVELINE/DiffCoastSetting": [
+    0,
+    18
+   ],
+   "DRIVELINE/DiffPowerSetting": [
+    0,
+    18
+   ],
+   "DRIVELINE/DiffPreloadSetting": [
+    0,
+    51
+   ],
+   "DRIVELINE/FrontDiffCoastSetting": [
+    0,
+    5
+   ],
+   "DRIVELINE/FrontDiffPowerSetting": [
+    0,
+    18
+   ],
+   "DRIVELINE/FrontDiffPreloadSetting": [
+    0,
+    255
+   ],
+   "ENGINE/ElectricMotorMapSetting": [
+    0,
+    10
+   ],
+   "ENGINE/RegenerationMapSetting": [
+    0,
+    10
+   ],
+   "FRONTLEFT/CamberSetting": [
+    0,
+    30
+   ],
+   "FRONTLEFT/CompoundSetting": [
+    0,
+    5
+   ],
+   "FRONTLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/PackerSetting": [
+    0,
+    30
+   ],
+   "FRONTLEFT/PressureSetting": [
+    0,
+    35
+   ],
+   "FRONTLEFT/RideHeightSetting": [
+    0,
+    30
+   ],
+   "FRONTLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SpringSetting": [
+    0,
+    15
+   ],
+   "FRONTRIGHT/CamberSetting": [
+    0,
+    30
+   ],
+   "FRONTRIGHT/CompoundSetting": [
+    0,
+    5
+   ],
+   "FRONTRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/PackerSetting": [
+    0,
+    30
+   ],
+   "FRONTRIGHT/PressureSetting": [
+    0,
+    35
+   ],
+   "FRONTRIGHT/RideHeightSetting": [
+    0,
+    30
+   ],
+   "FRONTRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SpringSetting": [
+    0,
+    15
+   ],
+   "REARLEFT/CamberSetting": [
+    0,
+    20
+   ],
+   "REARLEFT/CompoundSetting": [
+    0,
+    5
+   ],
+   "REARLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/PackerSetting": [
+    0,
+    30
+   ],
+   "REARLEFT/PressureSetting": [
+    0,
+    35
+   ],
+   "REARLEFT/RideHeightSetting": [
+    0,
+    25
+   ],
+   "REARLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SpringSetting": [
+    0,
+    10
+   ],
+   "REARRIGHT/CamberSetting": [
+    0,
+    20
+   ],
+   "REARRIGHT/CompoundSetting": [
+    0,
+    5
+   ],
+   "REARRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/PackerSetting": [
+    0,
+    30
+   ],
+   "REARRIGHT/PressureSetting": [
+    0,
+    35
+   ],
+   "REARRIGHT/RideHeightSetting": [
+    0,
+    25
+   ],
+   "REARRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SpringSetting": [
+    0,
+    10
+   ],
+   "REARWING/RWSetting": [
+    0,
+    19
+   ],
+   "SUSPENSION/Front3rdFastBumpSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdFastReboundSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdPackerSetting": [
+    0,
+    20
+   ],
+   "SUSPENSION/Front3rdSlowBumpSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdSlowReboundSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdSpringSetting": [
+    0,
+    15
+   ],
+   "SUSPENSION/FrontAntiSwaySetting": [
+    0,
+    15
+   ],
+   "SUSPENSION/FrontToeInSetting": [
+    0,
+    32
+   ],
+   "SUSPENSION/Rear3rdFastBumpSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Rear3rdFastReboundSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Rear3rdPackerSetting": [
+    0,
+    20
+   ],
+   "SUSPENSION/Rear3rdSlowBumpSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Rear3rdSlowReboundSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Rear3rdSpringSetting": [
+    0,
+    15
+   ],
+   "SUSPENSION/RearAntiSwaySetting": [
+    0,
+    15
+   ],
+   "SUSPENSION/RearToeInSetting": [
+    0,
+    32
+   ]
+  }
+ },
+ "toyotatr010": {
+  "name": "Toyota TR010",
+  "class": "Hypercar",
+  "limits": {
+   "BODYAERO/BrakeDuctRearSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/BrakeDuctSetting": [
+    0,
+    10
+   ],
+   "BODYAERO/OilRadiatorSetting": [
+    0,
+    4
+   ],
+   "BODYAERO/WaterRadiatorSetting": [
+    0,
+    4
+   ],
+   "CONTROLS/BrakeMigrationSetting": [
+    0,
+    5
+   ],
+   "CONTROLS/BrakePressureSetting": [
+    0,
+    80
+   ],
+   "CONTROLS/RearBrakeSetting": [
+    0,
+    44
+   ],
+   "CONTROLS/TCPowerCutMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TCSlipAngleMapSetting": [
+    0,
+    11
+   ],
+   "CONTROLS/TractionControlMapSetting": [
+    0,
+    11
+   ],
+   "DRIVELINE/DiffCoastSetting": [
+    0,
+    18
+   ],
+   "DRIVELINE/DiffPowerSetting": [
+    0,
+    18
+   ],
+   "DRIVELINE/DiffPreloadSetting": [
+    0,
+    51
+   ],
+   "DRIVELINE/FrontDiffCoastSetting": [
+    0,
+    5
+   ],
+   "DRIVELINE/FrontDiffPowerSetting": [
+    0,
+    18
+   ],
+   "DRIVELINE/FrontDiffPreloadSetting": [
+    0,
+    255
+   ],
+   "ENGINE/ElectricMotorMapSetting": [
+    0,
+    10
+   ],
+   "ENGINE/RegenerationMapSetting": [
+    0,
+    10
+   ],
+   "FRONTLEFT/CamberSetting": [
+    0,
+    30
+   ],
+   "FRONTLEFT/CompoundSetting": [
+    0,
+    5
+   ],
+   "FRONTLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/PackerSetting": [
+    0,
+    30
+   ],
+   "FRONTLEFT/PressureSetting": [
+    0,
+    35
+   ],
+   "FRONTLEFT/RideHeightSetting": [
+    0,
+    30
+   ],
+   "FRONTLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SpringSetting": [
+    0,
+    15
+   ],
+   "FRONTRIGHT/CamberSetting": [
+    0,
+    30
+   ],
+   "FRONTRIGHT/CompoundSetting": [
+    0,
+    5
+   ],
+   "FRONTRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/PackerSetting": [
+    0,
+    30
+   ],
+   "FRONTRIGHT/PressureSetting": [
+    0,
+    35
+   ],
+   "FRONTRIGHT/RideHeightSetting": [
+    0,
+    30
+   ],
+   "FRONTRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SpringSetting": [
+    0,
+    15
+   ],
+   "REARLEFT/CamberSetting": [
+    0,
+    20
+   ],
+   "REARLEFT/CompoundSetting": [
+    0,
+    5
+   ],
+   "REARLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/PackerSetting": [
+    0,
+    30
+   ],
+   "REARLEFT/PressureSetting": [
+    0,
+    35
+   ],
+   "REARLEFT/RideHeightSetting": [
+    0,
+    25
+   ],
+   "REARLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SpringSetting": [
+    0,
+    10
+   ],
+   "REARRIGHT/CamberSetting": [
+    0,
+    20
+   ],
+   "REARRIGHT/CompoundSetting": [
+    0,
+    5
+   ],
+   "REARRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/PackerSetting": [
+    0,
+    30
+   ],
+   "REARRIGHT/PressureSetting": [
+    0,
+    35
+   ],
+   "REARRIGHT/RideHeightSetting": [
+    0,
+    25
+   ],
+   "REARRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SpringSetting": [
+    0,
+    10
+   ],
+   "REARWING/RWSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdFastBumpSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdFastReboundSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdPackerSetting": [
+    0,
+    20
+   ],
+   "SUSPENSION/Front3rdSlowBumpSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdSlowReboundSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Front3rdSpringSetting": [
+    0,
+    15
+   ],
+   "SUSPENSION/FrontAntiSwaySetting": [
+    0,
+    15
+   ],
+   "SUSPENSION/FrontToeInSetting": [
+    0,
+    32
+   ],
+   "SUSPENSION/Rear3rdFastBumpSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Rear3rdFastReboundSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Rear3rdPackerSetting": [
+    0,
+    20
+   ],
+   "SUSPENSION/Rear3rdSlowBumpSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Rear3rdSlowReboundSetting": [
+    0,
+    11
+   ],
+   "SUSPENSION/Rear3rdSpringSetting": [
+    0,
+    15
+   ],
+   "SUSPENSION/RearAntiSwaySetting": [
+    0,
+    15
+   ],
+   "SUSPENSION/RearToeInSetting": [
+    0,
+    32
+   ]
+  }
+ },
+ "oreca07": {
+  "name": "Oreca 07",
+  "class": "LMP2",
+  "limits": {
+   "BODYAERO/BrakeDuctRearSetting": [
+    0,
+    4
+   ],
+   "BODYAERO/BrakeDuctSetting": [
+    0,
+    4
+   ],
+   "BODYAERO/OilRadiatorSetting": [
+    0,
+    3
+   ],
+   "BODYAERO/WaterRadiatorSetting": [
+    0,
+    4
+   ],
+   "CONTROLS/BrakePressureSetting": [
+    0,
+    80
+   ],
+   "CONTROLS/RearBrakeSetting": [
+    0,
+    27
+   ],
+   "CONTROLS/SteerLockSetting": [
+    0,
+    3
+   ],
+   "CONTROLS/TCPowerCutMapSetting": [
+    0,
+    8
+   ],
+   "CONTROLS/TCSlipAngleMapSetting": [
+    0,
+    8
+   ],
+   "CONTROLS/TractionControlMapSetting": [
+    0,
+    8
+   ],
+   "DRIVELINE/DiffCoastSetting": [
+    0,
+    4
+   ],
+   "DRIVELINE/DiffPowerSetting": [
+    0,
+    4
+   ],
+   "DRIVELINE/DiffPreloadSetting": [
+    0,
+    100
+   ],
+   "ENGINE/EngineMixtureSetting": [
+    0,
+    1
+   ],
+   "FRONTLEFT/CamberSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/CompoundSetting": [
+    0,
+    3
+   ],
+   "FRONTLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/PackerSetting": [
+    0,
+    20
+   ],
+   "FRONTLEFT/PressureSetting": [
+    0,
+    30
+   ],
+   "FRONTLEFT/RideHeightSetting": [
+    0,
+    45
+   ],
+   "FRONTLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTLEFT/SpringSetting": [
+    0,
+    3
+   ],
+   "FRONTRIGHT/CamberSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/CompoundSetting": [
+    0,
+    3
+   ],
+   "FRONTRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/PackerSetting": [
+    0,
+    20
+   ],
+   "FRONTRIGHT/PressureSetting": [
+    0,
+    30
+   ],
+   "FRONTRIGHT/RideHeightSetting": [
+    0,
+    45
+   ],
+   "FRONTRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "FRONTRIGHT/SpringSetting": [
+    0,
+    3
+   ],
+   "REARLEFT/CamberSetting": [
+    0,
+    6
+   ],
+   "REARLEFT/CompoundSetting": [
+    0,
+    3
+   ],
+   "REARLEFT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/PackerSetting": [
+    0,
+    20
+   ],
+   "REARLEFT/PressureSetting": [
+    0,
+    30
+   ],
+   "REARLEFT/RideHeightSetting": [
+    0,
+    54
+   ],
+   "REARLEFT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARLEFT/SpringSetting": [
+    0,
+    4
+   ],
+   "REARRIGHT/CamberSetting": [
+    0,
+    6
+   ],
+   "REARRIGHT/CompoundSetting": [
+    0,
+    3
+   ],
+   "REARRIGHT/FastBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/FastReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/PackerSetting": [
+    0,
+    20
+   ],
+   "REARRIGHT/PressureSetting": [
+    0,
+    30
+   ],
+   "REARRIGHT/RideHeightSetting": [
+    0,
+    54
+   ],
+   "REARRIGHT/SlowBumpSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SlowReboundSetting": [
+    0,
+    11
+   ],
+   "REARRIGHT/SpringSetting": [
+    0,
+    4
+   ],
+   "REARWING/RWSetting": [
+    0,
+    8
+   ],
+   "SUSPENSION/Front3rdPackerSetting": [
+    0,
+    20
+   ],
+   "SUSPENSION/Front3rdSpringSetting": [
+    0,
+    4
+   ],
+   "SUSPENSION/FrontAntiSwaySetting": [
+    0,
+    15
+   ],
+   "SUSPENSION/FrontToeInSetting": [
+    0,
+    32
+   ],
+   "SUSPENSION/Rear3rdPackerSetting": [
+    0,
+    10
+   ],
+   "SUSPENSION/RearAntiSwaySetting": [
+    0,
+    15
+   ],
+   "SUSPENSION/RearToeInSetting": [
+    0,
+    32
+   ]
+  }
+ }
+}

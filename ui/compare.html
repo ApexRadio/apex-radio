@@ -212,8 +212,8 @@ async function init() {
 async function share(sel) {
   const r = await (await fetch("/api/laps/export", { method: "POST", body: JSON.stringify({ id: $("sess").value, k: $(sel).value }) })).json();
   if (!r.ok) { $("msg").textContent = T("Impossible de créer le fichier.", "Couldn't create the file."); return; }
-  $("msg").innerHTML = (r.clip ? T("✓ <b>1.</b> Fichier copié : dans Discord, fais <b>Ctrl+V</b> (il s'attache au message). ",
-      "✓ <b>1.</b> File copied: in Discord press <b>Ctrl+V</b> (it attaches to the message). ")
+  $("msg").innerHTML = (r.clip ? T("✓ <b>1.</b> Fichier copié : sur Discord, va dans <b>📈-tours-partagés</b> de ton jeu, sujet du circuit, et fais <b>Ctrl+V</b> (il s'attache au message). ",
+      "✓ <b>1.</b> File copied: on Discord, go to your game's <b>📈-tours-partagés</b> forum, in the track's post, and press <b>Ctrl+V</b>. ")
       : T("✓ Fichier prêt : ", "✓ File ready: ") + `<span class="mono">${esc(r.file)}</span>. `) +
     T("<b>2.</b> Puis ", "<b>2.</b> Then ") + `<button id="cptxt" class="btn">📋 ${T("Copier la description", "Copy the description")}</button>` +
     T(" et refais <b>Ctrl+V</b> dans la zone de texte avant d'envoyer.", " and press <b>Ctrl+V</b> again in the text box before sending.");

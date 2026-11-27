@@ -215,6 +215,11 @@
       "Name": "profiles/Apex Radio",
       "DeviceType": 0,
       "DontAutoSwitchWhenInstalled": false
+    },
+    {
+      "Name": "profiles/Apex Radio TikTok",
+      "DeviceType": 0,
+      "DontAutoSwitchWhenInstalled": true
     }
   ]
 }

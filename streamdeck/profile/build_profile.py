@@ -260,9 +260,14 @@ def enc(u):
     return base64.b32hexencode(u.bytes).decode().rstrip("=") + "Z"
 
 
+VARIANT = "obs"   # "obs" : profil « Apex Radio » ; "tiktok" : profil « Apex Radio TikTok »
+
+
 class Page:
     def __init__(self, pid=None):
         self.id = uuid.UUID(pid) if pid else uuid.uuid4()
+        if VARIANT != "obs":   # autre profil : autres identifiants de pages
+            self.id = uuid.uuid5(self.id, VARIANT)
         self.actions = {}
         self.images = {}
 
@@ -306,6 +311,20 @@ OBS_NAMES = {"record": "Record", "record.pause": "Pause Recording", "record.addc
              "stream": "Stream", "replaybuffer": "Replay Buffer", "replaybuffer.save": "Save Replay Buffer",
              "screenshot": "Screenshot", "mixeraudio": "Audio Mixer", "scene": "Scene"}
 OBS_STATES = {"record": 2, "record.pause": 2, "stream": 2, "replaybuffer": 2, "mixeraudio": 2}
+
+
+# Plugin officiel « TikTok LIVE Studio » (gratuit, Marketplace Elgato). Lui aussi dessine ses touches.
+TT_NAMES = {"livestartend": "Go / end LIVE", "livepauseresume": "Pause / resume LIVE",
+            "recording": "Start / stop local recording", "highlight": "Highlight this moment",
+            "mic": "Mute / unmute microphone", "audio": "Mute / unmute audio output", "scene": "Switch scene",
+            "sayhi": "Say hi to viewers", "vibe": "Dynamic effects", "soundeffect": "Play sound effect",
+            "vote": 'Open "Poll & Gift vote"', "livegoal": 'Open "LIVE goal"'}
+TT_ONE = {"highlight", "sayhi", "vote", "livegoal"}
+
+
+def tiktok(kind, title=None):
+    st = [({"Title": title} if title else {}) for _ in range(1 if kind in TT_ONE else 2)]
+    return entry(f"com.tiktok.livestudio.{kind}", TT_NAMES[kind], "com.tiktok.livestudio", "TikTok LIVE Studio", "1.1.5", {}, st)
 
 
 def obs(kind, title=None):
@@ -366,7 +385,8 @@ def build():
     m.put(4, 0, apex("quiet"))
     m.put(0, 1, apex("ask", q="fais-moi le point", label="Le point"))
     m.put(1, 1, apex("ask", q="l'état de mes pneus", label="Pneus"))
-    m.put(2, 1, folder(m, obsp, tile("video", "OBS", PINK, kind="folder")))   # la météo reste dans LIVE
+    m.put(2, 1, folder(m, obsp, tile("video", "OBS", PINK, kind="folder") if VARIANT == "obs"
+                       else tile("brand-tiktok", "TIKTOK", PINK, kind="folder")))   # la météo reste dans LIVE
     m.put(3, 1, apex("repeat"))
     m.put(4, 1, apex("voice"))
     m.put(0, 2, apex("launch"))
@@ -424,31 +444,42 @@ def build():
                                   (3, 2): ("À +", "See you next race!"), (4, 2): ("BONNE NUIT", "Good night all!")}.items():
         t.put(c, r, apex("chat", label=label, text=text))
 
-    # OBS : enregistrer, streamer, garder les beaux moments ; les scènes et les sons se choisissent sous chaque touche
+    # OBS (ou TikTok LIVE Studio) : enregistrer, streamer, garder les beaux moments ;
+    # les scènes et les sons se choisissent sous chaque touche, dans le logiciel Stream Deck
     o = obsp
     o.put(0, 0, back(o))
-    o.put(1, 0, obs("record"))
-    o.put(2, 0, obs("record.pause"))
-    o.put(3, 0, obs("record.addchapter"))
-    o.put(4, 0, obs("stream"))
-    o.put(0, 1, obs("replaybuffer"))
-    o.put(1, 1, obs("replaybuffer.save"))
-    o.put(2, 1, obs("screenshot"))
-    o.put(3, 1, obs("mixeraudio", "MICRO"))
-    o.put(4, 1, obs("mixeraudio", "SON JEU"))
-    for c in range(5):
-        o.put(c, 2, obs("scene", f"SCÈNE {c + 1}"))
+    if VARIANT == "tiktok":
+        for (c, r), (kind, title) in {(1, 0): ("livestartend", None), (2, 0): ("livepauseresume", None),
+                                      (3, 0): ("recording", None), (4, 0): ("highlight", None),
+                                      (0, 1): ("mic", None), (1, 1): ("audio", None), (2, 1): ("sayhi", None),
+                                      (3, 1): ("vibe", None), (4, 1): ("soundeffect", None),
+                                      (0, 2): ("scene", "SCÈNE 1"), (1, 2): ("scene", "SCÈNE 2"),
+                                      (2, 2): ("scene", "SCÈNE 3"), (3, 2): ("vote", None),
+                                      (4, 2): ("livegoal", None)}.items():
+            o.put(c, r, tiktok(kind, title))
+    else:
+        for (c, r), (kind, title) in {(1, 0): ("record", None), (2, 0): ("record.pause", None),
+                                      (3, 0): ("record.addchapter", None), (4, 0): ("stream", None),
+                                      (0, 1): ("replaybuffer", None), (1, 1): ("replaybuffer.save", None),
+                                      (2, 1): ("screenshot", None), (3, 1): ("mixeraudio", "MICRO"),
+                                      (4, 1): ("mixeraudio", "SON JEU")}.items():
+            o.put(c, r, obs(kind, title))
+        for c in range(5):
+            o.put(c, 2, obs("scene", f"SCÈNE {c + 1}"))
 
     empty = Page("4722c796-e705-4a70-aabf-4440297ba767")   # page « par défaut » vide, comme dans les profils du logiciel
     pages = [home, menu, live, car, aids, chat, obsp, empty]
     prof_id = "71DB85AF-2AC5-484C-88C3-4494522CC216"
+    if VARIANT != "obs":
+        prof_id = str(uuid.uuid5(uuid.UUID(prof_id), VARIANT)).upper()
     base = f"{prof_id}.sdProfile/"
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(OUT, "w", zipfile.ZIP_DEFLATED) as z:
+    out = OUT if VARIANT == "obs" else OUT.with_name("Apex Radio TikTok.streamDeckProfile")
+    with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
         z.writestr(base, "")
         z.writestr(base + "manifest.json", json.dumps({
             "Device": {"Model": "20GAA9902", "UUID": DEVICE},
-            "Name": "Apex Radio",
+            "Name": "Apex Radio" if VARIANT == "obs" else "Apex Radio TikTok",
             "Pages": {"Current": str(home.id), "Default": str(empty.id), "Pages": [str(home.id)]},
             "Version": "3.0",
         }))
@@ -468,8 +499,10 @@ def build():
     prev = HERE / "preview"
     prev.mkdir(exist_ok=True)
     save_gif(splash_preview(keys), prev / "accueil.gif")
-    print("Profil construit :", OUT, OUT.stat().st_size // 1024, "Ko")
+    print("Profil construit :", out, out.stat().st_size // 1024, "Ko")
 
 
 if __name__ == "__main__":
+    build()
+    VARIANT = "tiktok"
     build()

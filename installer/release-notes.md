@@ -1,6 +1,27 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
-## 🆕 1.4.5
+## 🆕 1.5.0
+🇫🇷
+- **Comparer mes tours, version pro** : panneaux Écart / Gaz / Frein / Vitesse, carte du circuit avec les deux voitures au même instant, lecture ▶ du tour (×1 / ×2 / ×4), et un conseil d'ingé virage par virage (« freine environ 10 m plus tard »). Tu peux aussi **partager tes tours** et importer ceux d'autres pilotes (fichier .apexlap).
+- **Atelier setup bien plus fin** : vraies limites de 16 voitures relevées dans LMU (plus jamais de valeur refusée par le jeu). L'atelier règle aussi les ressorts, les amortisseurs, le pincement et le TC Cut / TC Slip, et ne repropose plus un réglage qui t'a rendu plus lent. Les fichiers portent le nom de la voiture (« APEX Porsche 911 GT3 R Bahrain Course »), et seules la v1 et les 3 dernières versions sont gardées.
+- **Pluie** : sous la pluie, l'ingé te compare à tes tours sous la pluie, plus à ton record du sec.
+- **Tu choisis ce que l'ingé annonce** (Réglages → 📣 Annonces de l'ingé) : chronos et secteurs par séance, écarts en course, drapeaux jaunes, et un **bip** quand tu appuies sur le bouton radio.
+- **Relais** : un **mur des stands** en direct (pilote au volant, progression du relais, prochain pilote, carte, météo, tours du relais). Tu peux **envoyer la course à l'équipe** en un fichier, et le planning reste affiché même jeu fermé.
+- **Tableau de bord à ta façon** : une croix ✕ pour masquer chaque case, les boutons − / + pour la taille du circuit, et un menu ▾ pour changer de jeu.
+- **Radio** : plus de faux drapeaux jaunes répétés, « C'est libre ! » du spotter, « Radio coupée » quand on coupe la radio, nouvelles questions comprises (« mon brake bias est bon ? », « dans quel état est ma voiture ? »), GTE, ABS et LMH bien prononcés.
+- **Corrections** : tableau de bord bloqué quand Pimax Play est lancé, micro qui « n'entendait que du silence » avec certains casques.
+
+🇬🇧
+- **Compare my laps, pro version**: Gap / Throttle / Brake / Speed panels, track map with both cars at the same moment, lap replay ▶ (×1 / ×2 / ×4), and an engineer tip for each corner ("brake about 10 m later"). You can also **share your laps** and import other drivers' laps (.apexlap file).
+- **Much finer setup workshop**: real limits of 16 cars read from LMU (never again a value the game refuses). The workshop also tunes springs, dampers, toe and TC Cut / TC Slip, and never suggests again a change that made you slower. Files carry the car name, and only v1 plus the last 3 versions are kept.
+- **Rain**: in the wet, the engineer compares you with your wet laps, not your dry record.
+- **You choose what the engineer calls out** (Settings → 📣 Engineer's calls): lap times and sectors per session, race gaps, yellow flags, and a **beep** when you press the radio button.
+- **Stints**: a live **pit wall** (driver at the wheel, stint progress, next driver, map, weather, stint laps). **Send the race to your team** as a file, and the plan stays visible with the game closed.
+- **Your own dashboard**: an ✕ to hide each panel, − / + for the track map size, and a ▾ menu to switch game.
+- **Radio**: no more repeated fake yellow flags, "Clear!" from the spotter, "Radio off" when you turn the radio off, new questions understood ("is my brake bias good?", "what state is my car in?"), GTE, ABS and LMH pronounced properly.
+- **Fixes**: dashboard stuck when Pimax Play is running, mic "only hearing silence" with some headsets.
+
+## 1.4.5
 🇫🇷
 - **Atelier setup corrigé** : la liste des setups ne disparaît plus toute seule (elle se fermait dès que la radio défilait), et ton choix reste bien pris. Vaut pour toutes les listes déroulantes d'Apex.
 - Rappel : Automobilista 2 est arrivé avec la 1.4.3 (dans AMS2 : Options → Système → Mémoire partagée → « Project CARS 2 »).
@@ -9,7 +30,7 @@
 - **Setup workshop fixed**: the setup list no longer vanishes by itself (it closed whenever the radio scrolled), and your choice is kept. Applies to every dropdown in Apex.
 - Reminder: Automobilista 2 arrived with 1.4.3 (in AMS2: Options → System → Shared Memory → "Project CARS 2").
 
-## 🆕 1.4.4
+## 1.4.4
 🇫🇷
 - **Automobilista 2 affiché partout** : l'écran d'attente le cite maintenant, avec le réglage à activer dans AMS2 : Options → Système → Mémoire partagée → « Project CARS 2 ».
 - Rappel de la 1.4.3 : Automobilista 2, ingé qui parle comme un pro, nouvelles questions radio, moins de bavardage, overlay OBS.

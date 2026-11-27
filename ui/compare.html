@@ -46,7 +46,11 @@
   .work { display:grid; grid-template-columns:minmax(320px,0.9fr) minmax(0,1.3fr); gap:12px; }
   .left { display:flex; flex-direction:column; gap:12px; min-width:0; }
   .mapcard { padding:12px 14px; position:relative; }
-  #map { width:100%; aspect-ratio:1.25; display:block; }
+  #map, #fmap { width:100%; aspect-ratio:1.25; display:block; }
+  #map[hidden], #fmap[hidden], #mini[hidden] { display:none; }
+  #fmap { background:radial-gradient(ellipse at center,#0b1018 0%,#06080c 100%); border-radius:12px; }
+  #mini { position:absolute; left:22px; bottom:20px; width:30%; aspect-ratio:1.25; background:rgba(6,8,12,.85);
+    border:1px solid var(--line2); border-radius:10px; }
   .maphead { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
   .legend { font-size:11px; color:var(--muted); display:flex; gap:12px; align-items:center; }
   .legend i { display:inline-block; width:16px; height:4px; border-radius:2px; vertical-align:middle; margin-right:4px; }
@@ -120,8 +124,10 @@
       <div class="left">
         <div class="card mapcard">
           <div class="maphead"><span class="lbl" id="hmap">Circuit</span>
+            <div class="toggle" id="mviews" hidden><button id="mvf" class="on">Suivi</button><button id="mvc">Circuit</button></div>
             <span class="legend"><span><i style="background:var(--good)"></i><span id="lg1">B gagne</span></span><span><i style="background:var(--alert)"></i><span id="lg2">B perd</span></span></span></div>
           <svg id="map" viewBox="0 0 100 80"></svg>
+          <svg id="fmap" hidden></svg><svg id="mini" viewBox="0 0 100 80" hidden></svg>
         </div>
         <div class="card seg">
           <div class="segnav"><button class="btn" id="segprev">‹</button><div class="t" id="segt">–</div><button class="btn" id="segnext">›</button></div>
@@ -182,7 +188,7 @@ async function init() {
   try { const st = await (await fetch("/api/state")).json(); LANG = st.lang || "fr"; } catch (e) {}
   document.documentElement.lang = LANG;
   const tx = { title: ["Comparer mes tours", "Compare my laps"], tback: ["Tableau de bord", "Dashboard"], lt: ["Circuit · voiture", "Track · car"],
-    tsa: ["Partager A", "Share A"], tsb: ["Partager B", "Share B"], timp: ["Importer un tour", "Import a lap"], hmap: ["Circuit · à l'instant choisi", "Track · at the chosen moment"],
+    tsa: ["Partager A", "Share A"], tsb: ["Partager B", "Share B"], timp: ["Importer un tour", "Import a lap"], hmap: ["Circuit · à l'instant choisi", "Track · at the chosen moment"],  mvf: ["Suivi", "Follow"], mvc: ["Circuit", "Track"],
     lg1: ["B gagne", "B gains"], lg2: ["B perd", "B loses"], ttel: ["Télémétrie", "Telemetry"], l0: ["Écart B − A (s)", "Gap B − A (s)"],
     l1: ["Gaz (%)", "Throttle (%)"], l2: ["Frein (%)", "Brake (%)"], l3: ["Vitesse (km/h)", "Speed (km/h)"], l4: ["Volant (% du braquage)", "Steering (% of lock)"], htraj: ["Trajectoires dans ce virage", "Lines through this corner"], hcorn: ["Tous les virages", "All corners"],
     mt: ["Temps", "Time"], md: ["Distance", "Distance"] };
@@ -379,7 +385,7 @@ function draw() {
       `<path d="${path(A.s, W, H, -sm, sm)}" stroke="var(--accent)" fill="none" stroke-width="1.4" stroke-dasharray="3 3"/>`, 96);
   }
   ROWS = corners();
-  drawMap(); drawTable();
+  drawMap(); drawFollow(); drawTable();
   let worst = -1;
   ROWS.forEach((r, i) => { if (!advice(r).inc && (worst < 0 || r.g > ROWS[worst].g)) worst = i; });
   if (worst < 0) worst = 0;
@@ -415,6 +421,52 @@ function drawMap() {
     `<circle id="mb" r="1.5" fill="var(--b)" stroke="#06070B" stroke-width=".4" style="filter:drop-shadow(0 0 1.5px var(--b))"/>`;
   document.querySelectorAll("#map .cl").forEach(g => g.onclick = () => { const i = ROWS.findIndex(r => String(r.c.id) === g.dataset.id); if (i >= 0) showSeg(i); });
 }
+// ---- vue « suivi » : piste large, trajectoires des deux tours, voitures qui avancent (coordonnées en mètres)
+let FOLLOW = true, FW = null;
+function hasXZ() { return Array.isArray(A.x) && Array.isArray(B.x) && Array.isArray(A.z) && Array.isArray(B.z); }
+function setView() {
+  const f = FOLLOW && !!FW;
+  // (sur un <svg>, .hidden ne marche pas : il faut l'attribut)
+  $("fmap").toggleAttribute("hidden", !f); $("mini").toggleAttribute("hidden", !f); $("map").toggleAttribute("hidden", f);
+  $("mvf").classList.toggle("on", f); $("mvc").classList.toggle("on", !f);
+  $("lg1").parentElement.parentElement.style.display = "";
+  if (f) setIdx(F);
+}
+function drawFollow() {
+  FW = null; $("mviews").hidden = !hasXZ();
+  if (!hasXZ()) { setView(); return; }
+  const Y = z => -z;
+  const ln = L => L.x.map((x, i) => (i ? "L" : "M") + x.toFixed(1) + "," + Y(L.z[i]).toFixed(1)).join("") + "Z";
+  const pts = (D.map || []).filter(Boolean);
+  const trk = pts.length > 50 ? pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + "," + Y(p[1]).toFixed(1)).join("") + "Z" : ln(A);
+  let seg = "";      // trajectoire de B, verte là où B gagne du temps, rose là où il en perd
+  for (let i = 0; i < NB; i++) {
+    const k = (i + 1) % NB, g = DL[Math.min(NB - 1, i + 1)] - DL[i], a = Math.min(1, Math.abs(g) / 0.004);
+    const col = g > 0.0004 ? `rgba(255,46,136,${0.45 + 0.55 * a})` : g < -0.0004 ? `rgba(61,255,162,${0.45 + 0.55 * a})` : "rgba(255,176,46,.9)";
+    seg += `<line x1="${B.x[i]}" y1="${Y(B.z[i])}" x2="${B.x[k]}" y2="${Y(B.z[k])}" stroke="${col}" stroke-width=".9" stroke-linecap="round"/>`;
+  }
+  const lab = (D.corners || []).map(c => { const i = Math.round(c.mid * NB) % NB; const x = A.x[i], y = Y(A.z[i]);
+    return `<g><circle cx="${x}" cy="${y - 16}" r="4.5" fill="#0A0E15" stroke="#2a3646" stroke-width=".6"/><text x="${x}" y="${y - 14.2}" fill="#9AA6B8" font-size="5" text-anchor="middle" font-family="JetBrains Mono">${c.id}</text></g>`; }).join("");
+  $("fmap").innerHTML = `<path d="${trk}" stroke="#121923" stroke-width="18" stroke-linejoin="round" fill="none"/>` +
+    `<path d="${trk}" stroke="#1b2532" stroke-width="13" stroke-linejoin="round" fill="none"/>` +
+    seg + `<path d="${ln(A)}" stroke="#E8EDF5" stroke-opacity=".85" stroke-width=".7" stroke-dasharray="1.6 1.4" fill="none"/>` + lab +
+    `<g id="fa"><circle r="3.2" fill="var(--accent)" stroke="#06070B" stroke-width=".8" style="filter:drop-shadow(0 0 3px var(--accent))"/><text y="-5" fill="var(--accent)" font-size="4.5" text-anchor="middle" font-weight="700">A</text></g>` +
+    `<g id="fb"><circle r="3.2" fill="var(--b)" stroke="#06070B" stroke-width=".8" style="filter:drop-shadow(0 0 3px var(--b))"/><text y="-5" fill="var(--b)" font-size="4.5" text-anchor="middle" font-weight="700">B</text></g>`;
+  // mini-carte : le circuit entier avec la position de B
+  $("mini").innerHTML = MAP ? `<path d="${(() => { let d = ""; MAP.pts.forEach((p, i) => { if (p) { const [x, z] = MAP.P(p); d += (d ? "L" : "M") + x.toFixed(1) + "," + z.toFixed(1); } }); return d; })()}" stroke="#2a3646" stroke-width="2.4" fill="none" stroke-linejoin="round"/><circle id="mnb" r="2.6" fill="var(--b)"/>` : "";
+  FW = { Y };
+  setView();
+}
+function followPos(i, j) {
+  if (!FW || !FOLLOW) return;
+  const Y = FW.Y, bx = B.x[i], by = Y(B.z[i]), ax = A.x[j], ay = Y(A.z[j]);
+  $("fb").setAttribute("transform", `translate(${bx},${by})`); $("fa").setAttribute("transform", `translate(${ax},${ay})`);
+  const R = 70, w = R * 2 * 1.25, h = R * 2;
+  $("fmap").setAttribute("viewBox", `${(bx - w / 2).toFixed(1)} ${(by - h / 2).toFixed(1)} ${w} ${h}`);
+  const pb = mapPos(i), mb = $("mnb"); if (pb && mb) { mb.setAttribute("cx", pb[0]); mb.setAttribute("cy", pb[1]); }
+}
+$("mvf").onclick = () => { FOLLOW = true; setView(); };
+$("mvc").onclick = () => { FOLLOW = false; setView(); };
 function mapPos(i) { if (!MAP) return null; const p = MAP.pts[Math.floor(i / NB * MAP.pts.length) % MAP.pts.length]; return p ? MAP.P(p) : null; }
 function drawTable() {
   const rows = ROWS.map((r, i) => ({ r, i })).sort((x, y) => y.r.g - x.r.g);
@@ -485,7 +537,7 @@ function setIdx(i) {
   const pb = mapPos(i), pa = mapPos(j);
   if (pb) { $("mb").setAttribute("cx", pb[0]); $("mb").setAttribute("cy", pb[1]); }
   if (pa) { $("ma").setAttribute("cx", pa[0]); $("ma").setAttribute("cy", pa[1]); }
-  trajPos(i, j);
+  trajPos(i, j); followPos(i, j);
   const d = DL[i];
   $("v0").innerHTML = `<span class="${d > 0 ? "loss" : "gain"}">${sgn(d)} s</span>`;
   const v = (k, u) => `<span style="color:var(--accent)">${Math.round(A[k][i])}${u}</span><span style="color:var(--b)">${Math.round(B[k][i])}${u}</span>`;

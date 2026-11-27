@@ -470,8 +470,9 @@ def build():
     empty = Page("4722c796-e705-4a70-aabf-4440297ba767")   # page « par défaut » vide, comme dans les profils du logiciel
     pages = [home, menu, live, car, aids, chat, obsp, empty]
     prof_id = "71DB85AF-2AC5-484C-88C3-4494522CC216"
-    if VARIANT != "obs":
-        prof_id = str(uuid.uuid5(uuid.UUID(prof_id), VARIANT)).upper()
+    # nouvel identifiant depuis la 0.4.0 : le logiciel Stream Deck n'écrase pas un profil déjà importé,
+    # il faut donc un profil « neuf » pour que les nouvelles touches (OBS, TikTok) apparaissent
+    prof_id = str(uuid.uuid5(uuid.UUID(prof_id), VARIANT + "-0.4")).upper()
     base = f"{prof_id}.sdProfile/"
     OUT.parent.mkdir(parents=True, exist_ok=True)
     out = OUT if VARIANT == "obs" else OUT.with_name("Apex Radio TikTok.streamDeckProfile")
@@ -479,7 +480,7 @@ def build():
         z.writestr(base, "")
         z.writestr(base + "manifest.json", json.dumps({
             "Device": {"Model": "20GAA9902", "UUID": DEVICE},
-            "Name": "Apex Radio" if VARIANT == "obs" else "Apex Radio TikTok",
+            "Name": "Apex Radio OBS" if VARIANT == "obs" else "Apex Radio TikTok",
             "Pages": {"Current": str(home.id), "Default": str(empty.id), "Pages": [str(home.id)]},
             "Version": "3.0",
         }))

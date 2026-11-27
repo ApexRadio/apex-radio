@@ -133,7 +133,8 @@ LINKED = {"bias": {("blocage", None), ("sous-virage", "entrée"), ("survirage", 
           "farb": {("sous-virage", "milieu"), ("sous-virage", "sortie"), ("sous-virage", "entrée")},
           "rarb": {("survirage", "milieu"), ("survirage", "sortie")}}
 CTRL_NAME = {"bias": "Répartition de freinage", "tc": "Contrôle de traction", "abs": "ABS",
-             "tcslip": "Patinage du contrôle de traction", "tccut": "Coupure du contrôle de traction",
+             # noms affichés dans LMU (« Coupure du contrôle de traction » faisait croire que le TC était coupé)
+             "tcslip": "TC Slip", "tccut": "TC Cut",
              "map": "Cartographie moteur",
              "farb": "Barre antiroulis avant", "rarb": "Barre antiroulis arrière"}
 CTRL_NAME_EN = {"bias": "Brake bias", "tc": "Traction control", "abs": "ABS",
@@ -395,7 +396,7 @@ class Behavior:
                         val = dec(L(f"à {(1 - v) * 100:.1f} % à l'avant", f"{(1 - v) * 100:.1f} % front"))
                     else:
                         val = L(f"sur {v}", f"{v}")
-                    self.say(None, L(f"{CTRL_NAME[k]} {'passée' if k in ('bias', 'tccut', 'map') else 'passé'} {val}, je réévalue.", f"{CTRL_NAME_EN[k]} now {val}, re-evaluating."))
+                    self.say(None, L(f"{CTRL_NAME[k]} {'passée' if k in ('bias', 'map') else 'passé'} {val}, je réévalue.", f"{CTRL_NAME_EN[k]} now {val}, re-evaluating."))
 
     def _reset_linked(self, k: str) -> None:
         links = LINKED.get(k, set())

@@ -135,6 +135,7 @@ _PL_RE = re.compile(r"(?<![\d,.])(\d+(?:[.,]\d+)?)\s(" + "|".join(_WORDS) + r")s
 _SPELL = [
     (re.compile(r"\bsetups\b", re.I), "sétups"), (re.compile(r"\bsetup\b", re.I), "sétup"),
     # lettres seules : écrites comme on les dit (un « é » seul était lu « e accent aigu », « E » seul disparaissait)
+    (re.compile(r"\bTC Cut\b", re.I), "té cé, keutt,"), (re.compile(r"\bTC Slip\b", re.I), "TC slip"),
     (re.compile(r"\bELMS\b"), "eu èl èm èss"), (re.compile(r"\bABS\b"), "a bé èss"),
     (re.compile(r"\bHypercars?\b", re.I), "Hyper car"),
     # « GT 3 » était lu « gé 3 » par la voix : on épelle

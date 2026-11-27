@@ -69,7 +69,7 @@ LABELS = {
     "SpringSetting": "Ressort", "SlowBumpSetting": "Compression lente", "FastBumpSetting": "Compression rapide",
     "SlowReboundSetting": "Détente lente", "FastReboundSetting": "Détente rapide", "PackerSetting": "Butée",
     "FrontToeInSetting": "Pincement avant", "RearToeInSetting": "Pincement arrière",
-    "TCPowerCutMapSetting": "TC coupure", "TCSlipAngleMapSetting": "TC glissement", "DiffPreloadSetting": "Précharge du différentiel",
+    "TCPowerCutMapSetting": "TC Cut", "TCSlipAngleMapSetting": "TC Slip", "DiffPreloadSetting": "Précharge du différentiel",
     "WaterRadiatorSetting": "Radiateur eau", "OilRadiatorSetting": "Radiateur huile",
 }
 SECTION_FR = {"FRONTLEFT": "AVG", "FRONTRIGHT": "AVD", "REARLEFT": "ARG", "REARRIGHT": "ARD"}

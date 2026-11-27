@@ -398,6 +398,10 @@ def loop(state: State, demo: bool) -> None:
                 traceback.print_exc()
             lt.update(snap, eng.say)
             state.map.update(snap)
+            try:
+                team_lap_tick(state)
+            except Exception:
+                traceback.print_exc()
             spotter.session = snap.session
             inc.update(snap)
             traffic.update(snap, plan, say)
@@ -1095,16 +1099,28 @@ def live_team(state) -> dict | None:
         cars.append({"x": round(c.get("x", 0), 1), "z": round(c.get("z", 0), 1), "r": role, "pits": bool(c.get("pits"))})
     t["cars"] = cars
     t["map_version"] = state.map.info().get("version") if getattr(state, "map", None) else None
-    # tours de la voiture d'équipe (pour le graphique du relais) : on note chaque nouveau tour bouclé
+    t["history"] = state.__dict__.get("team_laps", [])[-30:]
+    return t
+
+
+def team_lap_tick(state) -> None:
+    """Note chaque tour bouclé par la voiture d'équipe (toi ou un coéquipier), en continu dès le début de la course,
+    même quand la page Relais n'est pas ouverte : c'est le graphique « tours du relais »."""
+    s = getattr(state, "snap", None)
+    if not s or not s.connected:
+        return
+    if s.team:
+        n, last, drv, pits = s.team.get("laps") or 0, s.team.get("last"), s.team.get("driver") or "", bool(s.team.get("pits"))
+    elif s.on_track and s.session == "course":
+        n, last, drv, pits = s.laps_done, s.last_lap, s.driver, s.in_pits
+    else:
+        return
     hist = state.__dict__.setdefault("team_laps", [])
-    n = t.get("laps") or 0
     if hist and n < hist[-1]["n"]:
         hist.clear()                                   # nouvelle course
-    if t.get("last") and n and (not hist or n > hist[-1]["n"]):
-        hist.append({"n": n, "t": round(t["last"], 3), "d": t.get("driver") or "", "pit": bool(t.get("pits"))})
-        del hist[:-60]
-    t["history"] = hist[-30:]
-    return t
+    if last and n and (not hist or n > hist[-1]["n"]):
+        hist.append({"n": n, "t": round(last, 3), "d": drv, "pit": pits or bool(getattr(s, "pit_state", 0))})
+        del hist[:-200]
 
 
 def already_running() -> bool:

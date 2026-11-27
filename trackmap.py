@@ -61,7 +61,8 @@ class TrackMap:
         return sum(1 for c in self.count if c) / BINS
 
     def update(self, s: Snapshot) -> None:
-        if not s.on_track or not s.track:
+        # on apprend aussi le tracé quand on regarde un coéquipier rouler (mode équipier) : les voitures bougent
+        if not (s.on_track or getattr(s, "team", None)) or not s.track:
             return
         if s.track != self.track:
             self._load(s.track)

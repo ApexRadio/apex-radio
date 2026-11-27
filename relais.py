@@ -609,6 +609,7 @@ details#prep[open]>summary{margin-bottom:8px}
 #pw .top{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:12px}
 #pw .ttl{font-family:Orbitron,sans-serif;font-weight:900;letter-spacing:.14em;color:rgb(61,255,162);text-shadow:0 0 10px rgba(61,255,162,.5)}
 #pw .live{display:inline-flex;align-items:center;gap:6px;font-size:12px;letter-spacing:.14em;color:#FF2E88}
+#pw .live[hidden]{display:none}
 #pw .live i{width:8px;height:8px;border-radius:50%;background:#FF2E88;box-shadow:0 0 8px #FF2E88;animation:pwb 1.2s infinite}
 @keyframes pwb{50%{opacity:.25}}
 #pw .pos{margin-left:auto;display:flex;gap:18px;align-items:baseline;font-family:"JetBrains Mono",monospace}

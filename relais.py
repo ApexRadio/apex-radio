@@ -631,7 +631,14 @@ details#prep[open]>summary{margin-bottom:8px}
 #pw .gap{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid #18212D}
 #pw .gap:last-child{border-bottom:0} #pw .gap b{font-family:"JetBrains Mono",monospace;font-size:18px}
 #pw .wait{color:var(--muted);padding:6px 0}
-@media(max-width:900px){#pw .grid{grid-template-columns:1fr}#pw .stats{grid-template-columns:repeat(2,1fr)}}
+#pw .grid2{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:12px;margin-top:12px}
+#pw svg{border:0!important;background:none!important;box-shadow:none!important;padding:0!important}
+#pw #pwmap{width:100%;height:230px;display:block}
+#pw #pwlaps{width:100%;height:150px;display:block}
+#pw .wx{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+#pw .wx b{display:block;font-family:"JetBrains Mono",monospace;font-size:20px;color:#fff}
+#pw .carname{font-size:16px;font-weight:600;margin-top:6px}
+@media(max-width:900px){#pw .grid,#pw .grid2{grid-template-columns:1fr}#pw .stats{grid-template-columns:repeat(2,1fr)}}
 </style>"""
 
 PW_HTML = """<div class="card" id="pw"><div class="top"><span class="ttl" id="pwt">PIT WALL</span><span class="live" id="pwlive" hidden><i></i>LIVE</span>
@@ -681,7 +688,59 @@ function drawPit(d) {
    <div class="box pwd" style="--dc:rgb(${DCOL[kn % 4]})"><div class="lbl">${T.pw_next}</div>
      <div class="who" style="margin-top:8px"><div class="av">${esc2(nxt || "?").slice(0, 1).toUpperCase()}</div><div class="nm">${esc2(nxt || "–")}</div></div>
      <div class="eta">${eta != null ? T.pw_in + " ~" + hmS(eta) : "–"}</div><div class="lbl">${at ? T.pw_at + " " + at : ""}</div></div>
-   <div class="box">${gap(T.pw_ahead, tm.ahead)}${gap(T.pw_behind, tm.behind)}</div></div>`;
+   <div class="box">${gap(T.pw_ahead, tm.ahead)}${gap(T.pw_behind, tm.behind)}</div></div>
+  <div class="grid2">
+   <div class="box"><div class="lbl">${T.pw_map}${tm.track ? " · " + esc2(tm.track) : ""}</div><svg id="pwmap" viewBox="0 0 100 60"></svg></div>
+   <div class="box"><div class="lbl">${T.pw_laps2}</div><svg id="pwlaps" viewBox="0 0 300 150" preserveAspectRatio="none"></svg></div>
+   <div class="box"><div class="lbl">${T.pw_car}</div><div class="carname">${esc2(tm.car || "–")}</div>
+     <div class="lbl" style="margin-top:14px">${T.pw_wx}</div>${wxHtml(tm.weather)}</div></div>`;
+  pwMap(tm); pwLaps(tm, d);
+}
+function wxHtml(w) {
+  if (!w) return "";
+  const rain = w.rain > 5 ? "🌧️ " + w.rain + " %" : "☀️ " + T.pw_dry;
+  return `<div class="wx"><div><span class="lbl">${T.pw_air}</span><b>${w.air}°</b></div><div><span class="lbl">${T.pw_trk}</span><b>${w.track}°</b></div>` +
+    `<div><span class="lbl">${T.pw_rain}</span><b style="font-size:16px">${rain}</b></div><div><span class="lbl">${T.pw_wet}</span><b style="font-size:16px">${w.wet} %</b></div></div>`;
+}
+let PWPTS = null, PWVER = null, PWBOX = null;
+function pwMap(tm) {
+  if (tm.map_version !== PWVER) {
+    PWVER = tm.map_version;
+    fetch("/api/map").then(r => r.json()).then(j => { PWPTS = (j.points || []).filter(Boolean); PWBOX = null; pwMap(tm); });
+  }
+  const el = $("pwmap"); if (!el) return;
+  if (!PWPTS || PWPTS.length < 30) { el.innerHTML = `<text x="50" y="30" fill="#55657a" font-size="4" text-anchor="middle">${T.pw_nomap}</text>`; return; }
+  if (!PWBOX) {
+    const xs = PWPTS.map(p => p[0]), zs = PWPTS.map(p => p[1]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), z0 = Math.min(...zs), z1 = Math.max(...zs);
+    const k = Math.min(94 / (x1 - x0), 54 / (z1 - z0));
+    PWBOX = { x0, z1, k, ox: (100 - (x1 - x0) * k) / 2, oz: (60 - (z1 - z0) * k) / 2 };
+  }
+  const P = (x, z) => [PWBOX.ox + (x - PWBOX.x0) * PWBOX.k, PWBOX.oz + (PWBOX.z1 - z) * PWBOX.k];
+  const d = PWPTS.map((p, i) => { const [x, y] = P(p[0], p[1]); return (i ? "L" : "M") + x.toFixed(2) + "," + y.toFixed(2); }).join("") + "Z";
+  const col = { team: "#3DFFA2", ahead: "#FF2E88", behind: "#FFB547" };
+  const cars = (tm.cars || []).filter(c => !c.pits || c.r === "team").sort((a, b) => (a.r ? 1 : 0) - (b.r ? 1 : 0)).map(c => {
+    const [x, y] = P(c.x, c.z);
+    return c.r ? `<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${c.r === "team" ? 2.2 : 1.6}" fill="${col[c.r]}" stroke="#06070B" stroke-width=".4" style="filter:drop-shadow(0 0 1.5px ${col[c.r]})"/>`
+               : `<circle cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r=".9" fill="#5B6B80"/>`;
+  }).join("");
+  el.innerHTML = `<path d="${d}" stroke="#141c27" stroke-width="4" fill="none" stroke-linejoin="round"/><path d="${d}" stroke="#2a3646" stroke-width="2.2" fill="none" stroke-linejoin="round"/>` + cars;
+}
+function pwLaps(tm, d) {
+  const el = $("pwlaps"); if (!el) return;
+  const h = (tm.history || []).filter(x => x.t > 0);
+  if (h.length < 2) { el.innerHTML = `<text x="150" y="75" fill="#55657a" font-size="12" text-anchor="middle">${T.pw_nolap}</text>`; return; }
+  const ok = h.filter(x => !x.pit), ts = (ok.length ? ok : h).map(x => x.t).sort((a, b) => a - b);
+  const best = ts[0], cap = ts[Math.floor(ts.length * 0.8)] * 1.03;          // les tours aux stands ne cassent pas l'échelle
+  const lo = best - 0.5, hi = Math.max(best + 2, cap), W = 300, H = 150, bw = W / h.length;
+  const bars = h.map((x, i) => {
+    const v = Math.min(x.t, hi), y = H - 14 - (v - lo) / (hi - lo) * (H - 28), c = DCOL[dIdx(d, x.d) % 4];
+    return `<rect x="${(i * bw + 1).toFixed(1)}" y="${y.toFixed(1)}" width="${Math.max(1, bw - 2).toFixed(1)}" height="${(H - 14 - y).toFixed(1)}" rx="1.5" fill="rgb(${c})" opacity="${x.pit ? .35 : x.t === best ? 1 : .75}"/>`;
+  }).join("");
+  const yb = H - 14 - (best - lo) / (hi - lo) * (H - 28);
+  el.innerHTML = bars + `<line x1="0" x2="${W}" y1="${yb.toFixed(1)}" y2="${yb.toFixed(1)}" stroke="#3DFFA2" stroke-dasharray="4 3" stroke-width="1"/>` +
+    `<text x="${W - 2}" y="${(yb - 3).toFixed(1)}" fill="#3DFFA2" font-size="10" text-anchor="end" font-family="JetBrains Mono">${fmtL(best)}</text>` +
+    `<text x="2" y="${H - 2}" fill="#55657a" font-size="10" font-family="JetBrains Mono">${T.pw_laps} ${h[0].n}–${h[h.length - 1].n}</text>`;
 }
 """
 
@@ -728,7 +787,10 @@ def page() -> str:
         "pw_laps": ("Tours", "Laps"), "pw_stops": ("Arrêts", "Stops"), "pw_last": ("Dernier tour", "Last lap"), "pw_best": ("Meilleur", "Best"),
         "pw_ahead": ("DEVANT", "AHEAD"), "pw_behind": ("DERRIÈRE", "BEHIND"), "pw_cls": ("en", "in"), "pw_you": ("toi", "you"),
         "pw_since": ("au volant depuis", "driving for"), "pw_fuel": ("Essence", "Fuel"), "pw_nrg": ("Énergie", "Energy"),
-        "pw_pen": ("pénalité", "penalty"), "pw_now": ("maintenant", "now"), "prep": ("Préparer la course", "Set up the race"),
+        "pw_pen": ("pénalité", "penalty"), "pw_map": ("CIRCUIT", "TRACK"), "pw_laps2": ("TOURS DU RELAIS", "STINT LAPS"),
+        "pw_wx": ("MÉTÉO", "WEATHER"), "pw_air": ("Air", "Air"), "pw_trk": ("Piste", "Track"), "pw_rain": ("Pluie", "Rain"),
+        "pw_wet": ("Piste mouillée", "Wet track"), "pw_car": ("VOITURE", "CAR"), "pw_nomap": ("Le tracé s'affichera après un tour.", "The track will show after one lap."),
+        "pw_nolap": ("Les tours s'afficheront ici.", "Laps will show here."), "pw_dry": ("sèche", "dry"), "pw_now": ("maintenant", "now"), "prep": ("Préparer la course", "Set up the race"),
         "fuel": ("Un plein dure environ", "A full tank lasts about"),
         "tankmin": ("Durée d'un plein", "One tank lasts"), "tank_auto": ("auto", "auto"),
         "tank_tip": ("Laisse vide : Apex la mesure en roulant et la retient pour ce circuit.",

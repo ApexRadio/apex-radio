@@ -1068,15 +1068,43 @@ def live_team(state) -> dict | None:
     if not s or not s.connected:
         return None
     if s.team:
-        return {**s.team, "me": False}
-    if s.on_track and s.session == "course":
+        t = {**s.team, "me": False}
+    elif s.on_track and s.session == "course":
         side = lambda o, g: {"name": (o or {}).get("name"), "gap": g} if o else None
-        return {"me": True, "driver": s.driver, "place": s.position, "cpos": s.class_position, "class": s.car_class,
-                "laps": s.laps_done, "last": s.last_lap, "best": s.best_lap, "pits": s.in_pits, "stops": s.pit_stops,
-                "penalties": s.penalties, "time_left": s.time_left, "track": s.track,
-                "fuel": round(s.fuel, 1) if s.fuel else None, "energy": round(s.energy * 100) if s.energy else None,
-                "ahead": side(s.ahead, s.gap_class_ahead), "behind": side(s.behind, s.gap_class_behind)}
-    return None
+        t = {"me": True, "driver": s.driver, "car": s.car, "place": s.position, "cpos": s.class_position, "class": s.car_class,
+             "laps": s.laps_done, "last": s.last_lap, "best": s.best_lap, "pits": s.in_pits, "stops": s.pit_stops,
+             "penalties": s.penalties, "time_left": s.time_left, "track": s.track,
+             "fuel": round(s.fuel, 1) if s.fuel else None, "energy": round(s.energy * 100) if s.energy else None,
+             "ahead": side(s.ahead, s.gap_class_ahead), "behind": side(s.behind, s.gap_class_behind)}
+    else:
+        return None
+    # météo (la même pour tout le monde)
+    t["weather"] = {"air": round(s.air_temp), "track": round(s.track_temp), "rain": round((s.raining or 0) * 100),
+                    "wet": round((s.wetness or 0) * 100)}
+    # voitures sur la carte : la voiture d'équipe, celles devant / derrière dans sa catégorie, et les autres en petit
+    names = {"team": t.get("driver"), "ahead": (t.get("ahead") or {}).get("name"), "behind": (t.get("behind") or {}).get("name")}
+    cars = []
+    for c in s.cars or []:
+        if t["me"]:                       # c'est toi qui roules : le jeu indique déjà devant / derrière
+            role = "team" if c.get("me") else c.get("rel") or ""
+            cars.append({"x": round(c.get("x", 0), 1), "z": round(c.get("z", 0), 1), "r": role, "pits": bool(c.get("pits"))})
+            continue
+        role = "team" if c.get("name") == names["team"] else \
+            "ahead" if names["ahead"] and c.get("name") == names["ahead"] else \
+            "behind" if names["behind"] and c.get("name") == names["behind"] else ""
+        cars.append({"x": round(c.get("x", 0), 1), "z": round(c.get("z", 0), 1), "r": role, "pits": bool(c.get("pits"))})
+    t["cars"] = cars
+    t["map_version"] = state.map.info().get("version") if getattr(state, "map", None) else None
+    # tours de la voiture d'équipe (pour le graphique du relais) : on note chaque nouveau tour bouclé
+    hist = state.__dict__.setdefault("team_laps", [])
+    n = t.get("laps") or 0
+    if hist and n < hist[-1]["n"]:
+        hist.clear()                                   # nouvelle course
+    if t.get("last") and n and (not hist or n > hist[-1]["n"]):
+        hist.append({"n": n, "t": round(t["last"], 3), "d": t.get("driver") or "", "pit": bool(t.get("pits"))})
+        del hist[:-60]
+    t["history"] = hist[-30:]
+    return t
 
 
 def already_running() -> bool:

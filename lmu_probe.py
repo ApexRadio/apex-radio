@@ -75,6 +75,7 @@ DENY = ("load", "save", "delete", "remove", "reset", "set", "send", "apply", "st
         "rename", "copy", "toggle", "press", "click", "select", "change", "post", "put", "upload", "install",
         "receive", "request", "launch", "go", "skip", "end", "finish", "retire", "pit", "chat", "vote")
 WANT = ("garage", "setup", "vehicle", "car", "tire", "tyre", "upgrade")
+GARAGE_KNOWN = ("/rest/garage/getPlayerGarageData", "/rest/garage/summary")
 
 
 def _safe_paths(schema: dict) -> list[str]:
@@ -82,7 +83,7 @@ def _safe_paths(schema: dict) -> list[str]:
     import re
     out = []
     for path, ops in ((schema or {}).get("paths") or {}).items():
-        if "get" not in {k.lower() for k in (ops or {})} or "{" in path:
+        if "get" not in {k.lower() for k in (ops or {})} or "{" in path or "(" in path:
             continue
         low = path.lower()
         if not any(w in low for w in WANT):
@@ -132,8 +133,10 @@ class Probe:
             # on garde le relevé le plus complet
             for wait in (5, 25, 60):
                 time.sleep(wait)
-                schema = _get("/swagger-schema.json").get("json") or schema
-                paths = _safe_paths(schema)
+                schema = _get("/swagger-schema.json", 4_000_000).get("json") or schema
+                # les adresses sûres connues (menu des réglages complet avec mini / maxi, résumé du garage), plus celles
+                # trouvées dans la liste du jeu
+                paths = sorted(set(GARAGE_KNOWN) | set(_safe_paths(schema)))
                 cur = {"quand": time.strftime("%d/%m/%Y %H:%M:%S"), "classe": car_class, "voiture": car, "circuit": track,
                        "chemins": paths, "reponses": {ep: _get(ep, 600000) for ep in paths}}
                 size = sum(len(json.dumps(r)) for r in cur["reponses"].values() if r.get("status") == 200)

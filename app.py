@@ -1463,6 +1463,9 @@ def main() -> None:
     print(f"  Tableau de bord : {url}")
     print(f"  Sur téléphone : {PHONE_URL}")
     print(f"  Tes données : {DATA}")
+    import paths as _paths
+    if _paths.DATA_BLOCKED:
+        print(f"  (Windows refuse d'écrire dans {_paths.DATA_BLOCKED} : OneDrive ou protection des dossiers)")
     if MIGRATED:
         print(f"  Données reprises de l'ancien dossier : {', '.join(MIGRATED)}")
     print("=" * 56)

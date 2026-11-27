@@ -49,7 +49,24 @@ def _resolve() -> tuple[Path, Path]:
     return data, local
 
 
+def _writable(folder: Path) -> bool:
+    """Vrai si on peut vraiment écrire dans ce dossier. Certains PC refusent sans le dire : Documents dans OneDrive
+    pas synchronisé, ou « Dispositif d'accès contrôlé aux dossiers » de Windows Defender qui bloque les applis
+    inconnues dans Documents (Python reçoit alors « No such file or directory » en écrivant)."""
+    try:
+        folder.mkdir(parents=True, exist_ok=True)
+        test = folder / ".apex_test"
+        test.write_text("ok", encoding="utf-8")
+        test.unlink()
+        return True
+    except OSError:
+        return False
+
+
 DATA, LOCAL = _resolve()
+DATA_BLOCKED = None      # dossier Documents refusé par Windows : Apex range ses données ailleurs (voir journal)
+if DATA != APP and not os.environ.get("APEX_DATA") and not _writable(DATA):
+    DATA_BLOCKED, DATA = DATA, LOCAL / "Données"
 
 
 def migrate() -> list[str]:
@@ -85,3 +102,6 @@ def migrate() -> list[str]:
 
 
 MIGRATED = migrate()
+if DATA_BLOCKED:
+    print(f"  Windows refuse l'écriture dans {DATA_BLOCKED} (OneDrive ou protection des dossiers) :")
+    print(f"  tes données sont rangées dans {DATA}")

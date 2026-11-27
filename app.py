@@ -99,7 +99,7 @@ class State:
         v = self.voice
         if v.enabled:
             # on coupe : l'ingé le dit d'abord (sinon on ne sait pas si l'appui a marché), puis plus un mot
-            bye = L("Radio coupée. Réactive-la quand tu veux.", "Radio off. Turn it back on any time.")
+            bye = L("Radio coupée.", "Radio off.")
             if hasattr(v, "hush"):
                 v.hush()                       # la phrase en cours s'arrête
             v.farewell = bye

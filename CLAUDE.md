@@ -49,6 +49,8 @@ Créateur : Laurent (pseudo lolotuner), francophone : **réponds-lui en françai
 - OverTake.gg : fiche « Apex Radio - Voice Race Engineer » (LMU Misc), validée le 07/11/2026 : publier une « mise à jour » à chaque version.
 - Reddit : publications retirées par les filtres anti-spam (compte récent). Attendre, participer, puis une seule publication à la fois.
 - Toujours demander à Laurent de valider un texte avant de le publier à son nom.
+- Avant chaque version publique, lui dire clairement ce qui part chez tout le monde et qui n'a été testé que chez lui
+  (surtout tout ce qui interroge le jeu en arrière-plan, comme les sondes de `lmu_probe.py`). Il l'a demandé le 27/11/2026.
 
 ## En cours (14/11/2026)
 - Deux branches de test, rien de publié :

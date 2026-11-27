@@ -70,6 +70,14 @@ def _get(path: str, limit: int = 60000) -> dict:
 # Relevé complet du garage : COUPÉ. Le 27/11/2026, LMU a planté 5 fois pendant les relevés (jamais en 2 semaines avant) :
 # trop de demandes au jeu pendant qu'il charge le garage. Les limites des voitures sont déjà relevées (lmu_garage/).
 GARAGE_ON = False
+# Toutes les sondes (relevé léger des limites au garage, captures « menu / en piste / au stand ») : COUPÉES depuis la 1.5.1
+# par précaution, après un plantage de LMU signalé par un joueur. Apex ne pose plus au jeu que les questions dont il a
+# besoin (menu des stands, setup chargé…). Pour les activer sur un PC précis (relever une voiture qui manque), créer le fichier
+# %LOCALAPPDATA%\Apex Radio\releve_garage.txt.
+try:
+    LIGHT_ON = (LOCAL / "releve_garage.txt").exists()
+except Exception:
+    LIGHT_ON = False
 GARAGE_DIR = OUT.parent / "lmu_garage"     # un fichier par voiture : tout le menu des réglages vu par le jeu
 # jamais d'appel qui pourrait AGIR dans le jeu, même en GET (charger, enregistrer, quitter…)
 DENY = ("load", "save", "delete", "remove", "reset", "set", "send", "apply", "start", "stop", "exit", "quit",
@@ -109,7 +117,7 @@ class Probe:
         self.busy = False
 
     def update(self, s) -> None:
-        if not s.connected or self.busy:
+        if not LIGHT_ON or not s.connected or self.busy:
             return
         stage = "au_stand" if s.in_pits else "en_piste" if s.on_track else "menu"
         if GARAGE_ON and getattr(s, "game", "lmu") == "lmu" and s.in_pits and s.car and f"garage|{s.car}" not in self.done:
@@ -118,7 +126,7 @@ class Probe:
             self.busy = True
             threading.Thread(target=self._garage, args=(s.car_class, s.car, s.track), daemon=True).start()
             return
-        if getattr(s, "game", "lmu") == "lmu":
+        if LIGHT_ON and getattr(s, "game", "lmu") == "lmu":
             self._light_tick(s)
             if self.busy:
                 return

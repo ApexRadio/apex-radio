@@ -39,9 +39,15 @@ Want another sim? Tell us on [Discord](https://discord.gg/ZHg4qXd26g).
 - **Live dashboard**: track map with all cars, gaps, fuel, tyres, weather forecast, live delta to your best lap.
 - **Car behaviour analysis**: understeer, oversteer, lock-ups, wheelspin, corner by corner, with setup advice.
 - **Setup workshop** (LMU): builds one Qualifying and one Race setup file per track from what it measured
-  (never touches your own setup files). Starting fuel calculated from your consumption.
+  (never touches your own setup files), one file per car. It knows the real limits of 16 LMU cars and tunes wings, anti-roll bars,
+  springs, dampers, toe, diff, brake bias, TC, pressures and camber, and learns from your runs. Starting fuel calculated from your consumption.
+- **Compare my laps** (pro telemetry): Gap / Throttle / Brake / Speed panels, track map with both cars at the same moment, lap replay, an engineer tip for each corner, lap sharing between drivers (.apexlap file).
+- **Rain**: in the wet, you're compared with your wet laps and wet record, not your dry ones.
+- **Choose what the engineer calls out** (Settings → Engineer's calls): lap times per session, race gaps, yellow flags, beep on the radio button.
 - **Reference lap**: keeps your best clean lap per car and track and tells you where you lose time, corner by corner (not while you're battling).
 - **Stint planner** for team endurance: race name, date and start time, drivers and their unavailability, stints in tanks or in time with real clock times, a timeline, Discord sharing, driver change called at the right stop.
+- **Live pit wall** (Stints page): driver at the wheel, stint progress, next driver and clock time, position, gaps, track map, weather and stint lap chart. Send the race to your team as a file.
+- **Your own dashboard**: hide any panel with an ✕, resize the track map.
 - **Teammate mode**: when your teammate drives, Apex follows your team car (position, gaps, lap times, stops) instead of waiting for the game.
 - **1-click updates**: the new version downloads inside the app, one click on INSTALL and Apex reinstalls and reopens.
 - **Records and debriefs**: best lap per track and class, progress chart, a report for every session.
@@ -102,9 +108,15 @@ Tu veux un autre simulateur ? Dis-le sur [Discord](https://discord.gg/ZHg4qXd26g
 - **Tableau de bord en direct** : carte du circuit avec toutes les voitures, écarts, essence, pneus, prévisions météo, delta en direct.
 - **Analyse du comportement** : sous-virage, survirage, blocages, patinage, virage par virage, avec conseils de réglage.
 - **Atelier setup** (LMU) : un fichier Qualif et un fichier Course par circuit, construits à partir des mesures
-  (il ne touche jamais à tes propres setups). Essence de départ calculée d'après ta conso.
+  (il ne touche jamais à tes propres setups), un fichier par voiture. Il connaît les vraies limites de 16 voitures LMU, règle ailerons,
+  barres antiroulis, ressorts, amortisseurs, pincement, différentiel, freinage, TC, pressions et carrossage, et apprend de tes essais. Essence de départ calculée d'après ta conso.
+- **Comparer mes tours** (télémétrie façon pro) : panneaux Écart / Gaz / Frein / Vitesse, carte avec les deux voitures au même instant, lecture du tour, conseil d'ingé virage par virage, partage de tours entre pilotes (fichier .apexlap).
+- **Pluie** : sur piste mouillée, tu es comparé à tes tours et ton record sous la pluie, pas à ceux du sec.
+- **Tu choisis ce que l'ingé annonce** (Réglages → Annonces de l'ingé) : chronos par séance, écarts en course, drapeaux jaunes, bip du bouton radio.
 - **Tour de référence** : il garde ton meilleur tour propre par voiture et circuit et te dit où tu perds du temps, virage par virage (pas pendant une bagarre).
 - **Planning des relais** pour l'endurance en équipe : nom, date et heure de départ de la course, pilotes et leurs indisponibilités, relais en pleins ou en durée avec les vraies heures, frise, partage Discord, changement de pilote annoncé au bon arrêt.
+- **Mur des stands en direct** (page Relais) : pilote au volant, progression du relais, prochain pilote et heure, position, écarts, carte, météo et graphique des tours. Envoi de la course à l'équipe en un fichier.
+- **Tableau de bord à ta façon** : une ✕ pour masquer chaque case, taille du circuit réglable.
 - **Mode équipier** : quand ton coéquipier roule, Apex suit votre voiture (position, écarts, temps au tour, arrêts) au lieu d'attendre le jeu.
 - **Mise à jour en 1 clic** : la nouvelle version se télécharge dans l'appli, un clic sur INSTALLER et Apex se réinstalle puis se rouvre.
 - **Records et débriefs** : meilleur tour par circuit et catégorie, courbe de progression, un rapport par session.

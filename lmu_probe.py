@@ -140,6 +140,18 @@ class Probe:
                 cur = {"quand": time.strftime("%d/%m/%Y %H:%M:%S"), "classe": car_class, "voiture": car, "circuit": track,
                        "chemins": paths, "reponses": {ep: _get(ep, 600000) for ep in paths}}
                 size = sum(len(json.dumps(r)) for r in cur["reponses"].values() if r.get("status") == 200)
+                # le fichier porte le MODÈLE de la voiture (« Aston Martin Vantage AMR LMGT3 »), pas l'équipe / la livrée
+                try:
+                    tree = cur["reponses"]["/rest/garage/summary"]["json"]["car"]["displayProperties"]["fullTreePath"]
+                    model = tree.split(",")[-1].strip()
+                    cur["modele"] = model
+                    nd = GARAGE_DIR / (re.sub(r"[^A-Za-z0-9_-]+", "_", model)[:80] + ".json")
+                    if nd != dst:
+                        if dst.exists() and best >= 0:
+                            dst.unlink(missing_ok=True)
+                        dst = nd
+                except Exception:
+                    pass
                 if size > best:
                     best, res = size, cur
                     dst.write_text(json.dumps(res, indent=1, ensure_ascii=False), encoding="utf-8")

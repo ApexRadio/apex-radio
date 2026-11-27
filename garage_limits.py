@@ -41,6 +41,7 @@ WM = {"CAMBER": "CamberSetting", "PRESSURE": "PressureSetting", "PACKERS": "Pack
       "RIDEHEIGHT": "RideHeightSetting", "SLOWBUMP": "SlowBumpSetting", "FASTBUMP": "FastBumpSetting",
       "SLOWREBOUND": "SlowReboundSetting", "FASTREBOUND": "FastReboundSetting", "COMPOUND": "CompoundSetting",
       "BRAKEDISC": "BrakeDiscSetting", "BRAKEPAD": "BrakePadSetting", "TENDERSPRING": "TenderSpringSetting",
+      "TENDERSPRINGTRAVEL": "TenderTravelSetting",
       "TENDERTRAVEL": "TenderTravelSetting"}
 
 

@@ -113,6 +113,8 @@ class Radio:
         self.learn_target = "ptt"         # ce qu'on est en train d'apprendre : le bouton radio ou un raccourci
         self._short_down: dict = {}
         self.cfg = load_config()
+        if "coach_race" not in self.cfg:   # nouvel install : coach seulement en essais / qualif ; anciens joueurs : inchangé
+            self.cfg["coach_race"] = bool(self.cfg.get("last_car"))   # a déjà roulé avec Apex = ancien joueur
         self.state = "démarrage"       # démarrage / prêt / écoute / réflexion / erreur / apprentissage
         self.detail = ""
         self.last_heard = ""

@@ -1149,7 +1149,8 @@ async function wsLoad(keepChecks) {
   // pas de reconstruction des listes pendant que tu choisis (avant : toutes les 3 s la liste revenait au setup
   // déjà choisi, et le bouton « c'est ce setup… » renvoyait l'ancien : « ça fait rien », 23/11)
   const busy = [$("wsfolder"), $("wsfile")].some(x => document.activeElement === x || (x._fsel && document.activeElement === x._fsel))
-    || document.querySelector(".fsel-list");      // une liste déroulante est ouverte : on ne touche à rien
+    || [...document.querySelectorAll(".fsel-list")].some(x => x.id !== "gamemenu" && !x.hidden && getComputedStyle(x).display !== "none");
+    // (une liste déroulante VRAIMENT ouverte : on ne touche à rien ; le menu ▾ des jeux, caché, ne compte pas)
   if (!busy) {
     const sel = (wsPick && wsPick.folder) || $("wsfolder").value || WS.folder || (folders[0] || {}).name || "";
     $("wsfolder").innerHTML = folders.map(f => `<option ${f.name === sel ? "selected" : ""}>${esc(f.name)}</option>`).join("");

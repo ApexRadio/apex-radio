@@ -645,6 +645,10 @@ class Workshop:
             # le carrossage a des butées serrées (LMGT3 : −1,8° avant au minimum) : on ne propose que des valeurs
             # déjà vues dans tes setups de cette voiture, sinon LMU refuse et remet l'ancienne valeur
             return None
+        if "AntiSway" in key and new == 0 and idx > 0:
+            return None    # cran 0 = barre « Detached » (débranchée) : ce n'est pas « un cran plus souple »
+        if re.search(r"d[eé]tach", known.get(new, ""), re.I):
+            return None
         to_disp, est = known.get(new), False
         if to_disp is None:
             # affichage = le numéro du cran (« P5 », « 6 ») : la nouvelle valeur se déduit sans deviner
@@ -801,7 +805,12 @@ class Workshop:
         s = Setup(path)
         self._limits = self._learn_limits(st, s)
         changes, used, conflict = [], set(), {}
-        for ch in self._live(s, live or {}):      # ce que tu as réglé toi-même en piste passe en premier
+        act = (self._last_active or "").split("\\")[-1]
+        loaded = not act or "\\" not in (self._last_active or "") or \
+            act.removesuffix(".svm") == st["current"].removesuffix(".svm")
+        # « réglé en piste » n'a de sens que si le jeu a bien chargé CE setup (sinon : v2 créée mais pas encore
+        # rechargée au garage -> Apex croyait que tu avais remis le TC à la main et créait une v3 pour l'annuler)
+        for ch in (self._live(s, live or {}) if loaded else []):      # ce que tu as réglé toi-même en piste passe en premier
             changes.append(ch)
             used.add((ch["section"], ch["key"]))
         if self.mode == "Course":

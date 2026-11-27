@@ -6,6 +6,7 @@ avec la carte du circuit et ses virages, pour mettre deux tours l'un sur l'autre
 from __future__ import annotations
 
 import json
+from i18n import L
 import re
 
 from reflap import LAPS
@@ -100,7 +101,15 @@ def export(name: str, k: str, driver: str) -> dict:
            "driver": (driver or "Pilote")[:40], **{x: lap.get(x) for x in ("lap", "date", "L", "v", "b", "t")},
            **{x: lap[x] for x in ("s", "x", "z") if lap.get(x)}}      # volant et trajectoire (tours récents)
     m, s = divmod(out["lap"] or 0, 60)
-    fn = f"{_safe(out['track'])} - {_safe(out['car'])} - {int(m)}'{s:06.3f} - {_safe(out['driver'])}.apexlap"
+    chrono = f"{int(m)}'{s:06.3f}"
+    # le temps en premier : Discord coupe les noms de fichier trop longs
+    fn = f"{chrono} - {_safe(out['driver'])} - {_safe(out['track'])} - {_safe(out['car'])}.apexlap"
+    pluie = L(" 🌧️ (pluie)", " 🌧️ (wet)") if out["wet"] else ""
+    jeu = {"acevo": "AC EVO", "ams2": "AMS2"}.get(out["game"] or "lmu", "LMU")
+    texte = L(f"🏁 **{chrono.replace(chr(39), ':')}** · {out['track']}{pluie} · {out['car']} ({jeu}) · par {out['driver']}\n"
+              f"Pour comparer : glisse le fichier dans la page « Comparer mes tours » d'Apex Radio.",
+              f"🏁 **{chrono.replace(chr(39), ':')}** · {out['track']}{pluie} · {out['car']} ({jeu}) · by {out['driver']}\n"
+              f"To compare: drop the file on Apex Radio's \"Compare my laps\" page.")
     try:
         SHARED_DIR.mkdir(parents=True, exist_ok=True)
         dst = SHARED_DIR / fn
@@ -108,7 +117,7 @@ def export(name: str, k: str, driver: str) -> dict:
     except OSError as e:
         return {"ok": False, "error": e.__class__.__name__}
     clip = reveal(dst)
-    return {"ok": True, "clip": clip, "file": fn}
+    return {"ok": True, "clip": clip, "file": fn, "texte": texte}
 
 
 def import_lap(x: dict) -> dict:

@@ -211,9 +211,17 @@ async function init() {
 // ------------------------------------------------------------ partage
 async function share(sel) {
   const r = await (await fetch("/api/laps/export", { method: "POST", body: JSON.stringify({ id: $("sess").value, k: $(sel).value }) })).json();
-  $("msg").innerHTML = r.ok ? (r.clip ? T("✓ Fichier prêt et copié : colle-le dans Discord avec <b>Ctrl+V</b> (salon #chronos). ",
-      "✓ File ready and copied: paste it in Discord with <b>Ctrl+V</b>. ") : T("✓ Fichier prêt : ", "✓ File ready: ") + `<span class="mono">${esc(r.file)}</span>`)
-    : T("Impossible de créer le fichier.", "Couldn't create the file.");
+  if (!r.ok) { $("msg").textContent = T("Impossible de créer le fichier.", "Couldn't create the file."); return; }
+  $("msg").innerHTML = (r.clip ? T("✓ <b>1.</b> Fichier copié : dans Discord, fais <b>Ctrl+V</b> (il s'attache au message). ",
+      "✓ <b>1.</b> File copied: in Discord press <b>Ctrl+V</b> (it attaches to the message). ")
+      : T("✓ Fichier prêt : ", "✓ File ready: ") + `<span class="mono">${esc(r.file)}</span>. `) +
+    T("<b>2.</b> Puis ", "<b>2.</b> Then ") + `<button id="cptxt" class="btn">📋 ${T("Copier la description", "Copy the description")}</button>` +
+    T(" et refais <b>Ctrl+V</b> dans la zone de texte avant d'envoyer.", " and press <b>Ctrl+V</b> again in the text box before sending.");
+  $("cptxt").onclick = async () => {
+    try { await navigator.clipboard.writeText(r.texte); }
+    catch (e) { const t = document.createElement("textarea"); t.value = r.texte; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
+    $("cptxt").textContent = T("✓ Description copiée", "✓ Description copied");
+  };
 }
 async function importFiles(files) {
   let last = null, bad = 0;

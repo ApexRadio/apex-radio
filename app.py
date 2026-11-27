@@ -97,8 +97,16 @@ class State:
     # ------------------------------------------------ boutons du tableau de bord et raccourcis du volant
     def toggle_voice(self) -> None:
         v = self.voice
-        v.enabled = not v.enabled
         if v.enabled:
+            # on coupe : l'ingé le dit d'abord (sinon on ne sait pas si l'appui a marché), puis plus un mot
+            bye = L("Radio coupée. Réactive-la quand tu veux.", "Radio off. Turn it back on any time.")
+            if hasattr(v, "hush"):
+                v.hush()                       # la phrase en cours s'arrête
+            v.farewell = bye
+            v.say(bye, urgent=True)
+            v.enabled = False
+        else:
+            v.enabled = True
             v.say(L("Radio active.", "Radio on."), urgent=True)
         print(f"  Radio : {'activée' if v.enabled else 'coupée'}")
 

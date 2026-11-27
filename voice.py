@@ -383,9 +383,10 @@ class Voice:
                 self._warm()
             if spot and _t.monotonic() - t0 > 1.2:
                 continue   # info du spotter périmée : on ne la dit pas
+            if not self.enabled and text != getattr(self, "farewell", None):
+                continue                      # radio coupée : seul « Radio coupée » passe encore
+            self.farewell = None if text == getattr(self, "farewell", None) else getattr(self, "farewell", None)
             print(f"  [radio] {text}")
-            if not self.enabled:
-                continue
             try:
                 if self._piper is not None:
                     self._cut.clear()

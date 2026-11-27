@@ -12,6 +12,7 @@ Les messages urgents (box, neutralisation) passent devant les autres.
 
 from __future__ import annotations
 
+import evenements
 import io
 import math
 import queue
@@ -389,6 +390,9 @@ class Voice:
                 continue                      # radio coupée : seul « Radio coupée » passe encore
             self.farewell = None if text == getattr(self, "farewell", None) else getattr(self, "farewell", None)
             print(f"  [radio] {text}")
+            if not again:
+                evenements.noter("radio", texte=text, urgent=True if prio <= 0 and not spot else None,
+                                 spot=True if spot else None)
             try:
                 if self._piper is not None:
                     self._cut.clear()

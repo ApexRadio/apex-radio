@@ -12,6 +12,7 @@ Alertes radio supplémentaires :
 
 from __future__ import annotations
 
+import evenements
 import json
 import math
 import random
@@ -623,8 +624,13 @@ class Places:
         self.last_said, self.last_t = pos, s.elapsed
         if abs(diff) > 3:
             return                 # gros saut : arrêts des autres, pénalité… pas un vrai dépassement
+        if diff < 0:
+            evenements.noter("perte_places", decalage=self.STABLE, pos=pos, places=-diff)
         if diff > 0:
             how = self._how(s, diff)
+            # pour le montage vidéo : l'heure réelle du changement de place (avant la confirmation)
+            evenements.noter("depassement" if how == "pass" else "gain_places", decalage=self.STABLE,
+                             pos=pos, places=diff, comment=how if how not in ("pass", "?") else None)
             if how in ("pits", "out", "slow"):
                 # pas un dépassement : la voiture devant est rentrée aux stands, a abandonné ou s'est arrêtée
                 who = _driver(getattr(self, "prev_ahead", None))

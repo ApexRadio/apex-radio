@@ -342,6 +342,9 @@ def loop(state: State, demo: bool) -> None:
             f"but you're in the {car_label(m['car'], sn.car)}. Better load a setup made for this car."), urgent=False)
 
     threading.Thread(target=setup_sync, daemon=True).start()
+    import evenements
+    evenements.ACTIF = not demo            # la démo n'écrit pas de journal de course
+    ma_voiture = evenements.MaVoiture(beh)
     inc = Incidents(beh)
     inc.say = lambda key, text, urgent=False: eng.say(key, text, urgent=urgent, elapsed=state.snap.elapsed)
     state.voice.volume = float(state.radio.cfg.get("volume", 1.3))
@@ -424,6 +427,7 @@ def loop(state: State, demo: bool) -> None:
             limits.update(snap, say)
             warmup.update(snap, say)
             places.update(snap, say)
+            ma_voiture.update(snap)
             morale.update(snap, say)
             carinfo.update(snap, say)
             lmu = getattr(snap, "game", "lmu") == "lmu"   # atelier setup : fichiers LMU seulement

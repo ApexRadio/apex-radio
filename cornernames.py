@@ -90,6 +90,11 @@ TABLE = [
         (0.77, "le Mergulho", "Mergulho"),
         (0.858, "la Junção", "Junção"),
     ]),
+    (r"laguna seca", [
+        (0.135, "l'épingle Andretti", "the Andretti Hairpin"),
+        (0.695, "le Corkscrew", "the Corkscrew"),
+        (0.755, "le virage Rainey", "Rainey Curve"),
+    ]),
     (r"brands hatch(?!.*indy)", [
         (0.07, "Paddock Hill", "Paddock Hill Bend"),
         (0.155, "Druids", "Druids"),

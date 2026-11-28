@@ -436,7 +436,7 @@ function drawMap() {
   }
   // numéros (et noms) des virages, un peu à l'extérieur du tracé
   const lab = (D.corners || []).map(c => { const p = pts[Math.round(c.mid * n) % n]; if (!p) return ""; let [x, z] = P(p);
-    const dx = x - cx, dz = z - cy, d = Math.hypot(dx, dz) || 1; x += dx / d * 6; z += dz / d * 6;
+    const dx = x - cx, dz = z - cy, d = Math.hypot(dx, dz) || 1; x = Math.max(4, Math.min(236, x + dx / d * 6)); z = Math.max(4, Math.min(96, z + dz / d * 6));   // reste dans le cadre
     const nm = cshort(c), anc = dx / d > 0.3 ? "start" : dx / d < -0.3 ? "end" : "middle", tx = anc === "start" ? x + 3.6 : anc === "end" ? x - 3.6 : x;
     return `<g class="cl" data-id="${c.id}" style="cursor:pointer"><circle cx="${x.toFixed(1)}" cy="${z.toFixed(1)}" r="2.7" fill="#0A0E15" stroke="#3a4a5e" stroke-width=".4"/>` +
       `<text x="${x.toFixed(1)}" y="${(z + 1.05).toFixed(1)}" fill="#C9D3E0" font-size="2.9" text-anchor="middle" font-family="JetBrains Mono" font-weight="700">${c.id}</text>` +

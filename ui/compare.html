@@ -46,10 +46,10 @@
   .work { display:grid; grid-template-columns:minmax(320px,0.9fr) minmax(0,1.3fr); gap:12px; }
   .left { display:flex; flex-direction:column; gap:12px; min-width:0; }
   .mapcard { padding:12px 14px; position:relative; }
-  #map, #fmap { width:100%; aspect-ratio:1.25; display:block; }
+  #map, #fmap { width:100%; aspect-ratio:2.4; max-height:58vh; display:block; }
   #map[hidden], #fmap[hidden], #mini[hidden] { display:none; }
   #fmap { background:radial-gradient(ellipse at center,#0b1018 0%,#06080c 100%); border-radius:12px; }
-  #mini { position:absolute; left:22px; bottom:20px; width:30%; aspect-ratio:1.25; background:rgba(6,8,12,.85);
+  #mini { position:absolute; left:22px; bottom:20px; width:18%; aspect-ratio:2.4; background:rgba(6,8,12,.85);
     border:1px solid var(--line2); border-radius:10px; }
   .maphead { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
   .legend { font-size:11px; color:var(--muted); display:flex; gap:12px; align-items:center; }
@@ -120,15 +120,15 @@
         <div class="tm"><b id="tb">–</b><div class="sub" id="rb"></div></div></div>
       <div class="card deltabox"><span class="lbl">Δ B − A</span><b id="dt">–</b></div>
     </div>
-    <div class="work" style="margin-top:12px">
-      <div class="left">
-        <div class="card mapcard">
+    <div class="card mapcard" style="margin-top:12px">
           <div class="maphead"><span class="lbl" id="hmap">Circuit</span>
             <div class="toggle" id="mviews" hidden><button id="mvf" class="on">Suivi</button><button id="mvc">Circuit</button></div>
             <span class="legend"><span><i style="background:var(--good)"></i><span id="lg1">B gagne</span></span><span><i style="background:var(--alert)"></i><span id="lg2">B perd</span></span></span></div>
-          <svg id="map" viewBox="0 0 100 80"></svg>
-          <svg id="fmap" hidden></svg><svg id="mini" viewBox="0 0 100 80" hidden></svg>
+          <svg id="map" viewBox="0 0 240 100"></svg>
+          <svg id="fmap" hidden></svg><svg id="mini" viewBox="0 0 240 100" hidden></svg>
         </div>
+    <div class="work" style="margin-top:12px">
+      <div class="left">
         <div class="card seg">
           <div class="segnav"><button class="btn" id="segprev">‹</button><div class="t" id="segt">–</div><button class="btn" id="segnext">›</button></div>
           <div class="segrow"><span class="dot" style="background:var(--accent)"></span><span id="segna">A</span><span id="segta">–</span></div>
@@ -406,13 +406,23 @@ function draw() {
   if (worst < 0) worst = 0;
   showSeg(ROWS.length ? worst : -1, true);
 }
+// flèche « voiture » (pointe vers +x), à poser avec translate + rotate
+const CAR = (id, col, k, lab) => `<g id="${id}"><path d="M${2.6*k},0 L${-1.9*k},${-1.5*k} L${-1.1*k},0 L${-1.9*k},${1.5*k}Z" fill="${col}" stroke="#06070B" stroke-width="${0.35*k}" stroke-linejoin="round" style="filter:drop-shadow(0 0 ${1.6*k}px ${col})"/>` +
+  `<g class="lab" transform="translate(${(lab === "A" ? -2.6 : 2.6) * k},0)"><rect x="${-2.2*k}" y="${-5.6*k}" width="${4.4*k}" height="${2.9*k}" rx="${0.8*k}" fill="${col}"/><text y="${-3.45*k}" fill="#06070B" font-size="${2.3*k}" text-anchor="middle" font-weight="800" font-family="Orbitron">${lab}</text></g></g>`;   // étiquette A à gauche, B à droite : lisibles même quand les voitures se touchent
+function placeCar(id, x, y, ang) {
+  const g = $(id); if (!g) return;
+  g.setAttribute("transform", `translate(${x.toFixed(2)},${y.toFixed(2)})`);
+  g.firstChild.setAttribute("transform", `rotate(${ang.toFixed(1)})`);
+}
+const cshort = c => c.name ? (LANG === "fr" ? c.name[0] : c.name[1]).replace(/^(le |la |les |l'|the )/i, "") : "";
 function drawMap() {
   const pts = D.map;
-  if (!pts || pts.filter(Boolean).length < 50) { MAP = null; $("map").innerHTML = `<text x="50" y="40" fill="#55657a" font-size="4" text-anchor="middle">${T("Carte pas encore enregistrée", "Map not recorded yet")}</text>`; return; }
+  if (!pts || pts.filter(Boolean).length < 50) { MAP = null; $("map").innerHTML = `<text x="120" y="50" fill="#55657a" font-size="5" text-anchor="middle">${T("Carte pas encore enregistrée", "Map not recorded yet")}</text>`; return; }
   const ok = pts.filter(Boolean), xs_ = ok.map(p => p[0]), zs = ok.map(p => p[1]);
   const x0 = Math.min(...xs_), x1 = Math.max(...xs_), z0 = Math.min(...zs), z1 = Math.max(...zs);
-  const s = Math.min(92 / (x1 - x0), 72 / (z1 - z0)), ox = (100 - (x1 - x0) * s) / 2, oz = (80 - (z1 - z0) * s) / 2;
+  const s = Math.min(226 / (x1 - x0), 88 / (z1 - z0)), ox = (240 - (x1 - x0) * s) / 2, oz = (100 - (z1 - z0) * s) / 2;
   const P = p => [ox + (p[0] - x0) * s, oz + (z1 - p[1]) * s];
+  const cx = 120, cy = 50;
   MAP = { P, pts };
   const n = pts.length; let base = "", seg = "";
   for (let i = 0; i < n; i++) {
@@ -421,19 +431,26 @@ function drawMap() {
     base += `M${ax.toFixed(2)},${az.toFixed(2)}L${bx.toFixed(2)},${bz.toFixed(2)}`;
     const i0 = Math.floor(i / n * NB), i1 = Math.min(NB - 1, Math.floor((i + 1) / n * NB));
     const g = DL[i1] - DL[i0], k = Math.min(1, Math.abs(g) / 0.025);
-    const col = g > 0.002 ? `rgba(255,46,136,${0.3 + 0.7 * k})` : g < -0.002 ? `rgba(61,255,162,${0.3 + 0.7 * k})` : "rgba(140,153,172,.35)";
-    seg += `<line x1="${ax.toFixed(2)}" y1="${az.toFixed(2)}" x2="${bx.toFixed(2)}" y2="${bz.toFixed(2)}" stroke="${col}" stroke-width="1.1" stroke-linecap="round"/>`;
+    const col = g > 0.002 ? `rgba(255,46,136,${0.45 + 0.55 * k})` : g < -0.002 ? `rgba(61,255,162,${0.45 + 0.55 * k})` : "rgba(170,182,200,.30)";
+    seg += `<line x1="${ax.toFixed(2)}" y1="${az.toFixed(2)}" x2="${bx.toFixed(2)}" y2="${bz.toFixed(2)}" stroke="${col}" stroke-width="1.5" stroke-linecap="round"/>`;
   }
-  const lab = (D.corners || []).map(c => { const p = pts[Math.round(c.mid * n) % n]; if (!p) return ""; const [x, z] = P(p);
-    return `<g class="cl" data-id="${c.id}" style="cursor:pointer"><circle cx="${x.toFixed(1)}" cy="${z.toFixed(1)}" r="2.1" fill="#0A0E15" stroke="#2a3646" stroke-width=".35"/>` +
-      `<text x="${x.toFixed(1)}" y="${(z + 0.9).toFixed(1)}" fill="#9AA6B8" font-size="2.3" text-anchor="middle" font-family="JetBrains Mono">${c.id}</text></g>`; }).join("");
-  const p0 = pts[0] ? P(pts[0]) : [0, 0];
-  $("map").innerHTML = `<path d="${base}" stroke="#141c27" stroke-width="5" stroke-linecap="round" fill="none"/>` +
-    `<path d="${base}" stroke="#1d2836" stroke-width="3.6" stroke-linecap="round" fill="none"/>` + seg +
-    `<path id="mseg" d="" stroke="#fff" stroke-opacity=".9" stroke-width="2.2" stroke-linecap="round" fill="none"/>` + lab +
-    `<rect x="${(p0[0] - 0.4).toFixed(2)}" y="${(p0[1] - 2).toFixed(2)}" width=".8" height="4" fill="#fff"/>` +
-    `<circle id="ma" r="1.5" fill="var(--accent)" stroke="#06070B" stroke-width=".4" style="filter:drop-shadow(0 0 1.5px var(--accent))"/>` +
-    `<circle id="mb" r="1.5" fill="var(--b)" stroke="#06070B" stroke-width=".4" style="filter:drop-shadow(0 0 1.5px var(--b))"/>`;
+  // numéros (et noms) des virages, un peu à l'extérieur du tracé
+  const lab = (D.corners || []).map(c => { const p = pts[Math.round(c.mid * n) % n]; if (!p) return ""; let [x, z] = P(p);
+    const dx = x - cx, dz = z - cy, d = Math.hypot(dx, dz) || 1; x += dx / d * 6; z += dz / d * 6;
+    const nm = cshort(c), anc = dx / d > 0.3 ? "start" : dx / d < -0.3 ? "end" : "middle", tx = anc === "start" ? x + 3.6 : anc === "end" ? x - 3.6 : x;
+    return `<g class="cl" data-id="${c.id}" style="cursor:pointer"><circle cx="${x.toFixed(1)}" cy="${z.toFixed(1)}" r="2.7" fill="#0A0E15" stroke="#3a4a5e" stroke-width=".4"/>` +
+      `<text x="${x.toFixed(1)}" y="${(z + 1.05).toFixed(1)}" fill="#C9D3E0" font-size="2.9" text-anchor="middle" font-family="JetBrains Mono" font-weight="700">${c.id}</text>` +
+      (nm ? `<text x="${tx.toFixed(1)}" y="${(anc === "middle" ? z + (dz > 0 ? 6 : -4) : z + 1).toFixed(1)}" fill="#8494a8" font-size="2.6" text-anchor="${anc}" font-family="Inter">${esc(nm)}</text>` : "") + `</g>`; }).join("");
+  const p0 = pts[0] ? P(pts[0]) : [0, 0], p1 = pts[1] ? P(pts[1]) : p0;
+  const ang0 = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]) * 180 / Math.PI;
+  $("map").innerHTML =
+    `<path d="${base}" stroke="#d9e0ea" stroke-opacity=".55" stroke-width="7.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>` +   // bords blancs
+    `<path d="${base}" stroke="#20262f" stroke-width="6.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>` +                         // bitume
+    seg + `<path id="mseg" d="" stroke="#fff" stroke-opacity=".85" stroke-width="3" stroke-linecap="round" fill="none"/>` +
+    // ligne d'arrivée en damier
+    `<g transform="translate(${p0[0].toFixed(2)},${p0[1].toFixed(2)}) rotate(${ang0.toFixed(1)})">${[0, 1, 2, 3, 4, 5].map(r => [0, 1].map(c2 =>
+      `<rect x="${-1 + c2}" y="${-3 + r}" width="1" height="1" fill="${(r + c2) % 2 ? "#06070B" : "#fff"}"/>`).join("")).join("")}</g>` +
+    lab + CAR("ma", "var(--accent)", 1, "A") + CAR("mb", "var(--b)", 1, "B");
   document.querySelectorAll("#map .cl").forEach(g => g.onclick = () => { const i = ROWS.findIndex(r => String(r.c.id) === g.dataset.id); if (i >= 0) showSeg(i); });
 }
 // ---- vue « suivi » : piste large, trajectoires des deux tours, voitures qui avancent (coordonnées en mètres)
@@ -457,26 +474,32 @@ function drawFollow() {
   let seg = "";      // trajectoire de B, verte là où B gagne du temps, rose là où il en perd
   for (let i = 0; i < NB; i++) {
     const k = (i + 1) % NB, g = DL[Math.min(NB - 1, i + 1)] - DL[i], a = Math.min(1, Math.abs(g) / 0.004);
-    const col = g > 0.0004 ? `rgba(255,46,136,${0.45 + 0.55 * a})` : g < -0.0004 ? `rgba(61,255,162,${0.45 + 0.55 * a})` : "rgba(255,176,46,.9)";
-    seg += `<line x1="${B.x[i]}" y1="${Y(B.z[i])}" x2="${B.x[k]}" y2="${Y(B.z[k])}" stroke="${col}" stroke-width=".9" stroke-linecap="round"/>`;
+    const col = g > 0.0004 ? `rgba(255,46,136,${0.55 + 0.45 * a})` : g < -0.0004 ? `rgba(61,255,162,${0.55 + 0.45 * a})` : "var(--b)";
+    seg += `<line x1="${B.x[i]}" y1="${Y(B.z[i])}" x2="${B.x[k]}" y2="${Y(B.z[k])}" stroke="${col}" stroke-width="1.3" stroke-linecap="round"/>`;
   }
-  const lab = (D.corners || []).map(c => { const i = Math.round(c.mid * NB) % NB; const x = A.x[i], y = Y(A.z[i]);
-    return `<g><circle cx="${x}" cy="${y - 16}" r="4.5" fill="#0A0E15" stroke="#2a3646" stroke-width=".6"/><text x="${x}" y="${y - 14.2}" fill="#9AA6B8" font-size="5" text-anchor="middle" font-family="JetBrains Mono">${c.id}</text></g>`; }).join("");
-  $("fmap").innerHTML = `<path d="${trk}" stroke="#121923" stroke-width="18" stroke-linejoin="round" fill="none"/>` +
-    `<path d="${trk}" stroke="#1b2532" stroke-width="13" stroke-linejoin="round" fill="none"/>` +
-    seg + `<path d="${ln(A)}" stroke="#E8EDF5" stroke-opacity=".85" stroke-width=".7" stroke-dasharray="1.6 1.4" fill="none"/>` + lab +
-    `<g id="fa"><circle r="3.2" fill="var(--accent)" stroke="#06070B" stroke-width=".8" style="filter:drop-shadow(0 0 3px var(--accent))"/><text y="-5" fill="var(--accent)" font-size="4.5" text-anchor="middle" font-weight="700">A</text></g>` +
-    `<g id="fb"><circle r="3.2" fill="var(--b)" stroke="#06070B" stroke-width=".8" style="filter:drop-shadow(0 0 3px var(--b))"/><text y="-5" fill="var(--b)" font-size="4.5" text-anchor="middle" font-weight="700">B</text></g>`;
+  const lab = (D.corners || []).map(c => { const i = Math.round(c.mid * NB) % NB; const x = A.x[i], y = Y(A.z[i]), nm = cshort(c);
+    return `<g><circle cx="${x}" cy="${y - 17}" r="5" fill="#0A0E15" stroke="#3a4a5e" stroke-width=".7"/><text x="${x}" y="${y - 15}" fill="#C9D3E0" font-size="5.5" text-anchor="middle" font-family="JetBrains Mono" font-weight="700">${c.id}</text>` +
+      (nm ? `<text x="${x + 7}" y="${y - 15}" fill="#8494a8" font-size="5" font-family="Inter">${esc(nm)}</text>` : "") + `</g>`; }).join("");
+  $("fmap").innerHTML =
+    `<path d="${trk}" stroke="#d9e0ea" stroke-opacity=".6" stroke-width="15.5" stroke-linejoin="round" fill="none"/>` +   // bords de piste
+    `<path d="${trk}" stroke="#20262f" stroke-width="14" stroke-linejoin="round" fill="none"/>` +                          // bitume
+    `<path d="${trk}" stroke="#2a313b" stroke-width=".4" stroke-dasharray="3 5" fill="none"/>` +
+    `<path d="${ln(A)}" stroke="var(--accent)" stroke-opacity=".9" stroke-width="1.1" stroke-linejoin="round" fill="none"/>` + seg + lab +
+    CAR("fa", "var(--accent)", 1.9, "A") + CAR("fb", "var(--b)", 1.9, "B");
   // mini-carte : le circuit entier avec la position de B
-  $("mini").innerHTML = MAP ? `<path d="${(() => { let d = ""; MAP.pts.forEach((p, i) => { if (p) { const [x, z] = MAP.P(p); d += (d ? "L" : "M") + x.toFixed(1) + "," + z.toFixed(1); } }); return d; })()}" stroke="#2a3646" stroke-width="2.4" fill="none" stroke-linejoin="round"/><circle id="mnb" r="2.6" fill="var(--b)"/>` : "";
+  $("mini").innerHTML = MAP ? `<path d="${(() => { let d = ""; MAP.pts.forEach((p, i) => { if (p) { const [x, z] = MAP.P(p); d += (d ? "L" : "M") + x.toFixed(1) + "," + z.toFixed(1); } }); return d; })()}" stroke="#3a4a5e" stroke-width="4" fill="none" stroke-linejoin="round"/><circle id="mnb" r="5" fill="var(--b)"/>` : "";
   FW = { Y };
   setView();
 }
 function followPos(i, j) {
   if (!FW || !FOLLOW) return;
   const Y = FW.Y, bx = B.x[i], by = Y(B.z[i]), ax = A.x[j], ay = Y(A.z[j]);
-  $("fb").setAttribute("transform", `translate(${bx},${by})`); $("fa").setAttribute("transform", `translate(${ax},${ay})`);
-  const R = 70, w = R * 2 * 1.25, h = R * 2;
+  const hd = (L, k) => {   // cap de la voiture : on cherche un point quelques mètres plus loin (les cases peuvent se répéter)
+    for (let d = 1; d < 40; d++) { const m = (k + d) % NB, dx = L.x[m] - L.x[k], dy = Y(L.z[m]) - Y(L.z[k]);
+      if (dx * dx + dy * dy > 9) return Math.atan2(dy, dx) * 180 / Math.PI; }
+    return 0; };
+  placeCar("fb", bx, by, hd(B, i)); placeCar("fa", ax, ay, hd(A, j));
+  const R = 55, w = R * 2 * 2.4, h = R * 2;
   $("fmap").setAttribute("viewBox", `${(bx - w / 2).toFixed(1)} ${(by - h / 2).toFixed(1)} ${w} ${h}`);
   const pb = mapPos(i), mb = $("mnb"); if (pb && mb) { mb.setAttribute("cx", pb[0]); mb.setAttribute("cy", pb[1]); }
 }
@@ -550,8 +573,10 @@ function setIdx(i) {
   document.querySelectorAll("line.cur").forEach(l => { const W = +l.ownerSVGElement.getAttribute("viewBox").split(" ")[2]; l.setAttribute("x1", x * W); l.setAttribute("x2", x * W); });
   const t = CB[i], j = idxAt(CA, t);      // où était A au même instant
   const pb = mapPos(i), pa = mapPos(j);
-  if (pb) { $("mb").setAttribute("cx", pb[0]); $("mb").setAttribute("cy", pb[1]); }
-  if (pa) { $("ma").setAttribute("cx", pa[0]); $("ma").setAttribute("cy", pa[1]); }
+  const hdg = (k, p) => { for (let d = 1; d < 40; d++) { const q = mapPos((k + d) % NB);
+    if (q && Math.hypot(q[0] - p[0], q[1] - p[1]) > 0.6) return Math.atan2(q[1] - p[1], q[0] - p[0]) * 180 / Math.PI; } return 0; };
+  if (pb) placeCar("mb", pb[0], pb[1], hdg(i, pb));
+  if (pa) placeCar("ma", pa[0], pa[1], hdg(j, pa));
   trajPos(i, j); followPos(i, j);
   const d = DL[i];
   $("v0").innerHTML = `<span class="${d > 0 ? "loss" : "gain"}">${sgn(d)} s</span>`;

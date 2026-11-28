@@ -484,6 +484,7 @@
         <label><input type="checkbox" id="an_ch_course"> <span data-en="Race">Course</span></label></div></div>
           <div class="setrow"><span data-en="Gaps ahead / behind (race)">Écarts devant / derrière (course)</span><div class="setctl"><select id="an_ecarts" aria-label="Écarts" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
           <div class="setrow"><label for="an_jaunes" data-en="Yellow flags ahead of me">Drapeaux jaunes devant moi</label><div class="setctl"><input type="checkbox" id="an_jaunes"></div></div>
+          <div class="setrow"><label for="an_trafic" data-en="Slower cars ahead (multiclass)">Voitures plus lentes devant (multiclasse)</label><div class="setctl"><input type="checkbox" id="an_trafic"></div></div>
           <div class="setrow"><label for="an_leves" data-en="&quot;Yellows cleared&quot;">« Drapeaux jaunes levés »</label><div class="setctl"><input type="checkbox" id="an_leves"></div></div>
           <div class="setrow"><label for="an_bip" data-en="Beep when I press the radio button">Bip quand j'appuie sur le bouton radio</label><div class="setctl"><input type="checkbox" id="an_bip"></div></div>
           <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Only what the engineer says on his own. If you ask (&quot;what's my gap?&quot;, &quot;my sectors?&quot;), he always answers.">Seulement ce que l'ingé dit de lui-même. Si tu demandes (« mon écart ? », « mes secteurs ? »), il répond toujours.</div>
@@ -1103,13 +1104,14 @@ $("encourage").onchange = e => fetch("/api/encourage", { method: "POST", body: J
 const AN_SESS = ["essais", "qualif", "course"];
 $("an_ecarts").innerHTML = [["chaque", "À chaque tour", "Every lap"], ["normal", "De temps en temps", "Now and then"],
   ["demande", "Seulement si je demande", "Only when I ask"]].map(e => `<option value="${e[0]}">${T(e[1], e[2])}</option>`).join("");
-const AN_IDS = ["an_ecarts", "an_jaunes", "an_leves", "an_bip", ...AN_SESS.map(x => "an_ch_" + x)];
+const AN_IDS = ["an_ecarts", "an_jaunes", "an_trafic", "an_leves", "an_bip", ...AN_SESS.map(x => "an_ch_" + x)];
 let anTouched = 0;
 function paintAnnonces(a) {
   if (Date.now() - anTouched < 3000 || AN_IDS.some(id => document.activeElement === $(id))) return;
   AN_SESS.forEach(x => $("an_ch_" + x).checked = !!(a.chrono || {})[x]);
   $("an_ecarts").value = a.ecarts || "normal";
   $("an_jaunes").checked = a.jaunes !== false;
+  $("an_trafic").checked = a.trafic !== false;
   $("an_leves").checked = a.jaunes_leves !== false;
   $("an_bip").checked = a.bip !== false;
 }
@@ -1117,15 +1119,15 @@ function sendAnnonces() {
   anTouched = Date.now();
   const chrono = {}; AN_SESS.forEach(x => chrono[x] = $("an_ch_" + x).checked);
   fetch("/api/annonces", { method: "POST", body: JSON.stringify({ chrono, ecarts: $("an_ecarts").value,
-    jaunes: $("an_jaunes").checked, jaunes_leves: $("an_leves").checked, bip: $("an_bip").checked }) });
+    jaunes: $("an_jaunes").checked, trafic: $("an_trafic").checked, jaunes_leves: $("an_leves").checked, bip: $("an_bip").checked }) });
 }
 AN_IDS.forEach(id => $(id).addEventListener("change", sendAnnonces));
 
 // ---- réglage simple : « Ce qu'il dit de lui-même » (regroupe encouragements + annonces)
 const TALK = {
-  discret: { encourage: "discret", essais: false, qualif: false, course: false, ecarts: "demande", jaunes: true, leves: false },
-  normal:  { encourage: "normal", essais: true, qualif: true, course: false, ecarts: "normal", jaunes: true, leves: false },
-  bavard:  { encourage: "motivant", essais: true, qualif: true, course: true, ecarts: "chaque", jaunes: true, leves: true }};
+  discret: { encourage: "discret", essais: false, qualif: false, course: false, ecarts: "demande", jaunes: true, trafic: false, leves: false },
+  normal:  { encourage: "normal", essais: true, qualif: true, course: false, ecarts: "normal", jaunes: true, trafic: true, leves: false },
+  bavard:  { encourage: "motivant", essais: true, qualif: true, course: true, ecarts: "chaque", jaunes: true, trafic: true, leves: true }};
 const TALK_NOTE = {
   discret: () => T("Le strict nécessaire : drapeaux jaunes, alertes, stands. Tu lui demandes le reste.", "Only the essentials: yellow flags, warnings, pits. Ask him for the rest."),
   normal: () => T("Chrono en essais et qualif, écarts de temps en temps en course, quelques encouragements.", "Lap times in practice and quali, gaps now and then in races, some encouragement."),
@@ -1138,7 +1140,7 @@ function talkOptions(withPerso) {
 }
 function talkNow() {
   const v = { encourage: $("encourage").value, essais: $("an_ch_essais").checked, qualif: $("an_ch_qualif").checked,
-    course: $("an_ch_course").checked, ecarts: $("an_ecarts").value, jaunes: $("an_jaunes").checked, leves: $("an_leves").checked };
+    course: $("an_ch_course").checked, ecarts: $("an_ecarts").value, jaunes: $("an_jaunes").checked, trafic: $("an_trafic").checked, leves: $("an_leves").checked };
   return Object.keys(TALK).find(k => Object.keys(TALK[k]).every(x => TALK[k][x] === v[x])) || "perso";
 }
 function paintTalk() {
@@ -1153,7 +1155,7 @@ $("talk").onchange = e => {
   const p = TALK[e.target.value]; if (!p) return;
   if ($("encourage").value !== p.encourage) { $("encourage").value = p.encourage; $("encourage").dispatchEvent(new Event("change")); }
   AN_SESS.forEach(x => $("an_ch_" + x).checked = p[x]);
-  $("an_ecarts").value = p.ecarts; $("an_jaunes").checked = p.jaunes; $("an_leves").checked = p.leves;
+  $("an_ecarts").value = p.ecarts; $("an_jaunes").checked = p.jaunes; $("an_trafic").checked = p.trafic; $("an_leves").checked = p.leves;
   sendAnnonces(); $("talk").blur(); paintTalk();
 };
 ["encourage", ...AN_IDS].forEach(id => $(id).addEventListener("change", paintTalk));

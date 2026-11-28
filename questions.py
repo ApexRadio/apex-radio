@@ -1050,7 +1050,7 @@ def amount_command(t: str, s: Snapshot | None = None) -> str | None:
         energy = 1.0
         litres = float(getattr(s, "fuel_capacity", 0) or 0) or None
     else:
-        m = re.search(rf"\b(mets|met|mettez|ajoute|rajoute|remets|add|put) {_NUM} ?(litres?|l|liters?)\b", t)
+        m = re.search(rf"\b(mets|met|mettez|ajoute|rajoute|remets|prepare|prepares|preparez|regle|regles|reglez|add|put|prepare) {_NUM} ?(litres?|l|liters?)\b", t)
         if not m:
             return None
         add = float(m.group(2).replace(",", "."))

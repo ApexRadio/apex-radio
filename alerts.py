@@ -312,7 +312,12 @@ class Traffic:
             if gap < 20:                                 # au-delà, trop loin pour estimer
                 slow.append((gap, prev, c, key))
         slow.sort(key=lambda x: x[0])
-        if now - self.last < self.GLOBAL_GAP:
+        import annonces
+        if not annonces.get("trafic", True):
+            return
+        # en multiclasse, on double sans arrêt : 61 annonces en 1 h à Daytona (28/11). Normal : 1 toutes les 75 s au plus
+        gap_min = {"discret": 120.0, "normal": 75.0, "motivant": self.GLOBAL_GAP}[ENCOURAGE]
+        if now - self.last < gap_min:
             return
         # ~30 s avant sur les grands circuits ; sur un petit (tour de 50 s), 30 s c'est plus d'un demi-tour et trop
         # d'imprévus (bagarre, arrêt, trafic) : on prévient au plus 40 % d'un tour avant, pour rester juste
@@ -741,13 +746,16 @@ class Morale:
         self.since = 0
         pos = s.class_position or s.position
         lines = []
-        if prev and last < prev - 0.3:
+        if prev and last < prev - 0.3 and prev - last <= 0.025 * last:
+            # (au-delà de 2,5 %, le tour d'avant était un tour lent : arrêt au stand, jaune, incident.
+            #  « Excellent, tu as gagné 50,9 secondes sur ce tour » après l'arrêt, Daytona 28/11)
             d = prev - last
             ds = dec(f"{d:.1f}")
-            lines.append(var("lap", [(f"Super tour, {ds} seconde de mieux que le précédent !",
+            sec = "secondes" if d >= 2 else "seconde"
+            lines.append(var("lap", [(f"Super tour, {ds} {sec} de mieux que le précédent !",
                                       f"Great lap, {d:.1f} seconds quicker than the last one!"),
-                                     (f"Gros tour ! {ds} seconde de mieux.", f"Big lap! {d:.1f} seconds quicker."),
-                                     (f"Excellent, tu as gagné {ds} seconde sur ce tour.",
+                                     (f"Gros tour ! {ds} {sec} de mieux.", f"Big lap! {d:.1f} seconds quicker."),
+                                     (f"Excellent, tu as gagné {ds} {sec} sur ce tour.",
                                       f"Excellent, you found {d:.1f} seconds on that lap.")]))
         elif prev and abs(last - prev) < 0.4:
             lines.append(var("reg", [("Belle régularité, continue sur ce rythme.", "Nice and consistent, keep this pace."),

@@ -16,6 +16,7 @@ DEFAULT = {
     "ecarts": "normal",
     "jaunes": True,          # drapeaux jaunes devant toi
     "jaunes_leves": False,   # « drapeaux jaunes levés » : coupé par défaut (info en trop selon les joueurs, 28/11)
+    "trafic": True,          # « GT3 plus lente devant, tu la rattrapes dans 20 s » (multiclasse)
     "bip": True,             # petit bip quand on appuie sur le bouton radio
 }
 
@@ -47,8 +48,8 @@ def chrono(session: str) -> bool:
     return bool((CFG.get("chrono") or DEFAULT["chrono"]).get(_sess(session), True))
 
 
-def get(key: str):
-    return CFG.get(key, DEFAULT.get(key))
+def get(key: str, default=None):
+    return CFG.get(key, DEFAULT.get(key) if default is None else default)
 
 
 load(None)

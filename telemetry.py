@@ -252,7 +252,7 @@ class LMUSource:
             self._team_car = vehicle
             try:
                 from paths import DATA
-                (DATA / "equipe.json").write_text(json.dumps({"vehicle": vehicle, "track": track}), encoding="utf-8")
+                (DATA / "equipe.json").write_text(json.dumps({"vehicle": vehicle, "track": track, "t": time.time()}), encoding="utf-8")
             except Exception:
                 pass
 
@@ -281,15 +281,27 @@ class LMUSource:
         if self._team_car is None:
             try:
                 from paths import DATA
-                self._team_car = json.loads((DATA / "equipe.json").read_text(encoding="utf-8")).get("vehicle") or ""
+                j = json.loads((DATA / "equipe.json").read_text(encoding="utf-8"))
+                # la voiture d'équipe retenue ne vaut que pour CETTE course : même circuit et notée il y a moins de 30 h.
+                # Avant, celle d'une course précédente restait, et si un autre joueur avait ce nom de voiture,
+                # Apex suivait ce joueur au lieu du coéquipier (retour d'Akira, 28/11)
+                fresh = j.get("track") == _txt(info.mTrackName) and time.time() - float(j.get("t") or 0) < 30 * 3600
+                self._team_car = (j.get("vehicle") or "") if fresh else ""
             except Exception:
                 self._team_car = ""
-        car = next((v for v in vs if self._team_car and _txt(v.mVehicleName) == self._team_car), None)
-        if car is None and TEAM_DRIVERS:
+        me = getattr(self, "_me_name", "")
+        car = None
+        if TEAM_DRIVERS:
+            # d'abord les noms du planning des relais : c'est ce que le pilote a indiqué lui-même
             def words(x):
                 return {w for w in re.split(r"[^a-z0-9]+", _fold(x)) if len(w) >= 3}
             mates = [words(x) for x in TEAM_DRIVERS]
-            car = next((v for v in vs if any(m & words(_txt(v.mDriverName)) for m in mates if m)), None)
+            hits = [v for v in vs if _txt(v.mDriverName) != me and any(m & words(_txt(v.mDriverName)) for m in mates if m)]
+            if len(hits) > 1 and self._team_car:          # deux pilotes au nom proche : la voiture d'équipe départage
+                hits = [v for v in hits if _txt(v.mVehicleName) == self._team_car] or hits
+            car = hits[0] if hits else None
+        if car is None:
+            car = next((v for v in vs if self._team_car and _txt(v.mVehicleName) == self._team_car), None)
         if car is None or (getattr(self, "_me_name", "") and _txt(car.mDriverName) == self._me_name):
             return None              # personne d'autre au volant (c'est toi, au garage ou en spectateur)
         if not getattr(self, "_team_logged", False) or self._team_logged != _txt(car.mDriverName):

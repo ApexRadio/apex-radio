@@ -982,6 +982,13 @@ def make_handler(state: State):
                 self.end_headers()
                 self.wfile.write(body)
                 return
+            elif self.path == "/api/say":
+                # page « Comparer » en lecture commentée : l'ingé explique chaque virage
+                n = int(self.headers.get("Content-Length") or 0)
+                txt = str(json.loads(self.rfile.read(n) or b"{}").get("text") or "")[:400]
+                if txt and not state.snap.on_track:          # jamais pendant que tu roules
+                    state.voice.flush()
+                    state.voice.say(txt, urgent=True)
             elif self.path == "/api/output":
                 n = int(self.headers.get("Content-Length") or 0)
                 name = json.loads(self.rfile.read(n) or b"{}").get("name") or None

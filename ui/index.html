@@ -679,21 +679,7 @@ function applyLang() {
       el.setAttribute(attr, TA(el.dataset[keep], el.dataset[k]));
     }));
   fillLang();
-  lastRadio = ""; loadMics();
-function loadOutputs() {
-  fetch("/api/outputs").then(r => r.json()).then(list => {
-    const sel = $("outdev"), cur = sel.dataset.cur || "";
-    sel.innerHTML = `<option value="">${T("Sortie par défaut de Windows", "Windows default output")}</option>` +
-      list.map(o => `<option value="${esc(o.name)}">${esc(o.name)}${o.default ? T(" (défaut)", " (default)") : ""}</option>`).join("");
-    if (cur && ![...sel.options].some(o => o.value === cur))   // sortie choisie mais débranchée
-      sel.insertAdjacentHTML("beforeend", `<option value="${esc(cur)}">${esc(cur)} ${T("(débranchée)", "(unplugged)")}</option>`);
-    sel.value = cur;
-  }).catch(() => {});
-}
-loadOutputs();
-$("outdev").onfocus = loadOutputs;
-$("outdev").onchange = () => { $("outdev").dataset.cur = $("outdev").value; $("outdev").blur();
-  fetch("/api/output", { method: "POST", body: JSON.stringify({ name: $("outdev").value }) }); };
+  lastRadio = ""; loadMics(); loadOutputs();
 }
 const WHEELS_EN = ["FL", "FR", "RL", "RR"];
 const SESSION_EN = { course: "race", qualif: "qualifying", essais: "practice", warmup: "warm-up" };
@@ -1048,6 +1034,20 @@ function loadMics() {
   }).catch(() => {});
 }
 loadMics();
+function loadOutputs() {
+  fetch("/api/outputs").then(r => r.json()).then(list => {
+    const sel = $("outdev"), cur = sel.dataset.cur || "";
+    sel.innerHTML = `<option value="">${T("Sortie par défaut de Windows", "Windows default output")}</option>` +
+      list.map(o => `<option value="${esc(o.name)}">${esc(o.name)}${o.default ? T(" (défaut)", " (default)") : ""}</option>`).join("");
+    if (cur && ![...sel.options].some(o => o.value === cur))   // sortie choisie mais débranchée
+      sel.insertAdjacentHTML("beforeend", `<option value="${esc(cur)}">${esc(cur)} ${T("(débranchée)", "(unplugged)")}</option>`);
+    sel.value = cur;
+  }).catch(() => {});
+}
+loadOutputs();
+$("outdev").onfocus = loadOutputs;
+$("outdev").onchange = () => { $("outdev").dataset.cur = $("outdev").value; $("outdev").blur();
+  fetch("/api/output", { method: "POST", body: JSON.stringify({ name: $("outdev").value }) }); };
 function fillLang() {   // menu déroulant : chaque langue sous son propre nom
   const sel = $("lang"), codes = Object.keys(LANGS);
   if (sel.options.length !== codes.length || [...sel.options].some((o, i) => o.value !== codes[i]))

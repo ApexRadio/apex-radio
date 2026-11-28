@@ -1,5 +1,27 @@
 # Apex Radio — historique des versions / changelog
 
+## 1.5.2
+- 🇫🇷 **Choix de la sortie son** : la radio peut passer dans ton casque, tes enceintes… (Réglages → Ingénieur).
+- 🇬🇧 **Audio output choice**: the radio can play through your headset, speakers… (Settings → Engineer).
+- 🇫🇷 **Noms des virages** sur les cartes : Brands Hatch, Barcelone, Laguna Seca pour commencer.
+- 🇬🇧 **Corner names** on the maps: Brands Hatch, Barcelona, Laguna Seca to start with.
+- 🇫🇷 **Page Comparer revue** : grande carte, mode suivi avec zoom, et une relecture commentée à la voix.
+- 🇬🇧 **Compare page reworked**: big map, follow mode with zoom, and a voice-commented replay.
+- 🇫🇷 **Pénalités** : Apex te dit quoi faire selon la pénalité reçue (drive-through, stop & go…) et te prévient avant une disqualification.
+- 🇬🇧 **Penalties**: Apex tells you what to do for each penalty (drive-through, stop & go…) and warns you before a disqualification.
+- 🇫🇷 **Réglages simplifiés** : moins de doublons, plus clairs.
+- 🇬🇧 **Simpler settings**: fewer duplicates, clearer.
+- 🇫🇷 **Moins de drapeaux jaunes** : seulement ceux devant toi, avec un délai de 10 s, et plus de « drapeaux levés » par défaut.
+- 🇬🇧 **Fewer yellow flags**: only those ahead of you, with a 10 s delay, and no more "yellows cleared" by default.
+- 🇫🇷 **Multiclasse** : moins d'annonces « voiture plus lente devant », et tu peux les couper (Réglages → Annonces de l'ingé).
+- 🇬🇧 **Multiclass**: fewer "slower car ahead" calls, and you can turn them off (Settings → Engineer's calls).
+- 🇫🇷 **Relais** : Apex suit bien ton coéquipier, et plus un autre joueur.
+- 🇬🇧 **Stints**: Apex follows your teammate, not another player.
+- 🇫🇷 **Atelier setup** : plus de réglage GT3 proposé en LMP2, radiateurs corrigés.
+- 🇬🇧 **Setup workshop**: no more GT3 setup suggested in LMP2, radiators fixed.
+- 🇫🇷 **Petites corrections** : coach réglé sur « essais et qualif » pour les nouveaux, félicitations de tour plus justes, « prépare 38 litres » compris.
+- 🇬🇧 **Small fixes**: coach set to "practice and qualifying" for new players, fairer lap praise, "prepare 38 litres" understood.
+
 ## 1.5.1
 - 🇫🇷 **Documents bloqués par Windows** : si Windows refuse qu'Apex écrive dans tes Documents (OneDrive non synchronisé, protection des dossiers de Windows Defender), Apex range maintenant tes réglages et tes setups dans un autre dossier au lieu de les perdre.
 - 🇬🇧 **Documents blocked by Windows**: if Windows won't let Apex write to your Documents (OneDrive not synced, Windows Defender folder protection), Apex now stores your settings and setups in another folder instead of losing them.

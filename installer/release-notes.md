@@ -1,13 +1,29 @@
 ⬇️ **Télécharge / Download : `ApexRadio-Setup-…exe` dans Assets, en bas de cette page / in Assets, at the bottom of this page.**
 
-## 🆕 1.5.1
+## 🆕 1.5.2
 🇫🇷
-- **Documents bloqués par Windows** : si Windows refuse qu'Apex écrive dans tes Documents (OneDrive non synchronisé, protection des dossiers de Windows Defender), Apex range maintenant tes réglages et tes setups dans un autre dossier au lieu de les perdre.
-- **Plus de sécurité avec LMU** : Apex ne pose plus de questions au jeu en arrière-plan, seulement celles dont il a besoin.
+- **Choix de la sortie son** : la radio peut passer dans ton casque, tes enceintes… (Réglages → Ingénieur).
+- **Noms des virages** sur les cartes : Brands Hatch, Barcelone, Laguna Seca pour commencer.
+- **Page Comparer revue** : grande carte, mode suivi avec zoom, et une relecture commentée à la voix.
+- **Pénalités** : Apex te dit quoi faire selon la pénalité reçue (drive-through, stop & go…) et te prévient avant une disqualification.
+- **Réglages simplifiés** : moins de doublons, plus clairs.
+- **Moins de drapeaux jaunes** : seulement ceux devant toi, avec un délai de 10 s, et plus de « drapeaux levés » par défaut.
+- **Multiclasse** : moins d'annonces « voiture plus lente devant », et tu peux les couper (Réglages → Annonces de l'ingé).
+- **Relais** : Apex suit bien ton coéquipier, et plus un autre joueur.
+- **Atelier setup** : plus de réglage GT3 proposé en LMP2, radiateurs corrigés.
+- **Petites corrections** : coach réglé sur « essais et qualif » pour les nouveaux, félicitations de tour plus justes, « prépare 38 litres » compris.
 
 🇬🇧
-- **Documents blocked by Windows**: if Windows won't let Apex write to your Documents (OneDrive not synced, Windows Defender folder protection), Apex now stores your settings and setups in another folder instead of losing them.
-- **Safer with LMU**: Apex no longer asks the game things in the background, only what it needs.
+- **Audio output choice**: the radio can play through your headset, speakers… (Settings → Engineer).
+- **Corner names** on the maps: Brands Hatch, Barcelona, Laguna Seca to start with.
+- **Compare page reworked**: big map, follow mode with zoom, and a voice-commented replay.
+- **Penalties**: Apex tells you what to do for each penalty (drive-through, stop & go…) and warns you before a disqualification.
+- **Simpler settings**: fewer duplicates, clearer.
+- **Fewer yellow flags**: only those ahead of you, with a 10 s delay, and no more "yellows cleared" by default.
+- **Multiclass**: fewer "slower car ahead" calls, and you can turn them off (Settings → Engineer's calls).
+- **Stints**: Apex follows your teammate, not another player.
+- **Setup workshop**: no more GT3 setup suggested in LMP2, radiators fixed.
+- **Small fixes**: coach set to "practice and qualifying" for new players, fairer lap praise, "prepare 38 litres" understood.
 
 ## 1.4.5
 🇫🇷

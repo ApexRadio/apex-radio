@@ -469,7 +469,6 @@
       <div class="setrow"><span data-en="Volume">Volume</span><div class="setctl"><input type="range" id="vol" min="0.6" max="1.6" step="0.1" aria-label="Volume de la radio" style="width:90px;padding:0"></div></div>
       <div class="setrow" style="align-items:center"><span data-en="Sound output">Sortie du son</span><select id="outdev" aria-label="Sortie du son"></select></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Where you hear the engineer. Pick your headset if your Discord friends can hear him.">Où tu entends l'ingé. Choisis ton casque si tes amis sur Discord l'entendent.</div>
-      <div class="setrow"><span data-en="Test">Tester</span><div class="setctl"><button id="vtest" title="Tester la voix" data-en-title="Test the voice" data-en="Voice test">Test voix</button></div></div>
       <div class="setrow"><span data-en="How much he talks">Ce qu'il dit de lui-même</span><div class="setctl"><select id="talk" aria-label="Ce qu'il dit de lui-même" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" id="talknote"></div>
       <div class="setrow"><span data-en="Driving coach">Coach de pilotage</span><div class="setctl"><select id="coachsel" aria-label="Coach" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
@@ -490,7 +489,7 @@
           <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Only what the engineer says on his own. If you ask (&quot;what's my gap?&quot;, &quot;my sectors?&quot;), he always answers.">Seulement ce que l'ingé dit de lui-même. Si tu demandes (« mon écart ? », « mes secteurs ? »), il répond toujours.</div>
         </div>
       </details>
-      <div hidden><div class="setrow"><label for="coaching" data-en="Driving tips on track">Conseils de pilotage en piste</label><div class="setctl"><input type="checkbox" id="coaching"></div></div><div class="setrow"><label for="coachrace" data-en="Corner time loss also in races">Temps perdu par virage aussi en course</label><div class="setctl"><input type="checkbox" id="coachrace"></div></div></div>
+      <div hidden><div class="setrow"><span data-en="Test">Tester</span><div class="setctl"><button id="vtest" title="Tester la voix" data-en-title="Test the voice" data-en="Voice test">Test voix</button></div></div><button id="lmulaunch2" data-en="▶ LAUNCH LE MANS ULTIMATE">▶ LANCER LE MANS ULTIMATE</button><div class="setrow"><label for="coaching" data-en="Driving tips on track">Conseils de pilotage en piste</label><div class="setctl"><input type="checkbox" id="coaching"></div></div><div class="setrow"><label for="coachrace" data-en="Corner time loss also in races">Temps perdu par virage aussi en course</label><div class="setctl"><input type="checkbox" id="coachrace"></div></div></div>
     </section>
     <section class="setsec"><h2>🎮 <span data-en="Radio &amp; wheel">Radio et volant</span></h2>
       <div class="setrow" style="align-items:center"><span data-en="Mic">Micro</span><select id="mic" aria-label="Micro"></select></div>
@@ -505,7 +504,7 @@
     <section class="setsec"><h2>🏁 <span data-en="Game">Jeu</span></h2>
       <div class="setrow"><span data-en="My game">Mon jeu</span><div class="setctl"><select id="gamesel" aria-label="Jeu" style="max-width:none;border:0;padding:2px 4px"><option value="lmu">Le Mans Ultimate</option><option value="acevo">Assetto Corsa EVO</option><option value="ams2">Automobilista 2</option></select></div></div>
       <div class="setrow"><label for="autolmu" data-en="Launch my game when Apex opens">Lancer mon jeu à l'ouverture d'Apex</label><div class="setctl"><input type="checkbox" id="autolmu"></div></div>
-      <button id="lmulaunch2" data-en="▶ LAUNCH LE MANS ULTIMATE">▶ LANCER LE MANS ULTIMATE</button>
+      <div class="setrow" id="lmumoderow"><span data-en="Launch mode">Mode de lancement</span><div class="setctl"><select id="lmumode" aria-label="Mode de lancement" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
     </section>
     <section class="setsec"><h2>🎨 <span data-en="Look">Apparence</span></h2>
       <div class="setrow"><span data-en="Colour">Couleur</span><div class="setctl"><select id="accent" aria-label="Couleur" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
@@ -525,7 +524,6 @@
       <div class="setrow"><span data-en="Radio tone">Ton de la radio</span><div class="setctl"><select id="tone" aria-label="Ton de la radio" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><span data-en="Voice recognition">Reconnaissance vocale</span><div class="setctl"><select id="asr" aria-label="Reconnaissance vocale" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="sub" id="asrnote" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Precise: understands you better, but answers ~2× slower (1.5 GB download the first time).">Précise : te comprend mieux, mais répond environ 2 fois moins vite (1,5 Go à télécharger la première fois).</div>
-      <div class="setrow" id="lmumoderow"><span data-en="Launch mode">Mode de lancement</span><div class="setctl"><select id="lmumode" aria-label="Mode de lancement" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><span data-en="Stream overlay (OBS)">Overlay pour les streams (OBS)</span><div class="setctl"><button id="ovcopy" data-en="Copy the link">Copier le lien</button></div></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="In OBS: add a « Browser » source, paste the link, size 1920 × 1080. Transparent background: only the engineer's radio messages show up. Add ?info=1 at the end for a small position / gaps bar.">Dans OBS : ajoute une source « Navigateur », colle le lien, taille 1920 × 1080. Fond transparent : seuls les messages radio de l'ingénieur s'affichent. Ajoute ?info=1 à la fin pour une petite barre position / écarts.</div>
       <h3 style="margin:8px 0 0;font-size:14px">💬 <span data-en="Discord (team)">Discord (équipe)</span></h3>
@@ -709,7 +707,7 @@ function render(d) {
   if (!s.connected && Date.now() - lmuClicked > 60000) $("lmulaunch").innerHTML = `▶ ${T("Lancer", "Launch")} ${GAME_SHORT[GAME] || "LMU"}`;
   if (document.activeElement !== $("gamesel")) $("gamesel").value = GAME;
   paintGames();
-  $("lmumoderow").hidden = GAME !== "lmu";
+  $("lmumoderow").style.display = GAME === "lmu" ? "" : "none";   // .setrow est en flex : l'attribut hidden ne suffit pas
   $("lmulaunch2").textContent = `▶ ${T("LANCER", "LAUNCH")} ${(GAME_LONG[GAME] || "Le Mans Ultimate").toUpperCase()}`;
   if (document.activeElement !== $("autolmu")) $("autolmu").checked = !!d.autolaunch_lmu;
   $("statustxt").textContent = s.on_track ? `${GAME_SHORT[s.game] || "LMU"} ${T("connecté", "connected")}` : (s.connected ? T("Jeu détecté", "Game detected") : T("En attente du jeu", "Waiting for the game"));
@@ -1347,7 +1345,9 @@ function renderOnboard(d) {
 }
 $("oblist").onclick = e => { const a = e.target.dataset.ob; if (a === "lmu") launchLMU(); else if (a) $("setopen").click(); };
 $("obx").onclick = () => { try { localStorage.setItem("apex_onboard", "done"); } catch (e) {} $("onboard").hidden = true; };
-$("vtest").addEventListener("click", () => { OB.voiceTested = true; try { localStorage.setItem("apex_vtested", "1"); } catch (e) {} });
+// voix « testée » dès que le pilote règle la voix, le volume ou la sortie (l'ingé parle à chaque fois)
+const obVoice = () => { OB.voiceTested = true; try { localStorage.setItem("apex_vtested", "1"); } catch (e) {} };
+["vtest", "vchoice", "vol", "outdev"].forEach(id => $(id) && $(id).addEventListener(id === "vtest" ? "click" : "change", obVoice));
 // ---- lancer Le Mans Ultimate (par Steam)
 let lmuClicked = 0, GAME = "lmu";
 const GAME_SHORT = { lmu: "LMU", acevo: "AC EVO", ams2: "AMS2" }, GAME_LONG = { lmu: "Le Mans Ultimate", acevo: "Assetto Corsa EVO", ams2: "Automobilista 2" };

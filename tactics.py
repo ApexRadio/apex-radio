@@ -21,6 +21,37 @@ HERE = Path(__file__).parent
 from paths import DATA, LOCAL  # noqa: E402
 FUELBOOK = DATA / "fuelbook.json"
 PENALTY_LAPS = 3          # LMU laisse normalement 3 tours pour purger une pénalité
+
+# type de la pénalité en cours (LMU) : l'estimation d'arrêt de LMU (/rest/strategy/pitstop-estimate) compte
+# les secondes d'arrêt dues aux pénalités. > 0 = stop and go de N secondes ; 0 avec une pénalité = drive-through.
+PEN_KIND = {"kind": None, "secs": 0}
+
+
+def _read_penalty_kind() -> dict:
+    """Une seule question au jeu, seulement quand une pénalité tombe (pas d'interrogation en continu)."""
+    try:
+        import pitmenu
+        st, j = pitmenu._req("GET", "/rest/strategy/pitstop-estimate")
+        secs = float((j or {}).get("penalties") or 0) if isinstance(j, dict) else None
+    except Exception:
+        secs = None
+    print(f"  Pénalité : estimation d'arrêt LMU -> {secs!r} s")
+    if secs is None:
+        return {"kind": None, "secs": 0}
+    return {"kind": "stopgo", "secs": int(round(secs))} if secs >= 1 else {"kind": "drive", "secs": 0}
+
+
+def penalty_how() -> str:
+    """Ce qu'il faut faire pour purger la pénalité, en clair (vide si on ne sait pas)."""
+    k = PEN_KIND.get("kind")
+    if k == "stopgo":
+        n = PEN_KIND.get("secs") or 0
+        return L(f"C'est un stop and go de {n} secondes : entre aux stands, arrête-toi à ton emplacement, tu repars au bout de {n} secondes.",
+                 f"It's a {n}-second stop and go: enter the pits, stop in your box, you leave after {n} seconds.")
+    if k == "drive":
+        return L("C'est un drive-through : tu traverses la voie des stands à vitesse limitée, sans t'arrêter.",
+                 "It's a drive-through: go through the pit lane at the speed limit, without stopping.")
+    return ""
 TACTIC_GAP = 45.0         # s : au plus une annonce tactique toutes les 45 s
 PACE_EVERY = 5
 
@@ -96,18 +127,34 @@ class Penalties:
         if n > self.count:
             self.given_lap = self.said_lap = s.laps_done
             why = L(" pour les limites de piste", " for track limits") if s.elapsed - getattr(self, "_tl_pen_t", -1e9) < 20 else ""
-            say(None, L(f"Pénalité{why} ! Drive-through ou stop and go, regarde l'écran. Il faut la purger aux stands, "
-                        f"normalement tu as {PENALTY_LAPS} tours.",
-                        f"Penalty{why}! Drive-through or stop and go, check the screen. You need to serve it in the pits, "
-                        f"you normally have {PENALTY_LAPS} laps."), urgent=True)
             self._tl_pen_t = -1e9
+
+            def tell(why=why):
+                time.sleep(1.5)              # le temps que LMU mette à jour son estimation d'arrêt
+                PEN_KIND.update(_read_penalty_kind())
+                how = penalty_how()
+                if how:
+                    say(None, L(f"Pénalité{why} ! {how} Tu as normalement {PENALTY_LAPS} tours pour la faire.",
+                                f"Penalty{why}! {how} You normally have {PENALTY_LAPS} laps to serve it."), urgent=True)
+                else:
+                    say(None, L(f"Pénalité{why} ! Drive-through ou stop and go, regarde l'écran. Il faut la purger aux stands, "
+                                f"normalement tu as {PENALTY_LAPS} tours.",
+                                f"Penalty{why}! Drive-through or stop and go, check the screen. You need to serve it in the pits, "
+                                f"you normally have {PENALTY_LAPS} laps."), urgent=True)
+            import threading
+            threading.Thread(target=tell, daemon=True).start()
         elif n == self.count and 5 < s.elapsed - getattr(self, "_tl_pen_t", -1e9) < 60:
             # 5 s plus tard, toujours rien dans le compteur de pénalités du jeu : on la dit quand même
             self._tl_pen_t = -1e9
             say(None, L(f"Pénalité pour les limites de piste ! Regarde l'écran, il faudra sûrement passer par les stands.",
                         "Track limits penalty! Check the screen, you'll probably have to go through the pits."), urgent=True)
+        elif n < self.count and (s.game_phase == 8 or getattr(s, "finish_status", 0)):
+            # au damier, LMU remet le compteur à zéro : ce n'est PAS une pénalité purgée (on disait « purgée » à tort, 28/11)
+            self.given_lap = None
+            PEN_KIND.update({"kind": None, "secs": 0})
         elif n < self.count:
             if n == 0:
+                PEN_KIND.update({"kind": None, "secs": 0})
                 self.given_lap = None
                 say(None, pick("pen_ok", [("Pénalité purgée, c'est bon.", "Penalty served, all good."),
                                           ("C'est bon, pénalité effacée. On repart.", "Done, penalty cleared. Let's go."),
@@ -118,8 +165,9 @@ class Penalties:
             self.said_lap = s.laps_done
             left = PENALTY_LAPS - (s.laps_done - self.given_lap)
             if left == 1:
-                say(None, L("Dernier tour pour purger la pénalité, rentre au stand à la fin de ce tour !",
-                            "Last lap to serve the penalty, box at the end of this lap!"), urgent=True)
+                how = penalty_how()
+                say(None, L(f"Dernier tour pour purger la pénalité, rentre au stand à la fin de ce tour, sinon c'est la disqualification ! {how}",
+                            f"Last lap to serve the penalty, box at the end of this lap or you'll be disqualified! {how}").strip(), urgent=True)
             elif left > 1:
                 say(None, pick("pen_left", [(f"Pénalité toujours à purger, plus que {left} tours.", f"Penalty still to serve, {left} laps left."),
                                             (f"N'oublie pas la pénalité : il te reste {left} tours pour la faire.", f"Don't forget the penalty: {left} laps left to serve it."),

@@ -576,6 +576,14 @@ def sectors_behind(s: Snapshot, p: Plan) -> str:
 def penalty(s: Snapshot, p: Plan) -> str:
     if not s.penalties:
         return L("Aucune pénalité en cours.", "No penalty pending.")
+    try:
+        from tactics import penalty_how
+        how = penalty_how()
+    except Exception:
+        how = ""
+    if how:
+        return L(f"Tu as {s.penalties} pénalité{'s' if s.penalties > 1 else ''} à purger. {how}",
+                 f"You have {s.penalties} penalt{'ies' if s.penalties > 1 else 'y'} to serve. {how}")
     return L(f"Tu as {s.penalties} pénalité{'s' if s.penalties > 1 else ''} à purger aux stands. Regarde l'écran pour le type.",
              f"You have {s.penalties} penalt{'ies' if s.penalties > 1 else 'y'} to serve in the pits. Check the screen for the type.")
 

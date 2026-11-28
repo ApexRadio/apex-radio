@@ -637,8 +637,10 @@ class Workshop:
         if (delta < 0 and re.search(r"\b(soft|min|mini)\b", disp, re.I)) or (delta > 0 and re.search(r"\b(hard|max|maxi)\b", disp, re.I)):
             return None
         lim = getattr(self, "_limits", {}).get(f"{section}|{key}")
-        if game is None and lim and (new - lim["at"]) * lim["block"] > 0:
-            return None   # LMU n'accepte pas d'aller plus loin sur cette voiture
+        if lim and (new - lim["at"]) * lim["block"] > 0:
+            # LMU a déjà refusé d'aller plus loin sur cette voiture (même si son garage dit le contraire :
+            # radiateurs de la Porsche GT3 remis à « Open » à chaque fois, 28/11) : on ne repropose pas
+            return None
         if game is None and known and new > max(known) + 3:
             return None
         if game is None and key == "CamberSetting" and new not in known:
@@ -664,6 +666,9 @@ class Workshop:
                 step = (pts[-1][1] - pts[0][1]) / (pts[-1][0] - pts[0][0])
                 v = pts[0][1] + (new - pts[0][0]) * step
                 to_disp = f"≈ {v:.{max(0, min(2, len(str(step).split('.')[-1]) if '.' in str(round(step, 2)) else 0))}f} {unit}".strip()
+            elif "Radiator" in key or "Duct" in key:
+                # radiateurs / écopes : cran 0 = « Open » ; un cran de plus = plus fermé (« +1 cran » ne disait rien)
+                to_disp = L("plus fermé", "more closed") if delta > 0 else L("plus ouvert", "more open")
             else:
                 n = abs(delta)
                 # (la valeur actuelle est déjà dite à côté : « de P3 à −1 cran (depuis P3) » faisait doublon)

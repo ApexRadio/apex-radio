@@ -211,6 +211,12 @@ class Behavior:
             self.tyre_said = (None, -99)
             self.dirty = True   # le tour en cours ne compte pas
             self.bias_start = None
+            # températures freins / moteur : elles jugeaient l'ANCIEN setup. Sans ça, après « Appliquer »,
+            # l'atelier reproposait aussitôt « radiateur +1 cran » (retour de Laurent, 28/11)
+            self.brake_peaks = None
+            self.brake_hist.clear()
+            self.engine_peaks = None
+            self.engine_hist.clear()
 
     def new_session(self) -> None:
         """Autre circuit ou autre voiture (ou autre jeu) : tout ce qu'on avait noté ne vaut plus rien.

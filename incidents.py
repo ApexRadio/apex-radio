@@ -13,13 +13,14 @@ import time
 
 from i18n import L
 
-AHEAD = 0.30         # on annonce seulement ce qui est juste devant toi (30 % de tour)
+AHEAD = 0.25         # on annonce seulement ce qui est juste devant toi (25 % de tour)
 GLOBAL_GAP = 20.0    # s : au plus une annonce d'incident toutes les 20 s
 ON_TRACK = 9.0       # m : la voiture arrêtée doit être SUR la piste (près de la trajectoire) pour être dangereuse
 CONFIRM = 1.0        # s : l'incident doit durer un peu (pas un simple passage sur le vibreur)
 OFF_LINE = 14.0      # m : vraiment loin de la trajectoire (les dégagements bitumés ne comptent pas sinon)
 COOLDOWN = 25.0      # s : pas deux annonces pour le même virage
 SLOW = 10.0          # m/s : voiture quasi arrêtée
+YELLOW_AHEAD = 0.22  # tour : un drapeau jaune n'est dit que s'il est à moins de ~1/5 de tour devant toi
 
 
 class Incidents:
@@ -38,6 +39,30 @@ class Incidents:
             nxt = min(corners, key=lambda k: (k["start"] - f) % 1, default=None)
             return L(f"avant le virage {nxt['id']}", f"before turn {nxt['id']}") if nxt else L("sur la piste", "on track")
         return L(f"au virage {c}", f"at turn {c}") if c else L("sur la piste", "on track")
+
+    def _sector_start(self, sec: int):
+        """Position dans le tour (0..1) où commence le secteur sec (1, 2, 3), d'après la carte apprise."""
+        try:
+            pts = self.beh.map.points()
+            n = len(pts)
+            for i in range(n):
+                p, q = pts[i - 1], pts[i]
+                if p and q and q[2] == sec - 1 and p[2] != sec - 1:
+                    return i / n
+        except Exception:
+            pass
+        return None
+
+    def _yellow_dist(self, s, me, sec: int, stopped: list):
+        """Distance (en tour) entre toi et le danger. None si on ne sait pas."""
+        if not me or "f" not in me:
+            return None
+        if stopped:
+            return min((c["f"] - me["f"]) % 1 for c in stopped)
+        if me.get("s") == sec - 1:
+            return 0.0                  # tu es déjà dans ce secteur
+        st = self._sector_start(sec)
+        return None if st is None else (st - me["f"]) % 1
 
     def yellows(self, s) -> None:
         """Drapeaux jaunes locaux : « Drapeau jaune secteur 2, voiture arrêtée au virage 7 ! »."""
@@ -73,14 +98,20 @@ class Incidents:
         ann = self.__dict__.setdefault("_yann", set())   # jaunes vraiment annoncés (pour « levés »)
         mine = me.get("s") if me else None
         for sec in new:
-            done.add(sec)
             # seulement les jaunes devant toi (ton secteur ou le suivant) : les autres sont sur la carte,
             # pas besoin de les dire à la radio
             if mine is not None and (sec - 1 - mine) % 3 not in (0, 1):
+                done.add(sec)
                 continue
             where = ""
             stopped = [c for c in s.cars if not c.get("me") and not c.get("pits") and c.get("s") == sec - 1
                        and (c.get("spd", 99) < SLOW or c.get("off"))]
+            # trop loin devant (retours de joueurs, course LGR du 27/11 : « des jaunes qui étaient loin ») :
+            # on attend d'être à moins de ~1/5 de tour ; s'il est levé avant, on n'en parle jamais
+            d = self._yellow_dist(s, me, sec, stopped)
+            if d is not None and d > YELLOW_AHEAD:
+                continue
+            done.add(sec)
             if not stopped:
                 ghost[sec] = ghost.get(sec, 0) + 1
                 if ghost[sec] > 2:

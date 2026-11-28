@@ -731,5 +731,5 @@ class Behavior:
             by = {}
             for it in self.issues:
                 by.setdefault(it["corner"], it["kind"])
-            return {"corners": [{"id": c["id"], "x": c["x"], "z": c["z"], "issue": by.get(c["id"])} for c in corners],
+            return {"corners": [{"id": c["id"], "x": c["x"], "z": c["z"], "issue": by.get(c["id"]), "name": c.get("name")} for c in corners],
                     "issues": self.issues[:4], "tyres": self.tyre_tips[:3], "laps": self.laps_seen}

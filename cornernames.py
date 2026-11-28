@@ -90,6 +90,25 @@ TABLE = [
         (0.77, "le Mergulho", "Mergulho"),
         (0.858, "la Junção", "Junção"),
     ]),
+    (r"brands hatch(?!.*indy)", [
+        (0.07, "Paddock Hill", "Paddock Hill Bend"),
+        (0.155, "Druids", "Druids"),
+        (0.215, "Graham Hill", "Graham Hill Bend"),
+        (0.318, "Surtees", "Surtees"),
+        (0.522, "Hawthorn", "Hawthorn"),
+        (0.605, "Westfield", "Westfield"),
+        (0.703, "Dingle Dell", "Dingle Dell"),
+        (0.767, "Stirling's", "Stirling's"),
+        (0.895, "Clearways", "Clearways"),
+        (0.968, "Clark Curve", "Clark Curve"),
+    ]),
+    (r"barcelona|catalunya", [
+        (0.043, "Elf", "Elf"),
+        (0.065, "Elf", "Elf"),
+        (0.177, "Renault", "Renault"),
+        (0.205, "Repsol", "Repsol"),
+        (0.255, "Seat", "Seat"),
+    ]),
 ]
 
 ACTIVE: dict[int, tuple[str, str]] = {}     # virages nommés du circuit en cours : id → (fr, en)

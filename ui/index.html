@@ -403,7 +403,7 @@
           <section class="card mapcard hidecard"><button class="cardx" data-hide="map" title="Masquer le circuit" data-en-title="Hide the track">✕</button>
             <div class="row" style="align-items:baseline;flex-wrap:wrap"><h2 style="margin:0"><span data-en="Track">Circuit</span> <span id="trackname"></span></h2><span class="sub" style="margin:0" id="maplegend"></span>
               <span class="mapzoom"><button id="mapsmall" title="Circuit plus petit" data-en-title="Smaller track">−</button><button id="mapbig" title="Circuit plus grand" data-en-title="Bigger track">+</button></span></div>
-            <svg id="map" role="img" aria-label="Carte du circuit avec les voitures en direct" data-en-aria="Live track map with all cars" preserveAspectRatio="xMidYMid meet"></svg>
+            <svg id="map" style="overflow:visible" role="img" aria-label="Carte du circuit avec les voitures en direct" data-en-aria="Live track map with all cars" preserveAspectRatio="xMidYMid meet"></svg>
             <div class="sub" id="mapnote"></div>
             <div id="behav"></div>
           </section>
@@ -968,6 +968,19 @@ function drawMap(d) {
   }
   // virages + comportement
   const ISSUE_COL = { "sous-virage": "#4DA3FF", "survirage": "#FF8A3D", "blocage": "#FF2E88", "patinage": "#FFE500" };
+  // noms des virages célèbres (le Raidillon, Mulsanne…) à côté du virage, une seule fois par nom
+  const ccx = mapBox.W / 2, ccy = mapBox.H / 2, seenNames = new Set(), fz = Math.max(1, mapBox.H / 1000);
+  ((d.behavior || {}).corners || []).forEach(c => {
+    if (!c.name) return;
+    const nm = (c.name[LANG === "fr" ? 0 : 1] || c.name[1] || "").replace(/^(le |la |les |l'|the )/i, "");
+    if (!nm || seenNames.has(nm)) return;
+    seenNames.add(nm);
+    const [x, y] = mapProject(c.x, c.z);
+    const dx = x - ccx, dy = y - ccy, n = Math.hypot(dx, dy) || 1;
+    const lx = x + dx / n * 26 * fz, ly = y + dy / n * 26 * fz + 7 * fz;
+    const anchor = dx / n > 0.35 ? "start" : dx / n < -0.35 ? "end" : "middle";
+    svg += `<text x="${lx}" y="${ly}" text-anchor="${anchor}" fill="#C9D3E0" stroke="#06070B" stroke-width="${5 * fz}" paint-order="stroke" font-family="Inter, sans-serif" font-size="${Math.round(21 * fz)}" font-weight="600">${esc(nm[0].toUpperCase() + nm.slice(1))}</text>`;
+  });
   ((d.behavior || {}).corners || []).forEach(c => {
     const [x, y] = mapProject(c.x, c.z);
     const col = ISSUE_COL[c.issue] || "#5B6B80";

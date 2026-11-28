@@ -807,6 +807,16 @@ class Workshop:
         path = self.dir / st["folder"] / st["current"]
         if not path.exists():
             return {**st, "changes": [], "error": L("Fichier introuvable.", "File not found.")}
+        mm = self.class_mismatch(track)
+        fam = lambda c: {"LMGT3": "GT3"}.get(str(c).split("_")[0], str(c).split("_")[0])
+        if mm and fam(mm["car"]) != fam(mm["setup"]):
+            # setup d'une autre catégorie (GT3 alors que tu roules en LMP2, 28/11) : ce que l'analyse a vu sur TA voiture
+            # ne vaut rien pour ce fichier. On ne propose rien (une LMP2 ELMS avec un setup LMP2 reste possible : conversion)
+            return {**st, "changes": [], "error": L(
+                f"Ce setup est pour une {mm['setup']}, mais tu roules en {mm['car']}. Charge au garage un setup de ta voiture "
+                "(Apex le détecte tout seul) ou choisis-le dans la liste.",
+                f"This setup is for a {mm['setup']}, but you're driving a {mm['car']}. Load a setup for your car in the garage "
+                "(Apex detects it) or pick it in the list.")}
         s = Setup(path)
         self._limits = self._learn_limits(st, s)
         changes, used, conflict = [], set(), {}

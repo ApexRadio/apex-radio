@@ -446,7 +446,8 @@ class Radio:
             t = np.arange(int(sr * 0.07)) / sr
             tone = lambda f: 0.22 * np.sin(2 * np.pi * f * t) * np.minimum(1, np.minimum(t, t[::-1]) / 0.008)
             beep = np.concatenate([tone(1250), np.zeros(int(sr * 0.025)), tone(1650)]).astype("float32")
-            sd.play(beep, sr)       # sans attendre : l'écoute a déjà commencé
+            from voice import output_index
+            sd.play(beep, sr, device=output_index(self.cfg.get("out_name")))   # sans attendre ; même sortie que la voix
         except Exception as e:
             print(f"  [bip] {e!r}")
 

@@ -348,6 +348,7 @@ def loop(state: State, demo: bool) -> None:
     inc = Incidents(beh)
     inc.say = lambda key, text, urgent=False: eng.say(key, text, urgent=urgent, elapsed=state.snap.elapsed)
     state.voice.volume = float(state.radio.cfg.get("volume", 1.3))
+    state.voice.out_name = state.radio.cfg.get("out_name")
     if demo:
         demo_dir = make_demo_setups()
         state.workshop = Workshop({**state.radio.cfg, "setups_dir": str(demo_dir), "setup_folder_for": {}})
@@ -489,7 +490,7 @@ def loop(state: State, demo: bool) -> None:
                 "autolaunch_lmu": bool(state.radio.cfg.get("autolaunch_lmu")),
                 "game": state.radio.cfg.get("game", "lmu"),
                 "voice": {"on": state.voice.enabled, "engine": state.voice.engine, "volume": state.voice.volume,
-                          "quiet": state.voice.quiet, "choice": voices.current_id(), "list": voices.catalog(),
+                          "out": state.voice.out_name, "quiet": state.voice.quiet, "choice": voices.current_id(), "list": voices.catalog(),
                           "name": voices.engineer_name(),
                           "downloading": state.voice.downloading},
                 "penalty": pen.ui(snap),
@@ -575,8 +576,9 @@ def make_handler(state: State):
 
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
-            if self.path.startswith("/api/mics") or self.path.startswith("/api/map") or self.path.startswith("/api/traductions"):
-                data = state.radio.mics() if self.path.startswith("/api/mics") else i18n.catalog() \
+            if self.path.startswith(("/api/mics", "/api/map", "/api/traductions", "/api/outputs")):
+                data = state.radio.mics() if self.path.startswith("/api/mics") else voices.output_devices() \
+                    if self.path.startswith("/api/outputs") else i18n.catalog() \
                     if self.path.startswith("/api/traductions") else {**state.map.info(), "points": state.map.points()}
                 body, ctype = json.dumps(data).encode(), "application/json"
                 self.send_response(200)
@@ -977,6 +979,14 @@ def make_handler(state: State):
                 self.end_headers()
                 self.wfile.write(body)
                 return
+            elif self.path == "/api/output":
+                n = int(self.headers.get("Content-Length") or 0)
+                name = json.loads(self.rfile.read(n) or b"{}").get("name") or None
+                state.voice.out_name = name
+                state.radio.cfg["out_name"] = name
+                save_config(state.radio.cfg)
+                print(f"  Sortie son choisie : {name or 'défaut Windows'}")
+                state.voice.say(L("Radio check, tu m'entends ici ?", "Radio check, can you hear me here?"))
             elif self.path == "/api/mic":
                 n = int(self.headers.get("Content-Length") or 0)
                 idx = json.loads(self.rfile.read(n) or b"{}").get("index")

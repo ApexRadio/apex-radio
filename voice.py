@@ -185,11 +185,42 @@ def _radio(pcm16: bytes, rate: int, volume: float = 1.3) -> bytes:
     return (np.clip(y, -1, 1) * 32767).astype(np.int16).tobytes()
 
 
+def output_devices() -> list[dict]:
+    """Sorties son disponibles (API MME de Windows, comme pour les micros : la plus compatible)."""
+    try:
+        import sounddevice as sd
+        default_out = sd.default.device[1]
+        out, seen = [], set()
+        for i, d in enumerate(sd.query_devices()):
+            if d["max_output_channels"] > 0 and d["hostapi"] == 0 and d["name"] not in seen:
+                seen.add(d["name"])
+                out.append({"name": d["name"], "default": i == default_out})
+        return out
+    except Exception:
+        return []
+
+
+def output_index(name: str | None):
+    """Numéro sounddevice de la sortie choisie (par son nom, car les numéros changent quand on branche un casque).
+    None = sortie par défaut de Windows, ou sortie débranchée."""
+    if not name:
+        return None
+    try:
+        import sounddevice as sd
+        for i, d in enumerate(sd.query_devices()):
+            if d["max_output_channels"] > 0 and d["hostapi"] == 0 and d["name"] == name:
+                return i
+    except Exception:
+        pass
+    return None
+
+
 class Voice:
     def __init__(self) -> None:
         self.enabled = True
         self.quiet = False      # mode silence : seulement l'urgent (box, neutralisation, spotter, réponses)
         self.volume = 1.3
+        self.out_name = None    # sortie son choisie dans les réglages (None = sortie par défaut de Windows)
         self.engine = "aucune"
         self._q: queue.PriorityQueue = queue.PriorityQueue()
         self._n = 0
@@ -337,6 +368,11 @@ class Voice:
     def _play(self, wav: bytes) -> bool:
         """Renvoie False si la phrase a été coupée par une annonce du spotter."""
         self._hush.clear()
+        dev = output_index(self.out_name)
+        if dev is not None:
+            r = self._play_device(wav, dev)
+            if r is not None:
+                return r
         if sys.platform == "win32":
             import time as _t
             import winsound
@@ -363,6 +399,30 @@ class Voice:
         else:  # tests hors Windows : on enregistre le fichier
             (LOCAL / "derniere_annonce.wav").write_bytes(wav)
         return True
+
+    def _play_device(self, wav: bytes, dev: int):
+        """Lecture sur une sortie précise (casque…). Renvoie None si ça échoue : on repasse par la sortie par défaut."""
+        try:
+            import time as _t
+            import numpy as np
+            import sounddevice as sd
+            with wave.open(io.BytesIO(wav)) as w:
+                rate = w.getframerate() or 22050
+                x = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype("float32") / 32768.0
+            sd.play(x, rate, device=dev)
+            end = _t.monotonic() + len(x) / float(rate) + 0.05
+            while _t.monotonic() < end:
+                if self._hush.wait(0.02):
+                    sd.stop()
+                    print("  [radio] coupée par le pilote")
+                    break
+                if self._cut.is_set():
+                    sd.stop()
+                    return False
+            return True
+        except Exception as e:
+            print(f"  [voix] sortie choisie impossible ({e!r}) : sortie par défaut de Windows")
+            return None
 
     def _speak_windows(self, text: str) -> None:
         safe = text.replace("'", "''")

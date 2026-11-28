@@ -467,6 +467,8 @@
     <section class="setsec"><h2>🎙️ <span data-en="Engineer">Ingénieur</span></h2>
       <div class="setrow"><span data-en="Engineer's voice">Voix de l'ingénieur</span><div class="setctl"><select id="vchoice" aria-label="Voix" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="setrow"><span data-en="Volume">Volume</span><div class="setctl"><input type="range" id="vol" min="0.6" max="1.6" step="0.1" aria-label="Volume de la radio" style="width:90px;padding:0"></div></div>
+      <div class="setrow" style="align-items:center"><span data-en="Sound output">Sortie du son</span><select id="outdev" aria-label="Sortie du son"></select></div>
+      <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" data-en="Where you hear the engineer. Pick your headset if your Discord friends can hear him.">Où tu entends l'ingé. Choisis ton casque si tes amis sur Discord l'entendent.</div>
       <div class="setrow"><span data-en="Test">Tester</span><div class="setctl"><button id="vtest" title="Tester la voix" data-en-title="Test the voice" data-en="Voice test">Test voix</button></div></div>
       <div class="setrow"><span data-en="How much he talks">Ce qu'il dit de lui-même</span><div class="setctl"><select id="talk" aria-label="Ce qu'il dit de lui-même" style="max-width:none;border:0;padding:2px 4px"></select></div></div>
       <div class="sub" style="font-size:13px;font-family:inherit;letter-spacing:0" id="talknote"></div>
@@ -678,6 +680,20 @@ function applyLang() {
     }));
   fillLang();
   lastRadio = ""; loadMics();
+function loadOutputs() {
+  fetch("/api/outputs").then(r => r.json()).then(list => {
+    const sel = $("outdev"), cur = sel.dataset.cur || "";
+    sel.innerHTML = `<option value="">${T("Sortie par défaut de Windows", "Windows default output")}</option>` +
+      list.map(o => `<option value="${esc(o.name)}">${esc(o.name)}${o.default ? T(" (défaut)", " (default)") : ""}</option>`).join("");
+    if (cur && ![...sel.options].some(o => o.value === cur))   // sortie choisie mais débranchée
+      sel.insertAdjacentHTML("beforeend", `<option value="${esc(cur)}">${esc(cur)} ${T("(débranchée)", "(unplugged)")}</option>`);
+    sel.value = cur;
+  }).catch(() => {});
+}
+loadOutputs();
+$("outdev").onfocus = loadOutputs;
+$("outdev").onchange = () => { $("outdev").dataset.cur = $("outdev").value; $("outdev").blur();
+  fetch("/api/output", { method: "POST", body: JSON.stringify({ name: $("outdev").value }) }); };
 }
 const WHEELS_EN = ["FL", "FR", "RL", "RR"];
 const SESSION_EN = { course: "race", qualif: "qualifying", essais: "practice", warmup: "warm-up" };
@@ -713,6 +729,9 @@ function render(d) {
   $("statustxt").textContent = s.on_track ? `${GAME_SHORT[s.game] || "LMU"} ${T("connecté", "connected")}` : (s.connected ? T("Jeu détecté", "Game detected") : T("En attente du jeu", "Waiting for the game"));
   $("session").textContent = s.on_track ? `${s.track} · ${carLabel(s.car_class, s.car)} · ${T(s.session, SESSION_EN[s.session] || s.session)}` : "";
   if (d.voice && document.activeElement !== $("vol")) $("vol").value = d.voice.volume;
+  if (d.voice && document.activeElement !== $("outdev") && ($("outdev").dataset.cur || "") !== (d.voice.out || "")) {
+    $("outdev").dataset.cur = d.voice.out || ""; loadOutputs();
+  }
   if (d.voice) { $("vtoggle").classList.toggle("on", !!d.voice.on); $("vtoggle").setAttribute("aria-pressed", !!d.voice.on); }
 
   if (d.voice && d.voice.list && document.activeElement !== $("vchoice")) {

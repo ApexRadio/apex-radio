@@ -880,9 +880,15 @@
    "texte": " Laad een setup die gemaakt is voor de {1} {0}."
   },
   {
+   "fr": "Je télécharge la voix de {0}, {1} prend la radio dans une minute.",
+   "en": "Downloading {0}'s voice, it'll take over the radio in a minute.",
+   "ou": "app.py:1008",
+   "texte": "Ik download de stem van {0}, {1} neemt de radio over binnen een minuut."
+  },
+  {
    "fr": "Radio check. Tu m'entends bien ? On est prêts pour la course.",
    "en": "Radio check. Do you copy? We're ready to race.",
-   "ou": "app.py:1001",
+   "ou": "app.py:1011",
    "texte": "Radiocheck. Hoor je me? We zijn klaar om te racen."
   },
   {
@@ -924,7 +930,7 @@
   {
    "fr": "Ce dossier ne contient pas les setups de LMU.",
    "en": "This folder doesn't contain LMU setups.",
-   "ou": "app.py:1264",
+   "ou": "app.py:1274",
    "texte": "Deze map bevat geen LMU-setups."
   },
   {
@@ -978,86 +984,86 @@
   {
    "fr": "/records",
    "en": "/relais",
-   "ou": "app.py:588",
+   "ou": "app.py:590",
    "texte": ""
   },
   {
    "fr": "/tel",
    "en": "/phone",
-   "ou": "app.py:670",
+   "ou": "app.py:672",
    "texte": ""
   },
   {
    "fr": "/api/ptt/down",
    "en": "/api/ptt/up",
-   "ou": "app.py:689",
+   "ou": "app.py:691",
    "texte": ""
   },
   {
    "fr": "Rien à répéter pour l'instant.",
    "en": "Nothing to repeat yet.",
-   "ou": "app.py:693",
+   "ou": "app.py:695",
    "texte": "Nog niets om te herhalen."
   },
   {
    "fr": "Radio en français.",
    "en": "Radio in English.",
-   "ou": "app.py:701",
+   "ou": "app.py:703",
    "texte": "Radio in het Nederlands."
   },
   {
    "fr": "/api/laps/export",
    "en": "/api/laps/import",
-   "ou": "app.py:714",
+   "ou": "app.py:716",
    "texte": ""
   },
   {
    "fr": "Radio check, niveau du son.",
    "en": "Radio check, volume level.",
-   "ou": "app.py:767",
+   "ou": "app.py:769",
    "texte": "Radiocheck, volumeniveau."
   },
   {
    "fr": "/api/lmu/key",
    "en": "/api/lmu/chat",
-   "ou": "app.py:772",
+   "ou": "app.py:774",
    "texte": ""
   },
   {
    "fr": "/api/setup/dir",
    "en": "/api/setup/pickdir",
-   "ou": "app.py:871",
+   "ou": "app.py:873",
    "texte": ""
   },
   {
    "fr": "Bien reçu, {0}.",
    "en": "Copy that, {0}.",
-   "ou": "app.py:888",
+   "ou": "app.py:890",
    "texte": ""
   },
   {
    "fr": "✅ Apex Radio est relié à ce salon : les chronos, setups et débriefs partagés par l'équipe arriveront ici.",
    "en": "✅ Apex Radio is linked to this channel: the team's shared lap times, setups and debriefs will arrive here.",
-   "ou": "app.py:901",
+   "ou": "app.py:903",
    "texte": ""
   },
   {
    "fr": "Setup remis en version {0}. Recharge-le au garage.",
    "en": "Setup restored to version {0}. Reload it in the garage.",
-   "ou": "app.py:949",
+   "ou": "app.py:951",
    "texte": "Setup teruggezet naar versie {0}. Laad het opnieuw in de garage."
   },
   {
    "fr": "Setup {0} mis à jour, version {1}. Recharge-le au garage, je refais l'analyse.",
    "en": "{0} setup updated, version {1}. Reload it in the garage, I'll redo the analysis.",
-   "ou": "app.py:969",
+   "ou": "app.py:971",
    "texte": "Setup {0} bijgewerkt, versie {1}. Laad het opnieuw in de garage, ik analyseer opnieuw."
   },
   {
-   "fr": "Je télécharge la voix de {0}, {1} prend la radio dans une minute.",
-   "en": "Downloading {0}'s voice, it'll take over the radio in a minute.",
-   "ou": "app.py:998",
-   "texte": "Ik download de stem van {0}, {1} neemt de radio over binnen een minuut."
+   "fr": "Radio check, tu m'entends ici ?",
+   "en": "Radio check, can you hear me here?",
+   "ou": "app.py:989",
+   "texte": "Radiocheck, hoor je me hier?"
   },
   {
    "fr": "entrée",
@@ -1590,7 +1596,7 @@
   {
    "fr": "la ",
    "en": "l'",
-   "ou": "cornernames.py:133",
+   "ou": "cornernames.py:152",
    "texte": ""
   },
   {
@@ -4068,67 +4074,67 @@
   {
    "fr": "aucun",
    "en": "none",
-   "ou": "radio.py:134",
+   "ou": "radio.py:136",
    "texte": "geen"
   },
   {
    "fr": "clavier · {0}",
    "en": "keyboard · {0}",
-   "ou": "radio.py:136",
+   "ou": "radio.py:138",
    "texte": "toetsenbord · {0}"
   },
   {
    "fr": "{0} · bouton {1}",
    "en": "{0} · button {1}",
-   "ou": "radio.py:137",
+   "ou": "radio.py:139",
    "texte": "{0} · knop {1}"
   },
   {
    "fr": "le fichier model.bin n'arrive pas dans {0}. Souvent l'antivirus le bloque ou le met en quarantaine : autorise ce dossier dans l'antivirus, vérifie la place sur le disque, puis relance Apex.",
    "en": "model.bin never arrives in {0}. Often the antivirus blocks or quarantines it: allow this folder in your antivirus, check disk space, then restart Apex.",
-   "ou": "radio.py:219",
+   "ou": "radio.py:221",
    "texte": ""
   },
   {
    "fr": "Reconnaissance vocale indisponible : {0}",
    "en": "Speech recognition unavailable: {0}",
-   "ou": "radio.py:230",
+   "ou": "radio.py:232",
    "texte": "Spraakherkenning niet beschikbaar: {0}"
   },
   {
    "fr": "Aucun micro trouvé. Branche ton micro ou ton casque, puis choisis-le dans la liste.",
    "en": "No microphone found. Plug in your mic or headset, then pick it in the list.",
-   "ou": "radio.py:305",
+   "ou": "radio.py:307",
    "texte": "Geen microfoon gevonden. Sluit je microfoon of headset aan en kies hem in de lijst."
   },
   {
    "fr": "Le micro n'enregistre que du silence. Vérifie : 1) le bon micro dans la liste ci-dessous (essaie les autres si besoin), 2) le bouton « mute » de ton casque, 3) Paramètres Windows > Son > Entrée : parle, la barre doit bouger et le volume ne pas être à 0, 4) Confidentialité > Microphone : « Autoriser les applications de bureau ».",
    "en": "The mic is only recording silence. Check: 1) the right mic in the list below (try the others if needed), 2) your headset's mute button, 3) Windows Settings > Sound > Input: speak, the bar should move and the volume mustn't be 0, 4) Privacy > Microphone: \"Let desktop apps access\".",
-   "ou": "radio.py:352",
+   "ou": "radio.py:354",
    "texte": ""
   },
   {
    "fr": "La reconnaissance vocale se charge encore…",
    "en": "Speech recognition is still loading…",
-   "ou": "radio.py:364",
+   "ou": "radio.py:366",
    "texte": "De spraakherkenning laadt nog…"
   },
   {
    "fr": "Ce bouton sert déjà à la radio : choisis-en un autre.",
    "en": "That button is already your radio button: pick another one.",
-   "ou": "radio.py:496",
+   "ou": "radio.py:499",
    "texte": "Die knop is al je radioknop: kies een andere."
   },
   {
    "fr": "prêt",
    "en": "erreur",
-   "ou": "radio.py:573",
+   "ou": "radio.py:576",
    "texte": ""
   },
   {
    "fr": "Micro indisponible : {0}. Choisis ton micro dans la liste ci-dessous, et vérifie Paramètres Windows > Son > Entrée (micro par défaut) et Confidentialité > Microphone.",
    "en": "Microphone unavailable: {0}. Pick your mic in the list below, and check Windows Settings > Sound > Input (default mic) and Privacy > Microphone.",
-   "ou": "radio.py:590",
+   "ou": "radio.py:593",
    "texte": "Microfoon niet beschikbaar: {0}. Kies je microfoon in de lijst hieronder en controleer Windows-instellingen > Geluid > Invoer (standaardmicrofoon) en Privacy > Microfoon."
   },
   {
@@ -6376,627 +6382,639 @@
    "texte": ""
   },
   {
+   "fr": "V",
+   "en": "T",
+   "ou": "ui/index.html:1028",
+   "texte": "B"
+  },
+  {
+   "fr": "PNEUS",
+   "en": "TYRES",
+   "ou": "ui/index.html:1029",
+   "texte": "BANDEN"
+  },
+  {
+   "fr": "Voiture équilibrée, rien de répétitif.",
+   "en": "Car balanced, nothing recurring.",
+   "ou": "ui/index.html:1030",
+   "texte": "Auto in balans, niets terugkerends."
+  },
+  {
    "fr": "devant / derrière",
    "en": "ahead / behind",
-   "ou": "ui/index.html:1000",
+   "ou": "ui/index.html:1032",
    "texte": "voor / achter"
   },
   {
    "fr": "· secteurs : <span class=\"good\">vert</span> tu gagnes, <span class=\"bad\">rose</span> tu perds",
    "en": "· sectors: <span class=\"good\">green</span> you gain, <span class=\"bad\">pink</span> you lose",
-   "ou": "ui/index.html:1002",
+   "ou": "ui/index.html:1034",
    "texte": "· sectoren: <span class=\"good\">groen</span> je wint, <span class=\"bad\">roze</span> je verliest"
   },
   {
    "fr": "Appli arrêtée",
    "en": "App stopped",
-   "ou": "ui/index.html:1007",
+   "ou": "ui/index.html:1039",
    "texte": "App gestopt"
   },
   {
    "fr": "Micro par défaut de Windows",
    "en": "Windows default mic",
-   "ou": "ui/index.html:1013",
+   "ou": "ui/index.html:1045",
    "texte": "Standaardmicrofoon van Windows"
-  },
-  {
-   "fr": "(défaut)",
-   "en": "(default)",
-   "ou": "ui/index.html:1014",
-   "texte": "(standaard)"
   },
   {
    "fr": "Discret",
    "en": "Low-key",
-   "ou": "ui/index.html:1046",
+   "ou": "ui/index.html:1078",
    "texte": "Ingetogen"
   },
   {
    "fr": "Normal",
    "en": "Normal",
-   "ou": "ui/index.html:1046",
+   "ou": "ui/index.html:1078",
    "texte": "Normaal"
   },
   {
    "fr": "Motivant",
    "en": "Hype",
-   "ou": "ui/index.html:1046",
+   "ou": "ui/index.html:1078",
    "texte": "Opgepept"
   },
   {
    "fr": "Rester appuyé pour parler",
    "en": "Hold to talk",
-   "ou": "ui/index.html:1048",
+   "ou": "ui/index.html:1080",
    "texte": "Ingedrukt houden om te praten"
   },
   {
    "fr": "Appuyer une fois (arrêt tout seul à la fin de la phrase)",
    "en": "Press once (stops by itself when you finish)",
-   "ou": "ui/index.html:1048",
+   "ou": "ui/index.html:1080",
    "texte": "Eén keer drukken (stopt vanzelf als je klaar bent)"
   },
   {
    "fr": "Rapide",
    "en": "Fast",
-   "ou": "ui/index.html:1050",
+   "ou": "ui/index.html:1082",
    "texte": "Snel"
   },
   {
    "fr": "Précise (plus lente)",
    "en": "Precise (slower)",
-   "ou": "ui/index.html:1050",
+   "ou": "ui/index.html:1082",
    "texte": "Nauwkeurig (trager)"
   },
   {
    "fr": "Demander (fenêtre de Steam)",
    "en": "Ask (Steam window)",
-   "ou": "ui/index.html:1053",
+   "ou": "ui/index.html:1085",
    "texte": "Vragen (Steam-venster)"
   },
   {
    "fr": "Normal (écran)",
    "en": "Normal (screen)",
-   "ou": "ui/index.html:1053",
+   "ou": "ui/index.html:1085",
    "texte": "Normaal (scherm)"
   },
   {
    "fr": "VR – SteamVR",
    "en": "VR – SteamVR",
-   "ou": "ui/index.html:1054",
+   "ou": "ui/index.html:1086",
    "texte": "VR – SteamVR"
   },
   {
    "fr": "VR – OpenXR",
    "en": "VR – OpenXR",
-   "ou": "ui/index.html:1054",
+   "ou": "ui/index.html:1086",
    "texte": "VR – OpenXR"
   },
   {
    "fr": "Sobre (juste l'info)",
    "en": "Plain (just the info)",
-   "ou": "ui/index.html:1058",
+   "ou": "ui/index.html:1090",
    "texte": "Zakelijk (alleen de info)"
   },
   {
    "fr": "Radio d'équipe",
    "en": "Team radio",
-   "ou": "ui/index.html:1058",
+   "ou": "ui/index.html:1090",
    "texte": "Teamradio"
   },
   {
    "fr": "Détendu",
    "en": "Laid-back",
-   "ou": "ui/index.html:1059",
+   "ou": "ui/index.html:1091",
    "texte": "Relaxed"
   },
   {
    "fr": "Copié ✓",
    "en": "Copied ✓",
-   "ou": "ui/index.html:1066",
+   "ou": "ui/index.html:1098",
    "texte": ""
   },
   {
    "fr": "Copier le lien",
    "en": "Copy the link",
-   "ou": "ui/index.html:1066",
+   "ou": "ui/index.html:1098",
    "texte": ""
   },
   {
    "fr": "qualif",
    "en": "course",
-   "ou": "ui/index.html:1073",
+   "ou": "ui/index.html:1105",
    "texte": ""
   },
   {
    "fr": "À chaque tour",
    "en": "Every lap",
-   "ou": "ui/index.html:1074",
+   "ou": "ui/index.html:1106",
    "texte": ""
   },
   {
    "fr": "De temps en temps",
    "en": "Now and then",
-   "ou": "ui/index.html:1074",
+   "ou": "ui/index.html:1106",
    "texte": ""
   },
   {
    "fr": "Seulement si je demande",
    "en": "Only when I ask",
-   "ou": "ui/index.html:1075",
+   "ou": "ui/index.html:1107",
    "texte": ""
   },
   {
    "fr": "Le strict nécessaire : drapeaux jaunes, alertes, stands. Tu lui demandes le reste.",
    "en": "Only the essentials: yellow flags, warnings, pits. Ask him for the rest.",
-   "ou": "ui/index.html:1100",
+   "ou": "ui/index.html:1132",
    "texte": "Alleen het nodige: gele vlaggen, waarschuwingen, pits. De rest vraag je hem."
   },
   {
    "fr": "Chrono en essais et qualif, écarts de temps en temps en course, quelques encouragements.",
    "en": "Lap times in practice and quali, gaps now and then in races, some encouragement.",
-   "ou": "ui/index.html:1101",
+   "ou": "ui/index.html:1133",
    "texte": "Rondetijden in training en kwalificatie, af en toe gaten in de race, wat aanmoediging."
   },
   {
    "fr": "Chrono à chaque tour, écarts à chaque tour, beaucoup d'encouragements.",
    "en": "Lap time every lap, gaps every lap, lots of encouragement.",
-   "ou": "ui/index.html:1102",
+   "ou": "ui/index.html:1134",
    "texte": "Elke ronde de rondetijd en de gaten, veel aanmoediging."
   },
   {
    "fr": "Réglé à ta façon (voir « Personnaliser » plus bas).",
    "en": "Your own mix (see « Customise » below).",
-   "ou": "ui/index.html:1103",
+   "ou": "ui/index.html:1135",
    "texte": "Op jouw manier (zie „Aanpassen” hieronder)."
   },
   {
    "fr": "Bavard",
    "en": "Chatty",
-   "ou": "ui/index.html:1105",
+   "ou": "ui/index.html:1137",
    "texte": "Spraakzaam"
   },
   {
    "fr": "Personnalisé",
    "en": "Custom",
-   "ou": "ui/index.html:1106",
+   "ou": "ui/index.html:1138",
    "texte": "Aangepast"
   },
   {
    "fr": "Non",
    "en": "Off",
-   "ou": "ui/index.html:1132",
+   "ou": "ui/index.html:1164",
    "texte": "Uit"
   },
   {
    "fr": "En essais et qualif",
    "en": "In practice and quali",
-   "ou": "ui/index.html:1132",
+   "ou": "ui/index.html:1164",
    "texte": "In training en kwalificatie"
   },
   {
    "fr": "Toujours (aussi en course)",
    "en": "Always (races too)",
-   "ou": "ui/index.html:1133",
+   "ou": "ui/index.html:1165",
    "texte": "Altijd (ook in de race)"
   },
   {
    "fr": "Spotter on / off",
    "en": "Spotter on / off",
-   "ou": "ui/index.html:1146",
+   "ou": "ui/index.html:1178",
    "texte": "Spotter aan / uit"
   },
   {
    "fr": "Radio on / off",
    "en": "Radio on / off",
-   "ou": "ui/index.html:1146",
+   "ou": "ui/index.html:1178",
    "texte": "Radio aan / uit"
   },
   {
    "fr": "Mode silence",
    "en": "Quiet mode",
-   "ou": "ui/index.html:1147",
+   "ou": "ui/index.html:1179",
    "texte": "Stille modus"
   },
   {
    "fr": "Choisir",
    "en": "Set",
-   "ou": "ui/index.html:1153",
+   "ou": "ui/index.html:1185",
    "texte": "Kiezen"
   },
   {
    "fr": "Retirer",
    "en": "Remove",
-   "ou": "ui/index.html:1154",
+   "ou": "ui/index.html:1186",
    "texte": "Verwijderen"
   },
   {
    "fr": "À bientôt sur la piste ! 🏁",
    "en": "See you on track! 🏁",
-   "ou": "ui/index.html:1174",
+   "ou": "ui/index.html:1206",
    "texte": ""
   },
   {
    "fr": "Apex Radio est fermé. Tu peux fermer cette fenêtre.",
    "en": "Apex Radio is closed. You can close this window.",
-   "ou": "ui/index.html:1175",
+   "ou": "ui/index.html:1207",
    "texte": ""
   },
   {
    "fr": "Recherche…",
    "en": "Searching…",
-   "ou": "ui/index.html:1186",
+   "ou": "ui/index.html:1218",
    "texte": "Zoeken…"
   },
   {
    "fr": "Dossier trouvé : {0}",
    "en": "Folder found: {0}",
-   "ou": "ui/index.html:1188",
+   "ou": "ui/index.html:1220",
    "texte": "Map gevonden: {0}"
   },
   {
    "fr": "Aucun dossier choisi.",
    "en": "No folder chosen.",
-   "ou": "ui/index.html:1189",
+   "ou": "ui/index.html:1221",
    "texte": "Geen map gekozen."
   },
   {
    "fr": "Circuit détecté : {0}",
    "en": "Track detected: {0}",
-   "ou": "ui/index.html:1198",
+   "ou": "ui/index.html:1230",
    "texte": "Circuit gevonden: {0}"
   },
   {
    "fr": "Aucun circuit détecté pour l'instant (lance le jeu, ou choisis le dossier).",
    "en": "No track detected yet (start the game, or choose the folder).",
-   "ou": "ui/index.html:1198",
+   "ou": "ui/index.html:1230",
    "texte": "Nog geen circuit gevonden (start het spel of kies de map)."
   },
   {
    "fr": "Dossier des setups LMU introuvable : {0}",
    "en": "LMU setups folder not found: {0}",
-   "ou": "ui/index.html:1199",
+   "ou": "ui/index.html:1231",
    "texte": "LMU-setupmap niet gevonden: {0}"
   },
   {
    "fr": "Setup en cours : setup d'usine (pas encore enregistré)",
    "en": "Current setup: default setup (not saved yet)",
-   "ou": "ui/index.html:1213",
+   "ou": "ui/index.html:1245",
    "texte": "Huidige setup: standaardsetup (nog niet opgeslagen)"
   },
   {
    "fr": "Setup en cours : {0}",
    "en": "Current setup: {0}",
-   "ou": "ui/index.html:1213",
+   "ou": "ui/index.html:1245",
    "texte": "Huidige setup: {0}"
   },
   {
    "fr": "Aucun setup choisi pour ce circuit.",
    "en": "No setup chosen for this track.",
-   "ou": "ui/index.html:1213",
+   "ou": "ui/index.html:1245",
    "texte": "Geen setup gekozen voor dit circuit."
   },
   {
    "fr": "Ce setup a été fait pour la {0}, mais tu es en {1}.",
    "en": "This setup was made for the {0}, but you're in the {1}.",
-   "ou": "ui/index.html:1216",
+   "ou": "ui/index.html:1248",
    "texte": "Deze setup is gemaakt voor de {0}, maar je rijdt in de {1}."
   },
   {
    "fr": "Même voiture : la copie APEX sera convertie pour ta version.",
    "en": "Same car: the APEX copy will be converted for your version.",
-   "ou": "ui/index.html:1217",
+   "ou": "ui/index.html:1249",
    "texte": "Zelfde auto: de APEX-kopie wordt omgezet voor jouw versie."
   },
   {
    "fr": "Choisis d'abord le setup chargé dans le jeu (étape 1).",
    "en": "First choose the setup loaded in the game (step 1).",
-   "ou": "ui/index.html:1221",
+   "ou": "ui/index.html:1253",
    "texte": "Kies eerst de setup die in het spel geladen is (stap 1)."
   },
   {
    "fr": "Fais quelques tours propres : l'analyse en a {0}, il en faut au moins 3.",
    "en": "Do a few clean laps: the analysis has {0}, it needs at least 3.",
-   "ou": "ui/index.html:1224",
+   "ou": "ui/index.html:1256",
    "texte": "Rij een paar nette ronden: de analyse heeft er {0}, hij heeft er minstens 3 nodig."
   },
   {
    "fr": "Coche les réglages à appliquer :",
    "en": "Tick the changes to apply:",
-   "ou": "ui/index.html:1225",
+   "ou": "ui/index.html:1257",
    "texte": "Vink de wijzigingen aan die je wilt toepassen:"
   },
   {
    "fr": "Rien à changer pour l'instant : la voiture est équilibrée.",
    "en": "Nothing to change for now: the car is balanced.",
-   "ou": "ui/index.html:1225",
+   "ou": "ui/index.html:1257",
    "texte": "Voorlopig niets te veranderen: de auto is in balans."
   },
   {
    "fr": "Réglage",
    "en": "Setting",
-   "ou": "ui/index.html:1226",
+   "ou": "ui/index.html:1258",
    "texte": "Instelling"
   },
   {
    "fr": "Actuel",
    "en": "Current",
-   "ou": "ui/index.html:1226",
+   "ou": "ui/index.html:1258",
    "texte": "Huidig"
   },
   {
    "fr": "Proposé",
    "en": "Suggested",
-   "ou": "ui/index.html:1226",
+   "ou": "ui/index.html:1258",
    "texte": "Voorgesteld"
   },
   {
    "fr": "FAIT EN PISTE",
    "en": "SET ON TRACK",
-   "ou": "ui/index.html:1228",
+   "ou": "ui/index.html:1260",
    "texte": "INGESTELD OP DE BAAN"
   },
   {
    "fr": "ESSENCE",
    "en": "FUEL",
-   "ou": "ui/index.html:1228",
+   "ou": "ui/index.html:1260",
    "texte": "BRANDSTOF"
   },
   {
    "fr": "v1 · ton setup de départ ({0})",
    "en": "v1 · your starting setup ({0})",
-   "ou": "ui/index.html:1239",
+   "ou": "ui/index.html:1271",
    "texte": "v1 · je startsetup ({0})"
   },
   {
    "fr": "depuis",
    "en": "from",
-   "ou": "ui/index.html:1239",
+   "ou": "ui/index.html:1271",
    "texte": "vanaf"
   },
   {
    "fr": "la plus rapide",
    "en": "fastest",
-   "ou": "ui/index.html:1240",
+   "ou": "ui/index.html:1272",
    "texte": "de snelste"
   },
   {
    "fr": "dans le fichier APEX",
    "en": "in the APEX file",
-   "ou": "ui/index.html:1241",
+   "ou": "ui/index.html:1273",
    "texte": "in het APEX-bestand"
   },
   {
    "fr": "Remettre cette version",
    "en": "Restore this version",
-   "ou": "ui/index.html:1244",
+   "ou": "ui/index.html:1276",
    "texte": "Deze versie terugzetten"
   },
   {
    "fr": "setup de départ",
    "en": "starting setup",
-   "ou": "ui/index.html:1246",
+   "ou": "ui/index.html:1278",
    "texte": "startsetup"
   },
   {
    "fr": "Fichier dans LMU : <b>{0}</b> (un seul fichier {1}, mis à jour à chaque version)",
    "en": "File in LMU: <b>{0}</b> (one {1} file, updated with each version)",
-   "ou": "ui/index.html:1247",
+   "ou": "ui/index.html:1279",
    "texte": "Bestand in LMU: <b>{0}</b> (één enkel {1}-bestand, bijgewerkt bij elke versie)"
   },
   {
    "fr": "Bilan",
    "en": "Review",
-   "ou": "ui/index.html:1249",
+   "ou": "ui/index.html:1281",
    "texte": "Balans"
   },
   {
    "fr": "Revenir à",
    "en": "Go back to",
-   "ou": "ui/index.html:1250",
+   "ou": "ui/index.html:1282",
    "texte": "Terug naar"
   },
   {
    "fr": "<br>Pas encore de version créée par Apex Radio sur ce circuit.",
    "en": "<br>No version created by Apex Radio on this track yet.",
-   "ou": "ui/index.html:1252",
+   "ou": "ui/index.html:1284",
    "texte": "<br>Apex Radio heeft op dit circuit nog geen versie gemaakt."
   },
   {
    "fr": "<span class=\"good\">{0} remis en {1}</span> — recharge-le au garage dans LMU.",
    "en": "<span class=\"good\">{0} restored to {1}</span> — reload it in the LMU garage.",
-   "ou": "ui/index.html:1255",
+   "ou": "ui/index.html:1287",
    "texte": "<span class=\"good\">{0} teruggezet naar {1}</span> — laad het opnieuw in de LMU-garage."
   },
   {
    "fr": "conso mesurée {0} L/tour",
    "en": "measured consumption {0} L/lap",
-   "ou": "ui/index.html:1275",
+   "ou": "ui/index.html:1307",
    "texte": "gemeten verbruik {0} L/ronde"
   },
   {
    "fr": "conso pas encore mesurée",
    "en": "consumption not measured yet",
-   "ou": "ui/index.html:1275",
+   "ou": "ui/index.html:1307",
    "texte": "verbruik nog niet gemeten"
   },
   {
    "fr": "au départ",
    "en": "at the start",
-   "ou": "ui/index.html:1276",
+   "ou": "ui/index.html:1308",
    "texte": "bij de start"
   },
   {
    "fr": "Durée de la course en minutes",
    "en": "Race length in minutes",
-   "ou": "ui/index.html:1277",
+   "ou": "ui/index.html:1309",
    "texte": "Raceduur in minuten"
   },
   {
    "fr": "ou",
    "en": "or",
-   "ou": "ui/index.html:1278",
+   "ou": "ui/index.html:1310",
    "texte": "of"
   },
   {
    "fr": "Nombre de tours",
    "en": "Number of laps",
-   "ou": "ui/index.html:1278",
+   "ou": "ui/index.html:1310",
    "texte": "Aantal ronden"
   },
   {
    "fr": "Choisis ton bouton radio (volant ou clavier)",
    "en": "Pick your radio button (wheel or keyboard)",
-   "ou": "ui/index.html:1305",
+   "ou": "ui/index.html:1337",
    "texte": "Kies je radioknop (stuur of toetsenbord)"
   },
   {
    "fr": "Teste la voix de l'ingénieur",
    "en": "Test the engineer's voice",
-   "ou": "ui/index.html:1306",
+   "ou": "ui/index.html:1338",
    "texte": "Test de stem van de engineer"
   },
   {
    "fr": "Appuie sur ton bouton radio et dis « tu m'entends ? »",
    "en": "Hold your radio button and say \"can you hear me?\"",
-   "ou": "ui/index.html:1307",
+   "ou": "ui/index.html:1339",
    "texte": "Hou je radioknop ingedrukt en zeg „hoor je me?\""
   },
   {
    "fr": "Lance ton jeu (Le Mans Ultimate, Assetto Corsa EVO ou Automobilista 2)",
    "en": "Start your game (Le Mans Ultimate, Assetto Corsa EVO or Automobilista 2)",
-   "ou": "ui/index.html:1308",
+   "ou": "ui/index.html:1340",
    "texte": ""
   },
   {
    "fr": "▶ Lancer",
    "en": "▶ Launch",
-   "ou": "ui/index.html:1314",
+   "ou": "ui/index.html:1346",
    "texte": "▶ Starten"
   },
   {
    "fr": "Régler",
    "en": "Set up",
-   "ou": "ui/index.html:1314",
+   "ou": "ui/index.html:1346",
    "texte": "Instellen"
   },
   {
    "fr": "⏳ Lancement…",
    "en": "⏳ Launching…",
-   "ou": "ui/index.html:1342",
+   "ou": "ui/index.html:1374",
    "texte": "⏳ Wordt gestart…"
   },
   {
    "fr": "Réafficher",
    "en": "Show again",
-   "ou": "ui/index.html:1359",
+   "ou": "ui/index.html:1391",
    "texte": ""
   },
   {
    "fr": "Colle d'abord le lien du webhook.",
    "en": "Paste the webhook link first.",
-   "ou": "ui/index.html:1382",
+   "ou": "ui/index.html:1414",
    "texte": ""
   },
   {
    "fr": "Test en cours…",
    "en": "Testing…",
-   "ou": "ui/index.html:1383",
+   "ou": "ui/index.html:1415",
    "texte": ""
   },
   {
    "fr": "✓ Relié ! Un message de test est arrivé dans le salon.",
    "en": "✓ Linked! A test message arrived in the channel.",
-   "ou": "ui/index.html:1385",
+   "ou": "ui/index.html:1417",
    "texte": ""
   },
   {
    "fr": "Ce lien n'est pas un webhook Discord.",
    "en": "That link isn't a Discord webhook.",
-   "ou": "ui/index.html:1386",
+   "ou": "ui/index.html:1418",
    "texte": ""
   },
   {
    "fr": "Webhook retiré.",
    "en": "Webhook removed.",
-   "ou": "ui/index.html:1390",
+   "ou": "ui/index.html:1422",
    "texte": ""
   },
   {
    "fr": "✓ « {0} » copié, Discord s'ouvre sur le salon setups LMU : fais Ctrl+V.",
    "en": "✓ \"{0}\" copied, Discord opens the LMU setups channel: press Ctrl+V.",
-   "ou": "ui/index.html:1393",
+   "ou": "ui/index.html:1425",
    "texte": ""
   },
   {
    "fr": "Pas encore de setup pour ce circuit : choisis-le à l'étape 1 ou crée le fichier APEX.",
    "en": "No setup for this track yet: pick it in step 1 or create the APEX file.",
-   "ou": "ui/index.html:1394",
+   "ou": "ui/index.html:1426",
    "texte": ""
   },
   {
    "fr": "Impossible de copier le fichier.",
    "en": "Couldn't copy the file.",
-   "ou": "ui/index.html:1395",
+   "ou": "ui/index.html:1427",
    "texte": ""
   },
   {
    "fr": "Envoi…",
    "en": "Sending…",
-   "ou": "ui/index.html:1398",
+   "ou": "ui/index.html:1430",
    "texte": ""
   },
   {
    "fr": "✓ « {0} » envoyé dans le salon de l'équipe.",
    "en": "✓ \"{0}\" sent to the team channel.",
-   "ou": "ui/index.html:1400",
+   "ou": "ui/index.html:1432",
    "texte": ""
   },
   {
    "fr": "Pas encore de setup pour ce circuit.",
    "en": "No setup for this track yet.",
-   "ou": "ui/index.html:1401",
+   "ou": "ui/index.html:1433",
    "texte": ""
   },
   {
    "fr": "Installation de la mise à jour… Apex va se fermer puis se rouvrir tout seul.",
    "en": "Installing the update… Apex will close and reopen by itself.",
-   "ou": "ui/index.html:1406",
+   "ou": "ui/index.html:1438",
    "texte": ""
   },
   {
    "fr": "Installation impossible, utilise le bouton TÉLÉCHARGER.",
    "en": "Couldn't install, use the DOWNLOAD button.",
-   "ou": "ui/index.html:1412",
+   "ou": "ui/index.html:1444",
    "texte": ""
   },
   {
    "fr": "<span class=\"good\">{0} mis à jour ({1})</span> — recharge-le au garage dans LMU, puis roule quelques tours pour comparer.",
    "en": "<span class=\"good\">{0} updated ({1})</span> — reload it in the LMU garage, then do a few laps to compare.",
-   "ou": "ui/index.html:1448",
+   "ou": "ui/index.html:1480",
    "texte": "<span class=\"good\">{0} bijgewerkt ({1})</span> — laad het opnieuw in de LMU-garage en rij dan een paar ronden om te vergelijken."
   },
   {
    "fr": "Ton setup de départ était {0} : j'ai converti la copie APEX pour la LMP2 {1} (même voiture, Oreca 07). Vérifie les réglages dans le garage avant de rouler.",
    "en": "Your base setup was {0}: I converted the APEX copy for the LMP2 {1} (same car, Oreca 07). Check the settings in the garage before driving.",
-   "ou": "ui/index.html:1449",
+   "ou": "ui/index.html:1481",
    "texte": "Je basissetup was {0}: ik heb de APEX-kopie omgezet voor de LMP2 {1} (zelfde auto, Oreca 07). Controleer de instellingen in de garage voor je gaat rijden."
   },
   {
    "fr": "Impossible de copier le journal.",
    "en": "Couldn't copy the log.",
-   "ou": "ui/index.html:1459",
+   "ou": "ui/index.html:1491",
    "texte": ""
   },
   {
    "fr": "Journal copié ! Colle-le (Ctrl+V) dans Discord, salon #bugs.",
    "en": "Log copied! Paste it (Ctrl+V) on Discord, in #bugs.",
-   "ou": "ui/index.html:1460",
+   "ou": "ui/index.html:1492",
    "texte": ""
   },
   {
    "fr": "Journal enregistré : glisse le fichier ouvert dans l'Explorateur sur Discord.",
    "en": "Log saved: drag the file shown in Explorer onto Discord.",
-   "ou": "ui/index.html:1461",
+   "ou": "ui/index.html:1493",
    "texte": ""
   },
   {
@@ -7366,976 +7384,988 @@
    "texte": "Volume"
   },
   {
+   "fr": "Sortie du son",
+   "en": "Sound output",
+   "ou": "ui/index.html:470",
+   "texte": "Geluidsuitvoer"
+  },
+  {
+   "fr": "Où tu entends l'ingé. Choisis ton casque si tes amis sur Discord l'entendent.",
+   "en": "Where you hear the engineer. Pick your headset if your Discord friends can hear him.",
+   "ou": "ui/index.html:471",
+   "texte": "Waar je de engineer hoort. Kies je headset als je Discord-vrienden hem horen."
+  },
+  {
    "fr": "Tester",
    "en": "Test",
-   "ou": "ui/index.html:470",
+   "ou": "ui/index.html:472",
    "texte": "Testen"
   },
   {
    "fr": "Test voix",
    "en": "Voice test",
-   "ou": "ui/index.html:470",
+   "ou": "ui/index.html:472",
    "texte": "Stemtest"
   },
   {
    "fr": "Tester la voix",
    "en": "Test the voice",
-   "ou": "ui/index.html:470",
+   "ou": "ui/index.html:472",
    "texte": "Stem testen"
   },
   {
    "fr": "Ce qu'il dit de lui-même",
    "en": "How much he talks",
-   "ou": "ui/index.html:471",
+   "ou": "ui/index.html:473",
    "texte": "Wat hij uit zichzelf zegt"
   },
   {
    "fr": "Coach de pilotage",
    "en": "Driving coach",
-   "ou": "ui/index.html:473",
+   "ou": "ui/index.html:475",
    "texte": "Rijcoach"
   },
   {
    "fr": "Conseils virage par virage (freinage, entrée, sortie) et temps perdu par rapport à ton meilleur tour.",
    "en": "Corner-by-corner tips (braking, entry, exit) and the time lost compared to your best lap.",
-   "ou": "ui/index.html:474",
+   "ou": "ui/index.html:476",
    "texte": "Tips per bocht (remmen, insturen, uitkomen) en de tijd die je verliest op je beste ronde."
   },
   {
    "fr": "Ton prénom",
    "en": "Your first name",
-   "ou": "ui/index.html:475",
+   "ou": "ui/index.html:477",
    "texte": "Je voornaam"
   },
   {
    "fr": "ex. Laurent",
    "en": "e.g. Laurent",
-   "ou": "ui/index.html:475",
+   "ou": "ui/index.html:477",
    "texte": "bijv. Laurent"
   },
   {
    "fr": "Personnaliser annonce par annonce",
    "en": "Customise call by call",
-   "ou": "ui/index.html:477",
+   "ou": "ui/index.html:479",
    "texte": "Per melding aanpassen"
   },
   {
    "fr": "Encouragements",
    "en": "Encouragement",
-   "ou": "ui/index.html:479",
+   "ou": "ui/index.html:481",
    "texte": "Aanmoediging"
   },
   {
    "fr": "Chrono et secteurs à chaque tour",
    "en": "Lap time and sectors",
-   "ou": "ui/index.html:480",
+   "ou": "ui/index.html:482",
    "texte": "Rondetijd en sectoren"
   },
   {
    "fr": "Essais",
    "en": "Practice",
-   "ou": "ui/index.html:481",
+   "ou": "ui/index.html:483",
    "texte": "Training"
   },
   {
    "fr": "Écarts devant / derrière (course)",
    "en": "Gaps ahead / behind (race)",
-   "ou": "ui/index.html:484",
+   "ou": "ui/index.html:486",
    "texte": "Gaten voor / achter (race)"
   },
   {
    "fr": "Drapeaux jaunes devant moi",
    "en": "Yellow flags ahead of me",
-   "ou": "ui/index.html:485",
+   "ou": "ui/index.html:487",
    "texte": "Gele vlaggen voor me"
   },
   {
    "fr": "« Drapeaux jaunes levés »",
    "en": "\"Yellows cleared\"",
-   "ou": "ui/index.html:486",
+   "ou": "ui/index.html:488",
    "texte": "„Geel opgeheven”"
   },
   {
    "fr": "Bip quand j'appuie sur le bouton radio",
    "en": "Beep when I press the radio button",
-   "ou": "ui/index.html:487",
+   "ou": "ui/index.html:489",
    "texte": "Piep als ik op de radioknop druk"
   },
   {
    "fr": "Seulement ce que l'ingé dit de lui-même. Si tu demandes (« mon écart ? », « mes secteurs ? »), il répond toujours.",
    "en": "Only what the engineer says on his own. If you ask (\"what's my gap?\", \"my sectors?\"), he always answers.",
-   "ou": "ui/index.html:488",
+   "ou": "ui/index.html:490",
    "texte": "Alleen wat de engineer uit zichzelf zegt. Als je het vraagt („mijn gat?”, „mijn sectoren?”), antwoordt hij altijd."
   },
   {
    "fr": "Conseils de pilotage en piste",
    "en": "Driving tips on track",
-   "ou": "ui/index.html:491",
+   "ou": "ui/index.html:493",
    "texte": "Rijtips op de baan"
   },
   {
    "fr": "Temps perdu par virage aussi en course",
    "en": "Corner time loss also in races",
-   "ou": "ui/index.html:491",
+   "ou": "ui/index.html:493",
    "texte": "Tijdverlies per bocht ook in de race"
   },
   {
    "fr": "Radio et volant",
    "en": "Radio & wheel",
-   "ou": "ui/index.html:493",
+   "ou": "ui/index.html:495",
    "texte": "Radio en stuur"
   },
   {
    "fr": "Micro",
    "en": "Mic",
-   "ou": "ui/index.html:494",
+   "ou": "ui/index.html:496",
    "texte": "Microfoon"
   },
   {
    "fr": "Bouton radio",
    "en": "Radio button",
-   "ou": "ui/index.html:495",
+   "ou": "ui/index.html:497",
    "texte": "Radioknop"
   },
   {
    "fr": "CHOISIR LE BOUTON RADIO",
    "en": "CHOOSE THE RADIO BUTTON",
-   "ou": "ui/index.html:496",
+   "ou": "ui/index.html:498",
    "texte": "KIES DE RADIOKNOP"
   },
   {
    "fr": "Utilisation du bouton",
    "en": "Button use",
-   "ou": "ui/index.html:497",
+   "ou": "ui/index.html:499",
    "texte": "Knopgebruik"
   },
   {
    "fr": "Raccourcis (volant / clavier)",
    "en": "Shortcuts (wheel / keyboard)",
-   "ou": "ui/index.html:499",
+   "ou": "ui/index.html:501",
    "texte": "Sneltoetsen (stuur / toetsenbord)"
   },
   {
    "fr": "Mon jeu",
    "en": "My game",
-   "ou": "ui/index.html:504",
+   "ou": "ui/index.html:506",
    "texte": "Mijn spel"
   },
   {
    "fr": "Lancer mon jeu à l'ouverture d'Apex",
    "en": "Launch my game when Apex opens",
-   "ou": "ui/index.html:505",
+   "ou": "ui/index.html:507",
    "texte": "Mijn spel starten als Apex opent"
   },
   {
    "fr": "▶ LANCER LE MANS ULTIMATE",
    "en": "▶ LAUNCH LE MANS ULTIMATE",
-   "ou": "ui/index.html:506",
+   "ou": "ui/index.html:508",
    "texte": "▶ LE MANS ULTIMATE STARTEN"
   },
   {
    "fr": "Apparence",
    "en": "Look",
-   "ou": "ui/index.html:508",
+   "ou": "ui/index.html:510",
    "texte": "Uiterlijk"
   },
   {
    "fr": "Couleur",
    "en": "Colour",
-   "ou": "ui/index.html:509",
+   "ou": "ui/index.html:511",
    "texte": "Kleur"
   },
   {
    "fr": "Langue",
    "en": "Language",
-   "ou": "ui/index.html:510",
+   "ou": "ui/index.html:512",
    "texte": "Taal"
   },
   {
    "fr": "Pour masquer une case du tableau de bord, passe la souris dessus et clique sur sa croix ✕. Les boutons − / + sous le circuit changent sa taille.",
    "en": "To hide a card of the dashboard, hover it and click its ✕. The − / + under the track map change its size.",
-   "ou": "ui/index.html:511",
+   "ou": "ui/index.html:513",
    "texte": "Om een kaart te verbergen: ga er met de muis over en klik op het ✕. De knoppen − / + onder het circuit veranderen de grootte."
   },
   {
    "fr": "Taille du circuit",
    "en": "Track map size",
-   "ou": "ui/index.html:512",
+   "ou": "ui/index.html:514",
    "texte": "Grootte van het circuit"
   },
   {
    "fr": "Petite",
    "en": "Small",
-   "ou": "ui/index.html:512",
+   "ou": "ui/index.html:514",
    "texte": "Klein"
   },
   {
    "fr": "Normale",
    "en": "Normal",
-   "ou": "ui/index.html:512",
+   "ou": "ui/index.html:514",
    "texte": "Normaal"
   },
   {
    "fr": "Grande",
    "en": "Large",
-   "ou": "ui/index.html:512",
+   "ou": "ui/index.html:514",
    "texte": "Groot"
   },
   {
    "fr": "Très grande",
    "en": "Extra large",
-   "ou": "ui/index.html:512",
+   "ou": "ui/index.html:514",
    "texte": "Extra groot"
   },
   {
    "fr": "Afficher le circuit",
    "en": "Show the track map",
-   "ou": "ui/index.html:513",
+   "ou": "ui/index.html:515",
    "texte": "Circuit tonen"
   },
   {
    "fr": "Afficher les pneus",
    "en": "Show tyres",
-   "ou": "ui/index.html:514",
+   "ou": "ui/index.html:516",
    "texte": "Banden tonen"
   },
   {
    "fr": "Afficher la météo",
    "en": "Show weather",
-   "ou": "ui/index.html:515",
+   "ou": "ui/index.html:517",
    "texte": "Weer tonen"
   },
   {
    "fr": "Afficher les chronos",
    "en": "Show lap times",
-   "ou": "ui/index.html:516",
+   "ou": "ui/index.html:518",
    "texte": "Rondetijden tonen"
   },
   {
    "fr": "Remarques de pilotage sous le circuit",
    "en": "Show driving notes under the map",
-   "ou": "ui/index.html:517",
+   "ou": "ui/index.html:519",
    "texte": "Rijopmerkingen onder het circuit"
   },
   {
    "fr": "Avancé",
    "en": "Advanced",
-   "ou": "ui/index.html:519",
+   "ou": "ui/index.html:521",
    "texte": "Geavanceerd"
   },
   {
    "fr": "(à régler une fois)",
    "en": "(set once and forget)",
-   "ou": "ui/index.html:519",
+   "ou": "ui/index.html:521",
    "texte": "(één keer instellen)"
   },
   {
    "fr": "Menu des stands (LMU)",
    "en": "Pit menu (LMU)",
-   "ou": "ui/index.html:521",
+   "ou": "ui/index.html:523",
    "texte": "Pitmenu (LMU)"
   },
   {
    "fr": "Auto",
    "en": "Auto",
-   "ou": "ui/index.html:521",
+   "ou": "ui/index.html:523",
    "texte": "Auto"
   },
   {
    "fr": "À la demande",
    "en": "On request",
-   "ou": "ui/index.html:521",
+   "ou": "ui/index.html:523",
    "texte": "Op verzoek"
   },
   {
    "fr": "Auto : Apex règle l'essence / l'énergie, les pneus et les réparations dans le menu des stands de LMU environ un tour avant ton arrêt. À la demande : seulement quand tu dis « prépare l'arrêt ».",
    "en": "Auto: Apex sets fuel / energy, tyres and repairs in the LMU pit menu about a lap before your stop. On request: only when you say \"prepare the stop\".",
-   "ou": "ui/index.html:522",
+   "ou": "ui/index.html:524",
    "texte": "Auto: Apex zet brandstof / energie, banden en reparaties in het pitmenu van LMU zo'n ronde voor je stop. Op verzoek: alleen als je „bereid de stop voor” zegt."
   },
   {
    "fr": "Ton de la radio",
    "en": "Radio tone",
-   "ou": "ui/index.html:523",
+   "ou": "ui/index.html:525",
    "texte": "Toon van de radio"
   },
   {
    "fr": "Reconnaissance vocale",
    "en": "Voice recognition",
-   "ou": "ui/index.html:524",
+   "ou": "ui/index.html:526",
    "texte": "Spraakherkenning"
   },
   {
    "fr": "Précise : te comprend mieux, mais répond environ 2 fois moins vite (1,5 Go à télécharger la première fois).",
    "en": "Precise: understands you better, but answers ~2× slower (1.5 GB download the first time).",
-   "ou": "ui/index.html:525",
+   "ou": "ui/index.html:527",
    "texte": "Nauwkeurig: begrijpt je beter, maar antwoordt ~2× trager (1,5 GB downloaden de eerste keer)."
   },
   {
    "fr": "Mode de lancement",
    "en": "Launch mode",
-   "ou": "ui/index.html:526",
+   "ou": "ui/index.html:528",
    "texte": "Startmodus"
   },
   {
    "fr": "Overlay pour les streams (OBS)",
    "en": "Stream overlay (OBS)",
-   "ou": "ui/index.html:527",
+   "ou": "ui/index.html:529",
    "texte": "Stream-overlay (OBS)"
   },
   {
    "fr": "Dans OBS : ajoute une source « Navigateur », colle le lien, taille 1920 × 1080. Fond transparent : seuls les messages radio de l'ingénieur s'affichent. Ajoute ?info=1 à la fin pour une petite barre position / écarts.",
    "en": "In OBS: add a « Browser » source, paste the link, size 1920 × 1080. Transparent background: only the engineer's radio messages show up. Add ?info=1 at the end for a small position / gaps bar.",
-   "ou": "ui/index.html:528",
+   "ou": "ui/index.html:530",
    "texte": "In OBS: voeg een bron „Browser” toe, plak de link, grootte 1920 × 1080. Transparante achtergrond: alleen de radioberichten van de engineer verschijnen. Zet ?info=1 erachter voor een balkje met positie / gaten."
   },
   {
    "fr": "Discord (équipe)",
    "en": "Discord (team)",
-   "ou": "ui/index.html:529",
+   "ou": "ui/index.html:531",
    "texte": "Discord (team)"
   },
   {
    "fr": "Facultatif. Colle le webhook du salon de TON ÉQUIPE : Apex y postera tout seul tes chronos, setups et débriefs de course. Le lien reste sur ce PC. Pour le serveur public Apex Radio, les boutons de partage copient le message et ouvrent Discord.",
    "en": "Optional. Paste the webhook of your TEAM channel: Apex will post your lap times, setups and race debriefs there by itself. The link stays on this PC. For the public Apex Radio server, the share buttons copy the message and open Discord.",
-   "ou": "ui/index.html:530",
+   "ou": "ui/index.html:532",
    "texte": ""
   },
   {
    "fr": "Enregistrer et tester",
    "en": "Save and test",
-   "ou": "ui/index.html:532",
+   "ou": "ui/index.html:534",
    "texte": "Opslaan en testen"
   },
   {
    "fr": "Comment avoir un webhook ?",
    "en": "How do I get a webhook?",
-   "ou": "ui/index.html:533",
+   "ou": "ui/index.html:535",
    "texte": "Hoe krijg ik een webhook?"
   },
   {
    "fr": "Dans Discord, passe la souris sur le salon de l'équipe et clique sur la roue ⚙️ (Modifier le salon).",
    "en": "In Discord, hover the team channel and click the gear ⚙️ (Edit channel).",
-   "ou": "ui/index.html:535",
+   "ou": "ui/index.html:537",
    "texte": ""
   },
   {
    "fr": "Intégrations → Webhooks → Nouveau webhook.",
    "en": "Integrations → Webhooks → New webhook.",
-   "ou": "ui/index.html:536",
+   "ou": "ui/index.html:538",
    "texte": ""
   },
   {
    "fr": "Clique sur le webhook, puis Copier l'URL du webhook, et colle-la ici.",
    "en": "Click the webhook, then Copy webhook URL, and paste it here.",
-   "ou": "ui/index.html:537",
+   "ou": "ui/index.html:539",
    "texte": ""
   },
   {
    "fr": "Ne poste jamais ce lien en public : n'importe qui qui l'a peut écrire dans le salon.",
    "en": "Never post this link in public: anyone who has it can write in the channel.",
-   "ou": "ui/index.html:538",
+   "ou": "ui/index.html:540",
    "texte": ""
   },
   {
    "fr": "Version",
    "en": "Version",
-   "ou": "ui/index.html:541",
+   "ou": "ui/index.html:543",
    "texte": "Versie"
   },
   {
    "fr": "Version installée",
    "en": "Installed version",
-   "ou": "ui/index.html:542",
+   "ou": "ui/index.html:544",
    "texte": "Geïnstalleerde versie"
   },
   {
    "fr": "Version Microsoft Store : les mises à jour sont installées par le Store.",
    "en": "Microsoft Store version: updates are installed by the Store.",
-   "ou": "ui/index.html:543",
+   "ou": "ui/index.html:545",
    "texte": ""
   },
   {
    "fr": "Un problème depuis la dernière mise à jour ? Télécharge la version précédente et installe-la par-dessus : tes réglages, records et setups sont gardés.",
    "en": "A problem since the last update? Download the previous version and install it over this one: your settings, records and setups are kept.",
-   "ou": "ui/index.html:544",
+   "ou": "ui/index.html:546",
    "texte": "Een probleem sinds de laatste update? Download de vorige versie en installeer die eroverheen: je instellingen, records en setups blijven bewaard."
   },
   {
    "fr": "Toutes les versions",
    "en": "All versions",
-   "ou": "ui/index.html:547",
+   "ou": "ui/index.html:549",
    "texte": "Alle versies"
   },
   {
    "fr": "Dépannage",
    "en": "Troubleshooting",
-   "ou": "ui/index.html:550",
+   "ou": "ui/index.html:552",
    "texte": ""
   },
   {
    "fr": "Un souci pendant ta séance ? Clique sur le bouton : ton journal est copié, colle-le (Ctrl+V) sur Discord, dans #bugs. Les 20 derniers journaux sont aussi gardés dans Documents\\Apex Radio\\journaux.",
    "en": "A problem during your session? Click the button: your log is copied, then paste it (Ctrl+V) on Discord, in #bugs. The last 20 logs are also kept in Documents\\Apex Radio\\journaux.",
-   "ou": "ui/index.html:551",
+   "ou": "ui/index.html:553",
    "texte": ""
   },
   {
    "fr": "📋 Copier mon journal",
    "en": "📋 Copy my log",
-   "ou": "ui/index.html:553",
+   "ou": "ui/index.html:555",
    "texte": ""
   },
   {
    "fr": "Soutenir Apex Radio",
    "en": "Support Apex Radio",
-   "ou": "ui/index.html:557",
+   "ou": "ui/index.html:559",
    "texte": "Steun Apex Radio"
   },
   {
    "fr": "Apex Radio est gratuit et le restera. S'il t'aide, tu peux m'offrir un café ou le soutenir chaque mois.",
    "en": "Apex Radio is free and will stay free. If it helps you, you can buy me a coffee or support it every month.",
-   "ou": "ui/index.html:558",
+   "ou": "ui/index.html:560",
    "texte": "Apex Radio is gratis en blijft gratis. Als het je helpt, kun je me een koffie trakteren of het maandelijks steunen."
   },
   {
    "fr": "☕ M'offrir un café (Ko-fi)",
    "en": "☕ Buy me a coffee (Ko-fi)",
-   "ou": "ui/index.html:560",
+   "ou": "ui/index.html:562",
    "texte": "☕ Trakteer me op een koffie (Ko-fi)"
   },
   {
    "fr": "Fichier travaillé",
    "en": "Working file",
-   "ou": "ui/index.html:570",
+   "ou": "ui/index.html:572",
    "texte": "Werkbestand"
   },
   {
    "fr": "QUALIF",
    "en": "QUALI",
-   "ou": "ui/index.html:571",
+   "ou": "ui/index.html:573",
    "texte": "KWALI"
   },
   {
    "fr": "COURSE",
    "en": "RACE",
-   "ou": "ui/index.html:571",
+   "ou": "ui/index.html:573",
    "texte": "RACE"
   },
   {
    "fr": "📁 Choisir le dossier de LMU",
    "en": "📁 Choose the LMU folder",
-   "ou": "ui/index.html:574",
+   "ou": "ui/index.html:576",
    "texte": "📁 LMU-map kiezen"
   },
   {
    "fr": "LMU est installé ailleurs ? Choisis le dossier du jeu (Le Mans Ultimate), Apex trouve les setups dedans.",
    "en": "LMU is installed elsewhere? Pick the game folder (Le Mans Ultimate), Apex finds the setups inside.",
-   "ou": "ui/index.html:577",
+   "ou": "ui/index.html:579",
    "texte": "Staat LMU ergens anders? Kies de spelmap (Le Mans Ultimate), Apex vindt de setups erin."
   },
   {
    "fr": "1 · Le setup que tu utilises",
    "en": "1 · The setup you're using",
-   "ou": "ui/index.html:580",
+   "ou": "ui/index.html:582",
    "texte": "1 · De setup die je gebruikt"
   },
   {
    "fr": "C'EST CE SETUP QUI EST CHARGÉ DANS LE JEU",
    "en": "THIS IS THE SETUP LOADED IN THE GAME",
-   "ou": "ui/index.html:583",
+   "ou": "ui/index.html:585",
    "texte": "DIT IS DE SETUP DIE IN HET SPEL GELADEN IS"
   },
   {
    "fr": "2 · Réglages proposés",
    "en": "2 · Suggested changes",
-   "ou": "ui/index.html:587",
+   "ou": "ui/index.html:589",
    "texte": "2 · Voorgestelde wijzigingen"
   },
   {
    "fr": "APPLIQUER DANS LE FICHIER APEX",
    "en": "APPLY TO THE APEX FILE",
-   "ou": "ui/index.html:591",
+   "ou": "ui/index.html:593",
    "texte": "TOEPASSEN OP HET APEX-BESTAND"
   },
   {
    "fr": "3 · Historique sur ce circuit",
    "en": "3 · History on this track",
-   "ou": "ui/index.html:595",
+   "ou": "ui/index.html:597",
    "texte": "3 · Geschiedenis op dit circuit"
   },
   {
    "fr": "4 · Partager ce setup",
    "en": "4 · Share this setup",
-   "ou": "ui/index.html:599",
+   "ou": "ui/index.html:601",
    "texte": ""
   },
   {
    "fr": "Copie le fichier du setup et ouvre le salon setups LMU sur Discord : il ne reste qu'à faire Ctrl+V.",
    "en": "Copies the setup file and opens the LMU setups channel on Discord: just press Ctrl+V.",
-   "ou": "ui/index.html:600",
+   "ou": "ui/index.html:602",
    "texte": ""
   },
   {
    "fr": "📤 PARTAGER SUR DISCORD",
    "en": "📤 SHARE ON DISCORD",
-   "ou": "ui/index.html:601",
+   "ou": "ui/index.html:603",
    "texte": ""
   },
   {
    "fr": "🚀 Envoyer à mon équipe",
    "en": "🚀 Send to my team",
-   "ou": "ui/index.html:602",
+   "ou": "ui/index.html:604",
    "texte": ""
+  },
+  {
+   "fr": "Sortie par défaut de Windows",
+   "en": "Windows default output",
+   "ou": "ui/index.html:686",
+   "texte": "Standaarduitvoer van Windows"
+  },
+  {
+   "fr": "(défaut)",
+   "en": "(default)",
+   "ou": "ui/index.html:687",
+   "texte": "(standaard)"
+  },
+  {
+   "fr": "(débranchée)",
+   "en": "(unplugged)",
+   "ou": "ui/index.html:689",
+   "texte": "(losgekoppeld)"
   },
   {
    "fr": "EN ATTENTE",
    "en": "WAITING",
-   "ou": "ui/index.html:688",
+   "ou": "ui/index.html:704",
    "texte": "WACHTEN"
   },
   {
    "fr": "Jeu détecté, monte dans ta voiture.",
    "en": "Game detected, get in your car.",
-   "ou": "ui/index.html:688",
+   "ou": "ui/index.html:704",
    "texte": "Spel gevonden, stap in je auto."
   },
   {
    "fr": "Lance ton jeu et monte dans ta voiture.",
    "en": "Start your game and get in your car.",
-   "ou": "ui/index.html:688",
+   "ou": "ui/index.html:704",
    "texte": ""
   },
   {
    "fr": "DRAPEAU JAUNE",
    "en": "FULL COURSE YELLOW",
-   "ou": "ui/index.html:689",
+   "ou": "ui/index.html:705",
    "texte": "FULL COURSE YELLOW"
   },
   {
    "fr": "Drapeau jaune, ralentis.",
    "en": "Yellow flag, slow down.",
-   "ou": "ui/index.html:689",
+   "ou": "ui/index.html:705",
    "texte": "Gele vlag, rustig aan."
   },
   {
    "fr": "Rentre ce tour.",
    "en": "Pit this lap.",
-   "ou": "ui/index.html:690",
+   "ou": "ui/index.html:706",
    "texte": "Box deze ronde."
   },
   {
    "fr": "BOX DANS {0}",
    "en": "BOX IN {0}",
-   "ou": "ui/index.html:691",
+   "ou": "ui/index.html:707",
    "texte": "BOX OVER {0}"
   },
   {
    "fr": "Arrêt à la fin du tour {0}.",
    "en": "Stop at the end of lap {0}.",
-   "ou": "ui/index.html:691",
+   "ou": "ui/index.html:707",
    "texte": "Stop aan het einde van ronde {0}."
   },
   {
    "fr": "DAMIER",
    "en": "CHEQUERED",
-   "ou": "ui/index.html:692",
+   "ou": "ui/index.html:708",
    "texte": "GEBLOKTE VLAG"
   },
   {
    "fr": "Course terminée.",
    "en": "Race over.",
-   "ou": "ui/index.html:692",
+   "ou": "ui/index.html:708",
    "texte": "Race voorbij."
   },
   {
    "fr": "EN PISTE",
    "en": "ON TRACK",
-   "ou": "ui/index.html:693",
+   "ou": "ui/index.html:709",
    "texte": "OP DE BAAN"
   },
   {
    "fr": "RAS, on roule.",
    "en": "All good, keep going.",
-   "ou": "ui/index.html:693",
+   "ou": "ui/index.html:709",
    "texte": "Alles goed, rij door."
   },
   {
    "fr": "DÉMO",
    "en": "DEMO",
-   "ou": "ui/index.html:700",
+   "ou": "ui/index.html:716",
    "texte": "DEMO"
   },
   {
    "fr": "Lancer",
    "en": "Launch",
-   "ou": "ui/index.html:707",
+   "ou": "ui/index.html:723",
    "texte": ""
   },
   {
    "fr": "LANCER",
    "en": "LAUNCH",
-   "ou": "ui/index.html:711",
+   "ou": "ui/index.html:727",
    "texte": ""
   },
   {
    "fr": "connecté",
    "en": "connected",
-   "ou": "ui/index.html:713",
+   "ou": "ui/index.html:729",
    "texte": ""
   },
   {
    "fr": "Jeu détecté",
    "en": "Game detected",
-   "ou": "ui/index.html:713",
+   "ou": "ui/index.html:729",
    "texte": "Spel gevonden"
   },
   {
    "fr": "En attente du jeu",
    "en": "Waiting for the game",
-   "ou": "ui/index.html:713",
+   "ou": "ui/index.html:729",
    "texte": "Wachten op het spel"
   },
   {
    "fr": "femme",
    "en": "female",
-   "ou": "ui/index.html:721",
+   "ou": "ui/index.html:740",
    "texte": "vrouwelijk"
   },
   {
    "fr": "homme",
    "en": "male",
-   "ou": "ui/index.html:721",
+   "ou": "ui/index.html:740",
    "texte": "mannelijk"
   },
   {
    "fr": "Affichage téléphone : {0} (même Wi-Fi que le PC)",
    "en": "Phone view: {0} (same Wi-Fi as the PC)",
-   "ou": "ui/index.html:731",
+   "ou": "ui/index.html:750",
    "texte": "Telefoonweergave: {0} (zelfde wifi als de pc)"
   },
   {
    "fr": "meilleur tour",
    "en": "best lap",
-   "ou": "ui/index.html:736",
+   "ou": "ui/index.html:755",
    "texte": "beste ronde"
   },
   {
    "fr": "✓ Webhook enregistré (colle un autre lien pour le changer)",
    "en": "✓ Webhook saved (paste another link to change it)",
-   "ou": "ui/index.html:739",
+   "ou": "ui/index.html:758",
    "texte": ""
   },
   {
    "fr": "↩ Revenir à la {0}",
    "en": "↩ Go back to {0}",
-   "ou": "ui/index.html:746",
+   "ou": "ui/index.html:765",
    "texte": "↩ Terug naar {0}"
   },
   {
    "fr": "Nouvelle version {0} téléchargée, prête à installer (tu as la {1})",
    "en": "New version {0} downloaded, ready to install (you have {1})",
-   "ou": "ui/index.html:755",
+   "ou": "ui/index.html:774",
    "texte": ""
   },
   {
    "fr": "Nouvelle version {0} : téléchargement… {1} %",
    "en": "New version {0}: downloading… {1}%",
-   "ou": "ui/index.html:757",
+   "ou": "ui/index.html:776",
    "texte": ""
   },
   {
    "fr": "Nouvelle version {0} disponible (tu as la {1})",
    "en": "New version {0} available (you have {1})",
-   "ou": "ui/index.html:759",
+   "ou": "ui/index.html:778",
    "texte": "Nieuwe versie {0} beschikbaar (je hebt {1})"
   },
   {
    "fr": "INSTALLER",
    "en": "INSTALL",
-   "ou": "ui/index.html:762",
+   "ou": "ui/index.html:781",
    "texte": ""
   },
   {
    "fr": "TÉLÉCHARGER",
    "en": "DOWNLOAD",
-   "ou": "ui/index.html:765",
+   "ou": "ui/index.html:784",
    "texte": "DOWNLOADEN"
   },
   {
    "fr": "PÉNALITÉ À PURGER",
    "en": "PENALTY TO SERVE",
-   "ou": "ui/index.html:770",
+   "ou": "ui/index.html:789",
    "texte": "STRAF UIT TE ZITTEN"
   },
   {
    "fr": "TOUR",
    "en": "LAP",
-   "ou": "ui/index.html:770",
+   "ou": "ui/index.html:789",
    "texte": "RONDE"
   },
   {
    "fr": "TOI",
    "en": "YOU",
-   "ou": "ui/index.html:780",
+   "ou": "ui/index.html:799",
    "texte": "JIJ"
   },
   {
    "fr": "INGÉ",
    "en": "ENGINEER",
-   "ou": "ui/index.html:780",
+   "ou": "ui/index.html:799",
    "texte": ""
   },
   {
    "fr": "PRÊT",
    "en": "READY",
-   "ou": "ui/index.html:785",
+   "ou": "ui/index.html:804",
    "texte": "KLAAR"
   },
   {
    "fr": "● J'ÉCOUTE…",
    "en": "● LISTENING…",
-   "ou": "ui/index.html:785",
+   "ou": "ui/index.html:804",
    "texte": "● IK LUISTER…"
   },
   {
    "fr": "JE RÉFLÉCHIS…",
    "en": "THINKING…",
-   "ou": "ui/index.html:785",
+   "ou": "ui/index.html:804",
    "texte": "NADENKEN…"
   },
   {
    "fr": "APPUIE SUR LE BOUTON VOULU…",
    "en": "PRESS THE BUTTON YOU WANT…",
-   "ou": "ui/index.html:786",
+   "ou": "ui/index.html:805",
    "texte": "DRUK OP DE KNOP DIE JE WILT…"
   },
   {
    "fr": "PROBLÈME",
    "en": "PROBLEM",
-   "ou": "ui/index.html:786",
+   "ou": "ui/index.html:805",
    "texte": "PROBLEEM"
   },
   {
    "fr": "DÉMARRAGE…",
    "en": "STARTING…",
-   "ou": "ui/index.html:786",
+   "ou": "ui/index.html:805",
    "texte": "STARTEN…"
   },
   {
    "fr": "J'ÉCOUTE…",
    "en": "LISTENING…",
-   "ou": "ui/index.html:791",
+   "ou": "ui/index.html:810",
    "texte": "IK LUISTER…"
   },
   {
    "fr": "appuie sur le bouton…",
    "en": "press the button…",
-   "ou": "ui/index.html:793",
+   "ou": "ui/index.html:812",
    "texte": "druk op de knop…"
   },
   {
    "fr": "Chargement de la reconnaissance vocale… (l'ancienne reste active en attendant)",
    "en": "Loading speech recognition… (the previous one stays active meanwhile)",
-   "ou": "ui/index.html:806",
+   "ou": "ui/index.html:825",
    "texte": "Spraakherkenning wordt geladen… (de vorige blijft zolang actief)"
   },
   {
    "fr": "Reconnaissance vocale prête.",
    "en": "Speech recognition ready.",
-   "ou": "ui/index.html:807",
+   "ou": "ui/index.html:826",
    "texte": "Spraakherkenning klaar."
   },
   {
    "fr": "Reconnaissance vocale en cours de chargement…",
    "en": "Speech recognition loading…",
-   "ou": "ui/index.html:812",
+   "ou": "ui/index.html:831",
    "texte": "Spraakherkenning wordt geladen…"
   },
   {
    "fr": "{0} roule",
    "en": "{0} is driving",
-   "ou": "ui/index.html:822",
+   "ou": "ui/index.html:841",
    "texte": ""
   },
   {
    "fr": "· aux stands",
    "en": "· in the pits",
-   "ou": "ui/index.html:822",
+   "ou": "ui/index.html:841",
    "texte": ""
   },
   {
    "fr": "<b>{0}</b> tour{1} restant{1}",
    "en": "<b>{0}</b> lap{2} to go",
-   "ou": "ui/index.html:839",
+   "ou": "ui/index.html:858",
    "texte": "Nog <b>{0}</b> {1?ronden:ronde}"
   },
   {
    "fr": "P{0} au général · {1} voitures",
    "en": "P{0} overall · {1} cars",
-   "ou": "ui/index.html:840",
+   "ou": "ui/index.html:859",
    "texte": "P{0} overall · {1} auto's"
   },
   {
    "fr": "{0} voitures",
    "en": "{0} cars",
-   "ou": "ui/index.html:840",
+   "ou": "ui/index.html:859",
    "texte": "{0} auto's"
   },
   {
    "fr": "calcul…",
    "en": "calculating…",
-   "ou": "ui/index.html:845",
+   "ou": "ui/index.html:864",
    "texte": "berekenen…"
   },
   {
    "fr": "tour",
    "en": "lap",
-   "ou": "ui/index.html:849",
+   "ou": "ui/index.html:868",
    "texte": "ronde"
   },
   {
    "fr": "Stratégie en course uniquement",
    "en": "Strategy in races only",
-   "ou": "ui/index.html:853",
+   "ou": "ui/index.html:872",
    "texte": "Strategie alleen in de race"
   },
   {
    "fr": "CALCUL…",
    "en": "CALC…",
-   "ou": "ui/index.html:854",
+   "ou": "ui/index.html:873",
    "texte": "BEREKENEN…"
   },
   {
    "fr": "Après 2 tours propres",
    "en": "After 2 clean laps",
-   "ou": "ui/index.html:854",
+   "ou": "ui/index.html:873",
    "texte": "Na 2 nette ronden"
   },
   {
    "fr": "AU BOUT",
    "en": "TO THE END",
-   "ou": "ui/index.html:855",
+   "ou": "ui/index.html:874",
    "texte": "TOT HET EINDE"
   },
   {
    "fr": "Pas d'arrêt nécessaire",
    "en": "No stop needed",
-   "ou": "ui/index.html:855",
+   "ou": "ui/index.html:874",
    "texte": "Geen stop nodig"
   },
   {
    "fr": "CE TOUR",
    "en": "THIS LAP",
-   "ou": "ui/index.html:857",
+   "ou": "ui/index.html:876",
    "texte": "DEZE RONDE"
   },
   {
    "fr": "4 pneus",
    "en": "4 tyres",
-   "ou": "ui/index.html:858",
+   "ou": "ui/index.html:877",
    "texte": "4 banden"
   },
   {
    "fr": "én.",
    "en": "en.",
-   "ou": "ui/index.html:859",
+   "ou": "ui/index.html:878",
    "texte": "en."
   },
   {
    "fr": "Je règle le menu des stands au moment du box.",
    "en": "I'll set the pit menu when you box.",
-   "ou": "ui/index.html:874",
+   "ou": "ui/index.html:893",
    "texte": "Ik stel het pitmenu in als je binnenkomt."
   },
   {
    "fr": "Écarts",
    "en": "Gaps",
-   "ou": "ui/index.html:900",
+   "ou": "ui/index.html:919",
    "texte": "Gaten"
   },
   {
    "fr": "Mon rythme",
    "en": "My pace",
-   "ou": "ui/index.html:900",
+   "ou": "ui/index.html:919",
    "texte": "Mijn tempo"
   },
   {
    "fr": "Arrêt",
    "en": "Pit stop",
-   "ou": "ui/index.html:901",
+   "ou": "ui/index.html:920",
    "texte": "Pitstop"
   },
   {
    "fr": "Potentiel",
    "en": "Potential",
-   "ou": "ui/index.html:901",
+   "ou": "ui/index.html:920",
    "texte": "Potentieel"
   },
   {
    "fr": "meilleur",
    "en": "best",
-   "ou": "ui/index.html:905",
+   "ou": "ui/index.html:924",
    "texte": "beste"
   },
   {
    "fr": "pas encore de record ici",
    "en": "no record here yet",
-   "ou": "ui/index.html:906",
+   "ou": "ui/index.html:925",
    "texte": "hier nog geen record"
   },
   {
    "fr": "Tour idéal (tes meilleurs secteurs) : {0} s à gagner",
    "en": "Ideal lap (your best sectors): {0} s to gain",
-   "ou": "ui/index.html:910",
+   "ou": "ui/index.html:929",
    "texte": "Ideale ronde (je beste sectoren): {0} s te winnen"
   },
   {
    "fr": "Tour idéal : tes meilleurs secteurs mis bout à bout",
    "en": "Ideal lap: your best sectors put together",
-   "ou": "ui/index.html:911",
+   "ou": "ui/index.html:930",
    "texte": "Ideale ronde: je beste sectoren samengevoegd"
   },
   {
    "fr": "(invalide)",
    "en": "(invalid)",
-   "ou": "ui/index.html:917",
+   "ou": "ui/index.html:936",
    "texte": "(ongeldig)"
   },
   {
    "fr": "Derniers tours",
    "en": "Last laps",
-   "ou": "ui/index.html:926",
+   "ou": "ui/index.html:945",
    "texte": "Laatste ronden"
   },
   {
    "fr": "Après le premier tour complet…",
    "en": "After the first full lap…",
-   "ou": "ui/index.html:928",
+   "ou": "ui/index.html:947",
    "texte": "Na de eerste volledige ronde…"
   },
   {
    "fr": "Tracé en cours d'apprentissage : {0} % — il sera enregistré pour la prochaine fois.",
    "en": "Learning the track layout: {0} % — it will be saved for next time.",
-   "ou": "ui/index.html:943",
+   "ou": "ui/index.html:962",
    "texte": "Circuitlayout leren: {0} % — wordt bewaard voor de volgende keer."
-  },
-  {
-   "fr": "V",
-   "en": "T",
-   "ou": "ui/index.html:996",
-   "texte": "B"
-  },
-  {
-   "fr": "PNEUS",
-   "en": "TYRES",
-   "ou": "ui/index.html:997",
-   "texte": "BANDEN"
-  },
-  {
-   "fr": "Voiture équilibrée, rien de répétitif.",
-   "en": "Car balanced, nothing recurring.",
-   "ou": "ui/index.html:998",
-   "texte": "Auto in balans, niets terugkerends."
   },
   {
    "fr": "Mise à jour {0} disponible : télécharge-la sur le PC",

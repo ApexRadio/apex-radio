@@ -15,7 +15,7 @@ DEFAULT = {
     # écarts avec devant / derrière en course : "chaque" tour, "normal" (de temps en temps), "demande" (jamais tout seul)
     "ecarts": "normal",
     "jaunes": True,          # drapeaux jaunes devant toi
-    "jaunes_leves": True,    # « drapeaux jaunes levés »
+    "jaunes_leves": False,   # « drapeaux jaunes levés » : coupé par défaut (info en trop selon les joueurs, 28/11)
     "bip": True,             # petit bip quand on appuie sur le bouton radio
 }
 

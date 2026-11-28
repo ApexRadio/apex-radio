@@ -1126,7 +1126,7 @@ AN_IDS.forEach(id => $(id).addEventListener("change", sendAnnonces));
 // ---- réglage simple : « Ce qu'il dit de lui-même » (regroupe encouragements + annonces)
 const TALK = {
   discret: { encourage: "discret", essais: false, qualif: false, course: false, ecarts: "demande", jaunes: true, leves: false },
-  normal:  { encourage: "normal", essais: true, qualif: true, course: false, ecarts: "normal", jaunes: true, leves: true },
+  normal:  { encourage: "normal", essais: true, qualif: true, course: false, ecarts: "normal", jaunes: true, leves: false },
   bavard:  { encourage: "motivant", essais: true, qualif: true, course: true, ecarts: "chaque", jaunes: true, leves: true }};
 const TALK_NOTE = {
   discret: () => T("Le strict nécessaire : drapeaux jaunes, alertes, stands. Tu lui demandes le reste.", "Only the essentials: yellow flags, warnings, pits. Ask him for the rest."),

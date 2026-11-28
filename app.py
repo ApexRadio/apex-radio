@@ -188,7 +188,10 @@ def loop(state: State, demo: bool) -> None:
     pitlane = PitLane()
     warmup, carinfo, places, morale = WarmUp(), CarInfo(), Places(), Morale()
     set_encourage(state.radio.cfg.get("encourage", "normal"))
-    annonces.load(state.radio.cfg.get("annonces"))
+    saved_ann = state.radio.cfg.get("annonces")
+    if saved_ann is None and state.radio.cfg.get("last_car"):
+        saved_ann = {"jaunes_leves": True}     # ancien joueur qui n'a jamais touché aux annonces : on garde ce qu'il avait
+    annonces.load(saved_ann)
     import behavior as _bh
     _bh.set_coach(state.radio.cfg.get("coaching", True))
     _bh.set_coach_race(state.radio.cfg.get("coach_race", True))

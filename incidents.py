@@ -21,6 +21,7 @@ OFF_LINE = 14.0      # m : vraiment loin de la trajectoire (les dégagements bit
 COOLDOWN = 25.0      # s : pas deux annonces pour le même virage
 SLOW = 10.0          # m/s : voiture quasi arrêtée
 YELLOW_AHEAD = 0.22  # tour : un drapeau jaune n'est dit que s'il est à moins de ~1/5 de tour devant toi
+YELLOW_HOLD = 10.0   # s : un jaune n'est dit que s'il dure (les sorties courtes, l'affichage de LMU suffit ; idée d'un joueur, 28/11)
 
 
 class Incidents:
@@ -72,7 +73,8 @@ class Incidents:
             return
         old = getattr(self, "_ysecs", set())
         now = time.monotonic()
-        # Un jaune n'est annoncé que s'il TIENT (2,5 s) : le jeu envoie parfois des jaunes d'une fraction de seconde.
+        # Un jaune n'est annoncé que s'il TIENT (YELLOW_HOLD = 10 s) : sorties courtes et jaunes « fantômes » du jeu ignorés.
+        # Le danger immédiat (voiture arrêtée SUR la piste devant toi) reste annoncé tout de suite par update().
         # Et un secteur qui « clignote » en jaune au même endroit à chaque tour sans voiture arrêtée (remarque d'un
         # joueur au Mans, à Mulsanne) n'est plus annoncé après 2 fois : c'est une fausse info du jeu.
         first = self.__dict__.setdefault("_yfirst", {})
@@ -85,7 +87,7 @@ class Incidents:
         done &= secs
         ghost = self.__dict__.setdefault("_yghost", {})      # secteur -> nombre de jaunes sans voiture arrêtée
         # un même secteur n'est pas réannoncé avant 45 s (course hors ligne à Portimão : 40 jaunes en 30 min, 23/11)
-        new = [x for x in sorted(secs) if x not in done and now - first[x] >= 2.5 and now - self.said.get(f"y{x}", -99) > 45]
+        new = [x for x in sorted(secs) if x not in done and now - first[x] >= YELLOW_HOLD and now - self.said.get(f"y{x}", -99) > 45]
         me = next((c for c in s.cars if c.get("me")), None)
         if me and me.get("spd", 99) < 15:
             # tu es toi-même arrêté ou au ralenti (sortie, tête-à-queue) : ce jaune, c'est sans doute pour toi
